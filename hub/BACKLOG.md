@@ -136,18 +136,34 @@ başlığına ✅ ve tarih yazılır.
       döngü testinden çıkan ders L-008 olarak işlendi; cihaz koşumundan sonra
       tekrar bakılacak
 
-## Faz 4 — Hub Tarayıcı (kategorili görüntüleme)
+## Faz 4 — Hub Tarayıcı (kategorili görüntüleme) ✅ (2026-07-30)
 
-- [ ] B-040 · (agent) Kategori ana ekranı: SYSTEM.md §9'daki 6 kategori
-- [ ] B-041 · (agent) Oturumlar görünümü: liste + session.md render (özet üstte)
-- [ ] B-042 · (agent) Raporlar & Planlar görünümü: artifacts listesi,
-      frontmatter `type`'a göre filtre
-- [ ] B-043 · (agent) Bilgi tabanı görünümü: rules/skills/lessons kayıtları
-- [ ] B-044 · (agent) Yol haritası görünümü: BACKLOG.md ve EVOLUTION.md render
-- [ ] B-045 · (agent) Aktivite akışı: commit geçmişini §8 öneklerine göre
-      okunur akışa çevir
-- [ ] B-046 · (agent) Basit önbellekleme: son görülen içerik lokalde tutulur,
-      açılışta önce cache gösterilir
+- [x] B-040 · (agent) Kategori ana ekranı: SYSTEM.md §9'daki 6 kategori —
+      ✅ 2026-07-30 · S-2026-07-30-faz4-hub-tarayici; kategoriler gezinmeye
+      bağlandı, ayrıca Aktivite ve Sözleşme kartları eklendi
+- [x] B-041 · (agent) Oturumlar görünümü: liste + session.md render (özet üstte)
+      — ✅ 2026-07-30 · liste tek ağaç isteğinden çiziliyor (dosya
+      indirilmeden), belge açılınca frontmatter rozet + gövde markdown
+- [x] B-042 · (agent) Raporlar & Planlar görünümü: artifacts listesi,
+      frontmatter `type`'a göre filtre — ✅ 2026-07-30 · liste ağaçtan,
+      başlık/tür frontmatter'dan tamamlanıyor (üst sınırlı, gerekçesi kodda);
+      okunamayan artifact listeden düşmüyor
+- [x] B-043 · (agent) Bilgi tabanı görünümü: rules/skills/lessons kayıtları —
+      ✅ 2026-07-30 · üç dosya sekmeli; kayıtlar `## ID — başlık` bloklarından
+      ayrıştırılıyor, geçersiz kılınanlar (R-004) üstü çizili işaretleniyor
+- [x] B-044 · (agent) Yol haritası görünümü: BACKLOG.md ve EVOLUTION.md render
+      — ✅ 2026-07-30 · iki sekme; görev kutuları ve üstü çizili kararlar
+      GitHub'daki gibi çiziliyor (B-025 eklenti seti)
+- [x] B-045 · (agent) Aktivite akışı: commit geçmişini §8 öneklerine göre
+      okunur akışa çevir — ✅ 2026-07-30 · "task(T-001): active → done" →
+      "T-001 tamamlandı"; K-012 gereği kod commit'leri ayrı tür sayılıp
+      varsayılanda gizleniyor, düğmeyle açılıyor. Tanınmayan kalıpta mesaj
+      olduğu gibi bırakılıyor (uydurma yok)
+- [x] B-046 · (agent) Basit önbellekleme: son görülen içerik lokalde tutulur,
+      açılışta önce cache gösterilir — ✅ 2026-07-30 · ETag önbelleği cihazda
+      saklanıyor: açılışta ETag'ler elde olduğu için içerik 304'le anında
+      geliyor, ağ yokken son bilinen içerik gösteriliyor (bayat olduğu
+      işaretli). Sunucu hatası (401/500) önbellekle gizlenmiyor
 
 ## Faz 5 — Cilalama & Günlük Kullanım
 
