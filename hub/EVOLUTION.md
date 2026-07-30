@@ -119,8 +119,12 @@ agent'ın ele alması, sonucun app'te görünmesi. (Backlog Faz 2–3.)
   Tema uyumlu `HubMarkdown` altyapısı eklendi; parser artık gerçek hub
   dosyalarına karşı da test ediliyor. 55 test.
   → S-2026-07-30-b025-frontmatter-markdown
+- 2026-07-30: B-022 tamamlandı — onboarding token'ı kaydetmeden önce tek GET
+  ile doğruluyor; hata mesajları GitHub'ın 404 belirsizliğini dürüstçe
+  anlatıyor (L-007). Yazma izni sınanamadığı için B-026 açıldı. 71 test.
+  → S-2026-07-30-b022-onboarding
 - Bekleyen: B-015 (token, artık `takip`e scope'lu), B-020'nin kullanıcıda kalan
-  kısmı (SDK + `flutter create .` ile `android/`), ardından B-022 → B-024.
+  kısmı (SDK + `flutter create .` ile `android/`), ardından B-024 ve Faz 3.
 
 **Kararlar:**
 - **K-013:** Repo rolleri netleştirildi (kullanıcı cevabı). `taskr` salt
