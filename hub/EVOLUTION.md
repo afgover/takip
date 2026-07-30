@@ -55,7 +55,8 @@ ilk gerçek oturumla test edilmesi.
 - ~~**K-006:** Hub reposunun adı `takip`.~~ (Geçersiz: yanlış repo adı; bkz. K-007)
 - **K-007:** Hub reposu `afgover/taskr_takip`. Eski taskr reposu salt tarihçe
   olarak kalır; yeni çalışmalar yalnızca hub üzerinden yürür. `takip` reposu
-  kullanım dışıdır.
+  kullanım dışıdır. (`takip`in rolü K-011/K-012 ile, `taskr` ve `taskr_takip`in
+  rolleri K-013 ile değişti.)
 - **K-008:** Uygulama hedefi — önce **kişisel kullanım** (store'suz dağıtım);
   ileride **Android + iOS store** yayını. Onboarding'de PAT girişi kişisel
   aşama için yeterli; store aşamasında GitHub App OAuth değerlendirilecek
@@ -69,10 +70,11 @@ ilk gerçek oturumla test edilmesi.
 - **K-011:** Flutter uygulamasının evi, başta oluşturulan `afgover/takip`
   reposu — **çatı (uygulama) repo** olarak yeniden tanımlandı. Yapı:
   `takip` = uygulama kodu, `taskr_takip` = veri hub'ı, `taskr` = salt tarihçe.
-  (`taskr_takip` kısmı K-012 ile değişti.)
+  (`taskr_takip` kısmı K-012 ile, `taskr`ın rolü K-013 ile değişti.)
 - **K-012:** `takip` projesi **kendi hub'ını barındırır**: tüm hub içeriği
   `takip/hub/` klasörüne taşındı; `takip_takip` gibi ek repo açılmadı,
-  `taskr_takip` kullanım dışı bırakıldı. Gerekçe (kullanıcı kararı): tek
+  `taskr_takip` kullanım dışı bırakıldı (rolü K-013 ile güncellendi:
+  taskr'ın hub'ı olacak). Gerekçe (kullanıcı kararı): tek
   proje-tek repo sadeliği. Bedeli bilinçli kabul edildi: uygulama token'ı
   artık kod+veri içeren `takip`e scope'lanır (R-005) ve commit geçmişinde
   uygulama commit'leriyle hub commit'leri karışır (app aktivite akışı §8
@@ -96,8 +98,24 @@ agent'ın ele alması, sonucun app'te görünmesi. (Backlog Faz 2–3.)
   (sözleşme 1.2, R-005); `taskr_takip` kullanım dışı. Uygulama sabitleri
   (`lib/core/constants.dart`) `hub/` önekine, onboarding varsayılanı
   `afgover/takip`e güncellendi.
+- 2026-07-30: Repo rolleri kullanıcı cevabıyla netleşti (K-013); K-012 teyit
+  edildi, `takip/hub/` yapısında değişiklik gerekmedi. Kayıtlar (K-007/K-011/
+  K-012 notları, README, flutter-app-design K-011 notu) güncellendi.
+  → S-2026-07-30-repo-yapisi-netlestirme
 - Bekleyen: B-015 (token, artık `takip`e scope'lu), B-020 (kullanıcıda SDK +
   `flutter create .` + ilk `flutter analyze` doğrulaması), ardından B-022+.
+
+**Kararlar:**
+- **K-013:** Repo rolleri netleştirildi (kullanıcı cevabı). `taskr` salt
+  tarihçe değil, **kendi kendine devam eden ayrı bir projedir**; içindeki
+  `project-taskr` branch'i, bugünkü `takip` projesinin ilk versiyonunun
+  geliştirildiği yerdi ve oradan bu repoya evrildi. `taskr_takip`, standart
+  `<proje>_takip` modeline uygun olarak **orijinal taskr projesinin takip
+  hub'ı** olarak kullanılacak — kullanım dışı değil. (İçinde duran
+  takip-projesi hub geçmişi, taskr takibi fiilen başlatılırken ele alınacak.)
+  `takip` için K-012 teyit edildi: takip dosyaları `takip/hub/`ta kalır,
+  `takip_takip` açılmaz; repo tek kullanıcılı olduğundan risk kabul edilebilir
+  (kullanıcı kararı). Diğer tüm projelerde `<proje>_takip` modeli geçerlidir.
 
 ## Aşama 3 — Hub Tarayıcı (planlandı)
 
