@@ -40,6 +40,44 @@ class CommitsApi {
     final sha = (data.first as Map)['sha'];
     return sha is String ? sha : null;
   }
+
+  /// Son commit'ler — aktivite akışının kaynağı (B-045).
+  Future<List<CommitInfo>> recent({int limit = 50}) async {
+    final res = await sendGithub(
+      () => _dio.get<dynamic>(
+        '/repos/${Uri.encodeComponent(owner)}/${Uri.encodeComponent(repo)}'
+        '/commits',
+        queryParameters: {'per_page': limit},
+      ),
+    );
+
+    final data = res.data;
+    if (data is! List) {
+      throw const HubUnexpectedError('Commit listesi beklenmedik biçimde.');
+    }
+
+    return data.whereType<Map>().map(CommitInfo.fromJson).toList();
+  }
+}
+
+class CommitInfo {
+  const CommitInfo({required this.sha, required this.message, this.date});
+
+  factory CommitInfo.fromJson(Map<dynamic, dynamic> json) {
+    final commit = json['commit'];
+    final author = commit is Map ? commit['author'] : null;
+    final raw = author is Map ? author['date'] : null;
+
+    return CommitInfo(
+      sha: json['sha'] as String? ?? '',
+      message: (commit is Map ? commit['message'] as String? : null) ?? '',
+      date: raw is String ? DateTime.tryParse(raw)?.toLocal() : null,
+    );
+  }
+
+  final String sha;
+  final String message;
+  final DateTime? date;
 }
 
 final commitsApiProvider = Provider<CommitsApi>((ref) {

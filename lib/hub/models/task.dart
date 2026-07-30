@@ -1,4 +1,5 @@
 import '../../core/constants.dart';
+import '../../core/utils.dart';
 import '../frontmatter.dart';
 
 /// Görev durumu — sözleşmede durum = klasör (SYSTEM.md §4).
@@ -55,7 +56,7 @@ class TaskSummary {
       sha: sha,
       status: status,
       date: DateTime.tryParse(match.group(1)!),
-      title: _titleFromSlug(match.group(2)!),
+      title: titleFromSlug(match.group(2)!),
     );
   }
 
@@ -82,12 +83,6 @@ class TaskSummary {
   int get hashCode => Object.hash(path, sha);
 
   static final _namePattern = RegExp(r'^(\d{4}-\d{2}-\d{2})-(.+)$');
-
-  static String _titleFromSlug(String slug) {
-    final words = slug.replaceAll('-', ' ').trim();
-    if (words.isEmpty) return slug;
-    return words[0].toUpperCase() + words.substring(1);
-  }
 }
 
 /// Sözleşmedeki görev dosyasının modeli (frontmatter + gövde).

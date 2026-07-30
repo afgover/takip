@@ -29,3 +29,13 @@ String isoNow() {
   final now = clock.now().toUtc();
   return '${now.toIso8601String().split('.').first}Z';
 }
+
+/// `market-listesi` → `Market listesi`
+///
+/// Dosya/klasör adları sözleşmede slug'dır; listelerde dosya indirmeden
+/// okunabilir bir başlık göstermek için kullanılır.
+String titleFromSlug(String slug) {
+  final words = slug.replaceAll('-', ' ').trim();
+  if (words.isEmpty) return slug;
+  return words[0].toUpperCase() + words.substring(1);
+}

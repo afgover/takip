@@ -1,7 +1,10 @@
+import 'dart:async';
+import 'dart:convert';
 import 'dart:io' show SocketException;
 
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../core/errors.dart';
 import '../hub/hub_config.dart';
@@ -16,7 +19,15 @@ import '../hub/hub_config.dart';
 /// Kazanç: 304 yanıtları GitHub'ın istek limitinden düşmez (SK-002), yani
 /// 45 saniyelik yoklama pratikte bedavadır.
 class EtagCache {
+  EtagCache({this.onChanged});
+
   final _entries = <String, ({String etag, dynamic data})>{};
+
+  /// Önbellek değişince çağrılır — kalıcılaştırma buna bağlanır (B-046).
+  final void Function()? onChanged;
+
+  /// Diske yazılacak en fazla kayıt (en son yazılanlar önce).
+  static const maxPersistedEntries = 80;
 
   static String keyFor(RequestOptions options) =>
       '${options.method} ${options.uri}';
@@ -25,12 +36,36 @@ class EtagCache {
   bool has(String key) => _entries.containsKey(key);
   dynamic dataOf(String key) => _entries[key]?.data;
 
-  void write(String key, String etag, dynamic data) =>
-      _entries[key] = (etag: etag, data: data);
+  void write(String key, String etag, dynamic data) {
+    _entries[key] = (etag: etag, data: data);
+    onChanged?.call();
+  }
 
-  void clear() => _entries.clear();
+  void clear() {
+    _entries.clear();
+    onChanged?.call();
+  }
 
   int get length => _entries.length;
+
+  /// Uygulama kapanıp açıldığında önbellek boş başlamasın diye (B-046).
+  /// Kayıtlar sunucudan geldiği gibi (çözülmüş JSON) saklanır.
+  Map<String, dynamic> toJson() {
+    final keys = _entries.keys.toList().reversed.take(maxPersistedEntries);
+    return {
+      for (final key in keys)
+        key: {'etag': _entries[key]!.etag, 'data': _entries[key]!.data},
+    };
+  }
+
+  void loadJson(Map<String, dynamic> json) {
+    for (final entry in json.entries) {
+      final value = entry.value;
+      if (value is Map && value['etag'] is String) {
+        _entries[entry.key] = (etag: value['etag'] as String, data: value['data']);
+      }
+    }
+  }
 }
 
 /// GitHub REST istemcisi. Bu katman hub sözleşmesini bilmez; saf API'dir.
@@ -105,6 +140,28 @@ Dio buildGithubDio(String? Function() readToken, {EtagCache? cache}) {
         }
         handler.next(response);
       },
+      onError: (error, handler) {
+        // Ağ yokken elimizde son bilinen içerik varsa boş ekran yerine onu
+        // göster (B-046). Bayat olduğu `servedFromCacheFlag` ile belli edilir;
+        // sunucuya ulaşabildiğimiz her durumda (4xx/5xx) bu yola girilmez.
+        final isGet = error.requestOptions.method == 'GET';
+        final isOffline = error.response == null;
+        if (cache == null || !isGet || !isOffline) {
+          return handler.next(error);
+        }
+
+        final key = EtagCache.keyFor(error.requestOptions);
+        if (!cache.has(key)) return handler.next(error);
+
+        handler.resolve(
+          Response<dynamic>(
+            requestOptions: error.requestOptions,
+            statusCode: 200,
+            data: cache.dataOf(key),
+            extra: {...error.requestOptions.extra, servedFromCacheFlag: true},
+          ),
+        );
+      },
     ),
   );
 
@@ -115,7 +172,62 @@ Dio buildGithubDio(String? Function() readToken, {EtagCache? cache}) {
 /// (`response.extra[notModifiedFlag] == true`).
 const notModifiedFlag = 'takip.notModified';
 
-final etagCacheProvider = Provider<EtagCache>((ref) => EtagCache());
+/// Yanıtın ağ yokken önbellekten verildiğini işaretler (B-046) — yani veri
+/// bayat olabilir.
+const servedFromCacheFlag = 'takip.servedFromCache';
+
+/// Önbelleği cihazda saklar: uygulama yeniden açıldığında ETag'ler elde
+/// olduğu için içerik ya 304'le anında gelir ya da ağ yoksa doğrudan
+/// önbellekten gösterilir (B-046).
+class EtagCacheStore {
+  EtagCacheStore(this._prefsKey);
+
+  final String _prefsKey;
+  bool _saving = false;
+  bool _dirty = false;
+
+  Future<void> restore(EtagCache cache) async {
+    final prefs = await SharedPreferences.getInstance();
+    final raw = prefs.getString(_prefsKey);
+    if (raw == null) return;
+    try {
+      cache.loadJson(jsonDecode(raw) as Map<String, dynamic>);
+    } catch (_) {
+      await prefs.remove(_prefsKey); // bozuk önbellek takılıp kalmasın
+    }
+  }
+
+  /// Üst üste gelen yazmaları teke indirir; yanıt işleme yolunu bloklamaz.
+  Future<void> save(EtagCache cache) async {
+    if (_saving) {
+      _dirty = true;
+      return;
+    }
+    _saving = true;
+    try {
+      do {
+        _dirty = false;
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString(_prefsKey, jsonEncode(cache.toJson()));
+      } while (_dirty);
+    } catch (_) {
+      // Önbellek kaydedilemezse uygulama çalışmaya devam etmeli.
+    } finally {
+      _saving = false;
+    }
+  }
+}
+
+final etagCacheStoreProvider =
+    Provider<EtagCacheStore>((ref) => EtagCacheStore('etag_cache'));
+
+final etagCacheProvider = Provider<EtagCache>((ref) {
+  final store = ref.watch(etagCacheStoreProvider);
+  late final EtagCache cache;
+  cache = EtagCache(onChanged: () => unawaited(store.save(cache)));
+  unawaited(store.restore(cache));
+  return cache;
+});
 
 final githubDioProvider = Provider<Dio>((ref) {
   final cache = ref.watch(etagCacheProvider);
