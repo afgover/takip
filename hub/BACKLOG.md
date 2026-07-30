@@ -122,8 +122,19 @@ başlığına ✅ ve tarih yazılır.
       (b) içerik farklı → aynı gün aynı başlıkla başka görev, ad sonuna sayı
       ekleniyor; üstüne asla yazılmıyor. 5 denemede çözülemezse anlaşılır hata
 - [ ] B-034 · (agent+user) Uçtan uca test: app'ten görev ekle → agent ele alsın →
-      done'a taşısın → app'te "Tamamlananlar"da görünsün
-- [ ] B-035 · (agent) Test çıktılarını `knowledge/lessons.md`'ye işle
+      done'a taşısın → app'te "Tamamlananlar"da görünsün — ⏳ 2026-07-30 ·
+      **sözleşme ayağı tamam, cihaz ayağı bekliyor** (madde açık kalır).
+      Yapılanlar: (1) gerçek
+      ekranlarla, GitHub Contents API'sini taklit eden hub üzerinde tam döngü
+      testi (ekle → agent taşır → app'te durum değişir → tamamlananlarda
+      sonucuyla görünür) + ağ kesintisi senaryosu; (2) gerçek hub'da T-002:
+      dosya app'in `TaskDraft` üreticisinden çıktığı gibi inbox → active →
+      done geçirildi, biçim bozulmadı. **Kalan:** gerçek GitHub üzerinden
+      cihazda koşum — B-015 (token) ve B-020 (SDK + `flutter create .`)
+      tamamlanınca yapılacak. → L-008
+- [ ] B-035 · (agent) Test çıktılarını `knowledge/lessons.md`'ye işle —
+      döngü testinden çıkan ders L-008 olarak işlendi; cihaz koşumundan sonra
+      tekrar bakılacak
 
 ## Faz 4 — Hub Tarayıcı (kategorili görüntüleme)
 
