@@ -41,3 +41,12 @@ Yapılanlar:
 4. Hedef kararı kayda geçti: önce kişisel kullanım, ileride Android + iOS store
    (K-008); `flutter-app-design.md` §8 güncellendi.
 5. B-015 (uygulama token'ı) kullanıcı kararıyla ertelendi; Faz 2 öncesi yapılacak.
+
+### Kullanıcı
+> android
+
+### Agent
+Kişisel aşama platformu Android olarak kayda geçti (K-009); `flutter-app-design.md`
+§8 ve B-020 güncellendi. Faz 2 öncesi açık kalan tek tasarım sorusu: görev
+kategorileri sabit mi, kullanıcı tanımlı mı? Ayrıca uygulama kodunun hangi
+repoda yaşayacağı (hub veri-reposu kod içermez) Faz 2 açılışında netleşecek.

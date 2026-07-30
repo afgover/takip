@@ -101,7 +101,8 @@ eklenir; formatı ve token modelini değiştirmez.
   ileride Android + iOS store yayını. Kişisel aşamada onboarding'de PAT girişi
   yeterli; store aşamasına geçerken GitHub App OAuth akışı değerlendirilecek
   (B-061 ile birlikte).
-- ⏳ Hedef platform önceliği: uzun vadede ikisi de (Android + iOS); kişisel
-  aşamada hangi platformla başlanacağı Faz 2 açılışında (B-020) netleşecek.
+- ✅ **Platform önceliği (K-009, 2026-07-30):** Kişisel aşama **Android**
+  (APK dağıtımı); iOS store aşamasıyla birlikte. Kod tabanı yine platform
+  bağımsız tutulur, yalnız test/dağıtım önceliği Android'dedir.
 - ⏳ Görev ekleme ekranında kategori listesi sabit mi (`SYSTEM.md` §4'teki 5
   kategori), kullanıcı tanımlı mı?

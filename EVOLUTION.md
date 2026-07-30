@@ -60,6 +60,8 @@ ilk gerçek oturumla test edilmesi.
   ileride **Android + iOS store** yayını. Onboarding'de PAT girişi kişisel
   aşama için yeterli; store aşamasında GitHub App OAuth değerlendirilecek
   (B-061 ile birlikte).
+- **K-009:** Kişisel aşamada hedef platform **Android** (APK ile dağıtım).
+  iOS, store aşamasıyla birlikte gelecek.
 
 ---
 
