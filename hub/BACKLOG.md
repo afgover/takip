@@ -73,8 +73,13 @@ başlığına ✅ ve tarih yazılır.
       S-2026-07-30-b023-github-istemci; `flutter analyze` temiz, 27 test geçti.
       R-001 yapısal kapıya bağlandı (`TaskRepo.writeToInbox`); dersler L-005,
       L-006; skill SK-003
-- [ ] B-024 · (agent) ETag'li polling servisi: foreground'da 30–60 sn aralıkla
-      değişiklik kontrolü, 304'te sessiz geçiş
+- [x] B-024 · (agent) ETag'li polling servisi: foreground'da 30–60 sn aralıkla
+      değişiklik kontrolü, 304'te sessiz geçiş — ✅ 2026-07-30 ·
+      S-2026-07-30-b024-etag-polling; `EtagCache` + `If-None-Match`
+      interceptor'ı (doğrulama önbelleği: bayat veri göstermez),
+      `HubWatcher` tek commit isteğiyle değişiklik izliyor, arka planda
+      duruyor; auth hatasında durur, rate limit'te reset'e kadar bekler.
+      87 test, analyze temiz. → SK-005
 - [x] B-025 · (agent) Frontmatter parser (yaml) + markdown render altyapısı —
       ✅ 2026-07-30 · S-2026-07-30-b025-frontmatter-markdown; parser CRLF/BOM
       ve bozuk YAML'a dayanıklı, tipli erişimciler + round-trip güvenli
