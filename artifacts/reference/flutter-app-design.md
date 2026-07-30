@@ -95,11 +95,13 @@ function; imza doğrular, veri taşımaz, repo token'ı tutmaz) → FCM/APNs pus
 app bildirimi alır ve veriyi kendi token'ıyla GitHub'dan çeker. Mevcut mimariye
 eklenir; formatı ve token modelini değiştirmez.
 
-## 8. Açık sorular (Faz 2 başlamadan kullanıcıyla netleşecek)
+## 8. Açık sorular ve cevapları
 
-- Hedef platform önceliği: yalnız Android mi, iOS da ilk günden mi?
-- Dağıtım: kişisel kullanım (APK / TestFlight) mi, store hedefi var mı?
-  (Store hedefi yoksa onboarding'de PAT girişi tamamen yeterli; store hedefi
-  doğarsa GitHub App OAuth akışına geçiş Faz 6'da değerlendirilir.)
-- Görev ekleme ekranında kategori listesi sabit mi (`SYSTEM.md` §4'teki 5
+- ✅ **Dağıtım (K-008, 2026-07-30):** Önce kişisel kullanım (store'suz dağıtım);
+  ileride Android + iOS store yayını. Kişisel aşamada onboarding'de PAT girişi
+  yeterli; store aşamasına geçerken GitHub App OAuth akışı değerlendirilecek
+  (B-061 ile birlikte).
+- ⏳ Hedef platform önceliği: uzun vadede ikisi de (Android + iOS); kişisel
+  aşamada hangi platformla başlanacağı Faz 2 açılışında (B-020) netleşecek.
+- ⏳ Görev ekleme ekranında kategori listesi sabit mi (`SYSTEM.md` §4'teki 5
   kategori), kullanıcı tanımlı mı?
