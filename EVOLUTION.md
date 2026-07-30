@@ -33,7 +33,7 @@ altyapıya gidiyordu.
 
 ---
 
-## Aşama 1 — Hub Kurulumu (aktif)
+## Aşama 1 — Hub Kurulumu ✅ (2026-07-30)
 
 **Hedef:** Format sözleşmesinin yazılması, hub reposunun açılması ve sözleşmenin
 ilk gerçek oturumla test edilmesi.
@@ -72,10 +72,19 @@ ilk gerçek oturumla test edilmesi.
 
 ---
 
-## Aşama 2 — Uygulama MVP'si (planlandı)
+## Aşama 2 — Uygulama MVP'si (aktif)
 
 **Hedef:** Flutter iskeleti + todo döngüsü: app'ten eklenen görevin hub'a düşmesi,
 agent'ın ele alması, sonucun app'te görünmesi. (Backlog Faz 2–3.)
+
+**Durum:**
+- 2026-07-30: Aşama açıldı. İskelet (B-021) `takip` çatı reposuna yazıldı:
+  katmanlı mimari (github → hub → features), Riverpod, tema, alt gezinme,
+  onboarding + 4 ekran taslağı; frontmatter parser ve slug üretimi çalışır
+  durumda, API katmanı TODO(B-023). Aşama 1'in kapanışında B-015 (token)
+  ertelenmiş tek madde olarak Faz 2'ye devroldu.
+- Bekleyen: B-015 (token), B-020 (kullanıcıda SDK + `flutter create .` +
+  ilk `flutter analyze` doğrulaması), ardından B-022+.
 
 ## Aşama 3 — Hub Tarayıcı (planlandı)
 

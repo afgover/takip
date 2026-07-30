@@ -49,10 +49,15 @@ başlığına ✅ ve tarih yazılır.
 ## Faz 2 — Flutter Uygulama İskeleti
 
 - [ ] B-020 · (user) Flutter ortamı hazırlığı (SDK kurulumu) — platform kararı
-      verildi: Android öncelikli (K-009)
-- [ ] B-021 · (agent) Proje iskeleti (`afgover/takip` çatı reposunda, K-011):
+      verildi: Android öncelikli (K-009). İlk kurulum: `takip` reposunda
+      `flutter create . --platforms=android && flutter pub get &&
+      flutter analyze` (iskeletin derleme doğrulaması dahil)
+- [x] B-021 · (agent) Proje iskeleti (`afgover/takip` çatı reposunda, K-011):
       klasör yapısı, state management (Riverpod), tema, navigasyon —
-      `artifacts/reference/flutter-app-design.md` §3'e göre
+      `artifacts/reference/flutter-app-design.md` §3'e göre — ✅ 2026-07-30 ·
+      takip@417da6b; SDK'sız ortamda elle yazıldı, derleme doğrulaması
+      B-020'ye bağlı. Onboarding/ekran taslakları dahil; API katmanı
+      TODO(B-023) işaretli
 - [ ] B-022 · (agent) Onboarding ekranı: token + repo adı girişi, token'ın
       `flutter_secure_storage`'a kaydı
 - [ ] B-023 · (agent) GitHub istemci katmanı: Contents API (get/put/delete),

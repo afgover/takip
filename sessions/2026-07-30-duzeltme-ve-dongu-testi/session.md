@@ -62,3 +62,16 @@ K-011 — Flutter uygulaması `afgover/takip` çatı reposunda yaşayacak; `taki
 README'si buna göre yeniden yazıldı. Yapı: takip = uygulama, taskr_takip = veri
 hub'ı, taskr = tarihçe. Faz 2'nin tüm tasarım öngereksinimleri tamamlandı;
 kalan: B-015 (token, ertelendi) ve B-020 (kullanıcıda Flutter SDK).
+
+### Kullanıcı
+> devam
+
+### Agent
+Faz 2 açıldı (Aşama 1 ✅ → Aşama 2 aktif). B-021 tamamlandı: Flutter iskeleti
+`takip` çatı reposuna yazıldı (takip@417da6b) — katmanlı mimari
+(github → hub → features), Riverpod, tema, alt gezinmeli kabuk, onboarding +
+Bekleyenler/Ekle/Tarayıcı/Ayarlar ekran taslakları; frontmatter parser ve slug
+üretimi çalışır durumda, API katmanı TODO(B-023) işaretleriyle bekliyor.
+Ortamda Flutter SDK olmadığından derleme doğrulaması B-020'ye bağlandı:
+kullanıcı `flutter create . --platforms=android && flutter pub get &&
+flutter analyze` koşacak (README'de belgeli).
