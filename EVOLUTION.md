@@ -62,6 +62,13 @@ ilk gerçek oturumla test edilmesi.
   (B-061 ile birlikte).
 - **K-009:** Kişisel aşamada hedef platform **Android** (APK ile dağıtım).
   iOS, store aşamasıyla birlikte gelecek.
+- **K-010:** Görev kategorileri — 5 sabit varsayılan (`gorev, arastirma,
+  gelistirme, hata, fikir`) + **kullanıcı tanımlı** serbest değerler. App,
+  seçim listesini varsayılanlar + mevcut görevlerde geçen kategorilerden
+  türetir; ek kayıt dosyası gerekmez, R-001 değişmez. → Sözleşme 1.1
+- **K-011:** Flutter uygulamasının evi, başta oluşturulan `afgover/takip`
+  reposu — **çatı (uygulama) repo** olarak yeniden tanımlandı. Yapı:
+  `takip` = uygulama kodu, `taskr_takip` = veri hub'ı, `taskr` = salt tarihçe.
 
 ---
 

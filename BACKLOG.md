@@ -50,8 +50,9 @@ başlığına ✅ ve tarih yazılır.
 
 - [ ] B-020 · (user) Flutter ortamı hazırlığı (SDK kurulumu) — platform kararı
       verildi: Android öncelikli (K-009)
-- [ ] B-021 · (agent) Proje iskeleti: klasör yapısı, state management (Riverpod),
-      tema, navigasyon — `artifacts/reference/flutter-app-design.md` §3'e göre
+- [ ] B-021 · (agent) Proje iskeleti (`afgover/takip` çatı reposunda, K-011):
+      klasör yapısı, state management (Riverpod), tema, navigasyon —
+      `artifacts/reference/flutter-app-design.md` §3'e göre
 - [ ] B-022 · (agent) Onboarding ekranı: token + repo adı girişi, token'ın
       `flutter_secure_storage`'a kaydı
 - [ ] B-023 · (agent) GitHub istemci katmanı: Contents API (get/put/delete),

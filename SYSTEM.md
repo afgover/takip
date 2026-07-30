@@ -5,7 +5,7 @@ ve hangi şemaya uyacağını** tanımlar. Agent ve kullanıcı uygulaması bu s
 dışına çıkmaz. Sözleşme değişiklikleri `EVOLUTION.md`'ye kaydedilir ve bu dosyanın
 başındaki sürüm numarası artırılır.
 
-**Sözleşme sürümü:** 1.0
+**Sözleşme sürümü:** 1.1
 **Zaman biçimi:** her yerde ISO 8601, UTC (`2026-07-30T14:05:00Z`)
 **Dil:** doküman içerikleri Türkçe; alan adları (frontmatter anahtarları) İngilizce
 **Dosya adları:** küçük harf, Türkçe karakter yok, boşluk yerine tire (`gorev-adi`)
@@ -113,7 +113,10 @@ created_by: user             # user | agent
 created: 2026-07-30T14:05:00Z
 updated: 2026-07-30T16:00:00Z
 priority: normal             # low | normal | high | urgent
-category: gorev              # gorev | arastirma | gelistirme | hata | fikir
+category: gorev              # varsayılanlar: gorev, arastirma, gelistirme, hata,
+                             # fikir — serbest değer de geçerli (kullanıcı tanımlı).
+                             # App, seçim listesini varsayılanlar + mevcut
+                             # görevlerde geçen kategorilerden türetir. (v1.1)
 tags: []
 session: none                # ele alındığı oturumun ID'si (agent doldurur)
 result: none                 # tamamlanınca: sonucun 1 satır özeti veya artifact linki

@@ -50,3 +50,15 @@ Kişisel aşama platformu Android olarak kayda geçti (K-009); `flutter-app-desi
 §8 ve B-020 güncellendi. Faz 2 öncesi açık kalan tek tasarım sorusu: görev
 kategorileri sabit mi, kullanıcı tanımlı mı? Ayrıca uygulama kodunun hangi
 repoda yaşayacağı (hub veri-reposu kod içermez) Faz 2 açılışında netleşecek.
+
+### Kullanıcı
+> Kategori önerilerin yerinde; user da ekleyebilsin. İlk başta verdiğim `takip`
+> reposu, app'i içeren çatı repo olacak.
+
+### Agent
+İki karar işlendi: K-010 — kategoriler 5 varsayılan + kullanıcı tanımlı serbest
+değer; app listeyi mevcut görevlerden türetir (Sözleşme 1.0 → 1.1, §4).
+K-011 — Flutter uygulaması `afgover/takip` çatı reposunda yaşayacak; `takip`in
+README'si buna göre yeniden yazıldı. Yapı: takip = uygulama, taskr_takip = veri
+hub'ı, taskr = tarihçe. Faz 2'nin tüm tasarım öngereksinimleri tamamlandı;
+kalan: B-015 (token, ertelendi) ve B-020 (kullanıcıda Flutter SDK).

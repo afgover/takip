@@ -104,5 +104,8 @@ eklenir; formatı ve token modelini değiştirmez.
 - ✅ **Platform önceliği (K-009, 2026-07-30):** Kişisel aşama **Android**
   (APK dağıtımı); iOS store aşamasıyla birlikte. Kod tabanı yine platform
   bağımsız tutulur, yalnız test/dağıtım önceliği Android'dedir.
-- ⏳ Görev ekleme ekranında kategori listesi sabit mi (`SYSTEM.md` §4'teki 5
-  kategori), kullanıcı tanımlı mı?
+- ✅ **Kategoriler (K-010, 2026-07-30):** 5 varsayılan + kullanıcı tanımlı
+  serbest değer; app seçim listesini varsayılanlar + mevcut görevlerden türetir
+  (Sözleşme 1.1).
+- ✅ **Uygulama kodunun evi (K-011, 2026-07-30):** `afgover/takip` çatı reposu.
+  Hub (`taskr_takip`) kod içermez.
