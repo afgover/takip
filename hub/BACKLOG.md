@@ -108,8 +108,13 @@ başlığına ✅ ve tarih yazılır.
       (dosya indirilmiyor), detay açılınca içerik çekilip `HubMarkdown` ile
       render ediliyor; yoklama değişiklik görünce liste kendiliğinden
       tazeleniyor. Boş/hata/yükleniyor durumları ayrı ayrı ele alındı
-- [ ] B-032 · (agent) Görev yazma dayanıklılığı: offline kuyruk (tek cihaz,
+- [x] B-032 · (agent) Görev yazma dayanıklılığı: offline kuyruk (tek cihaz,
       basit: gönderilemeyen görev lokalde bekler, bağlantı gelince PUT edilir)
+      — ✅ 2026-07-30 · S-2026-07-30-faz3-todo-dongusu; yalnız ağ hatası
+      kuyruğa alınır (yetki hatası beklemekle düzelmez, hemen söylenir).
+      Bağlantı sinyali için ayrı dinleyici yok: yoklamanın başarılı kontrolü
+      "çevrimiçiyiz" demek (B-024 yeniden kullanıldı). Kuyruktakiler
+      bekleyenler listesinin başında "Gönderilecek" rozetiyle görünüyor
 - [ ] B-033 · (agent) 409/SHA çakışması yönetimi: yeniden oku → yeniden dene
 - [ ] B-034 · (agent+user) Uçtan uca test: app'ten görev ekle → agent ele alsın →
       done'a taşısın → app'te "Tamamlananlar"da görünsün
