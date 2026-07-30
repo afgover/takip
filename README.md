@@ -4,16 +4,18 @@
 Android öncelikli — K-009). Uygulama, hub'a bağlanan bir GitHub istemcisidir;
 kendi backend'i yoktur.
 
-## Sistemin yapısı (K-011, K-012)
+## Sistemin yapısı (K-011, K-012, K-013)
 
 Bu repo **kendi kendini barındırır**: uygulama kodu ve takip projesinin veri
-hub'ı aynı repodadır (`takip_takip` gibi ek repo yoktur).
+hub'ı aynı repodadır (`takip_takip` gibi ek repo yoktur — tek kullanıcılı
+repo için bilinçli istisna, K-012/K-013).
 
 | Konum | Rol |
 |---|---|
 | `takip/lib/` (bu repo) | Uygulama kodu (Flutter) |
 | `takip/hub/` (bu repo) | Veri hub'ı: oturumlar, görevler, backlog, bilgi tabanı |
-| `taskr` | Eski uygulama — salt tarihçe |
+| `taskr` | Kendi kendine devam eden ayrı proje (bu projenin ilk versiyonu `project-taskr` branch'inde doğdu) |
+| `taskr_takip` | Orijinal taskr projesinin takip hub'ı |
 | diğer projeler | Ayrı `<proje>_takip` hub repoları (işleyiş değişmez) |
 
 Format sözleşmesi ve tasarım dokümanları hub'dadır:
