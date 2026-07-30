@@ -18,6 +18,31 @@ class TaskRepo {
 
   Future<void> addTask(HubTask task) => throw UnimplementedError('B-030');
 
+  /// Uygulamanın **tek yazma kapısı** (R-001).
+  ///
+  /// Yol değil *dosya adı* alır ve önüne her zaman `tasks/inbox/` ekler;
+  /// böylece kural runtime kontrolüne bırakılmaz, app'in başka bir klasöre
+  /// yazması yapısal olarak mümkün olmaz. Dosya adı sözleşmedeki biçimdedir
+  /// (`<YYYY-MM-DD>-<slug>.md`, bkz. `core/utils.dart`).
+  Future<String> writeToInbox(
+    String fileName, {
+    required String content,
+    required String commitMessage,
+  }) {
+    if (fileName.contains('/')) {
+      throw ArgumentError.value(
+        fileName,
+        'fileName',
+        'Yol değil, dosya adı bekleniyor (R-001: app yalnızca inbox\'a yazar).',
+      );
+    }
+    return _api.putFile(
+      '${Hub.inboxDir}/$fileName',
+      content,
+      commitMessage: commitMessage,
+    );
+  }
+
   Future<List<RepoEntry>> listPending() async => [
         ...await _api.listDir(Hub.inboxDir),
         ...await _api.listDir(Hub.activeDir),

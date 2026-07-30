@@ -36,7 +36,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
           ),
           const SizedBox(height: 16),
           DropdownButtonFormField<String>(
-            initialValue: _priority,
+            value: _priority,
             decoration: const InputDecoration(
                 labelText: 'Öncelik', border: OutlineInputBorder()),
             items: [
@@ -47,7 +47,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
           ),
           const SizedBox(height: 16),
           DropdownButtonFormField<String>(
-            initialValue: _category,
+            value: _category,
             decoration: const InputDecoration(
                 labelText: 'Kategori', border: OutlineInputBorder()),
             items: [

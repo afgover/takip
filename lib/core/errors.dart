@@ -27,3 +27,16 @@ class HubRateLimitError extends HubError {
   const HubRateLimitError(super.message, {this.resetAt});
   final DateTime? resetAt;
 }
+
+/// İstenen yol repoda yok (404). Dizin listelemede bu hata "boş liste"ye
+/// çevrilir; git'te boş dizin diye bir şey olmadığı için "içi boşalmış dizin"
+/// ile "hiç olmayan dizin" ayırt edilemez (bkz. L-005).
+class HubNotFoundError extends HubError {
+  const HubNotFoundError(super.message);
+}
+
+/// Yukarıdakilerin hiçbirine girmeyen durum (5xx, beklenmeyen gövde, vb.).
+class HubUnexpectedError extends HubError {
+  const HubUnexpectedError(super.message, {this.statusCode});
+  final int? statusCode;
+}
