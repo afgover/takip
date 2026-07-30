@@ -71,7 +71,13 @@ başlığına ✅ ve tarih yazılır.
       L-006; skill SK-003
 - [ ] B-024 · (agent) ETag'li polling servisi: foreground'da 30–60 sn aralıkla
       değişiklik kontrolü, 304'te sessiz geçiş
-- [ ] B-025 · (agent) Frontmatter parser (yaml) + markdown render altyapısı
+- [x] B-025 · (agent) Frontmatter parser (yaml) + markdown render altyapısı —
+      ✅ 2026-07-30 · S-2026-07-30-b025-frontmatter-markdown; parser CRLF/BOM
+      ve bozuk YAML'a dayanıklı, tipli erişimciler + round-trip güvenli
+      serializer (SK-004). `HubMarkdown` widget'ı GitHub eklenti setiyle
+      (tablo, `~~üstü çizili~~`, görev kutusu) tema uyumlu çiziyor.
+      Sözleşme uyum testi eklendi: parser gerçek hub dosyalarına karşı
+      koşuyor. 55 test, analyze temiz
 
 ## Faz 3 — Todo Döngüsü (MVP çekirdeği)
 
