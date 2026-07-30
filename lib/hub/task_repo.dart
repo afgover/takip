@@ -1,14 +1,13 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../core/constants.dart';
+import '../core/errors.dart';
 import '../github/contents_api.dart';
 import 'hub_watcher.dart';
 import 'models/task.dart';
 import 'models/task_draft.dart';
 
 /// Görev deposu — sözleşme (SYSTEM.md §4) ile Contents API arasındaki köprü.
-///
-/// TODO(B-032): offline outbox — PUT başarısızsa lokal kuyruğa al.
 class TaskRepo {
   TaskRepo(this._api);
   final ContentsApi _api;
@@ -62,19 +61,72 @@ class TaskRepo {
 
   /// Hazır taslağı hub'a gönderir. Outbox (B-032) bekleyen taslakları da
   /// buradan gönderir — yazma yolu tek.
+  ///
+  /// Ad çakışmasını (B-033) iki farklı duruma ayırır — ikisi de gerçekte
+  /// oluyor:
+  ///
+  /// 1. **Aynı görev zaten gönderilmiş.** Outbox yeniden denerken yazma
+  ///    başarılı olup yanıt kaybolmuş olabilir. Bu durumda dosya aynı içerikle
+  ///    duruyordur; kopya oluşturmak yanlış olur, işlem başarılı sayılır.
+  /// 2. **Aynı gün aynı başlıkla başka bir görev.** Dosya var ama içeriği
+  ///    farklı; kullanıcının önceki görevinin üstüne yazmak yerine ad
+  ///    sonuna sayı eklenir.
+  ///
+  /// Ayrımı yapmanın tek yolu dosyayı okumak — sözleşmedeki "yeniden oku,
+  /// yeniden dene" tam olarak bu.
   Future<TaskSummary> send(TaskDraft draft) async {
-    final sha = await writeToInbox(
-      draft.fileName,
-      content: draft.content,
-      commitMessage: draft.commitMessage,
-    );
+    var attempt = draft;
 
-    return TaskSummary.fromEntry(
-      path: '${Hub.inboxDir}/${draft.fileName}',
-      name: draft.fileName,
-      sha: sha,
-      status: TaskStatus.inbox,
-    )!;
+    for (var tries = 1; tries <= _maxWriteAttempts; tries++) {
+      try {
+        final sha = await writeToInbox(
+          attempt.fileName,
+          content: attempt.content,
+          commitMessage: attempt.commitMessage,
+        );
+        return _inboxSummary(attempt.fileName, sha);
+      } on HubConflictError {
+        final existing = await _readInboxIfExists(attempt.fileName);
+
+        if (existing == null) {
+          continue; // dosya bu arada silinmiş: aynı adla yeniden dene
+        }
+        if (existing.content == attempt.content) {
+          return _inboxSummary(attempt.fileName, existing.sha);
+        }
+        attempt = draft.withFileName(_numbered(draft.fileName, tries + 1));
+      }
+    }
+
+    throw HubConflictError(
+      '${draft.fileName} yazılamadı: aynı adla $_maxWriteAttempts dosya var.',
+    );
+  }
+
+  static const _maxWriteAttempts = 5;
+
+  TaskSummary _inboxSummary(String fileName, String sha) =>
+      TaskSummary.fromEntry(
+        path: '${Hub.inboxDir}/$fileName',
+        name: fileName,
+        sha: sha,
+        status: TaskStatus.inbox,
+      )!;
+
+  Future<RepoFile?> _readInboxIfExists(String fileName) async {
+    try {
+      return await _api.getFile('${Hub.inboxDir}/$fileName');
+    } on HubNotFoundError {
+      return null;
+    }
+  }
+
+  /// `2026-07-30-market.md` → `2026-07-30-market-2.md`
+  static String _numbered(String fileName, int n) {
+    final stem = fileName.endsWith('.md')
+        ? fileName.substring(0, fileName.length - 3)
+        : fileName;
+    return '$stem-$n.md';
   }
 
   /// Bekleyenler: `inbox/` + `active/`. İçerik indirilmez (B-031).
