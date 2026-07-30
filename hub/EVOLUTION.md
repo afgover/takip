@@ -109,8 +109,13 @@ agent'ın ele alması, sonucun app'te görünmesi. (Backlog Faz 2–3.)
   (eski commit geçmişi orada kopya olarak duruyor; silinmesi kullanıcı
   onayına bırakıldı). Çalışma branch'i `main`'e merge edildi.
   → S-2026-07-30-gecmis-tasima-ve-merge
-- Bekleyen: B-015 (token, artık `takip`e scope'lu), B-020 (kullanıcıda SDK +
-  `flutter create .` + ilk `flutter analyze` doğrulaması), ardından B-022+.
+- 2026-07-30: B-023 tamamlandı — Contents API katmanı, SHA'lı iyimser kilit ve
+  hata modeli yazıldı; R-001 hub katmanında yapısal kapıya bağlandı. Proje ilk
+  kez derlendi: iskeletteki 2 derleme hatası düzeltildi, `flutter analyze`
+  temiz, 27 test geçiyor. → S-2026-07-30-b023-github-istemci, L-005, L-006
+- Bekleyen: B-015 (token, artık `takip`e scope'lu), B-020'nin kullanıcıda kalan
+  kısmı (SDK + `flutter create .` ile `android/`), ardından B-025 → B-022 →
+  B-024.
 
 **Kararlar:**
 - **K-013:** Repo rolleri netleştirildi (kullanıcı cevabı). `taskr` salt
