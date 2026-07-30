@@ -123,8 +123,12 @@ agent'ın ele alması, sonucun app'te görünmesi. (Backlog Faz 2–3.)
   ile doğruluyor; hata mesajları GitHub'ın 404 belirsizliğini dürüstçe
   anlatıyor (L-007). Yazma izni sınanamadığı için B-026 açıldı. 71 test.
   → S-2026-07-30-b022-onboarding
-- Bekleyen: B-015 (token, artık `takip`e scope'lu), B-020'nin kullanıcıda kalan
-  kısmı (SDK + `flutter create .` ile `android/`), ardından B-024 ve Faz 3.
+- 2026-07-30: B-024 tamamlandı — ETag doğrulama önbelleği ve tek commit
+  isteğine dayanan ön plan yoklaması. Faz 2'nin **agent tarafı bitti**
+  (B-021…B-025); açık kalanlar kullanıcıya bağlı B-015/B-020 ile sonradan
+  açılan B-026. 87 test. → S-2026-07-30-b024-etag-polling
+- Sıradaki: Faz 3 (MVP çekirdeği) — B-030 görev ekleme, B-031 bekleyenler
+  listesi, B-032 outbox, B-033 çakışma, B-034 uçtan uca test.
 
 **Kararlar:**
 - **K-013:** Repo rolleri netleştirildi (kullanıcı cevabı). `taskr` salt
