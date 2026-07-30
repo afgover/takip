@@ -12,6 +12,9 @@ abstract final class Hub {
   static const backlogFile = '$basePath/BACKLOG.md';
   static const evolutionFile = '$basePath/EVOLUTION.md';
 
+  /// Onboarding'de öneri olarak gelen repo (K-012: kod ve hub aynı repoda).
+  static const defaultRepo = 'afgover/takip';
+
   /// K-010: varsayılan kategoriler; kullanıcı serbest değer ekleyebilir.
   static const defaultCategories = [
     'gorev',

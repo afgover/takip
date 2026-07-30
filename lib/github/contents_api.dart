@@ -45,6 +45,17 @@ class ContentsApi {
         .toList();
   }
 
+  /// Yol repoda var mı? Yetki hataları yukarı geçer — "yok" ile "göremiyorum"
+  /// karıştırılmaz (onboarding doğrulaması buna dayanır, B-022).
+  Future<bool> pathExists(String path) async {
+    try {
+      await _send(() => _dio.get<dynamic>(_url(path)));
+      return true;
+    } on HubNotFoundError {
+      return false;
+    }
+  }
+
   /// Tek dosyanın içeriği (base64 çözülmüş) ve sha'sı.
   Future<RepoFile> getFile(String path) async {
     final res = await _send(() => _dio.get<dynamic>(_url(path)));

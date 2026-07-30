@@ -9,6 +9,33 @@ class HubConfig {
   final String owner;
   final String repo;
   final String token;
+
+  String get slug => '$owner/$repo';
+
+  /// Kullanıcının yazdığı repo alanını ayrıştırır. `owner/ad` beklenir ama
+  /// adres çubuğundan kopyalanan tam URL de kabul edilir (yaygın davranış).
+  /// Biçim tutmuyorsa null.
+  static ({String owner, String repo})? parseRepo(String input) {
+    var s = input.trim();
+    if (s.isEmpty) return null;
+
+    s = s.replaceFirst(
+      RegExp(r'^(https?://)?(www\.)?github\.com/', caseSensitive: false),
+      '',
+    );
+    s = s.replaceFirst(RegExp(r'\.git$'), '');
+    s = s.replaceAll(RegExp(r'^/+|/+$'), '');
+
+    final parts = s.split('/');
+    if (parts.length != 2) return null;
+
+    final owner = parts[0].trim();
+    final repo = parts[1].trim();
+    if (!_segment.hasMatch(owner) || !_segment.hasMatch(repo)) return null;
+    return (owner: owner, repo: repo);
+  }
+
+  static final _segment = RegExp(r'^[A-Za-z0-9._-]+$');
 }
 
 const _storage = FlutterSecureStorage();

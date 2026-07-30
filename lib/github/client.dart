@@ -9,7 +9,12 @@ import '../hub/hub_config.dart';
 /// GitHub REST istemcisi. Bu katman hub sözleşmesini bilmez; saf API'dir.
 ///
 /// TODO(B-024): ETag interceptor'ı — 304'te önbellekten dön, limit tüketme.
-final githubDioProvider = Provider<Dio>((ref) {
+///
+/// [readToken] her istekte çağrılır: token Dio örneğine gömülmez. Böylece
+/// kullanıcı ayarlardan token değiştirdiğinde (B-051) elde eski token kalmaz,
+/// ve onboarding henüz kaydedilmemiş bir aday token'la doğrulama yapabilir
+/// (B-022).
+Dio buildGithubDio(String? Function() readToken) {
   final dio = Dio(
     BaseOptions(
       baseUrl: 'https://api.github.com',
@@ -23,20 +28,23 @@ final githubDioProvider = Provider<Dio>((ref) {
     ),
   );
 
-  // Token'ı istek anında oku: kullanıcı ayarlardan token değiştirdiğinde
-  // (B-051) Dio örneğini yeniden kurmak gerekmez, elde eski token kalmaz.
   dio.interceptors.add(
     InterceptorsWrapper(
       onRequest: (options, handler) {
-        final config = ref.read(hubConfigProvider).value;
-        if (config != null) {
-          options.headers['Authorization'] = 'Bearer ${config.token}';
+        final token = readToken();
+        if (token != null && token.isNotEmpty) {
+          options.headers['Authorization'] = 'Bearer $token';
         }
         handler.next(options);
       },
     ),
   );
 
+  return dio;
+}
+
+final githubDioProvider = Provider<Dio>((ref) {
+  final dio = buildGithubDio(() => ref.read(hubConfigProvider).value?.token);
   ref.onDispose(dio.close);
   return dio;
 });
