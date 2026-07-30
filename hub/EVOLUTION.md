@@ -102,6 +102,11 @@ agent'ın ele alması, sonucun app'te görünmesi. (Backlog Faz 2–3.)
   edildi, `takip/hub/` yapısında değişiklik gerekmedi. Kayıtlar (K-007/K-011/
   K-012 notları, README, flutter-app-design K-011 notu) güncellendi.
   → S-2026-07-30-repo-yapisi-netlestirme
+- 2026-07-30: K-013 uygulandı — `taskr_takip`'teki takip hub geçmişi (12
+  commit) tree'yi değiştirmeyen merge ile bu reponun tarihçesine bağlandı
+  (8ed8134); dosya karşılaştırmasında eksik kayıt çıkmadı. `taskr_takip`
+  sıfırlanıp taskr projesinin takip hub'ı olarak rezerve edildi. Çalışma
+  branch'i `main`'e merge edildi. → S-2026-07-30-gecmis-tasima-ve-merge
 - Bekleyen: B-015 (token, artık `takip`e scope'lu), B-020 (kullanıcıda SDK +
   `flutter create .` + ilk `flutter analyze` doğrulaması), ardından B-022+.
 
