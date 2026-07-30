@@ -2,6 +2,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../hub/hub_watcher.dart';
+import '../../hub/outbox.dart';
 
 /// Yoklamayı uygulamanın ön plan/arka plan durumuna bağlar (B-024).
 ///
@@ -45,5 +46,18 @@ class _HubWatcherScopeState extends ConsumerState<HubWatcherScope>
   }
 
   @override
-  Widget build(BuildContext context) => widget.child;
+  Widget build(BuildContext context) {
+    // Başarılı bir yoklama "çevrimiçiyiz" demektir; ayrı bir bağlantı
+    // dinleyicisine gerek kalmadan outbox burada boşaltılır (B-032).
+    ref.listen<HubStatus>(hubWatcherProvider, (previous, next) {
+      final becameHealthy = next.error == null &&
+          next.lastCheckedAt != null &&
+          next.lastCheckedAt != previous?.lastCheckedAt;
+      if (becameHealthy) {
+        ref.read(outboxProvider.notifier).flush();
+      }
+    });
+
+    return widget.child;
+  }
 }

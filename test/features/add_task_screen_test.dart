@@ -130,6 +130,46 @@ void main() {
         reason: 'hatada kullanıcının yazdığı kaybolmamalı');
   });
 
+  testWidgets('ağ yokken görev kuyruğa alınır, kaybolmaz', (tester) async {
+    final built = buildScreen(
+      handler: (options, _) => throw DioException.connectionError(
+        requestOptions: options,
+        reason: 'ağ yok',
+      ),
+    );
+    await tester.pumpWidget(built.widget);
+
+    await fillAndSubmit(tester);
+
+    expect(find.textContaining('kuyruğa alındı'), findsOneWidget);
+    final titleField = tester.widget<TextFormField>(
+      find.byKey(AddTaskScreen.titleFieldKey),
+    );
+    expect(titleField.controller?.text, isEmpty, reason: 'iş kaybolmadı');
+
+    final prefs = await SharedPreferences.getInstance();
+    final queued = prefs.getStringList('outbox')!;
+    expect(queued, hasLength(1));
+    expect(
+      jsonDecode(queued.single)['fileName'],
+      endsWith('-market-listesi.md'),
+    );
+  });
+
+  testWidgets('yetki hatası kuyruğa alınmaz — beklemekle düzelmez',
+      (tester) async {
+    final built = buildScreen(
+      handler: (_, __) =>
+          jsonResponse({'message': 'Bad credentials'}, status: 401),
+    );
+    await tester.pumpWidget(built.widget);
+
+    await fillAndSubmit(tester);
+
+    final prefs = await SharedPreferences.getInstance();
+    expect(prefs.getStringList('outbox'), anyOf(isNull, isEmpty));
+  });
+
   testWidgets('yeni kategori girilebilir ve sonraki açılışta listede olur',
       (tester) async {
     final built = buildScreen();

@@ -1,3 +1,6 @@
+import 'dart:convert';
+
+import 'package:clock/clock.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -5,7 +8,9 @@ import 'package:takip/core/errors.dart';
 import 'package:takip/features/pending/pending_screen.dart';
 import 'package:takip/features/pending/task_detail_screen.dart';
 import 'package:takip/hub/hub_config.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:takip/hub/models/task.dart';
+import 'package:takip/hub/models/task_draft.dart';
 import 'package:takip/hub/task_repo.dart';
 
 class FakeHubConfigNotifier extends HubConfigNotifier {
@@ -35,6 +40,9 @@ Widget buildApp({
     );
 
 void main() {
+  // Kuyruk diskte durduğu için testler birbirinin kalıntısını görmemeli.
+  setUp(() => SharedPreferences.setMockInitialValues({}));
+
   testWidgets('yüklenirken göstergeyi çizer', (tester) async {
     await tester.pumpWidget(buildApp(
       tasksOverride: pendingTasksProvider.overrideWith(
@@ -75,6 +83,59 @@ void main() {
     expect(find.text('Yeni'), findsOneWidget);
     // Tarih dosya adından okunuyor (dosya indirilmeden).
     expect(find.text('30.07.2026'), findsOneWidget);
+  });
+
+  testWidgets('kuyrukta bekleyen görevler listenin başında gösterilir',
+      (tester) async {
+    SharedPreferences.setMockInitialValues({
+      'outbox': [
+        jsonEncode(
+          withClock(
+            Clock.fixed(DateTime.utc(2026, 7, 30)),
+            () => TaskDraft.create(title: 'Gönderilemeyen görev'),
+          ).toJson(),
+        ),
+      ],
+    });
+
+    await tester.pumpWidget(buildApp(
+      tasksOverride: pendingTasksProvider.overrideWith((ref) async => [
+            summary('2026-07-30-market-listesi.md', TaskStatus.inbox),
+          ]),
+    ));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Gönderilecek'), findsOneWidget);
+    expect(find.text('Bağlantı gelince gönderilecek'), findsOneWidget);
+
+    final tiles = tester.widgetList<ListTile>(find.byType(ListTile)).toList();
+    expect(
+      (tiles.first.title! as Text).data,
+      'Gönderilemeyen görev',
+      reason: 'kuyruktakiler en üstte',
+    );
+  });
+
+  testWidgets('hub boş ama kuyruk doluysa boş durum gösterilmez',
+      (tester) async {
+    SharedPreferences.setMockInitialValues({
+      'outbox': [
+        jsonEncode(
+          withClock(
+            Clock.fixed(DateTime.utc(2026, 7, 30)),
+            () => TaskDraft.create(title: 'Bekleyen'),
+          ).toJson(),
+        ),
+      ],
+    });
+
+    await tester.pumpWidget(buildApp(
+      tasksOverride: pendingTasksProvider.overrideWith((ref) async => const []),
+    ));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Bekleyen görev yok'), findsNothing);
+    expect(find.text('Bekleyen'), findsOneWidget);
   });
 
   testWidgets('hata durumunda sebep ve yeniden dene çıkar', (tester) async {

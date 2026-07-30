@@ -5,6 +5,8 @@ import '../../core/constants.dart';
 import '../../core/errors.dart';
 import '../../core/utils.dart';
 import '../../hub/categories.dart';
+import '../../hub/models/task_draft.dart';
+import '../../hub/outbox.dart';
 import '../../hub/task_repo.dart';
 
 /// Görev ekleme: başlık, açıklama, öncelik, kategori → `tasks/inbox/` (B-030).
@@ -59,25 +61,22 @@ class _AddTaskScreenState extends ConsumerState<AddTaskScreen> {
     });
 
     final category = _effectiveCategory;
+    final draft = TaskDraft.create(
+      title: _titleCtrl.text,
+      description: _descCtrl.text,
+      priority: _priority,
+      category: category,
+    );
+
     try {
-      await ref.read(taskRepoProvider).addTask(
-            title: _titleCtrl.text,
-            description: _descCtrl.text,
-            priority: _priority,
-            category: category,
-          );
-
-      await ref.read(taskCategoriesProvider.notifier).remember(category);
-      ref.invalidate(pendingTasksProvider);
-
-      if (!mounted) return;
-      _titleCtrl.clear();
-      _descCtrl.clear();
-      _newCategoryCtrl.clear();
-      setState(() => _category = category);
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Görev hub\'a gönderildi.')),
+      await ref.read(taskRepoProvider).send(draft);
+      await _finishSuccessfully(category, 'Görev hub\'a gönderildi.');
+    } on HubNetworkError {
+      // Ağ yokken görev kaybolmaz: kuyruğa alınır, bağlantı gelince gider.
+      await ref.read(outboxProvider.notifier).add(draft);
+      await _finishSuccessfully(
+        category,
+        'Ağ yok — görev kuyruğa alındı, bağlantı gelince gönderilecek.',
       );
     } on HubError catch (e) {
       if (mounted) setState(() => _error = e.message);
@@ -86,6 +85,21 @@ class _AddTaskScreenState extends ConsumerState<AddTaskScreen> {
     } finally {
       if (mounted) setState(() => _busy = false);
     }
+  }
+
+  /// Gönderildi ya da kuyruğa alındı — ikisinde de form temizlenir, çünkü
+  /// kullanıcının yazdığı iş kaybolmamıştır.
+  Future<void> _finishSuccessfully(String category, String message) async {
+    await ref.read(taskCategoriesProvider.notifier).remember(category);
+    ref.invalidate(pendingTasksProvider);
+
+    if (!mounted) return;
+    _titleCtrl.clear();
+    _descCtrl.clear();
+    _newCategoryCtrl.clear();
+    setState(() => _category = category);
+
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
   }
 
   @override

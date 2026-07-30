@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../hub/hub_watcher.dart';
 import '../../hub/models/task.dart';
+import '../../hub/models/task_draft.dart';
+import '../../hub/outbox.dart';
 import '../../hub/task_repo.dart';
 import '../common/hub_error_view.dart';
 import 'task_detail_screen.dart';
@@ -13,7 +15,7 @@ import 'task_detail_screen.dart';
 /// ancak detaya girilince çekilir. Yoklama hub'da değişiklik görürse liste
 /// kendiliğinden tazelenir (B-024).
 ///
-/// TODO(B-032): outbox'taki "gönderilecek" görevler en üstte.
+/// Henüz gönderilememiş görevler (B-032) listenin en üstünde ayrı gösterilir.
 class PendingScreen extends ConsumerWidget {
   const PendingScreen({super.key});
 
@@ -23,9 +25,11 @@ class PendingScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final tasks = ref.watch(pendingTasksProvider);
     final status = ref.watch(hubWatcherProvider);
+    final queued = ref.watch(outboxProvider).valueOrNull ?? const [];
 
     Future<void> refresh() async {
       await ref.read(hubWatcherProvider.notifier).checkNow();
+      await ref.read(outboxProvider.notifier).flush();
       ref.invalidate(pendingTasksProvider);
       await ref.read(pendingTasksProvider.future);
     }
@@ -56,7 +60,8 @@ class PendingScreen extends ConsumerWidget {
       body: RefreshIndicator(
         onRefresh: refresh,
         child: switch (tasks) {
-          AsyncData(:final value) when value.isEmpty => const _Scrollable(
+          AsyncData(:final value) when value.isEmpty && queued.isEmpty =>
+            const _Scrollable(
               child: HubEmptyView(
                 icon: Icons.inbox_outlined,
                 title: 'Bekleyen görev yok',
@@ -66,9 +71,11 @@ class PendingScreen extends ConsumerWidget {
             ),
           AsyncData(:final value) => ListView.separated(
               key: listKey,
-              itemCount: value.length,
+              itemCount: queued.length + value.length,
               separatorBuilder: (_, __) => const Divider(height: 1),
-              itemBuilder: (context, i) => _TaskTile(task: value[i]),
+              itemBuilder: (context, i) => i < queued.length
+                  ? _QueuedTile(draft: queued[i])
+                  : _TaskTile(task: value[i - queued.length]),
             ),
           AsyncError(:final error) => _Scrollable(
               child: HubErrorView(
@@ -121,6 +128,39 @@ class _TaskTile extends StatelessWidget {
       onTap: () => Navigator.of(context).push(
         MaterialPageRoute<void>(
           builder: (_) => TaskDetailScreen(summary: task),
+        ),
+      ),
+    );
+  }
+}
+
+/// Kuyrukta bekleyen (henüz hub'a gitmemiş) görev. Hub'da karşılığı olmadığı
+/// için detayı açılamaz; sözleşmedeki durumlardan biri de değildir — bu
+/// yalnızca cihazdaki bir ara durumdur.
+class _QueuedTile extends StatelessWidget {
+  const _QueuedTile({required this.draft});
+
+  final TaskDraft draft;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+    return ListTile(
+      leading: Icon(Icons.cloud_upload_outlined, color: colors.outline),
+      title: Text(draft.title),
+      subtitle: const Text('Bağlantı gelince gönderilecek'),
+      trailing: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+        decoration: BoxDecoration(
+          color: colors.surfaceContainerHighest,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Text(
+          'Gönderilecek',
+          style: Theme.of(context)
+              .textTheme
+              .labelSmall
+              ?.copyWith(color: colors.onSurfaceVariant),
         ),
       ),
     );
