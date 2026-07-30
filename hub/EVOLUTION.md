@@ -69,6 +69,15 @@ ilk gerçek oturumla test edilmesi.
 - **K-011:** Flutter uygulamasının evi, başta oluşturulan `afgover/takip`
   reposu — **çatı (uygulama) repo** olarak yeniden tanımlandı. Yapı:
   `takip` = uygulama kodu, `taskr_takip` = veri hub'ı, `taskr` = salt tarihçe.
+  (`taskr_takip` kısmı K-012 ile değişti.)
+- **K-012:** `takip` projesi **kendi hub'ını barındırır**: tüm hub içeriği
+  `takip/hub/` klasörüne taşındı; `takip_takip` gibi ek repo açılmadı,
+  `taskr_takip` kullanım dışı bırakıldı. Gerekçe (kullanıcı kararı): tek
+  proje-tek repo sadeliği. Bedeli bilinçli kabul edildi: uygulama token'ı
+  artık kod+veri içeren `takip`e scope'lanır (R-005) ve commit geçmişinde
+  uygulama commit'leriyle hub commit'leri karışır (app aktivite akışı §8
+  önekleriyle filtreler). **Diğer projeler için işleyiş değişmez:** ayrı
+  `<proje>_takip` hub reposu modeli geçerli kalır. → Sözleşme 1.2
 
 ---
 
@@ -83,8 +92,12 @@ agent'ın ele alması, sonucun app'te görünmesi. (Backlog Faz 2–3.)
   onboarding + 4 ekran taslağı; frontmatter parser ve slug üretimi çalışır
   durumda, API katmanı TODO(B-023). Aşama 1'in kapanışında B-015 (token)
   ertelenmiş tek madde olarak Faz 2'ye devroldu.
-- Bekleyen: B-015 (token), B-020 (kullanıcıda SDK + `flutter create .` +
-  ilk `flutter analyze` doğrulaması), ardından B-022+.
+- 2026-07-30: K-012 uygulandı — hub içeriği `takip/hub/` altına taşındı
+  (sözleşme 1.2, R-005); `taskr_takip` kullanım dışı. Uygulama sabitleri
+  (`lib/core/constants.dart`) `hub/` önekine, onboarding varsayılanı
+  `afgover/takip`e güncellendi.
+- Bekleyen: B-015 (token, artık `takip`e scope'lu), B-020 (kullanıcıda SDK +
+  `flutter create .` + ilk `flutter analyze` doğrulaması), ardından B-022+.
 
 ## Aşama 3 — Hub Tarayıcı (planlandı)
 

@@ -12,12 +12,12 @@ Projede uyulacak kalıcı kurallar. Kayıtlar silinmez; geçersizleşen kural ü
   Taşıma, düzenleme ve diğer tüm klasörlere yazma agent'ın işidir. Bu, izin
   modelini basit ve öngörülebilir tutar.
 
-## R-002 — Uygulama token'ı yalnızca hub'a scope'lanır
-- **Tarih:** 2026-07-30
+## ~~R-002 — Uygulama token'ı yalnızca hub'a scope'lanır~~
+- **Tarih:** 2026-07-30 (geçersiz: 2026-07-30, K-012 — bkz. R-005)
 - **Kaynak:** Aşama 0, K-002
-- **Açıklama:** Fine-grained token "Only select repositories → hub" ile üretilir;
-  izinler `Contents: Read & write` + `Metadata: Read` ile sınırlıdır. Token asla
-  kod repolarına erişemez.
+- **Açıklama:** ~~Token asla kod repolarına erişemez.~~ `takip` özel durumunda
+  hub, uygulama reposunun içinde yaşadığı için token bu repoya scope'lanır;
+  ayrıntı R-005'te. Diğer projeler için ilke geçerliliğini korur.
 
 ## R-003 — Hub'a push'lanmamış kayıt, yapılmamış kayıttır
 - **Tarih:** 2026-07-30
@@ -30,3 +30,13 @@ Projede uyulacak kalıcı kurallar. Kayıtlar silinmez; geçersizleşen kural ü
 - **Kaynak:** SYSTEM.md
 - **Açıklama:** Oturum, artifact, done-görev ve knowledge kayıtları silinmez.
   Geçersizleşen kayıt üstü çizilerek işaretlenir ve gerekçesi eklenir.
+
+## R-005 — Token `takip`e scope'lanır; app'in yazma alanı hub/tasks/inbox/
+- **Tarih:** 2026-07-30
+- **Kaynak:** K-012
+- **Açıklama:** `takip` kendi hub'ını barındırdığı için uygulama token'ı
+  "Only select repositories → takip" ile üretilir (`Contents: R&W`,
+  `Metadata: R`). Kod ve veri aynı repoda olduğundan token teknik olarak koda
+  da yazabilir — bilinçli tercih (K-012); app davranış olarak yalnızca
+  `hub/tasks/inbox/`'a yazar (R-001, yol öneki `hub/`). Diğer projelerde ayrı
+  `<proje>_takip` repo modeli ve eski scope kuralı geçerlidir.

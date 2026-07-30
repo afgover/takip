@@ -5,10 +5,16 @@ ve hangi şemaya uyacağını** tanımlar. Agent ve kullanıcı uygulaması bu s
 dışına çıkmaz. Sözleşme değişiklikleri `EVOLUTION.md`'ye kaydedilir ve bu dosyanın
 başındaki sürüm numarası artırılır.
 
-**Sözleşme sürümü:** 1.1
+**Sözleşme sürümü:** 1.2
 **Zaman biçimi:** her yerde ISO 8601, UTC (`2026-07-30T14:05:00Z`)
 **Dil:** doküman içerikleri Türkçe; alan adları (frontmatter anahtarları) İngilizce
 **Dosya adları:** küçük harf, Türkçe karakter yok, boşluk yerine tire (`gorev-adi`)
+
+> **Hub kökü (v1.2, K-012):** Bu sözleşmedeki tüm yollar hub köküne görelidir.
+> `takip` projesi için hub kökü, `takip` reposundaki **`hub/`** klasörüdür
+> (kendi kendini barındıran özel durum; `takip_takip` diye ek repo açılmaz).
+> Diğer projeler için işleyiş değişmez: hub, ayrı bir `<proje>_takip`
+> reposunun köküdür.
 
 ---
 

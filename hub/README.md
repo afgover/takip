@@ -1,7 +1,9 @@
 # Taskr Hub
 
-Bu repo, **project-taskr** sisteminin veri omurgasıdır. Kod içermez; agent'ın
-ürettiği tüm kayıtları ve kullanıcının uygulama üzerinden atadığı görevleri tutar.
+Bu klasör (`hub/`), **project-taskr** sisteminin veri omurgasıdır (K-012:
+`takip` projesi hub'ını kendi reposunda barındırır; ek `takip_takip` reposu
+yoktur). Agent'ın ürettiği tüm kayıtları ve kullanıcının uygulama üzerinden
+atadığı görevleri tutar; uygulama kodu reponun kökündedir (`lib/`).
 
 Sistemin nasıl işlediği iki dokümanda tanımlıdır:
 
@@ -26,6 +28,6 @@ knowledge/           rules.md, skills.md, lessons.md — kurallar, yetenekler, d
 ## Erişim modeli
 
 - **Agent:** repoya tam yazma erişimi; `AGENT_PROTOCOL.md`'ye göre yazar.
-- **Kullanıcı uygulaması:** yalnızca bu repoya scope'lanmış fine-grained token
-  (`Contents: Read & write`, `Metadata: Read`). Görevleri `tasks/inbox/`'a yazar,
-  geri kalan her şeyi okur.
+- **Kullanıcı uygulaması:** yalnızca `takip` reposuna scope'lanmış fine-grained
+  token (`Contents: Read & write`, `Metadata: Read`). Görevleri
+  `hub/tasks/inbox/`'a yazar, geri kalan her şeyi okur (R-001/R-005).

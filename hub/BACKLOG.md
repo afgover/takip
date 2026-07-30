@@ -37,7 +37,7 @@ başlığına ✅ ve tarih yazılır.
 - [x] B-014 · (agent) `hub-template/` içeriğini yeni repoya taşı, ilk commit'leri
       sözleşme kurallarıyla at — ✅ 2026-07-30 · S-2026-07-30-hub-tasima
 - [ ] B-015 · (user) Uygulama için fine-grained token üret — Only select
-      repositories → `taskr_takip`; `Contents: R&W`, `Metadata: R`
+      repositories → `takip`; `Contents: R&W`, `Metadata: R` (K-012)
       · ⏸ 2026-07-30 kullanıcı kararıyla ertelendi; Faz 2 öncesi yapılacak
 - [x] B-016 · (agent+user) Sözleşmeyi ilk gerçek oturumla test et: bir oturum
       kaydı + bir görev döngüsü (inbox → active → done) elle işlet, pürüzleri

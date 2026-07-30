@@ -75,3 +75,17 @@ Bekleyenler/Ekle/Tarayıcı/Ayarlar ekran taslakları; frontmatter parser ve slu
 Ortamda Flutter SDK olmadığından derleme doğrulaması B-020'ye bağlandı:
 kullanıcı `flutter create . --platforms=android && flutter pub get &&
 flutter analyze` koşacak (README'de belgeli).
+
+### Kullanıcı
+> Sadece takip deposunu, diğer repolardan farklı olarak, takip_takip diye ek
+> repo oluşturmadan tüm dosya içeriğini takip reposu altında topla; diğer
+> repolar için işleyiş öncekiyle aynı olacak.
+
+### Agent
+K-012 uygulandı: tüm hub içeriği `taskr_takip`ten `takip/hub/` klasörüne
+taşındı; `taskr_takip` "taşındı" notuyla kullanım dışı bırakıldı. Sözleşme
+1.2'ye çıktı (hub kökü tanımı), R-002 üstü çizilip R-005 eklendi (token artık
+`takip`e scope'lu; app yine yalnızca `hub/tasks/inbox/`'a yazar). Uygulama
+tarafında `constants.dart` yolları `hub/` önekine, onboarding varsayılan repo
+değeri `afgover/takip`e güncellendi. Diğer projeler için `<proje>_takip`
+ayrı repo modeli geçerli kalıyor.
