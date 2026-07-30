@@ -33,16 +33,18 @@ başlığına ✅ ve tarih yazılır.
 - [x] B-011 · (agent) Agent kayıt prosedürü (`AGENT_PROTOCOL.md`) taslağı — ✅ 2026-07-30
 - [x] B-012 · (agent) Backlog / evrim / knowledge iskeletleri — ✅ 2026-07-30
 - [x] B-013 · (user) Yeni hub reposunu oluştur ve agent'a bildir — ✅ 2026-07-30 ·
-      `afgover/takip` oluşturuldu
+      `afgover/taskr_takip` (önce yanlışlıkla `takip` kullanıldı; bkz. K-007, L-003)
 - [x] B-014 · (agent) `hub-template/` içeriğini yeni repoya taşı, ilk commit'leri
       sözleşme kurallarıyla at — ✅ 2026-07-30 · S-2026-07-30-hub-tasima
 - [ ] B-015 · (user) Uygulama için fine-grained token üret — Only select
-      repositories → hub; `Contents: R&W`, `Metadata: R`
-- [ ] B-016 · (agent+user) Sözleşmeyi ilk gerçek oturumla test et: bir oturum
+      repositories → `taskr_takip`; `Contents: R&W`, `Metadata: R`
+      · ⏸ 2026-07-30 kullanıcı kararıyla ertelendi; Faz 2 öncesi yapılacak
+- [x] B-016 · (agent+user) Sözleşmeyi ilk gerçek oturumla test et: bir oturum
       kaydı + bir görev döngüsü (inbox → active → done) elle işlet, pürüzleri
-      `knowledge/lessons.md`'ye yaz
-- [ ] B-017 · (agent) Sözleşme test sonuçlarına göre `SYSTEM.md` 1.1 revizyonu
-      (gerekirse)
+      `knowledge/lessons.md`'ye yaz — ✅ 2026-07-30 · T-001,
+      S-2026-07-30-duzeltme-ve-dongu-testi; dersler: L-003, L-004
+- [x] B-017 · (agent) Sözleşme test sonuçlarına göre `SYSTEM.md` 1.1 revizyonu
+      (gerekirse) — ✅ 2026-07-30 · revizyon ihtiyacı çıkmadı, sözleşme 1.0 kaldı
 
 ## Faz 2 — Flutter Uygulama İskeleti
 

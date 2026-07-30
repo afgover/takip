@@ -41,15 +41,25 @@ ilk gerçek oturumla test edilmesi.
 **Durum:**
 - 2026-07-30: `SYSTEM.md` 1.0, `AGENT_PROTOCOL.md`, `BACKLOG.md`, knowledge
   iskeletleri taslak olarak hazırlandı (taskr kod reposunda).
-- 2026-07-30: Hub reposu `afgover/takip` oluşturuldu (B-013 ✅); iskelet buraya
-  taşındı, taskr reposundaki ön çalışma klasörü kaldırıldı (B-014 ✅). Flutter
-  tasarımı `artifacts/reference/flutter-app-design.md` olarak kaydedildi.
-  Bu repo artık tek doğru kaynak.
-- Bekleyen: uygulama token'ı (B-015), sözleşmenin ilk gerçek oturumla testi (B-016).
+- 2026-07-30: İskelet hub reposuna taşındı, taskr reposundaki ön çalışma klasörü
+  kaldırıldı (B-013 ✅, B-014 ✅). Flutter tasarımı
+  `artifacts/reference/flutter-app-design.md` olarak kaydedildi.
+- 2026-07-30: İsim düzeltmesi — hub yanlışlıkla `takip` reposuna kurulmuştu;
+  tüm geçmiş `afgover/taskr_takip`e taşındı (K-007). Bu repo artık tek doğru
+  kaynak; `takip` kullanım dışı bırakıldı, kullanıcı silebilir. → L-003
+- 2026-07-30: Sözleşme döngü testi tamamlandı (B-016 ✅, görev T-001);
+  revizyon ihtiyacı çıkmadı (B-017 ✅). B-015 (uygulama token'ı) kullanıcı
+  kararıyla ertelendi — Faz 2 öncesi tamamlanacak.
 
 **Kararlar:**
-- **K-006:** Hub reposunun adı `takip`. Eski taskr reposu salt tarihçe olarak
-  kalır; yeni çalışmalar yalnızca hub üzerinden yürür.
+- ~~**K-006:** Hub reposunun adı `takip`.~~ (Geçersiz: yanlış repo adı; bkz. K-007)
+- **K-007:** Hub reposu `afgover/taskr_takip`. Eski taskr reposu salt tarihçe
+  olarak kalır; yeni çalışmalar yalnızca hub üzerinden yürür. `takip` reposu
+  kullanım dışıdır.
+- **K-008:** Uygulama hedefi — önce **kişisel kullanım** (store'suz dağıtım);
+  ileride **Android + iOS store** yayını. Onboarding'de PAT girişi kişisel
+  aşama için yeterli; store aşamasında GitHub App OAuth değerlendirilecek
+  (B-061 ile birlikte).
 
 ---
 
