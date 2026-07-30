@@ -150,7 +150,25 @@ agent'ın ele alması, sonucun app'te görünmesi. (Backlog Faz 2–3.)
   `takip_takip` açılmaz; repo tek kullanıcılı olduğundan risk kabul edilebilir
   (kullanıcı kararı). Diğer tüm projelerde `<proje>_takip` modeli geçerlidir.
 
-## Aşama 3 — Hub Tarayıcı (planlandı)
+## Aşama 3 — Hub Tarayıcı ✅ (2026-07-30)
 
 **Hedef:** Agent'ın hub'a kaydettiği her şeyin app'te kategoriler halinde
 görüntülenmesi. (Backlog Faz 4.)
+
+**Durum:**
+- 2026-07-30: Faz 4 tamamlandı (B-040…B-046). Kategori ekranı, oturum ve
+  artifact listeleri, bilgi tabanı, yol haritası, aktivite akışı ve kalıcı
+  önbellek. 164 test. → S-2026-07-30-faz4-hub-tarayici
+
+**Kararlar:**
+- **K-014:** Tarayıcı listeleri **tek özyinelemeli ağaç isteğinden** üretilir
+  (Git Trees API), klasör klasör gezilmez. Gerekçe: alternatifte istek sayısı
+  kayıt sayısıyla büyürdü; ağaç isteği sabit sayıdadır ve ETag'lendiği için
+  değişiklik yokken limitten düşmez. Ağaç kırpılırsa eksik liste gösterilmez,
+  hata verilir.
+- **K-015:** Aktivite akışında **kod commit'leri ayrı tür** sayılır ve
+  varsayılanda gizlenir (K-012'nin öngördüğü filtre). §8 kalıbına uymayan
+  mesaj insan diline çevrilmeye çalışılmaz, olduğu gibi gösterilir.
+- **K-016:** Önbellek ağ yokken **son bilinen içeriği** gösterir ve bunu
+  işaretler; ama sunucudan gelen hata (401/500) önbellekle gizlenmez —
+  sorunu saklamak, bayat veri göstermekten daha kötüdür.
