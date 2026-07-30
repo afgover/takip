@@ -115,7 +115,12 @@ başlığına ✅ ve tarih yazılır.
       Bağlantı sinyali için ayrı dinleyici yok: yoklamanın başarılı kontrolü
       "çevrimiçiyiz" demek (B-024 yeniden kullanıldı). Kuyruktakiler
       bekleyenler listesinin başında "Gönderilecek" rozetiyle görünüyor
-- [ ] B-033 · (agent) 409/SHA çakışması yönetimi: yeniden oku → yeniden dene
+- [x] B-033 · (agent) 409/SHA çakışması yönetimi: yeniden oku → yeniden dene —
+      ✅ 2026-07-30 · S-2026-07-30-faz3-todo-dongusu; çakışmada dosya okunup
+      iki durum ayrılıyor: (a) içerik aynı → görev zaten gönderilmiş, kopya
+      açılmıyor (outbox yeniden denerken yanıtın kaybolduğu gerçek durum),
+      (b) içerik farklı → aynı gün aynı başlıkla başka görev, ad sonuna sayı
+      ekleniyor; üstüne asla yazılmıyor. 5 denemede çözülemezse anlaşılır hata
 - [ ] B-034 · (agent+user) Uçtan uca test: app'ten görev ekle → agent ele alsın →
       done'a taşısın → app'te "Tamamlananlar"da görünsün
 - [ ] B-035 · (agent) Test çıktılarını `knowledge/lessons.md`'ye işle
