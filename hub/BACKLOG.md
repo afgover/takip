@@ -97,8 +97,12 @@ başlığına ✅ ve tarih yazılır.
 
 - [ ] B-030 · (agent) "Görev ekle" ekranı: başlık, açıklama, öncelik, kategori →
       `tasks/inbox/<tarih>-<slug>.md` olarak PUT
-- [ ] B-031 · (agent) Bekleyenler ekranı: `inbox/` + `active/` listesi, durum
-      rozetleri, görev detayı görünümü
+- [x] B-031 · (agent) Bekleyenler ekranı: `inbox/` + `active/` listesi, durum
+      rozetleri, görev detayı görünümü — ✅ 2026-07-30 ·
+      S-2026-07-30-faz3-todo-dongusu; liste iki klasör isteğiyle çiziliyor
+      (dosya indirilmiyor), detay açılınca içerik çekilip `HubMarkdown` ile
+      render ediliyor; yoklama değişiklik görünce liste kendiliğinden
+      tazeleniyor. Boş/hata/yükleniyor durumları ayrı ayrı ele alındı
 - [ ] B-032 · (agent) Görev yazma dayanıklılığı: offline kuyruk (tek cihaz,
       basit: gönderilemeyen görev lokalde bekler, bağlantı gelince PUT edilir)
 - [ ] B-033 · (agent) 409/SHA çakışması yönetimi: yeniden oku → yeniden dene
