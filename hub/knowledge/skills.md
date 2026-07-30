@@ -29,3 +29,14 @@ Biçim: `SYSTEM.md` §5.
   headers: {...})` ile üretir. Böylece URL kurulumu, base64 kodlama, gönderilen
   gövde ve HTTP durum → hata eşlemesi uçtan uca doğrulanır. İstek gövdesi
   `requestStream`'den okunur (byte'lar birleştirilip `utf8.decode`).
+
+## SK-004 — Sözleşme dosyası yazarken güvenli YAML üretimi
+- **Tarih:** 2026-07-30
+- **Kaynak:** B-025
+- **Açıklama:** App'in yazdığı frontmatter'ı agent okuyacağı için üretilen YAML
+  her durumda geçerli olmalı. Kural: bir skaler ancak baş/son boşluğu yoksa,
+  `true/false/yes/no/null/~` gibi ayrılmış bir kelime değilse, sayıya
+  benzemiyorsa ve `^[\p{L}\p{N}][\p{L}\p{N} _./-]*$` kalıbına uyuyorsa tırnaksız
+  yazılır; aksi halde çift tırnak + `\` `"` `\n` kaçışı. Türkçe harfler sade
+  skalerde geçerlidir, tırnak gerektirmez. Doğrulama ölçütü tek cümle:
+  `parse(serialize(x)) == x` (gövdenin de boş satır biriktirmemesi dahil).
