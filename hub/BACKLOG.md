@@ -95,8 +95,13 @@ başlığına ✅ ve tarih yazılır.
 
 ## Faz 3 — Todo Döngüsü (MVP çekirdeği)
 
-- [ ] B-030 · (agent) "Görev ekle" ekranı: başlık, açıklama, öncelik, kategori →
-      `tasks/inbox/<tarih>-<slug>.md` olarak PUT
+- [x] B-030 · (agent) "Görev ekle" ekranı: başlık, açıklama, öncelik, kategori →
+      `tasks/inbox/<tarih>-<slug>.md` olarak PUT — ✅ 2026-07-30 ·
+      S-2026-07-30-faz3-todo-dongusu; `TaskDraft` (dosya adı + içerik + commit
+      mesajı) yazma yolunun tek kaynağı, JSON'a çevrilebilir olduğu için
+      outbox da aynı taslağı gönderiyor. `id: pending` — ID'yi agent atar.
+      Kategoriler K-010'a göre: varsayılanlar + cihazda biriken + serbest
+      giriş (bütün görev dosyalarını indirmemek için)
 - [x] B-031 · (agent) Bekleyenler ekranı: `inbox/` + `active/` listesi, durum
       rozetleri, görev detayı görünümü — ✅ 2026-07-30 ·
       S-2026-07-30-faz3-todo-dongusu; liste iki klasör isteğiyle çiziliyor
