@@ -127,8 +127,16 @@ agent'ın ele alması, sonucun app'te görünmesi. (Backlog Faz 2–3.)
   isteğine dayanan ön plan yoklaması. Faz 2'nin **agent tarafı bitti**
   (B-021…B-025); açık kalanlar kullanıcıya bağlı B-015/B-020 ile sonradan
   açılan B-026. 87 test. → S-2026-07-30-b024-etag-polling
-- Sıradaki: Faz 3 (MVP çekirdeği) — B-030 görev ekleme, B-031 bekleyenler
-  listesi, B-032 outbox, B-033 çakışma, B-034 uçtan uca test.
+- 2026-07-30: Faz 3'ün agent tarafı tamamlandı — B-030 (görev ekleme), B-031
+  (bekleyenler + detay), B-032 (outbox), B-033 (çakışma). B-034'ün sözleşme
+  ayağı bitti (sahte hub üzerinde gerçek ekranlarla tam döngü + gerçek hub'da
+  T-002), cihaz ayağı B-015/B-020'ye bağlı olduğu için madde açık.
+  128 test. → S-2026-07-30-faz3-todo-dongusu, L-008
+- **Aşama 2'nin durumu:** agent tarafında yapılacak iş kalmadı. Uygulama
+  uçtan uca çalışır durumda ama henüz hiç gerçek cihazda koşmadı; aşamayı
+  kapatmak için B-015 + B-020 + B-034'ün cihaz ayağı gerekiyor.
+- Sıradaki: kullanıcı adımlarından sonra B-034'ün cihaz koşumu ve B-035;
+  ardından Faz 4 (hub tarayıcı) — B-026 de aradan alınabilir.
 
 **Kararlar:**
 - **K-013:** Repo rolleri netleştirildi (kullanıcı cevabı). `taskr` salt
