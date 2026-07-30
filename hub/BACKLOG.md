@@ -52,6 +52,10 @@ başlığına ✅ ve tarih yazılır.
       verildi: Android öncelikli (K-009). İlk kurulum: `takip` reposunda
       `flutter create . --platforms=android && flutter pub get &&
       flutter analyze` (iskeletin derleme doğrulaması dahil)
+      · ℹ 2026-07-30: derleme doğrulaması kısmı agent ortamında yapıldı
+      (Flutter 3.27.1 / Dart 3.6, `pubspec.lock` repoda). Sende kalan:
+      SDK kurulumu + `flutter create .` ile `android/` üretimi + cihazda
+      `flutter run`. Kod tarafı artık her oturumda analiz+test'ten geçiyor (L-006)
 - [x] B-021 · (agent) Proje iskeleti (`afgover/takip` çatı reposunda, K-011):
       klasör yapısı, state management (Riverpod), tema, navigasyon —
       `artifacts/reference/flutter-app-design.md` §3'e göre — ✅ 2026-07-30 ·
@@ -60,8 +64,11 @@ başlığına ✅ ve tarih yazılır.
       TODO(B-023) işaretli
 - [ ] B-022 · (agent) Onboarding ekranı: token + repo adı girişi, token'ın
       `flutter_secure_storage`'a kaydı
-- [ ] B-023 · (agent) GitHub istemci katmanı: Contents API (get/put/delete),
-      base64, SHA yönetimi, hata modeli
+- [x] B-023 · (agent) GitHub istemci katmanı: Contents API (get/put/delete),
+      base64, SHA yönetimi, hata modeli — ✅ 2026-07-30 ·
+      S-2026-07-30-b023-github-istemci; `flutter analyze` temiz, 27 test geçti.
+      R-001 yapısal kapıya bağlandı (`TaskRepo.writeToInbox`); dersler L-005,
+      L-006; skill SK-003
 - [ ] B-024 · (agent) ETag'li polling servisi: foreground'da 30–60 sn aralıkla
       değişiklik kontrolü, 304'te sessiz geçiş
 - [ ] B-025 · (agent) Frontmatter parser (yaml) + markdown render altyapısı
