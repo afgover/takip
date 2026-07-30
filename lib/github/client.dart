@@ -6,15 +6,42 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../core/errors.dart';
 import '../hub/hub_config.dart';
 
-/// GitHub REST istemcisi. Bu katman hub sözleşmesini bilmez; saf API'dir.
+/// GET yanıtlarının ETag'lerini ve gövdelerini tutan doğrulama önbelleği.
 ///
-/// TODO(B-024): ETag interceptor'ı — 304'te önbellekten dön, limit tüketme.
+/// Bu bir **süre bazlı** önbellek değildir: her istek yine sunucuya gider,
+/// yalnızca `If-None-Match` başlığıyla. Sunucu "değişmedi" (304) derse gövde
+/// buradan verilir. Dolayısıyla bayat veri gösterme riski yoktur — yazma
+/// sonrası bir sonraki GET, ETag tutmadığı için 200 ve yeni içerik döner.
+///
+/// Kazanç: 304 yanıtları GitHub'ın istek limitinden düşmez (SK-002), yani
+/// 45 saniyelik yoklama pratikte bedavadır.
+class EtagCache {
+  final _entries = <String, ({String etag, dynamic data})>{};
+
+  static String keyFor(RequestOptions options) =>
+      '${options.method} ${options.uri}';
+
+  String? etagOf(String key) => _entries[key]?.etag;
+  bool has(String key) => _entries.containsKey(key);
+  dynamic dataOf(String key) => _entries[key]?.data;
+
+  void write(String key, String etag, dynamic data) =>
+      _entries[key] = (etag: etag, data: data);
+
+  void clear() => _entries.clear();
+
+  int get length => _entries.length;
+}
+
+/// GitHub REST istemcisi. Bu katman hub sözleşmesini bilmez; saf API'dir.
 ///
 /// [readToken] her istekte çağrılır: token Dio örneğine gömülmez. Böylece
 /// kullanıcı ayarlardan token değiştirdiğinde (B-051) elde eski token kalmaz,
 /// ve onboarding henüz kaydedilmemiş bir aday token'la doğrulama yapabilir
 /// (B-022).
-Dio buildGithubDio(String? Function() readToken) {
+///
+/// [cache] verilirse GET'ler ETag ile doğrulanır (B-024).
+Dio buildGithubDio(String? Function() readToken, {EtagCache? cache}) {
   final dio = Dio(
     BaseOptions(
       baseUrl: 'https://api.github.com',
@@ -25,6 +52,8 @@ Dio buildGithubDio(String? Function() readToken) {
         'Accept': 'application/vnd.github+json',
         'X-GitHub-Api-Version': '2022-11-28',
       },
+      // 304 hata değil, "değişmedi" cevabıdır; interceptor ele alacak.
+      validateStatus: (s) => s != null && (s < 300 || s == 304),
     ),
   );
 
@@ -35,7 +64,46 @@ Dio buildGithubDio(String? Function() readToken) {
         if (token != null && token.isNotEmpty) {
           options.headers['Authorization'] = 'Bearer $token';
         }
+        if (cache != null && options.method == 'GET') {
+          final etag = cache.etagOf(EtagCache.keyFor(options));
+          if (etag != null) options.headers['If-None-Match'] = etag;
+        }
         handler.next(options);
+      },
+      onResponse: (response, handler) {
+        if (cache == null || response.requestOptions.method != 'GET') {
+          return handler.next(response);
+        }
+        final key = EtagCache.keyFor(response.requestOptions);
+
+        if (response.statusCode == 304) {
+          if (!cache.has(key)) {
+            // Elimizde gövde yokken 304 gelemez; geldiyse önbellek
+            // temizlenmiştir — sessizce boş veri döndürmek yerine belli et.
+            return handler.reject(
+              DioException(
+                requestOptions: response.requestOptions,
+                response: response,
+                message: 'ETag önbelleği boşken 304 alındı',
+              ),
+            );
+          }
+          return handler.next(
+            Response<dynamic>(
+              requestOptions: response.requestOptions,
+              statusCode: 200,
+              data: cache.dataOf(key),
+              headers: response.headers,
+              extra: {...response.extra, notModifiedFlag: true},
+            ),
+          );
+        }
+
+        final etag = response.headers.value('etag');
+        if (response.statusCode == 200 && etag != null) {
+          cache.write(key, etag, response.data);
+        }
+        handler.next(response);
       },
     ),
   );
@@ -43,11 +111,42 @@ Dio buildGithubDio(String? Function() readToken) {
   return dio;
 }
 
+/// Yanıtın gövdesinin 304 sonrası önbellekten geldiğini işaretler
+/// (`response.extra[notModifiedFlag] == true`).
+const notModifiedFlag = 'takip.notModified';
+
+final etagCacheProvider = Provider<EtagCache>((ref) => EtagCache());
+
 final githubDioProvider = Provider<Dio>((ref) {
-  final dio = buildGithubDio(() => ref.read(hubConfigProvider).value?.token);
+  final cache = ref.watch(etagCacheProvider);
+
+  // Repo ya da token değişirse önceki hesabın gövdeleri elde kalmasın.
+  ref.listen<AsyncValue<HubConfig?>>(hubConfigProvider, (prev, next) {
+    final before = prev?.value;
+    final after = next.value;
+    if (before?.slug != after?.slug || before?.token != after?.token) {
+      cache.clear();
+    }
+  });
+
+  final dio = buildGithubDio(
+    () => ref.read(hubConfigProvider).value?.token,
+    cache: cache,
+  );
   ref.onDispose(dio.close);
   return dio;
 });
+
+/// Dio çağrısını sarar: dışarı yalnızca [HubError] sızar.
+Future<Response<dynamic>> sendGithub(
+  Future<Response<dynamic>> Function() request,
+) async {
+  try {
+    return await request();
+  } on DioException catch (e) {
+    throw mapGithubError(e);
+  }
+}
 
 /// Dio istisnasını uygulama hata modeline (core/errors.dart) çevirir.
 ///

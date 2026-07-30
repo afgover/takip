@@ -9,6 +9,9 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  # Zamana bağlı mantık (yoklama, rate limit beklemesi) testte sahte saatle
+  # sürülebilsin diye DateTime.now() yerine clock.now() kullanılıyor.
+  clock: ^1.1.1
   flutter_riverpod: ^2.6.1
   dio: ^5.7.0
   flutter_secure_storage: ^9.2.2
@@ -22,6 +25,8 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^5.0.0
+  # Yoklama zamanlayıcısını gerçek zaman beklemeden test etmek için (B-024).
+  fake_async: ^1.3.1
 
 flutter:
   uses-material-design: true

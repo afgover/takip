@@ -122,13 +122,8 @@ class ContentsApi {
   /// Tüm çağrılar buradan geçer: dışarı yalnızca [HubError] sızar.
   Future<Response<dynamic>> _send(
     Future<Response<dynamic>> Function() request,
-  ) async {
-    try {
-      return await request();
-    } on DioException catch (e) {
-      throw mapGithubError(e);
-    }
-  }
+  ) =>
+      sendGithub(request);
 }
 
 /// Dizin listesindeki tek kayıt (dosya ya da alt dizin).

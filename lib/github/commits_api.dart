@@ -1,6 +1,55 @@
-/// Commit geçmişi — Aktivite akışı ekranının veri kaynağı.
+import 'package:dio/dio.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../core/errors.dart';
+import '../hub/hub_config.dart';
+import 'client.dart';
+
+/// Commit geçmişi — yoklamanın değişiklik sinyali (B-024) ve ileride aktivite
+/// akışının veri kaynağı (B-045).
 ///
-/// TODO(B-045): GET /repos/{o}/{r}/commits ile son commit'leri çek;
-/// mesajları SYSTEM.md §8 öneklerine göre ayrıştırıp insan diline çevir
-/// ("task(T-003): active → done" → "Agent T-003'ü tamamladı").
-class CommitsApi {}
+/// TODO(B-045): mesajları SYSTEM.md §8 öneklerine göre ayrıştırıp insan diline
+/// çevir ("task(T-003): active → done" → "Agent T-003'ü tamamladı").
+class CommitsApi {
+  CommitsApi(this._dio, {required this.owner, required this.repo});
+
+  final Dio _dio;
+  final String owner;
+  final String repo;
+
+  /// Reponun son commit sha'sı; repo hiç commit almamışsa null.
+  ///
+  /// Yoklamanın tamamı bu tek isteğe dayanır: klasörleri ayrı ayrı taramak
+  /// yerine "hub'da herhangi bir şey değişti mi?" sorusu tek çağrıyla
+  /// sorulur. Değişiklik yoksa yanıt ETag sayesinde 304'tür.
+  Future<String?> headSha() async {
+    final res = await sendGithub(
+      () => _dio.get<dynamic>(
+        '/repos/${Uri.encodeComponent(owner)}/${Uri.encodeComponent(repo)}'
+        '/commits',
+        queryParameters: const {'per_page': 1},
+      ),
+    );
+
+    final data = res.data;
+    if (data is! List) {
+      throw const HubUnexpectedError('Commit listesi beklenmedik biçimde.');
+    }
+    if (data.isEmpty) return null;
+
+    final sha = (data.first as Map)['sha'];
+    return sha is String ? sha : null;
+  }
+}
+
+final commitsApiProvider = Provider<CommitsApi>((ref) {
+  final config = ref.watch(hubConfigProvider).value;
+  if (config == null) {
+    throw StateError('Hub yapılandırılmadı — önce onboarding tamamlanmalı.');
+  }
+  return CommitsApi(
+    ref.watch(githubDioProvider),
+    owner: config.owner,
+    repo: config.repo,
+  );
+});
