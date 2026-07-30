@@ -4,6 +4,7 @@ import '../core/constants.dart';
 import '../github/contents_api.dart';
 import 'hub_watcher.dart';
 import 'models/task.dart';
+import 'models/task_draft.dart';
 
 /// Görev deposu — sözleşme (SYSTEM.md §4) ile Contents API arasındaki köprü.
 ///
@@ -35,6 +36,45 @@ class TaskRepo {
       content,
       commitMessage: commitMessage,
     );
+  }
+
+  /// Yeni görevi sözleşmeye uygun biçimde `tasks/inbox/`'a yazar (B-030).
+  ///
+  /// `id: pending` bilinçlidir: ID'yi agent ilk işleyişte atar (SYSTEM.md §4),
+  /// app numara uydurmaz. Commit mesajı §8 biçimindedir.
+  Future<TaskSummary> addTask({
+    required String title,
+    String description = '',
+    String priority = 'normal',
+    String category = 'gorev',
+    List<String> tags = const [],
+  }) async {
+    return send(
+      TaskDraft.create(
+        title: title,
+        description: description,
+        priority: priority,
+        category: category,
+        tags: tags,
+      ),
+    );
+  }
+
+  /// Hazır taslağı hub'a gönderir. Outbox (B-032) bekleyen taslakları da
+  /// buradan gönderir — yazma yolu tek.
+  Future<TaskSummary> send(TaskDraft draft) async {
+    final sha = await writeToInbox(
+      draft.fileName,
+      content: draft.content,
+      commitMessage: draft.commitMessage,
+    );
+
+    return TaskSummary.fromEntry(
+      path: '${Hub.inboxDir}/${draft.fileName}',
+      name: draft.fileName,
+      sha: sha,
+      status: TaskStatus.inbox,
+    )!;
   }
 
   /// Bekleyenler: `inbox/` + `active/`. İçerik indirilmez (B-031).

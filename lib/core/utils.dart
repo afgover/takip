@@ -1,3 +1,5 @@
+import 'package:clock/clock.dart';
+
 /// Türkçe karakterleri sadeleştirip sözleşmeye uygun slug üretir
 /// (SYSTEM.md: küçük harf, tire, Türkçe karakter yok).
 String slugify(String input) {
@@ -13,6 +15,9 @@ String slugify(String input) {
       .replaceAll(RegExp(r'^-|-$'), '');
 }
 
+/// Başlıktan geçerli bir slug çıkmıyor mu? (yalnız noktalama/emoji girilmişse)
+bool slugIsEmpty(String input) => slugify(input).isEmpty;
+
 /// Sözleşmedeki görev dosya adı: `<YYYY-MM-DD>-<slug>.md`
 String taskFileName(DateTime date, String title) {
   final d = date.toUtc().toIso8601String().substring(0, 10);
@@ -21,6 +26,6 @@ String taskFileName(DateTime date, String title) {
 
 /// ISO 8601 UTC, saniye hassasiyetinde (sözleşme zaman biçimi).
 String isoNow() {
-  final now = DateTime.now().toUtc();
+  final now = clock.now().toUtc();
   return '${now.toIso8601String().split('.').first}Z';
 }
