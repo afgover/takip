@@ -2,21 +2,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../core/constants.dart';
 import '../github/contents_api.dart';
+import 'hub_watcher.dart';
 import 'models/task.dart';
 
 /// Görev deposu — sözleşme (SYSTEM.md §4) ile Contents API arasındaki köprü.
 ///
-/// TODO(B-030): addTask — frontmatter'lı dosya üret (id: pending,
-///   created_by: user), `tasks/inbox/<tarih>-<slug>.md` olarak PUT,
-///   commit mesajı: `task(pending): inbox'a eklendi (app)`.
-/// TODO(B-031): listPending — inbox+active klasör listesi (içerik indirmeden),
-///   detay görünümünde getFile ile içerik.
 /// TODO(B-032): offline outbox — PUT başarısızsa lokal kuyruğa al.
 class TaskRepo {
   TaskRepo(this._api);
   final ContentsApi _api;
-
-  Future<void> addTask(HubTask task) => throw UnimplementedError('B-030');
 
   /// Uygulamanın **tek yazma kapısı** (R-001).
   ///
@@ -43,13 +37,74 @@ class TaskRepo {
     );
   }
 
-  Future<List<RepoEntry>> listPending() async => [
-        ...await _api.listDir(Hub.inboxDir),
-        ...await _api.listDir(Hub.activeDir),
-      ];
+  /// Bekleyenler: `inbox/` + `active/`. İçerik indirilmez (B-031).
+  Future<List<TaskSummary>> listPending() async {
+    final lists = await Future.wait([
+      _list(Hub.inboxDir, TaskStatus.inbox),
+      _list(Hub.activeDir, TaskStatus.active),
+    ]);
+    return _sorted(lists.expand((e) => e).toList());
+  }
 
-  Future<List<RepoEntry>> listDone() => _api.listDir(Hub.doneDir);
+  Future<List<TaskSummary>> listDone() async =>
+      _sorted(await _list(Hub.doneDir, TaskStatus.done));
+
+  Future<List<TaskSummary>> _list(String dir, TaskStatus status) async {
+    final entries = await _api.listDir(dir);
+    return entries
+        .where((e) => !e.isDirectory)
+        .map((e) => TaskSummary.fromEntry(
+              path: e.path,
+              name: e.name,
+              sha: e.sha,
+              status: status,
+            ))
+        .whereType<TaskSummary>()
+        .toList();
+  }
+
+  /// Yeniden eskiye; tarihi okunamayan dosyalar sona.
+  List<TaskSummary> _sorted(List<TaskSummary> tasks) {
+    tasks.sort((a, b) {
+      if (a.date == null && b.date == null) return a.fileName.compareTo(b.fileName);
+      if (a.date == null) return 1;
+      if (b.date == null) return -1;
+      final byDate = b.date!.compareTo(a.date!);
+      return byDate != 0 ? byDate : a.fileName.compareTo(b.fileName);
+    });
+    return tasks;
+  }
+
+  /// Görev dosyasının tam içeriği — detay ekranı açılınca çekilir.
+  Future<HubTask> read(TaskSummary summary) async {
+    final file = await _api.getFile(summary.path);
+    return HubTask.parse(
+      path: file.path,
+      content: file.content,
+      status: summary.status,
+      sha: file.sha,
+    );
+  }
 }
 
 final taskRepoProvider =
     Provider<TaskRepo>((ref) => TaskRepo(ref.watch(contentsApiProvider)));
+
+/// Bekleyen görevler. Yoklama hub'da değişiklik görürse (B-024) `headSha`
+/// değişir ve liste kendiliğinden tazelenir.
+final pendingTasksProvider = FutureProvider<List<TaskSummary>>((ref) {
+  ref.watch(hubWatcherProvider.select((s) => s.headSha));
+  return ref.watch(taskRepoProvider).listPending();
+});
+
+final doneTasksProvider = FutureProvider<List<TaskSummary>>((ref) {
+  ref.watch(hubWatcherProvider.select((s) => s.headSha));
+  return ref.watch(taskRepoProvider).listDone();
+});
+
+/// Tek görevin içeriği (detay ekranı).
+final taskDetailProvider =
+    FutureProvider.autoDispose.family<HubTask, TaskSummary>((ref, summary) {
+  ref.watch(hubWatcherProvider.select((s) => s.headSha));
+  return ref.watch(taskRepoProvider).read(summary);
+});

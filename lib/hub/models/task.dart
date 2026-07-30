@@ -1,5 +1,94 @@
+import '../../core/constants.dart';
+import '../frontmatter.dart';
+
 /// Görev durumu — sözleşmede durum = klasör (SYSTEM.md §4).
-enum TaskStatus { inbox, active, done }
+enum TaskStatus {
+  inbox('Yeni'),
+  active('Ele alınıyor'),
+  done('Tamamlandı');
+
+  const TaskStatus(this.label);
+
+  /// Ekranda gösterilen Türkçe karşılık.
+  final String label;
+
+  static TaskStatus? fromPath(String path) {
+    if (path.startsWith(Hub.inboxDir)) return TaskStatus.inbox;
+    if (path.startsWith(Hub.activeDir)) return TaskStatus.active;
+    if (path.startsWith(Hub.doneDir)) return TaskStatus.done;
+    return null;
+  }
+}
+
+/// Listede gösterilen özet — **dosya indirilmeden** klasör listesinden
+/// üretilir (SYSTEM.md §4: durum klasördür, ad tarih+slug'dır). Böylece
+/// bekleyenler ekranı iki istekte çizilir; içerik ancak detaya girilince
+/// indirilir.
+class TaskSummary {
+  const TaskSummary({
+    required this.path,
+    required this.fileName,
+    required this.sha,
+    required this.status,
+    required this.date,
+    required this.title,
+  });
+
+  /// Klasör listesindeki kayıttan üretir; görev dosyası değilse null
+  /// (README.md, `_template.md` gibi yardımcı dosyalar elenir).
+  static TaskSummary? fromEntry({
+    required String path,
+    required String name,
+    required String sha,
+    required TaskStatus status,
+  }) {
+    if (!name.endsWith('.md')) return null;
+    if (name == 'README.md' || name.startsWith('_')) return null;
+
+    final stem = name.substring(0, name.length - 3);
+    final match = _namePattern.firstMatch(stem);
+    if (match == null) return null;
+
+    return TaskSummary(
+      path: path,
+      fileName: name,
+      sha: sha,
+      status: status,
+      date: DateTime.tryParse(match.group(1)!),
+      title: _titleFromSlug(match.group(2)!),
+    );
+  }
+
+  final String path;
+  final String fileName;
+  final String sha;
+  final TaskStatus status;
+
+  /// Dosya adındaki tarih (`<YYYY-MM-DD>-<slug>.md`).
+  final DateTime? date;
+
+  /// Slug'dan türetilen okunabilir başlık. Gerçek başlık frontmatter'dadır ve
+  /// detay açılınca görünür; liste için dosya adı yeterlidir.
+  final String title;
+
+  // Detay provider'ı bu nesneyi anahtar olarak kullanıyor: liste her
+  // tazelendiğinde yeni örnek üretiliyor, değer eşitliği olmazsa aynı görev
+  // için yeni bir provider açılırdı.
+  @override
+  bool operator ==(Object other) =>
+      other is TaskSummary && other.path == path && other.sha == sha;
+
+  @override
+  int get hashCode => Object.hash(path, sha);
+
+  static final _namePattern = RegExp(r'^(\d{4}-\d{2}-\d{2})-(.+)$');
+
+  static String _titleFromSlug(String slug) {
+    final words = slug.replaceAll('-', ' ').trim();
+    if (words.isEmpty) return slug;
+    return words[0].toUpperCase() + words.substring(1);
+  }
+}
 
 /// Sözleşmedeki görev dosyasının modeli (frontmatter + gövde).
 class HubTask {
@@ -17,7 +106,36 @@ class HubTask {
     required this.status,
     required this.path,
     this.body = '',
+    this.sha,
   });
+
+  /// Hub'dan gelen dosyayı sözleşme şemasına göre okur. Eksik alanlar
+  /// sözleşmedeki varsayılanlara düşer; elle düzenlenmiş bir dosya yüzünden
+  /// ekran çökmez.
+  factory HubTask.parse({
+    required String path,
+    required String content,
+    required TaskStatus status,
+    String? sha,
+  }) {
+    final fm = Frontmatter.parse(content);
+    return HubTask(
+      id: fm.strOr('id', 'pending'),
+      title: fm.strOr('title', ''),
+      createdBy: fm.strOr('created_by', 'user'),
+      created: fm.strOr('created', ''),
+      updated: fm.strOr('updated', ''),
+      priority: fm.strOr('priority', 'normal'),
+      category: fm.strOr('category', Hub.defaultCategories.first),
+      tags: fm.list('tags'),
+      session: fm.strOr('session', 'none'),
+      result: fm.strOr('result', 'none'),
+      status: status,
+      path: path,
+      body: fm.body,
+      sha: sha,
+    );
+  }
 
   final String id; // "pending" → agent henüz ID atamadı
   final String title;
@@ -33,6 +151,12 @@ class HubTask {
   final String path; // hub içindeki tam yol
   final String body;
 
+  /// Dosyanın o anki sha'sı — güncelleme yaparken gerekir (B-033).
+  final String? sha;
+
+  bool get isPending => id == 'pending';
+  bool get hasResult => result.isNotEmpty && result != 'none';
+
   Map<String, dynamic> toFrontmatter() => {
         'id': id,
         'title': title,
@@ -45,4 +169,8 @@ class HubTask {
         'session': session,
         'result': result,
       };
+
+  /// Sözleşmeye uygun dosya içeriği (frontmatter + gövde).
+  String toFileContent() =>
+      Frontmatter.of(toFrontmatter(), body: body).serialize();
 }
