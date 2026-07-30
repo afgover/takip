@@ -113,9 +113,14 @@ agent'ın ele alması, sonucun app'te görünmesi. (Backlog Faz 2–3.)
   hata modeli yazıldı; R-001 hub katmanında yapısal kapıya bağlandı. Proje ilk
   kez derlendi: iskeletteki 2 derleme hatası düzeltildi, `flutter analyze`
   temiz, 27 test geçiyor. → S-2026-07-30-b023-github-istemci, L-005, L-006
+- 2026-07-30: B-025 tamamlandı — frontmatter parser sağlamlaştırıldı (CRLF/BOM,
+  bozuk YAML'a dayanıklılık, tipli erişim) ve serializer round-trip güvenli hâle
+  getirildi (SK-004): app'in yazdığı sözleşme dosyası her durumda geçerli YAML.
+  Tema uyumlu `HubMarkdown` altyapısı eklendi; parser artık gerçek hub
+  dosyalarına karşı da test ediliyor. 55 test.
+  → S-2026-07-30-b025-frontmatter-markdown
 - Bekleyen: B-015 (token, artık `takip`e scope'lu), B-020'nin kullanıcıda kalan
-  kısmı (SDK + `flutter create .` ile `android/`), ardından B-025 → B-022 →
-  B-024.
+  kısmı (SDK + `flutter create .` ile `android/`), ardından B-022 → B-024.
 
 **Kararlar:**
 - **K-013:** Repo rolleri netleştirildi (kullanıcı cevabı). `taskr` salt
