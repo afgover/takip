@@ -40,3 +40,15 @@ Biçim: `SYSTEM.md` §5.
   yazılır; aksi halde çift tırnak + `\` `"` `\n` kaçışı. Türkçe harfler sade
   skalerde geçerlidir, tırnak gerektirmez. Doğrulama ölçütü tek cümle:
   `parse(serialize(x)) == x` (gövdenin de boş satır biriktirmemesi dahil).
+
+## SK-005 — Zamana bağlı mantığı sahte saatle test etmek
+- **Tarih:** 2026-07-30
+- **Kaynak:** B-024
+- **Açıklama:** `fakeAsync` yalnız **zamanlayıcıları ve mikro görevleri**
+  sahteler; `DateTime.now()` gerçek duvar saatini okumaya devam eder. Bu yüzden
+  "şu ana kadar bekle" türü mantık (rate limit sonrası geri çekilme) sahte
+  zamanda hiç sona ermez ve test yanıltıcı biçimde kırılır. Çözüm: üretim
+  kodunda `DateTime.now()` yerine `package:clock`'un `clock.now()`'u kullanmak;
+  `fakeAsync` bu saati `elapse` ile birlikte ilerletir. Yan fayda: zaman damgası
+  üreten kod (`lastChangedAt` gibi) testte belirlenimli olur, aynı mikrosaniyede
+  üretilen iki damganın eşit çıkma riski kalkar.
