@@ -68,3 +68,15 @@ Biçim: `SYSTEM.md` §5.
   söylenmelidir. Yetki hatası (401/403) ise gerçekten ayrıdır ve "yok" ile
   karıştırılmamalıdır — bu yüzden `pathExists` yalnız 404'ü false'a çevirir,
   yetki hatalarını yukarı geçirir.
+
+## L-008 — `testWidgets` içinde gerçek async işi doğrudan beklemek kilitler
+- **Tarih:** 2026-07-30
+- **Kaynak:** B-034
+- **Açıklama:** `testWidgets` gövdesi sahte saatli bir zonda koşar; olay
+  döngüsü ancak `pump()` ile ilerler. Bu yüzden bir HTTP çağrısını (sahte
+  adaptörle bile olsa) doğrudan `await` etmek testi sonsuza kadar askıda
+  bırakır — hata mesajı da vermez, sadece asılır. İki doğru yol var:
+  (a) isteği bir kullanıcı eylemi tetikliyorsa `pumpAndSettle()` yeterlidir,
+  (b) test gövdesinden doğrudan çağrılıyorsa `await tester.runAsync(() => ...)`
+  ile gerçek zonda çalıştırılır. Aynı kod düz `test()` içinde sorunsuz
+  çalıştığı için sorun kolayca yanlış yere aranıyor.
