@@ -19,3 +19,13 @@ Biçim: `SYSTEM.md` §5.
 - **Açıklama:** GET isteklerinde `If-None-Match: <etag>` gönderilir; içerik
   değişmediyse 304 döner ve bu cevap rate limit'ten düşmez. Böylece 30–60 sn
   aralıklı yoklama pratikte bedavadır.
+
+## SK-003 — Dio'yu ağsız test etmek: sahte HttpClientAdapter
+- **Tarih:** 2026-07-30
+- **Kaynak:** B-023
+- **Açıklama:** `dio.httpClientAdapter` değiştirilerek ağa çıkmadan gerçek
+  istek/yanıt döngüsü test edilir: adaptör `fetch(options, requestStream, _)`
+  ile isteği yakalar, test yanıtı `ResponseBody.fromString(json, status,
+  headers: {...})` ile üretir. Böylece URL kurulumu, base64 kodlama, gönderilen
+  gövde ve HTTP durum → hata eşlemesi uçtan uca doğrulanır. İstek gövdesi
+  `requestStream`'den okunur (byte'lar birleştirilip `utf8.decode`).
