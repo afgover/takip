@@ -15,7 +15,7 @@ class OnboardingScreen extends ConsumerStatefulWidget {
 
 class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   final _formKey = GlobalKey<FormState>();
-  final _repoCtrl = TextEditingController(text: 'afgover/taskr_takip');
+  final _repoCtrl = TextEditingController(text: 'afgover/takip');
   final _tokenCtrl = TextEditingController();
 
   @override

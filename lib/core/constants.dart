@@ -1,13 +1,16 @@
-/// Hub sözleşmesi (taskr_takip/SYSTEM.md) sabitleri.
+/// Hub sözleşmesi (hub/SYSTEM.md) sabitleri.
+/// K-012: takip projesi hub'ını kendi reposunda `hub/` klasöründe barındırır;
+/// tüm sözleşme yolları bu önekle kullanılır.
 abstract final class Hub {
-  static const inboxDir = 'tasks/inbox';
-  static const activeDir = 'tasks/active';
-  static const doneDir = 'tasks/done';
-  static const sessionsDir = 'sessions';
-  static const artifactsDir = 'artifacts';
-  static const knowledgeDir = 'knowledge';
-  static const backlogFile = 'BACKLOG.md';
-  static const evolutionFile = 'EVOLUTION.md';
+  static const basePath = 'hub';
+  static const inboxDir = '$basePath/tasks/inbox';
+  static const activeDir = '$basePath/tasks/active';
+  static const doneDir = '$basePath/tasks/done';
+  static const sessionsDir = '$basePath/sessions';
+  static const artifactsDir = '$basePath/artifacts';
+  static const knowledgeDir = '$basePath/knowledge';
+  static const backlogFile = '$basePath/BACKLOG.md';
+  static const evolutionFile = '$basePath/EVOLUTION.md';
 
   /// K-010: varsayılan kategoriler; kullanıcı serbest değer ekleyebilir.
   static const defaultCategories = [

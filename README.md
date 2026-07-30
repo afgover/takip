@@ -1,20 +1,24 @@
 # takip — Taskr Uygulaması (çatı repo)
 
 **project-taskr** sisteminin kullanıcı uygulaması bu repoda yaşar (Flutter,
-Android öncelikli — K-009). Uygulama, veri hub'ına bağlanan bir GitHub
-istemcisidir; kendi backend'i yoktur.
+Android öncelikli — K-009). Uygulama, hub'a bağlanan bir GitHub istemcisidir;
+kendi backend'i yoktur.
 
-## Sistemin yapısı (K-011)
+## Sistemin yapısı (K-011, K-012)
 
-| Repo | Rol |
+Bu repo **kendi kendini barındırır**: uygulama kodu ve takip projesinin veri
+hub'ı aynı repodadır (`takip_takip` gibi ek repo yoktur).
+
+| Konum | Rol |
 |---|---|
-| `takip` (bu repo) | Uygulama kodu (Flutter) |
-| [`taskr_takip`](https://github.com/afgover/taskr_takip) | Veri hub'ı: oturumlar, görevler, backlog, bilgi tabanı |
+| `takip/lib/` (bu repo) | Uygulama kodu (Flutter) |
+| `takip/hub/` (bu repo) | Veri hub'ı: oturumlar, görevler, backlog, bilgi tabanı |
 | `taskr` | Eski uygulama — salt tarihçe |
+| diğer projeler | Ayrı `<proje>_takip` hub repoları (işleyiş değişmez) |
 
 Format sözleşmesi ve tasarım dokümanları hub'dadır:
-- `taskr_takip/SYSTEM.md` — veri formatı sözleşmesi
-- `taskr_takip/artifacts/reference/flutter-app-design.md` — uygulama tasarımı
+- `hub/SYSTEM.md` — veri formatı sözleşmesi (yollar hub köküne göre)
+- `hub/artifacts/reference/flutter-app-design.md` — uygulama tasarımı
 
 Uygulama iskeleti: `lib/` (aşağıya bakın).
 
