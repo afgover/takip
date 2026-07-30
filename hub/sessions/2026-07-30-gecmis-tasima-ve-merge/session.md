@@ -18,9 +18,13 @@ olarak duruyordu (çalışma dosyaları K-012'de zaten silinmişti); bu geçmiş
 takip reposunda olmayan 12 commit'i, iki reponun ortak kökü (959e0b5)
 sayesinde tree'yi değiştirmeyen bir merge ile (`-s ours`, 8ed8134) bu reponun
 tarihçesine bağlandı. Ardından çalışma branch'i `main`'e merge edilip
-push'landı ve `taskr_takip` sıfırlanarak orijinal taskr projesinin takip
-hub'ı olarak rezerve edildi (README ile; takip geçmişinin bu repoya
-taşındığı not düşüldü).
+push'landı ve `taskr_takip` README'si güncellenerek repo, orijinal taskr
+projesinin takip hub'ı olarak rezerve edildi (f84558e; takip geçmişinin bu
+repoya taşındığı not düşüldü). Not: `taskr_takip`'in eski commit geçmişini
+tamamen silme (orphan + force push) izin katmanınca yıkıcı işlem olarak
+engellendi; geçmiş orada kopya olarak duruyor, tek doğru kaynağın
+`afgover/takip` olduğu README'de belirtildi. Silme istenirse kullanıcı
+onayıyla yapılacak.
 
 ## Kayıt
 
@@ -35,5 +39,6 @@ README'si var; takip kayıtları 16 commit'lik git geçmişinde. Son tam içerik
 `git merge -s ours` ile bağlandı (8ed8134): dosyalar değişmedi, 12 eski
 commit tarihçeye eklendi ve uygulamanın §8 aktivite akışında görünür hale
 geldi. Oturum kaydı ve EVOLUTION güncellemesinin ardından branch `main`'e
-merge edilip push'landı; `taskr_takip` temiz bir başlangıç commit'iyle
-(taskr'ın hub'ı için rezerve README'si) sıfırlandı.
+merge edilip push'landı; `taskr_takip` README'si normal bir commit'le
+(f84558e) taskr'ın hub'ı için rezerve edildi — geçmişi silen sıfırlama izin
+katmanınca engellendiği için eski commit'ler orada kopya olarak kaldı.
