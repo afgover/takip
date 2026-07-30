@@ -1,0 +1,18 @@
+# Dart / Flutter
+.dart_tool/
+.packages
+build/
+.flutter-plugins
+.flutter-plugins-dependencies
+*.iml
+.idea/
+
+# Platform klasörlerinin üretilen kısımları
+android/.gradle/
+android/local.properties
+ios/Pods/
+ios/.symlinks/
+
+# Gizli
+*.keystore
+key.properties
