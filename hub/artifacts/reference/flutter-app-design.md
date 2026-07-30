@@ -108,4 +108,6 @@ eklenir; formatı ve token modelini değiştirmez.
   serbest değer; app seçim listesini varsayılanlar + mevcut görevlerden türetir
   (Sözleşme 1.1).
 - ✅ **Uygulama kodunun evi (K-011, 2026-07-30):** `afgover/takip` çatı reposu.
-  Hub (`taskr_takip`) kod içermez.
+  ~~Hub (`taskr_takip`) kod içermez.~~ (Güncelleme, K-012/K-013: takip'in
+  hub'ı `takip/hub/` klasörüdür; `taskr_takip` orijinal taskr projesinin
+  takip hub'ı olarak kullanılacak.)
