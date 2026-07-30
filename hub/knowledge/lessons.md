@@ -56,3 +56,15 @@ Biçim: `SYSTEM.md` §5.
   Hata küçüktü ama kod yazıldığı anda değil, haftalar sonra görülecekti. Kural:
   SDK gerektiren iş yapılıyorsa SDK ortama kurulur ve **her oturumda** analiz +
   test çalıştırılır; "sonra doğrularız" borcu faiziyle geri döner.
+
+## L-007 — GitHub'da 404, üç ayrı sorunun ortak cevabı
+- **Tarih:** 2026-07-30
+- **Kaynak:** B-022
+- **Açıklama:** Contents API'de 404; (a) repo yok, (b) token bu repoyu
+  kapsamıyor, (c) yol/klasör yok durumlarının üçünde de dönüyor. Fine-grained
+  token görmediği repoyu "yok" sayar — varlığını sızdırmamak için bilinçli bir
+  tasarım. Sonuç: tek istekle bu üçü ayırt edilemez. Kullanıcıya "repo
+  bulunamadı" demek yanlış yönlendirir; mesajda üç olasılık birlikte
+  söylenmelidir. Yetki hatası (401/403) ise gerçekten ayrıdır ve "yok" ile
+  karıştırılmamalıdır — bu yüzden `pathExists` yalnız 404'ü false'a çevirir,
+  yetki hatalarını yukarı geçirir.
