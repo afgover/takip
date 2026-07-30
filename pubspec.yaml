@@ -13,6 +13,8 @@ dependencies:
   dio: ^5.7.0
   flutter_secure_storage: ^9.2.2
   flutter_markdown: ^0.7.4
+  # ExtensionSet (tablo, ~~üstü çizili~~, görev listesi) için doğrudan gerekli.
+  markdown: ^7.1.1
   yaml: ^3.1.2
   shared_preferences: ^2.3.2
 
