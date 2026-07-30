@@ -62,8 +62,12 @@ başlığına ✅ ve tarih yazılır.
       takip@417da6b; SDK'sız ortamda elle yazıldı, derleme doğrulaması
       B-020'ye bağlı. Onboarding/ekran taslakları dahil; API katmanı
       TODO(B-023) işaretli
-- [ ] B-022 · (agent) Onboarding ekranı: token + repo adı girişi, token'ın
-      `flutter_secure_storage`'a kaydı
+- [x] B-022 · (agent) Onboarding ekranı: token + repo adı girişi, token'ın
+      `flutter_secure_storage`'a kaydı — ✅ 2026-07-30 ·
+      S-2026-07-30-b022-onboarding; kaydetmeden önce tek GET ile doğrulama
+      (`hub/` kökü), anlaşılır hata kutusu, token göster/gizle, yapıştırılan
+      GitHub adresini kabul eden repo ayrıştırma, "token nasıl alınır"
+      yardımı. 71 test, analyze temiz. → L-007
 - [x] B-023 · (agent) GitHub istemci katmanı: Contents API (get/put/delete),
       base64, SHA yönetimi, hata modeli — ✅ 2026-07-30 ·
       S-2026-07-30-b023-github-istemci; `flutter analyze` temiz, 27 test geçti.
@@ -78,6 +82,11 @@ başlığına ✅ ve tarih yazılır.
       (tablo, `~~üstü çizili~~`, görev kutusu) tema uyumlu çiziyor.
       Sözleşme uyum testi eklendi: parser gerçek hub dosyalarına karşı
       koşuyor. 55 test, analyze temiz
+- [ ] B-026 · (agent) Onboarding'de **yazma izni** doğrulaması — B-022'deki
+      kontrol yalnız okumayı sınıyor; salt okunur token onboarding'i geçip ilk
+      görev gönderiminde 403 veriyor. Önce araştırılacak: fine-grained token'da
+      `GET /repos/{o}/{r}` yanıtı `permissions.push`'u güvenilir biçimde
+      veriyor mu? Vermiyorsa alternatif, hatayı B-050'de net anlatmak
 
 ## Faz 3 — Todo Döngüsü (MVP çekirdeği)
 
