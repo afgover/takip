@@ -87,11 +87,16 @@ başlığına ✅ ve tarih yazılır.
       (tablo, `~~üstü çizili~~`, görev kutusu) tema uyumlu çiziyor.
       Sözleşme uyum testi eklendi: parser gerçek hub dosyalarına karşı
       koşuyor. 55 test, analyze temiz
-- [ ] B-026 · (agent) Onboarding'de **yazma izni** doğrulaması — B-022'deki
-      kontrol yalnız okumayı sınıyor; salt okunur token onboarding'i geçip ilk
-      görev gönderiminde 403 veriyor. Önce araştırılacak: fine-grained token'da
-      `GET /repos/{o}/{r}` yanıtı `permissions.push`'u güvenilir biçimde
-      veriyor mu? Vermiyorsa alternatif, hatayı B-050'de net anlatmak
+- [x] B-026 · (agent) Onboarding'de **yazma izni** doğrulaması — ✅ 2026-07-30 ·
+      S-2026-07-30-b026-yazma-izni. Araştırma sonucu: `permissions.push`
+      **kullanılamaz** — alan token'ın kapsamını değil kullanıcının rolünü
+      yansıtıyor, token'larla hatalı değerler döndüğü bildirilmiş ve token
+      izinlerini sorgulayan belgelenmiş bir uç nokta yok (L-009). Onun yerine
+      yan etkisiz yoklama: `content` alanı olmayan bir PUT gönderiliyor — bu
+      istek izin olsa bile hiçbir dosya oluşturamaz, ama izin yoksa 403 döner
+      (SK-006). Yorum tek yönlü: 403 "izin yok" demek, 403 gelmemesi "izin var"
+      demek değil — kontrol yanlış alarm veremez. Eksik izin adı
+      `X-Accepted-GitHub-Permissions` başlığından okunup mesaja konuyor
 
 ## Faz 3 — Todo Döngüsü (MVP çekirdeği)
 
