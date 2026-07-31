@@ -197,3 +197,9 @@ başlığına ✅ ve tarih yazılır.
 - [ ] B-062 · (agent) `done/` yıllık arşivleme otomasyonu
 - [ ] B-063 · (agent) Çoklu proje desteği (`projects/<ad>/` yapısına geçiş
       değerlendirmesi)
+- [ ] B-064 · (agent+user) "Pro versiyon" değerlendirmesinin yeniden açılması —
+      K-017 ile ertelendi. **Ön koşul:** B-052 (bir haftalık gerçek kullanım).
+      Kararı yeniden açacak kanıtlar: GitHub hesabı olmayan kullanıcılar,
+      düzenli medya eki, saniyeler mertebesinde bildirim ihtiyacı, repo dışı
+      entegrasyon. Bunlar çıkmazsa yol "tek ürün + opsiyonel bileşen"
+      (B-060/B-061/B-063) olarak sürer
