@@ -52,3 +52,15 @@ Biçim: `SYSTEM.md` §5.
   `fakeAsync` bu saati `elapse` ile birlikte ilerletir. Yan fayda: zaman damgası
   üreten kod (`lastChangedAt` gibi) testte belirlenimli olur, aynı mikrosaniyede
   üretilen iki damganın eşit çıkma riski kalkar.
+
+## SK-006 — Yan etkisiz izin yoklaması: yerine getirilemez istek
+- **Tarih:** 2026-07-30
+- **Kaynak:** B-026
+- **Açıklama:** Bir yazma iznini denemeden öğrenmenin yolu yoksa (L-009),
+  istek **yapısal olarak yerine getirilemez** hâlde gönderilir: Contents
+  API'de `content` alanı zorunlu olduğundan, `content` içermeyen bir PUT
+  izin olsa bile hiçbir dosya oluşturamaz/değiştiremez. Yetkilendirme
+  reddi (403) yine de döner. Yani sinyal alınır, yan etki sıfırdır. Yanıtın
+  `X-Accepted-GitHub-Permissions` başlığı hangi iznin gerektiğini söyler ve
+  hata mesajında doğrudan kullanılabilir. 403'ün rate limit hâli ayrılmalıdır
+  (`x-ratelimit-remaining: 0`).

@@ -80,3 +80,15 @@ Biçim: `SYSTEM.md` §5.
   (b) test gövdesinden doğrudan çağrılıyorsa `await tester.runAsync(() => ...)`
   ile gerçek zonda çalıştırılır. Aynı kod düz `test()` içinde sorunsuz
   çalıştığı için sorun kolayca yanlış yere aranıyor.
+
+## L-009 — GitHub'da bir token'ın kendi izinlerini sorması mümkün değil
+- **Tarih:** 2026-07-30
+- **Kaynak:** B-026 araştırması
+- **Açıklama:** `GET /repos/{o}/{r}` yanıtındaki `permissions` alanı, isteği
+  yapan **kullanıcının repo rolünü** yansıtır; token'ın kapsamını değil.
+  Fine-grained token'larla alanın hatalı (hepsi `false`) döndüğü de bildirilmiş
+  durumda. Token izinlerini sorgulayacak belgelenmiş bir uç nokta yok. Sonuç:
+  "izin var mı?" sorusu doğrudan sorulamaz; ancak bir işlem denenip **403**
+  alınarak *kesin olumsuz* öğrenilebilir. Böyle bir kontrol tasarlanırken
+  yorum tek yönlü tutulmalı — 403 "izin yok" demektir, ama 403 gelmemesi
+  "izin var" demek değildir.
