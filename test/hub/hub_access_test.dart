@@ -24,25 +24,33 @@ const candidate = HubConfig(owner: 'afgover', repo: 'takip', token: 'gizli');
 
 void main() {
   group('checkHubAccess', () {
-    test('hub kökü görünüyorsa geçer ve tek istek atar', () async {
-      final built = buildApi(
-        (_, __) => jsonResponse([
-          {
-            'name': 'SYSTEM.md',
-            'path': 'hub/SYSTEM.md',
-            'sha': 'a',
-            'type': 'file',
-          },
-        ]),
-      );
+    test('hub kökü okunur, ardından yazma izni yoklanır', () async {
+      // İki istek: hub kökünü okuma + içeriksiz yazma denemesi (B-026).
+      final built = buildApi((options, __) {
+        if (options.method == 'GET') {
+          return jsonResponse([
+            {
+              'name': 'SYSTEM.md',
+              'path': 'hub/SYSTEM.md',
+              'sha': 'a',
+              'type': 'file',
+            },
+          ]);
+        }
+        return jsonResponse(
+          {'message': 'Invalid request. "content" wasn\'t supplied.'},
+          status: 422,
+        );
+      });
 
       await checkHubAccess(built.api, candidate);
 
-      expect(built.adapter.requests, hasLength(1));
+      expect(built.adapter.requests, hasLength(2));
       expect(
-        built.adapter.requests.single.path,
+        built.adapter.requests.first.path,
         '/repos/afgover/takip/contents/hub',
       );
+      expect(built.adapter.requests.last.method, 'PUT');
     });
 
     test('404 → repo/token/klasör olasılıklarını birlikte söyler', () async {

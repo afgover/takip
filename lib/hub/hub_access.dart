@@ -29,17 +29,32 @@ Future<void> verifyHubAccess(HubConfig candidate) async {
 
 /// [verifyHubAccess]'in ağ kurulumundan arındırılmış çekirdeği.
 Future<void> checkHubAccess(ContentsApi api, HubConfig candidate) async {
-  if (await api.pathExists(Hub.basePath)) return;
+  if (!await api.pathExists(Hub.basePath)) {
+    // GitHub, "repo yok", "token bu repoyu görmüyor" ve "klasör yok"
+    // durumlarının üçüne de 404 döner; ayırt edemediğimiz için üçünü de
+    // söylüyoruz.
+    throw HubNotFoundError(
+      '${candidate.slug} içindeki "${Hub.basePath}/" klasörüne erişilemedi. '
+      'Repo adı yanlış olabilir, token bu repoyu kapsamıyor olabilir ya da '
+      'repoda henüz hub klasörü yok.',
+    );
+  }
 
-  // GitHub, "repo yok", "token bu repoyu görmüyor" ve "klasör yok"
-  // durumlarının üçüne de 404 döner; ayırt edemediğimiz için üçünü de
-  // söylüyoruz.
-  throw HubNotFoundError(
-    '${candidate.slug} içindeki "${Hub.basePath}/" klasörüne erişilemedi. '
-    'Repo adı yanlış olabilir, token bu repoyu kapsamıyor olabilir ya da '
-    'repoda henüz hub klasörü yok.',
-  );
+  // Okuma tamam; yazma iznini de sınayalım (B-026). Bu kontrol yalnız kesin
+  // olumsuzu bildirir, "izin var" diye kesin konuşmaz.
+  final denied = await api.writeDenialReason('${Hub.inboxDir}/$_probeFileName');
+  if (denied != null) {
+    throw HubAuthError(
+      'Token bu repoya yazamıyor, yalnız okuyabiliyor. Görev eklemek için '
+      'gereken izin: $denied. Token ayarlarında Contents iznini '
+      '"Read and write" yapman gerekiyor.',
+    );
+  }
 }
+
+/// Yoklamada kullanılan yol. Dosya hiçbir zaman oluşturulmaz (istek içeriksiz
+/// gönderilir); ad yalnızca kayıtlarda anlaşılır görünsün diye seçildi.
+const _probeFileName = '.izin-denemesi.md';
 
 /// Testlerde ve ileride farklı doğrulama stratejilerinde değiştirilebilsin
 /// diye provider üzerinden veriliyor.

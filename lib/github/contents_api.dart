@@ -56,6 +56,40 @@ class ContentsApi {
     }
   }
 
+  /// Token'ın yazma izni **kesin olarak yok mu**? Varsa/bilinmiyorsa null,
+  /// yoksa eksik iznin adı döner (B-026).
+  ///
+  /// GitHub'da bir token'ın izinlerini soracak bir uç nokta yok:
+  /// `GET /repos` yanıtındaki `permissions`, token'ın kapsamını değil
+  /// kullanıcının rolünü yansıtır. Geriye tek güvenilir sinyal kalıyor:
+  /// yazma denemesine gelen 403.
+  ///
+  /// Deneme **içeriksiz** bir PUT'tur. `content` zorunlu bir alan olduğu için
+  /// GitHub bu isteği yerine getiremez — yani izin olsa bile repoda hiçbir
+  /// şey oluşmaz, hiçbir şey değişmez. Sonuç yorumu tek yönlüdür: 403 gelirse
+  /// izin kesin yoktur; başka her yanıt (doğrulama hatası dahil) "bilinmiyor"
+  /// sayılır. Böylece bu kontrol yanlış alarm veremez, yalnızca gerçek bir
+  /// sorunu erken yakalayabilir.
+  Future<String?> writeDenialReason(String path) async {
+    try {
+      await _dio.put<dynamic>(
+        _url(path),
+        data: {'message': 'izin denemesi (içerik gönderilmedi)'},
+      );
+      return null;
+    } on DioException catch (e) {
+      final response = e.response;
+      if (response?.statusCode != 403) return null;
+
+      // 403 rate limit de olabilir; o "izin yok" demek değildir.
+      if (response!.headers.value('x-ratelimit-remaining') == '0') return null;
+
+      // GitHub 403'te hangi iznin gerektiğini başlıkta söyler.
+      return response.headers.value('x-accepted-github-permissions') ??
+          'contents=write';
+    }
+  }
+
   /// Tek dosyanın içeriği (base64 çözülmüş) ve sha'sı.
   Future<RepoFile> getFile(String path) async {
     final res = await _send(() => _dio.get<dynamic>(_url(path)));
