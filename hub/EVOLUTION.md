@@ -135,6 +135,15 @@ agent'ın ele alması, sonucun app'te görünmesi. (Backlog Faz 2–3.)
 - **Aşama 2'nin durumu:** agent tarafında yapılacak iş kalmadı. Uygulama
   uçtan uca çalışır durumda ama henüz hiç gerçek cihazda koşmadı; aşamayı
   kapatmak için B-015 + B-020 + B-034'ün cihaz ayağı gerekiyor.
+- 2026-07-30: Faz 5'in agent tarafı tamamlandı — B-050 (hata UX'i: her hata
+  için başlık + yapılabilecek şey, her ekranda duran durum şeridi) ve B-051
+  (yoklama aralığı, bağlantı düzenleme, önbellek temizleme, onaylı sıfırlama).
+  B-046'nın yoklamayla etkileşiminden doğan hata düzeltildi: önbellekten gelen
+  commit yanıtı artık "değişmedi" sayılmıyor, yoksa çevrimdışılık hiç
+  görünmüyordu. 184 test. → S-2026-07-30-faz5-cilalama
+- **Agent tarafında yapılacak iş kalmadı** (B-026 hariç). Kalanların hepsi
+  kullanıcıya bağlı: B-015 (token), B-020 (SDK + `android/`), B-034'ün cihaz
+  ayağı, B-052 (bir haftalık kullanım) ve ona bağlı B-053.
 - Sıradaki: kullanıcı adımlarından sonra B-034'ün cihaz koşumu ve B-035;
   ardından Faz 4 (hub tarayıcı) — B-026 de aradan alınabilir.
 
