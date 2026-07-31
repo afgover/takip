@@ -167,10 +167,21 @@ başlığına ✅ ve tarih yazılır.
 
 ## Faz 5 — Cilalama & Günlük Kullanım
 
-- [ ] B-050 · (agent) Hata durumları UX'i: token geçersiz, rate limit, ağ yok
-- [ ] B-051 · (agent) Ayarlar: polling aralığı, token değiştirme, repo değiştirme
+- [x] B-050 · (agent) Hata durumları UX'i: token geçersiz, rate limit, ağ yok
+      — ✅ 2026-07-30 · S-2026-07-30-faz5-cilalama; her hata tipi için başlık +
+      ne yapılabileceği (`describeHubError`): token hatasında ayarlara giden
+      düğme ve gereken izinler, rate limit'te kalan süre, ağ hatasında
+      kuyruk hatırlatması. Ayrıca her ekranın üstünde duran durum şeridi:
+      sorun bağlamdan bağımsız görünüyor. Yoklamanın çevrimdışıyken
+      "her şey yolunda" sanması düzeltildi (B-046 ile oluşan etkileşim)
+- [x] B-051 · (agent) Ayarlar: polling aralığı, token değiştirme, repo değiştirme
+      — ✅ 2026-07-30 · S-2026-07-30-faz5-cilalama; aralık (30 sn…5 dk) diske
+      yazılıyor ve çalışan yoklamaya anında uygulanıyor; bağlantı düzenleme
+      B-022'deki kuralı sürdürüyor (doğrulanmadan kaydetme yok), token boş
+      bırakılırsa yalnız repo değişiyor; önbellek temizleme ve onaylı
+      sıfırlama (kuyrukta bekleyen görev varsa uyarıyla)
 - [ ] B-052 · (user) Bir hafta gerçek kullanım; sürtünme noktalarını görev olarak
-      inbox'a at
+      inbox'a at — B-015, B-020 ve B-034'ün cihaz ayağı tamamlandıktan sonra
 - [ ] B-053 · (agent) Kullanım geri bildirimlerine göre revizyon turu
 
 ## Faz 6 — 2. Plan (şimdilik bekliyor)
