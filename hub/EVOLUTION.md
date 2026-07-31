@@ -141,9 +141,12 @@ agent'ın ele alması, sonucun app'te görünmesi. (Backlog Faz 2–3.)
   B-046'nın yoklamayla etkileşiminden doğan hata düzeltildi: önbellekten gelen
   commit yanıtı artık "değişmedi" sayılmıyor, yoksa çevrimdışılık hiç
   görünmüyordu. 184 test. → S-2026-07-30-faz5-cilalama
-- **Agent tarafında yapılacak iş kalmadı** (B-026 hariç). Kalanların hepsi
-  kullanıcıya bağlı: B-015 (token), B-020 (SDK + `android/`), B-034'ün cihaz
-  ayağı, B-052 (bir haftalık kullanım) ve ona bağlı B-053.
+- 2026-07-30: B-026 tamamlandı — yazma izni onboarding'de sınanıyor. Önerilen
+  yöntem (`permissions.push`) araştırmada elendi (L-009); yerine yan etkisiz
+  yoklama kondu (SK-006). 191 test. → S-2026-07-30-b026-yazma-izni
+- **Agent tarafında açık iş kalmadı.** Kalanların hepsi kullanıcıya bağlı:
+  B-015 (token), B-020 (SDK + `android/`), B-034'ün cihaz ayağı, B-052 (bir
+  haftalık kullanım) ve ona bağlı B-053/B-035.
 - Sıradaki: kullanıcı adımlarından sonra B-034'ün cihaz koşumu ve B-035;
   ardından Faz 4 (hub tarayıcı) — B-026 de aradan alınabilir.
 
