@@ -31,6 +31,15 @@ class CommitsApi {
       ),
     );
 
+    // Önbellekten gelen yanıt burada **cevap sayılmaz**: soru "hub değişti mi"
+    // ve elimizdeki eski sürümü geri okumak bu soruyu yanıtlamaz. Ağ yokken
+    // içerik ekranlarının önbellekten beslenmesi doğru (B-046), ama yoklamanın
+    // "her şey yolunda" sanması yanlış olurdu — kullanıcı çevrimdışı olduğunu
+    // hiç öğrenemezdi.
+    if (res.extra[servedFromCacheFlag] == true) {
+      throw const HubNetworkError('Ağ bağlantısı yok.');
+    }
+
     final data = res.data;
     if (data is! List) {
       throw const HubUnexpectedError('Commit listesi beklenmedik biçimde.');

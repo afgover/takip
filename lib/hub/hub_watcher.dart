@@ -3,10 +3,10 @@ import 'dart:async';
 import 'package:clock/clock.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../core/constants.dart';
 import '../core/errors.dart';
 import '../github/commits_api.dart';
 import 'hub_config.dart';
+import 'settings.dart';
 
 /// Yoklamanın o anki durumu. Ekranlar [headSha]'yı izler: değeri değiştiğinde
 /// hub'da bir şey değişmiş demektir, veriyi yeniden çekerler.
@@ -54,9 +54,9 @@ class HubStatus {
       );
 }
 
-/// Yoklama aralığı. B-051'de ayarlardan değiştirilebilecek.
+/// Yoklama aralığı — ayarlardan değiştirilebilir (B-051).
 final pollIntervalProvider = Provider<Duration>(
-  (ref) => Hub.defaultPollInterval,
+  (ref) => ref.watch(appSettingsProvider).pollInterval,
 );
 
 /// Hub'ı ön planda yoklayan servis (B-024).
@@ -79,6 +79,13 @@ class HubWatcher extends Notifier<HubStatus> {
 
   @override
   HubStatus build() {
+    // Kullanıcı aralığı değiştirince yeni değer bir sonraki açılışa kalmasın.
+    ref.listen<Duration>(pollIntervalProvider, (previous, next) {
+      if (previous == next || _timer == null) return;
+      _cancelTimer();
+      _timer = Timer.periodic(next, (_) => checkNow());
+    });
+
     ref.onDispose(_cancelTimer);
     return const HubStatus();
   }

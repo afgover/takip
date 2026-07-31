@@ -5,6 +5,7 @@ import 'package:dio/dio.dart';
 import 'package:fake_async/fake_async.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:takip/core/constants.dart';
 import 'package:takip/core/errors.dart';
 import 'package:takip/github/commits_api.dart';
@@ -65,6 +66,10 @@ Duration intervals(int n) => Hub.defaultPollInterval * n;
 }
 
 void main() {
+  // Ayarlar (yoklama aralığı) shared_preferences okuyor; binding gerekiyor.
+  TestWidgetsFlutterBinding.ensureInitialized();
+  setUp(() => SharedPreferences.setMockInitialValues({}));
+
   test('start hemen bir kontrol yapar ve aralıkla sürdürür', () {
     fakeAsync((async) {
       final t = boot(async);

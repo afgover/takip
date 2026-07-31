@@ -149,7 +149,9 @@ void main() {
     ));
     await tester.pumpAndSettle();
 
-    expect(find.text('Ağ bağlantısı yok.'), findsOneWidget);
+    // B-050: ham mesaj yerine başlık + ne yapılabileceği gösteriliyor.
+    expect(find.text('Bağlantı yok'), findsOneWidget);
+    expect(find.textContaining('kuyrukta bekler'), findsOneWidget);
 
     await tester.tap(find.text('Yeniden dene'));
     await tester.pumpAndSettle();
