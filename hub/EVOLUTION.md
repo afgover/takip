@@ -161,6 +161,21 @@ agent'ın ele alması, sonucun app'te görünmesi. (Backlog Faz 2–3.)
   `takip` için K-012 teyit edildi: takip dosyaları `takip/hub/`ta kalır,
   `takip_takip` açılmaz; repo tek kullanıcılı olduğundan risk kabul edilebilir
   (kullanıcı kararı). Diğer tüm projelerde `<proje>_takip` modeli geçerlidir.
+- **K-017:** **Ayrı bir "pro" versiyon şimdilik yapılmayacak.** Kullanıcı, ekip
+  çalışması için backend'li (webhook, doğrudan içerik aktarımı) ikinci bir
+  versiyon önerdi; gerçek kullanım testinden sonra gerekirse yeniden gündeme
+  gelmek üzere ertelendi. Gerekçeler: (a) light sürüm henüz hiçbir cihazda
+  çalışmadı, "yetmiyor" tespitini yapacak veri yok; (b) L-001 — ilk taskr
+  backend yükü yüzünden bırakılmıştı; (c) takım çalışmasının gerektirdiğinin
+  çoğu GitHub'da zaten var (commit yazarı = kim yaptı, collaborator izinleri,
+  K-004 sayesinde çakışmasız eşzamanlı yazma); geriye kalan gerçek boşluk
+  **bildirim gecikmesi**. Tercih edilen yol: iki kod tabanı yerine **tek ürün +
+  opsiyonel bileşen** — ürün aslında sözleşmedir (SYSTEM.md), app onun
+  istemcisidir; B-060 (stateless relay) veri modeline dokunmadan push
+  ekleyebilir. **Kararı yeniden açacak kanıtlar:** GitHub hesabı olmayan
+  kullanıcılar, düzenli medya eki (Contents API 1 MB sınırı + git'te binary
+  maliyeti), saniyeler mertebesinde bildirim ihtiyacı, repo dışı entegrasyon.
+  → S-2026-07-30-versiyon-stratejisi, B-064
 
 ## Aşama 3 — Hub Tarayıcı ✅ (2026-07-30)
 
