@@ -203,6 +203,13 @@ başlığına ✅ ve tarih yazılır.
 - [ ] B-052 · (user) Bir hafta gerçek kullanım; sürtünme noktalarını görev olarak
       inbox'a at — B-015, B-020 ve B-034'ün cihaz ayağı tamamlandıktan sonra
 - [ ] B-053 · (agent) Kullanım geri bildirimlerine göre revizyon turu
+- [x] B-065 · (agent) Agent'ın kullanıcıdan beklediği işler uygulamada
+      görünsün — ✅ 2026-08-01 · takip@90b9d42; sözleşme 1.4, `tasks/waiting/`
+      (K-022). Sistem o güne kadar yalnız kullanıcı→agent yönünü modelliyordu;
+      agent→user işleri sadece bu listede `(user)` etiketiyle duruyor ve
+      uygulamada hiç görünmüyordu. Bekleyenler listesi üçüncü klasörü de
+      okuyor, kullanıcıyı bekleyenler listenin başında. "Yaptım" düğmesi
+      inbox'a bildirim yazıyor; R-001 korunuyor. İlk gerçek görev: T-004
 - [x] B-058 · (agent) Yeni proje ekleme prosedürünü kalıcı belge yap —
       ✅ 2026-08-01 · `artifacts/reference/proje-ekleme.md`;
       S-2026-08-01-proje-ekleme-ve-arsiv. Beş adım (repo aç, token kapsat,
