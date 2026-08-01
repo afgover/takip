@@ -64,3 +64,31 @@ Biçim: `SYSTEM.md` §5.
   `X-Accepted-GitHub-Permissions` başlığı hangi iznin gerektiğini söyler ve
   hata mesajında doğrudan kullanılabilir. 403'ün rate limit hâli ayrılmalıdır
   (`x-ratelimit-remaining: 0`).
+
+## SK-007 — Var olan projede `flutter create` sonrası artık temizliği
+- **Tarih:** 2026-08-01
+- **Kaynak:** S-2026-08-01-b020-mac-kurulum (B-020)
+- **Açıklama:** `flutter create .` var olan bir projeye platform klasörü
+  eklerken yalnız istenen klasörü üretmez; şablonun tamamını uygular. Kod yazılıp
+  sonra platform eklenen projelerde sıra şu:
+  1. Komut öncesi çalışma ağacı **temiz** olmalı — tek ayırt edici araç `git`.
+  2. Komut sonrası `git status` **ve** `git diff --stat` ayrı ayrı okunur:
+     birincisi yeni dosyaları, ikincisi var olanlara dokunulup dokunulmadığını
+     (`.gitignore`, `README.md`, `pubspec.yaml`) gösterir.
+  3. `test/widget_test.dart` üretilmişse **silinir** — varsayılan sayaç şablonu
+     projede olmayan `MyApp` sınıfını çağırır ve test paketini kırar.
+  4. `.metadata` **tutulur**; Flutter'ın proje/migration dosyasıdır.
+  5. `<platform>/app/src/main/` manifest'i elle okunur (→ L-010).
+  6. `applicationId`/`namespace` doğrulanır: `--org` yanlışsa geri dönüş
+     uygulamayı cihazdan silip yeniden kurmayı gerektirir.
+  Kapanış doğrulaması: `flutter analyze` + `flutter test` (L-006).
+
+## SK-008 — Katlanabilir cihazdan ekran görüntüsü almak
+- **Tarih:** 2026-08-01
+- **Kaynak:** S-2026-08-01-b020-mac-kurulum (B-020)
+- **Açıklama:** Birden fazla ekranı olan cihazlarda (örn. Galaxy Z Flip)
+  `adb exec-out screencap -p > x.png` **bozuk dosya** üretir: `screencap`
+  "Multiple displays were found" uyarısını stdout'a basar ve uyarı PNG
+  baytlarının başına karışır. Çözüm, çıktıyı cihaz üzerinde dosyaya yazıp
+  çekmek: `adb shell screencap -p /sdcard/x.png && adb pull /sdcard/x.png`.
+  Doğrulama: `file x.png` → "PNG image data" demeli.

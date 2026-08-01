@@ -92,3 +92,25 @@ Biçim: `SYSTEM.md` §5.
   alınarak *kesin olumsuz* öğrenilebilir. Böyle bir kontrol tasarlanırken
   yorum tek yönlü tutulmalı — 403 "izin yok" demektir, ama 403 gelmemesi
   "izin var" demek değildir.
+
+## L-010 — `flutter create` INTERNET iznini release manifest'ine koymaz
+- **Tarih:** 2026-08-01
+- **Kaynak:** S-2026-08-01-b020-mac-kurulum (B-020)
+- **Açıklama:** Flutter şablonu `android.permission.INTERNET` iznini yalnızca
+  `android/app/src/debug/` ve `profile/` manifestlerine yazar — gerekçesi, iznin
+  geliştirme sırasında hot reload için gerekmesi. `main/AndroidManifest.xml`'e
+  konmaz, çünkü şablon "her uygulama ağ kullanmaz" varsayar. Ağ kullanan bir
+  uygulamada bu sessiz bir tuzaktır: debug ve profile koşumları sorunsuz
+  çalışır, hata **yalnızca release derlemesinde** ve çoğu zaman ağ hatası gibi
+  görünerek ortaya çıkar. Bu proje `api.github.com` dışında hiçbir şey yapmadığı
+  için (K-001) izin `main` manifest'ine gerekçesiyle eklendi. **Genel kural:**
+  platform klasörü üretildikten sonra `main` manifest'i elle okunur; debug'da
+  çalışıyor olmak release'te çalışacağının kanıtı değildir.
+
+## L-011 — `flutter install` varsayılan olarak release APK arar
+- **Tarih:** 2026-08-01
+- **Kaynak:** S-2026-08-01-b020-mac-kurulum (B-020)
+- **Açıklama:** `flutter build apk --debug` ile derleyip ardından
+  `flutter install -d <cihaz>` çağırmak "APK does not exist" hatası verir; komut
+  `--debug` bayrağı olmadan `app-release.apk` arar. Derleme ve kurulum
+  bayraklarının eşleşmesi gerekir: `flutter install -d <cihaz> --debug`.
