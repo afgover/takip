@@ -57,17 +57,26 @@ void main() {
     });
   });
 
-  test('listPending inbox ve active\'i birleştirir, yeniden eskiye sıralar',
-      () async {
+  test('listPending üç klasörü birleştirir; bekleyenler önde, sonra yeniden '
+      'eskiye', () async {
+    // Her klasör tek görev döndürüyor. `waiting` en ESKİ tarihi taşıyor:
+    // tarihe göre sıralansa sona düşerdi — öne gelmesi sıralamanın durumu
+    // önceliklendirdiğini kanıtlıyor (K-022).
+    const byDir = {
+      'inbox': ('2026-07-28-eski-gorev.md', 'aaa'),
+      'active': ('2026-07-30-yeni-gorev.md', 'bbb'),
+      'waiting': ('2026-07-20-token-uret.md', 'ccc'),
+    };
+
     final built = buildRepo((options, __) {
-      final isInbox = options.path.endsWith('inbox');
-      final name =
-          isInbox ? '2026-07-28-eski-gorev.md' : '2026-07-30-yeni-gorev.md';
+      final dir = options.path.split('/').last;
+      final entry = byDir[dir];
+      if (entry == null) return jsonResponse(const []);
       return jsonResponse([
         {
-          'name': name,
-          'path': '${options.path}/$name',
-          'sha': isInbox ? 'aaa' : 'bbb',
+          'name': entry.$1,
+          'path': '${options.path}/${entry.$1}',
+          'sha': entry.$2,
           'type': 'file',
         },
       ]);
@@ -75,11 +84,14 @@ void main() {
 
     final tasks = await built.repo.listPending();
 
-    expect(tasks.map((e) => e.title), ['Yeni gorev', 'Eski gorev']);
-    expect(tasks.map((e) => e.status), [TaskStatus.active, TaskStatus.inbox]);
+    expect(tasks.map((e) => e.title), ['Token uret', 'Yeni gorev', 'Eski gorev']);
+    expect(
+      tasks.map((e) => e.status),
+      [TaskStatus.waiting, TaskStatus.active, TaskStatus.inbox],
+    );
     expect(
       built.adapter.requests.map((r) => r.path.split('/').last).toSet(),
-      {'inbox', 'active'},
+      {'inbox', 'active', 'waiting'},
     );
   });
 

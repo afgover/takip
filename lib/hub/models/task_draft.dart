@@ -54,6 +54,44 @@ class TaskDraft {
     );
   }
 
+  /// `waiting/`teki bir görev için "kullanıcı yaptı" bildirimi (sözleşme 1.4).
+  ///
+  /// Ayrı bir görev olarak gider çünkü app asıl dosyayı taşıyamaz (R-001).
+  /// Agent bunu görünce asıl görevi `waiting/`ten çıkarır ve bildirimi kapatır.
+  factory TaskDraft.waitingDone(HubTask task, {DateTime? now}) {
+    final at = now ?? DateTime.parse(isoNow());
+    final label = task.title.trim().isEmpty ? task.id : task.title.trim();
+    final title = '$label — yapıldı';
+
+    final draft = HubTask(
+      id: 'pending',
+      title: title,
+      createdBy: 'user',
+      created: isoNow(),
+      updated: isoNow(),
+      priority: task.priority,
+      category: task.category,
+      tags: const ['waiting-done'],
+      session: 'none',
+      result: 'none',
+      status: TaskStatus.inbox,
+      path: '',
+      body: '# $title\n\n'
+          '## İstek\n'
+          '`${task.path}`${task.isPending ? '' : ' (${task.id})'} görevinde '
+          'beklenen iş yapıldı. Asıl görevi `waiting/`ten çıkarabilirsin.\n\n'
+          '## Notlar\n',
+    );
+
+    return TaskDraft(
+      fileName: taskFileName(at, title),
+      content: draft.toFileContent(),
+      commitMessage: "task(pending): inbox'a eklendi (app)",
+      title: title,
+      createdAt: at,
+    );
+  }
+
   factory TaskDraft.fromJson(Map<String, dynamic> json) => TaskDraft(
         fileName: json['fileName'] as String,
         content: json['content'] as String,

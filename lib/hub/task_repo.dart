@@ -131,14 +131,28 @@ class TaskRepo {
     return '$stem-$n.md';
   }
 
-  /// Bekleyenler: `inbox/` + `active/`. İçerik indirilmez (B-031).
+  /// Bekleyenler: `inbox/` + `active/` + `waiting/`. İçerik indirilmez (B-031).
+  ///
+  /// `waiting/` de buraya girer çünkü kullanıcı açısından hepsi "kapanmamış
+  /// iş"tir; ayrımı durum rozeti ve sıralama yapar (kullanıcıyı bekleyenler
+  /// en üstte).
   Future<List<TaskSummary>> listPending() async {
     final lists = await Future.wait([
       _list(Hub.inboxDir, TaskStatus.inbox),
       _list(Hub.activeDir, TaskStatus.active),
+      _list(Hub.waitingDir, TaskStatus.waiting),
     ]);
     return _sorted(lists.expand((e) => e).toList());
   }
+
+  /// Kullanıcı "Yaptım" dediğinde `inbox/`a yazılan bildirim görevi
+  /// (sözleşme 1.4).
+  ///
+  /// Asıl görevi **app taşımaz**: R-001 gereği app'in yazma alanı tek
+  /// klasördür ve bu garanti derleme zamanı sabitidir. App yalnızca haber
+  /// verir; `waiting/ → done/` geçişini agent yapar.
+  Future<TaskSummary> reportWaitingDone(HubTask task) =>
+      send(TaskDraft.waitingDone(task));
 
   Future<List<TaskSummary>> listDone() async =>
       _sorted(await _list(Hub.doneDir, TaskStatus.done));
@@ -157,9 +171,18 @@ class TaskRepo {
         .toList();
   }
 
-  /// Yeniden eskiye; tarihi okunamayan dosyalar sona.
+  /// Önce **kullanıcıyı bekleyenler**, sonra yeniden eskiye; tarihi okunamayan
+  /// dosyalar sona.
+  ///
+  /// `waiting/` öne alınıyor çünkü listedeki tek "senden bir şey isteniyor"
+  /// kalemi o; tarihe göre araya karışsa, agent'ın beklediği iş eski diye
+  /// listenin dibinde kalabilirdi — görünmemesi zaten çözmeye çalıştığımız
+  /// sorundu (K-022).
   List<TaskSummary> _sorted(List<TaskSummary> tasks) {
     tasks.sort((a, b) {
+      if (a.status.needsUser != b.status.needsUser) {
+        return a.status.needsUser ? -1 : 1;
+      }
       if (a.date == null && b.date == null) return a.fileName.compareTo(b.fileName);
       if (a.date == null) return 1;
       if (b.date == null) return -1;

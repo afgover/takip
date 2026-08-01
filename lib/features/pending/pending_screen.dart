@@ -118,9 +118,14 @@ class _TaskTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
       leading: Icon(
-        task.status == TaskStatus.active
-            ? Icons.play_circle_outline
-            : Icons.fiber_new_outlined,
+        switch (task.status) {
+          TaskStatus.waiting => Icons.pan_tool_outlined,
+          TaskStatus.active => Icons.play_circle_outline,
+          _ => Icons.fiber_new_outlined,
+        },
+        color: task.status.needsUser
+            ? Theme.of(context).colorScheme.tertiary
+            : null,
       ),
       title: Text(task.title),
       subtitle: Text(formatTaskDate(task.date) ?? task.fileName),
@@ -190,6 +195,12 @@ class TaskStatusChip extends StatelessWidget {
       TaskStatus.active => (
           colors.primaryContainer,
           colors.onPrimaryContainer
+        ),
+      // Kullanıcıyı bekleyen iş listede göze çarpmalı: tek "senden bir şey
+      // isteniyor" durumu bu.
+      TaskStatus.waiting => (
+          colors.tertiaryContainer,
+          colors.onTertiaryContainer
         ),
       TaskStatus.done => (
           colors.surfaceContainerHighest,

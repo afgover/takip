@@ -5,6 +5,9 @@ abstract final class Hub {
   static const basePath = 'hub';
   static const inboxDir = '$basePath/tasks/inbox';
   static const activeDir = '$basePath/tasks/active';
+
+  /// Agent'ın kullanıcıdan somut bir şey beklediği görevler (sözleşme 1.4).
+  static const waitingDir = '$basePath/tasks/waiting';
   static const doneDir = '$basePath/tasks/done';
   static const sessionsDir = '$basePath/sessions';
   static const artifactsDir = '$basePath/artifacts';

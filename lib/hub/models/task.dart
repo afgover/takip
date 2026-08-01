@@ -6,6 +6,9 @@ import '../frontmatter.dart';
 enum TaskStatus {
   inbox('Yeni'),
   active('Ele alınıyor'),
+
+  /// Top kullanıcıda: agent somut bir şey bekliyor (sözleşme 1.4).
+  waiting('Seni bekliyor'),
   done('Tamamlandı');
 
   const TaskStatus(this.label);
@@ -13,9 +16,13 @@ enum TaskStatus {
   /// Ekranda gösterilen Türkçe karşılık.
   final String label;
 
+  /// Kullanıcının bir şey yapması gereken durum — listede öne alınır.
+  bool get needsUser => this == TaskStatus.waiting;
+
   static TaskStatus? fromPath(String path) {
     if (path.startsWith(Hub.inboxDir)) return TaskStatus.inbox;
     if (path.startsWith(Hub.activeDir)) return TaskStatus.active;
+    if (path.startsWith(Hub.waitingDir)) return TaskStatus.waiting;
     if (path.startsWith(Hub.doneDir)) return TaskStatus.done;
     return null;
   }
