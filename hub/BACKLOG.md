@@ -107,7 +107,7 @@ başlığına ✅ ve tarih yazılır.
       demek değil — kontrol yanlış alarm veremez. Eksik izin adı
       `X-Accepted-GitHub-Permissions` başlığından okunup mesaja konuyor
 
-## Faz 3 — Todo Döngüsü (MVP çekirdeği)
+## Faz 3 — Todo Döngüsü (MVP çekirdeği) ✅ (2026-08-01)
 
 - [x] B-030 · (agent) "Görev ekle" ekranı: başlık, açıklama, öncelik, kategori →
       `tasks/inbox/<tarih>-<slug>.md` olarak PUT — ✅ 2026-07-30 ·
@@ -135,23 +135,26 @@ başlığına ✅ ve tarih yazılır.
       açılmıyor (outbox yeniden denerken yanıtın kaybolduğu gerçek durum),
       (b) içerik farklı → aynı gün aynı başlıkla başka görev, ad sonuna sayı
       ekleniyor; üstüne asla yazılmıyor. 5 denemede çözülemezse anlaşılır hata
-- [ ] B-034 · (agent+user) Uçtan uca test: app'ten görev ekle → agent ele alsın →
-      done'a taşısın → app'te "Tamamlananlar"da görünsün — ⏳ 2026-07-30 ·
-      **sözleşme ayağı tamam, cihaz ayağı bekliyor** (madde açık kalır).
+- [x] B-034 · (agent+user) Uçtan uca test: app'ten görev ekle → agent ele alsın →
+      done'a taşısın → app'te "Tamamlananlar"da görünsün — ✅ 2026-08-01 ·
+      **sözleşme ayağı 2026-07-30'da, cihaz ayağı 2026-08-01'de tamamlandı.**
       Yapılanlar: (1) gerçek
       ekranlarla, GitHub Contents API'sini taklit eden hub üzerinde tam döngü
       testi (ekle → agent taşır → app'te durum değişir → tamamlananlarda
       sonucuyla görünür) + ağ kesintisi senaryosu; (2) gerçek hub'da T-002:
       dosya app'in `TaskDraft` üreticisinden çıktığı gibi inbox → active →
       done geçirildi, biçim bozulmadı. → L-008
-      · ⏳ 2026-08-01: **cihaz ayağının çoğu koştu.** Kullanıcı telefondan görev
-      ekledi → dosya gerçek GitHub'da inbox'a düştü (45cc3a5, sözleşmeye uygun)
-      → agent T-003 atayıp `inbox → active → done` geçirdi. **Kalan:** görevin
-      app'te "Tamamlananlar"da sonucuyla göründüğünün kullanıcı tarafından
-      doğrulanması. → S-2026-08-01-b020-mac-kurulum
-- [ ] B-035 · (agent) Test çıktılarını `knowledge/lessons.md`'ye işle —
-      döngü testinden çıkan ders L-008 olarak işlendi; cihaz koşumundan sonra
-      tekrar bakılacak
+      Cihaz ayağı: kullanıcı telefondan görev ekledi → dosya gerçek GitHub'da
+      inbox'a düştü (45cc3a5, sözleşmeye uygun) → agent T-003 atayıp
+      `inbox → active → done` geçirdi → kullanıcı sonucu app'te
+      "Tamamlananlar"da gördü. Zincirin tamamı gerçek GitHub üzerinden koştu.
+      → S-2026-08-01-b020-mac-kurulum
+- [x] B-035 · (agent) Test çıktılarını `knowledge/lessons.md`'ye işle —
+      ✅ 2026-08-01 · döngü testinden L-008; cihaz koşumundan L-010 (release
+      manifestinde INTERNET izni), L-011 (`flutter install` varsayılanı),
+      L-014 (derleme türü değişikliği veriyi siler) ve SK-007/SK-008.
+      T-003'ün uygulanmasından L-012 (türetilmiş asenkron provider bayattır),
+      L-013 (yazma yolunda platform kanalı beklenmez), SK-009
 
 ## Faz 4 — Hub Tarayıcı (kategorili görüntüleme) ✅ (2026-07-30)
 
