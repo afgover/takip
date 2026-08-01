@@ -83,7 +83,7 @@ ilk gerçek oturumla test edilmesi.
 
 ---
 
-## Aşama 2 — Uygulama MVP'si (aktif)
+## Aşama 2 — Uygulama MVP'si ✅ (2026-08-01)
 
 **Hedef:** Flutter iskeleti + todo döngüsü: app'ten eklenen görevin hub'a düşmesi,
 agent'ın ele alması, sonucun app'te görünmesi. (Backlog Faz 2–3.)
@@ -172,6 +172,16 @@ agent'ın ele alması, sonucun app'te görünmesi. (Backlog Faz 2–3.)
   geliştir" — ve kullanıcının kararıyla aynı oturumda uygulandı (takip@d5c206e).
   219 test, analyze temiz. → S-2026-08-01-b020-mac-kurulum, K-018, L-012, L-013,
   SK-009
+- 2026-08-01: **Aşama kapandı.** Kullanıcı T-003'ün sonucunu app'te
+  "Tamamlananlar"da gördü; B-034 ve B-035 tamamlandı, **Faz 3 kapandı**. Aşama
+  2'nin hedefi ("app'ten eklenen görevin hub'a düşmesi, agent'ın ele alması,
+  sonucun app'te görünmesi") gerçek cihaz ve gerçek GitHub üzerinde uçtan uca
+  doğrulandı. Aşamanın açılışından beri süren "hiçbir gerçek cihazda hiç
+  çalışmadı" eşiği bugün aşıldı.
+  Kapanışta release derlemesi cihaza kuruldu; derleme türü değişikliği
+  uygulamayı kaldırıp yeniden kurduğu için token silindi ve yeniden girildi
+  (→ L-014). Bunun bir yan sonucu: T-003'ün eski anahtar göçü **cihazda
+  sınanamadı**, yalnız birim testiyle doğrulanmış durumda.
 
 **Kararlar:**
 - **K-013:** Repo rolleri netleştirildi (kullanıcı cevabı). `taskr` salt
@@ -231,3 +241,17 @@ görüntülenmesi. (Backlog Faz 4.)
 - **K-016:** Önbellek ağ yokken **son bilinen içeriği** gösterir ve bunu
   işaretler; ama sunucudan gelen hata (401/500) önbellekle gizlenmez —
   sorunu saklamak, bayat veri göstermekten daha kötüdür.
+
+## Aşama 4 — Günlük Kullanım (aktif)
+
+**Hedef:** Sistemi bir hafta gerçek işle kullanmak ve sürtünme noktalarını
+uygulamanın kendi kanalından (inbox) toplamak. (Backlog: B-052 → B-053.)
+Bu aşama kod yazmakla değil, **kullanmakla** ilerler; çıkacak işler B-053'te
+toplanır ve gerekiyorsa Faz 6 maddelerini (B-060…B-064) yeniden sıralar.
+
+**Durum:**
+- 2026-08-01: Aşama açıldı. Uygulama release derlemesi olarak cihazda,
+  `afgover/takip`'e bağlı ve çoklu repo destekli.
+
+**Kararlar:**
+- (henüz yok)
