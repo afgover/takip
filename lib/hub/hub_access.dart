@@ -18,7 +18,7 @@ typedef HubAccessVerifier = Future<void> Function(HubConfig candidate);
 /// Doğrulanamayan tek şey **yazma** iznidir: salt okunur bir token bu kontrolü
 /// geçer, sorun ilk görev gönderiminde 403 olarak görünür (B-026).
 Future<void> verifyHubAccess(HubConfig candidate) async {
-  final dio = buildGithubDio(() => candidate.token);
+  final dio = buildGithubDio((_) => candidate.token);
   try {
     final api = ContentsApi(dio, owner: candidate.owner, repo: candidate.repo);
     await checkHubAccess(api, candidate);

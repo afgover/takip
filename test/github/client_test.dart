@@ -18,7 +18,7 @@ void main() {
           },
         ),
       );
-      final dio = buildGithubDio(() => 't', cache: cache)
+      final dio = buildGithubDio((_) => 't', cache: cache)
         ..httpClientAdapter = adapter;
 
       await dio.get<dynamic>('/repos/a/b/commits');
@@ -46,7 +46,7 @@ void main() {
         }
         return ResponseBody.fromString('', 304);
       });
-      final dio = buildGithubDio(() => 't', cache: cache)
+      final dio = buildGithubDio((_) => 't', cache: cache)
         ..httpClientAdapter = adapter;
 
       await dio.get<dynamic>('/repos/a/b/commits');
@@ -73,7 +73,7 @@ void main() {
           },
         );
       });
-      final dio = buildGithubDio(() => 't', cache: cache)
+      final dio = buildGithubDio((_) => 't', cache: cache)
         ..httpClientAdapter = adapter;
 
       await dio.get<dynamic>('/repos/a/b/commits');
@@ -98,7 +98,7 @@ void main() {
           },
         ),
       );
-      final dio = buildGithubDio(() => 't', cache: cache)
+      final dio = buildGithubDio((_) => 't', cache: cache)
         ..httpClientAdapter = adapter;
 
       await dio.get<dynamic>('/repos/a/b/contents/hub');
@@ -119,7 +119,7 @@ void main() {
           },
         ),
       );
-      final dio = buildGithubDio(() => 't', cache: cache)
+      final dio = buildGithubDio((_) => 't', cache: cache)
         ..httpClientAdapter = adapter;
 
       await dio.put<dynamic>('/repos/a/b/contents/x.md', data: {'a': 1});
@@ -131,7 +131,7 @@ void main() {
       // Sunucu bizim göndermediğimiz bir etag'e 304 dönemez; yine de olursa
       // sessizce boş veri göstermek yerine hata verilir.
       final cache = EtagCache();
-      final dio = buildGithubDio(() => 't', cache: cache)
+      final dio = buildGithubDio((_) => 't', cache: cache)
         ..httpClientAdapter =
             FakeAdapter((_, __) => ResponseBody.fromString('', 304));
 
@@ -143,7 +143,7 @@ void main() {
 
     test('önbellek verilmezse If-None-Match eklenmez', () async {
       final adapter = FakeAdapter((_, __) => jsonResponse(const []));
-      final dio = buildGithubDio(() => 't')..httpClientAdapter = adapter;
+      final dio = buildGithubDio((_) => 't')..httpClientAdapter = adapter;
 
       await dio.get<dynamic>('/repos/a/b/commits');
       await dio.get<dynamic>('/repos/a/b/commits');
@@ -152,6 +152,59 @@ void main() {
         adapter.requests.every((r) => !r.headers.containsKey('If-None-Match')),
         isTrue,
       );
+    });
+  });
+  group('token isteğin gittiği repoya bağlanır (L-019)', () {
+    test('githubSlugOf yolu ayrıştırır', () {
+      expect(githubSlugOf('/repos/afgover/takip/commits'), 'afgover/takip');
+      expect(
+        githubSlugOf('/repos/afgover/financer_takip/contents/hub'),
+        'afgover/financer_takip',
+      );
+      // Yüzde-kodlanmış segmentler çözülür.
+      expect(githubSlugOf('/repos/af%2Dgover/a%2Eb'), 'af-gover/a.b');
+      // Repo yolu olmayan istekler eşleşmez.
+      expect(githubSlugOf('/user'), isNull);
+      expect(githubSlugOf('/repos/afgover'), isNull);
+      expect(githubSlugOf(''), isNull);
+    });
+
+    test('her repo kendi token\'ıyla çağrılır, aktif olan hangisiyse olsun',
+        () async {
+      final tokens = <String, String>{
+        'afgover/takip': 'token-takip',
+        'afgover/financer_takip': 'token-financer',
+      };
+      final seen = <String, String?>{};
+
+      final adapter = FakeAdapter((options, _) {
+        seen[options.path] = options.headers['Authorization'] as String?;
+        return jsonResponse(const []);
+      });
+      // Gerçekteki kurulumun aynısı: token, isteğin yolundan seçiliyor.
+      final dio = buildGithubDio(
+        (options) => tokens[githubSlugOf(options.path)],
+      )..httpClientAdapter = adapter;
+
+      await dio.get<dynamic>('/repos/afgover/takip/commits');
+      await dio.get<dynamic>('/repos/afgover/financer_takip/commits');
+
+      expect(seen['/repos/afgover/takip/commits'], 'Bearer token-takip');
+      expect(
+        seen['/repos/afgover/financer_takip/commits'],
+        'Bearer token-financer',
+        reason: 'adres bir repoya, token başka repoya ait olamaz',
+      );
+    });
+
+    test('eşleşme yoksa token gönderilmez', () async {
+      final adapter = FakeAdapter((options, _) => jsonResponse(const []));
+      final dio = buildGithubDio((options) => null)
+        ..httpClientAdapter = adapter;
+
+      await dio.get<dynamic>('/repos/afgover/takip/commits');
+
+      expect(adapter.requests.single.headers['Authorization'], isNull);
     });
   });
 }

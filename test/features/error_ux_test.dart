@@ -166,7 +166,7 @@ void main() {
     // sayarsa kullanıcı çevrimdışı olduğunu hiç öğrenemez.
     final cache = EtagCache();
     var online = true;
-    final dio = buildGithubDio(() => 't', cache: cache)
+    final dio = buildGithubDio((_) => 't', cache: cache)
       ..httpClientAdapter = FakeAdapter((options, _) {
         if (!online) {
           throw DioException.connectionError(

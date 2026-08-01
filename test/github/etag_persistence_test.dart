@@ -60,7 +60,7 @@ void main() {
     await store.restore(cache);
 
     final adapter = FakeAdapter((_, __) => ResponseBody.fromString('', 304));
-    final dio = buildGithubDio(() => 't', cache: cache)
+    final dio = buildGithubDio((_) => 't', cache: cache)
       ..httpClientAdapter = adapter;
 
     final res = await dio.get<dynamic>('/repos/a/b/commits');
@@ -73,7 +73,7 @@ void main() {
     test('son bilinen içerik döner ve bayat olduğu işaretlenir', () async {
       final cache = EtagCache();
       var online = true;
-      final dio = buildGithubDio(() => 't', cache: cache)
+      final dio = buildGithubDio((_) => 't', cache: cache)
         ..httpClientAdapter = FakeAdapter((options, _) {
           if (!online) {
             throw DioException.connectionError(
@@ -102,7 +102,7 @@ void main() {
     });
 
     test('önbellekte yoksa hata yutulmaz', () async {
-      final dio = buildGithubDio(() => 't', cache: EtagCache())
+      final dio = buildGithubDio((_) => 't', cache: EtagCache())
         ..httpClientAdapter = FakeAdapter(
           (options, _) => throw DioException.connectionError(
             requestOptions: options,
@@ -121,7 +121,7 @@ void main() {
       // sorunu saklamak olurdu.
       final cache = EtagCache();
       var fail = false;
-      final dio = buildGithubDio(() => 't', cache: cache)
+      final dio = buildGithubDio((_) => 't', cache: cache)
         ..httpClientAdapter = FakeAdapter((options, _) => fail
             ? jsonResponse({'message': 'Bad credentials'}, status: 401)
             : jsonResponse(const [], headers: {

@@ -8,6 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../core/errors.dart';
 import '../hub/hub_config.dart';
+import '../hub/hub_connections.dart';
 
 /// GET yanıtlarının ETag'lerini ve gövdelerini tutan doğrulama önbelleği.
 ///
@@ -70,13 +71,26 @@ class EtagCache {
 
 /// GitHub REST istemcisi. Bu katman hub sözleşmesini bilmez; saf API'dir.
 ///
+/// İstek için kullanılacak token'ı seçer. İsteğin kendisini alır, çünkü
+/// "hangi token" sorusunun doğru cevabı "hangi repoya gidiyoruz"a bağlıdır
+/// (L-019).
+typedef GithubTokenReader = String? Function(RequestOptions options);
+
+/// `/repos/{owner}/{repo}/...` yolundan `owner/repo` çıkarır; başka bir yolsa
+/// null. Segmentler çağrı yerlerinde yüzde-kodlandığı için çözülerek okunur.
+String? githubSlugOf(String path) {
+  final parts = path.split('/').where((p) => p.isNotEmpty).toList();
+  if (parts.length < 3 || parts.first != 'repos') return null;
+  return '${Uri.decodeComponent(parts[1])}/${Uri.decodeComponent(parts[2])}';
+}
+
 /// [readToken] her istekte çağrılır: token Dio örneğine gömülmez. Böylece
 /// kullanıcı ayarlardan token değiştirdiğinde (B-051) elde eski token kalmaz,
 /// ve onboarding henüz kaydedilmemiş bir aday token'la doğrulama yapabilir
 /// (B-022).
 ///
 /// [cache] verilirse GET'ler ETag ile doğrulanır (B-024).
-Dio buildGithubDio(String? Function() readToken, {EtagCache? cache}) {
+Dio buildGithubDio(GithubTokenReader readToken, {EtagCache? cache}) {
   final dio = Dio(
     BaseOptions(
       baseUrl: 'https://api.github.com',
@@ -95,7 +109,7 @@ Dio buildGithubDio(String? Function() readToken, {EtagCache? cache}) {
   dio.interceptors.add(
     InterceptorsWrapper(
       onRequest: (options, handler) {
-        final token = readToken();
+        final token = readToken(options);
         if (token != null && token.isNotEmpty) {
           options.headers['Authorization'] = 'Bearer $token';
         }
@@ -253,8 +267,21 @@ final githubDioProvider = Provider<Dio>((ref) {
     }
   });
 
+  // Token, **isteğin gittiği repoya** göre seçilir; "o an aktif olan bağlantı"
+  // ya göre değil. Aradaki fark çoklu repoda gerçek bir hataydı (L-019):
+  // adres, sağlayıcı kurulurken sabitleniyor ama token istek gönderilirken
+  // okunuyordu. Repo değiştirildiği anda ikisi farklı bağlantıya ait olabiliyor
+  // ve A reposunun adresine B reposunun token'ı gidiyordu — private repoda
+  // bunun karşılığı 404, yani kullanıcıya "Bulunamadı".
   final dio = buildGithubDio(
-    () => ref.read(hubConfigProvider).value?.token,
+    (options) {
+      final slug = githubSlugOf(options.path);
+      final connections = ref.read(hubConnectionsProvider).valueOrNull;
+      final match = slug == null ? null : connections?.bySlug(slug);
+      // Eşleşme yoksa (repo yolu olmayan istek, ya da liste henüz yüklenmedi)
+      // eski davranışa düşülür.
+      return (match ?? ref.read(hubConfigProvider).value)?.token;
+    },
     cache: cache,
   );
   ref.onDispose(dio.close);

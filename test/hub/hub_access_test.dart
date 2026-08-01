@@ -107,7 +107,7 @@ void main() {
   test('doğrulama isteği aday token ile imzalanır', () async {
     // Henüz kaydedilmemiş token'la doğrulama yapılabilmesi B-022'nin şartı.
     final adapter = FakeAdapter((_, __) => jsonResponse(const []));
-    final dio = buildGithubDio(() => 'aday-token')
+    final dio = buildGithubDio((_) => 'aday-token')
       ..httpClientAdapter = adapter;
 
     await ContentsApi(dio, owner: 'afgover', repo: 'takip')

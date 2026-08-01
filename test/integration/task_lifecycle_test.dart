@@ -113,7 +113,7 @@ void main() {
     SharedPreferences.setMockInitialValues({});
     hub = FakeHub()..seedTaskFolders();
 
-    final dio = buildGithubDio(() => 't')..httpClientAdapter = hub.adapter;
+    final dio = buildGithubDio((_) => 't')..httpClientAdapter = hub.adapter;
     container = ProviderContainer(
       overrides: [
         hubConfigProvider.overrideWith(FakeHubConfigNotifier.new),
@@ -221,7 +221,7 @@ void main() {
       (tester) async {
     // Ağı kes: her istek bağlantı hatası.
     var online = false;
-    final dio = buildGithubDio(() => 't')
+    final dio = buildGithubDio((_) => 't')
       ..httpClientAdapter = FakeAdapter((options, body) {
         if (!online) {
           throw DioException.connectionError(

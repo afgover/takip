@@ -217,7 +217,7 @@ Future<T> withTaskRepoFor<T>(
   HubConfig config,
   Future<T> Function(TaskRepo repo) body,
 ) async {
-  final dio = buildGithubDio(() => config.token);
+  final dio = buildGithubDio((_) => config.token);
   try {
     return await body(
       TaskRepo(ContentsApi(dio, owner: config.owner, repo: config.repo)),
