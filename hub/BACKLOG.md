@@ -203,6 +203,18 @@ başlığına ✅ ve tarih yazılır.
 - [ ] B-052 · (user) Bir hafta gerçek kullanım; sürtünme noktalarını görev olarak
       inbox'a at — B-015, B-020 ve B-034'ün cihaz ayağı tamamlandıktan sonra
 - [ ] B-053 · (agent) Kullanım geri bildirimlerine göre revizyon turu
+- [x] B-054 · (agent) Kurulum veriyi silmesin — `tool/install.sh`, yalnız
+      `adb install -r` kullanır, asla kaldırmaz — ✅ 2026-08-01 · takip@e796e0d;
+      S-2026-08-01-token-kaliciligi. `flutter install`'ın kaldırması yapısal
+      değil, hata yoluymuş (L-016; L-014 düzeltildi). Gerçek cihazda doğrulandı
+- [x] B-055 · (agent) Bağlantıların parolayla şifreli yedeği (dışa aktar /
+      geri yükle) — ✅ 2026-08-01 · takip@735efbc; PBKDF2-HMAC-SHA256 +
+      AES-GCM (`package:cryptography`). Veri kaybında bütün repolar tek
+      yapıştırmayla geri geliyor. Koşulları R-006'da bağlayıcı
+- [x] B-056 · (agent) Yeni repo eklerken kayıtlı token'ı yeniden kullanabilme —
+      ✅ 2026-08-01 · takip@2730ea4; fine-grained token birden çok repoyu
+      kapsayabildiği için "her repo için yeni token" zorunluluğu kalktı.
+      Doğrulama gevşetilmedi (B-022, B-026 yolundan geçiyor)
 
 ## Faz 6 — 2. Plan (şimdilik bekliyor)
 
