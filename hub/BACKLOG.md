@@ -203,6 +203,19 @@ başlığına ✅ ve tarih yazılır.
 - [ ] B-052 · (user) Bir hafta gerçek kullanım; sürtünme noktalarını görev olarak
       inbox'a at — B-015, B-020 ve B-034'ün cihaz ayağı tamamlandıktan sonra
 - [ ] B-053 · (agent) Kullanım geri bildirimlerine göre revizyon turu
+- [x] B-058 · (agent) Yeni proje ekleme prosedürünü kalıcı belge yap —
+      ✅ 2026-08-01 · `artifacts/reference/proje-ekleme.md`;
+      S-2026-08-01-proje-ekleme-ve-arsiv. Beş adım (repo aç, token kapsat,
+      iskelet kur, uygulamaya ekle, agent'a söyle) + sık karşılaşılanlar +
+      projeyi arşive kaldırma. Yazarken sözleşme/uygulama çelişkisi bulundu →
+      sözleşme 1.3, K-020
+- [x] B-059 · (agent) project-taskr belgelerini takip hub'ına taşı —
+      ✅ 2026-08-01 · 35 belge `artifacts/reference/project-taskr/` altında,
+      kaynak yolları ve arşiv notlarıyla; dizin `arsiv-dizini.md`. Proje arşive
+      kaldırıldığı için ayrı hub açılmadı (K-021). **Bulunamayan:** Project
+      Taskr'ın yönettiği projelerin (CoPilot, Financer, Sarraf, DataSources)
+      verisi repoda değil, uygulamanın veritabanındaydı; repoda yalnız ad
+      olarak geçiyorlar
 - [x] B-054 · (agent) Kurulum veriyi silmesin — `tool/install.sh`, yalnız
       `adb install -r` kullanır, asla kaldırmaz — ✅ 2026-08-01 · takip@e796e0d;
       S-2026-08-01-token-kaliciligi. `flutter install`'ın kaldırması yapısal
