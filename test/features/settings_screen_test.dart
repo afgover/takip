@@ -228,10 +228,14 @@ void main() {
     ));
     await tester.pumpAndSettle();
 
+    // L-015: liste uzadıkça satır görünür alanın dışına düşüyor.
+    await tester.scrollUntilVisible(
+        find.byKey(SettingsScreen.clearCacheKey), 200);
+    await tester.pumpAndSettle();
     await tester.tap(find.byKey(SettingsScreen.clearCacheKey));
     await tester.pumpAndSettle();
 
     expect(cache.length, 0);
-    expect(find.text('Önbellek temizlendi.'), findsOneWidget);
+    expect(find.text('Temizlendi, yeniden indiriliyor.'), findsOneWidget);
   });
 }

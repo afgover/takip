@@ -1,9 +1,12 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../github/client.dart';
 import '../../hub/hub_config.dart';
 import '../../hub/hub_connections.dart';
+import '../../hub/hub_sync.dart';
 import '../../hub/hub_watcher.dart';
 import '../../hub/outbox.dart';
 import '../../hub/settings.dart';
@@ -17,6 +20,8 @@ class SettingsScreen extends ConsumerWidget {
 
   static const reposKey = Key('settings-repos');
   static const backupKey = Key('settings-backup');
+  static const offlineKey = Key('settings-offline');
+  static const syncNowKey = Key('settings-sync-now');
   static const intervalKey = Key('settings-poll-interval');
   static const clearCacheKey = Key('settings-clear-cache');
   static const resetKey = Key('settings-reset');
@@ -29,6 +34,7 @@ class SettingsScreen extends ConsumerWidget {
     final queued = ref.watch(outboxProvider).valueOrNull ?? const [];
     final connectionCount =
         ref.watch(hubConnectionsProvider).valueOrNull?.length ?? 1;
+    final sync = ref.watch(hubSyncProvider);
 
     return Scaffold(
       appBar: AppBar(title: const Text('Ayarlar')),
@@ -104,6 +110,40 @@ class SettingsScreen extends ConsumerWidget {
             ),
           ),
           const Divider(),
+          const _SectionTitle('Çevrimdışı'),
+          ListTile(
+            key: offlineKey,
+            leading: Icon(
+              sync.syncing
+                  ? Icons.cloud_download_outlined
+                  : (sync.hasOfflineCopy
+                      ? Icons.offline_pin_outlined
+                      : Icons.cloud_off_outlined),
+            ),
+            title: const Text('Cihazdaki kopya'),
+            subtitle: Text(_offlineText(sync)),
+            trailing: sync.syncing
+                ? const SizedBox(
+                    height: 20,
+                    width: 20,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  )
+                : TextButton(
+                    key: syncNowKey,
+                    onPressed: () => ref.read(hubSyncProvider.notifier).syncNow(),
+                    child: const Text('Şimdi indir'),
+                  ),
+          ),
+          const Padding(
+            padding: EdgeInsets.fromLTRB(16, 0, 16, 8),
+            child: Text(
+              'Tarayıcıdaki her şey cihaza indirilir ve hub değiştikçe '
+              'kendiliğinden güncellenir; ağ yokken de açılır. Yalnızca '
+              'değişen dosyalar indirilir.',
+              style: TextStyle(fontSize: 12),
+            ),
+          ),
+          const Divider(),
           const _SectionTitle('Veri'),
           if (queued.isNotEmpty)
             ListTile(
@@ -119,13 +159,20 @@ class SettingsScreen extends ConsumerWidget {
             key: clearCacheKey,
             leading: const Icon(Icons.cleaning_services_outlined),
             title: const Text('Önbelleği temizle'),
-            subtitle: const Text('Her şey hub\'dan yeniden indirilir'),
-            onTap: () {
+            subtitle: const Text('Cihazdaki kopya dahil, her şey yeniden iner'),
+            onTap: () async {
               ref.read(etagCacheProvider).clear();
+              // Yerel kopya da gitmeli: yalnız ETag önbelleği silinseydi
+              // tarayıcı eski kopyayı göstermeye devam eder ve "temizledim
+              // ama değişmedi" denirdi.
+              await ref.read(hubSyncProvider.notifier).clearOfflineCopy();
               ref.invalidate(hubWatcherProvider);
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Önbellek temizlendi.')),
-              );
+              unawaited(ref.read(hubSyncProvider.notifier).syncNow());
+              if (context.mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Temizlendi, yeniden indiriliyor.')),
+                );
+              }
             },
           ),
           const Divider(),
@@ -190,6 +237,28 @@ class SettingsScreen extends ConsumerWidget {
     if (confirmed ?? false) {
       await ref.read(hubConfigProvider.notifier).clear();
     }
+  }
+
+  static String _offlineText(SyncStatus sync) {
+    if (sync.syncing) {
+      return sync.total == 0
+          ? 'Değişiklik aranıyor…'
+          : '${sync.done}/${sync.total} belge indiriliyor…';
+    }
+    if (!sync.hasOfflineCopy) {
+      return sync.error == null
+          ? 'Henüz indirilmedi'
+          : 'İndirilemedi — ${describeHubError(sync.error!).headline}';
+    }
+
+    final base = '${sync.docCount} belge indirildi';
+    if (sync.syncedAt == null) return base;
+
+    final ago = DateTime.now().difference(sync.syncedAt!);
+    if (ago.inMinutes < 1) return '$base · az önce güncellendi';
+    if (ago.inHours < 1) return '$base · ${ago.inMinutes} dakika önce';
+    if (ago.inDays < 1) return '$base · ${ago.inHours} saat önce';
+    return '$base · ${ago.inDays} gün önce';
   }
 
   static String _statusText(HubStatus status) {

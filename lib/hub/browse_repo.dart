@@ -4,20 +4,33 @@ import '../core/constants.dart';
 import '../github/contents_api.dart';
 import '../github/trees_api.dart';
 import 'frontmatter.dart';
+import 'hub_sync.dart';
 import 'hub_watcher.dart';
 import 'models/hub_doc.dart';
+import 'offline_store.dart';
 
 /// Hub tarayıcısının veri katmanı (Faz 4) — SYSTEM.md §9 kategorileri.
 ///
 /// Listeler tek bir özyinelemeli ağaç isteğinden çıkarılır; klasör klasör
 /// gezilmez. İçerik ancak bir belge açılınca indirilir.
 class BrowseRepo {
-  BrowseRepo(this._trees, this._contents);
+  BrowseRepo(this._trees, this._contents, [this._store]);
 
   final TreesApi _trees;
   final ContentsApi _contents;
 
-  Future<List<TreeEntry>> _tree() => _trees.recursive();
+  /// Cihazdaki kopya (B-057). Varsa ağ hiç kullanılmaz — tarayıcı
+  /// çevrimdışıyken de, hiç açılmamış belgeler dahil, tam çalışır.
+  final OfflineStore? _store;
+
+  /// Yerel kopya güncel tutuluyor (senkron `headSha` değişince koşuyor), bu
+  /// yüzden önce oraya bakılır. Kopya yoksa (ilk açılış, senkron bitmeden)
+  /// ağa düşülür — davranış eskisi gibi.
+  Future<List<TreeEntry>> _tree() async {
+    final stored = await _store?.readTree();
+    if (stored != null && stored.isNotEmpty) return stored;
+    return _trees.recursive();
+  }
 
   /// `sessions/<tarih>-<slug>/session.md`
   Future<List<HubDoc>> sessions() async {
@@ -77,8 +90,11 @@ class BrowseRepo {
   Future<List<KnowledgeEntry>> knowledge(KnowledgeFile file) async =>
       KnowledgeEntry.parseFile(await readDoc(file.path));
 
-  Future<String> readDoc(String path) async =>
-      (await _contents.getFile(path)).content;
+  Future<String> readDoc(String path) async {
+    final stored = await _store?.readDoc(path);
+    if (stored != null) return stored.content;
+    return (await _contents.getFile(path)).content;
+  }
 }
 
 /// Bilgi tabanındaki üç canlı dosya (SYSTEM.md §5).
@@ -110,29 +126,40 @@ final browseRepoProvider = Provider<BrowseRepo>(
   (ref) => BrowseRepo(
     ref.watch(treesApiProvider),
     ref.watch(contentsApiProvider),
+    ref.watch(offlineStoreProvider),
   ),
 );
 
-/// Aşağıdaki listeler yoklamanın sürümünü izler: hub değişince tazelenir.
-final sessionsProvider = FutureProvider<List<HubDoc>>((ref) {
+/// Tarayıcı sağlayıcılarının ortak tazelenme sinyali.
+///
+/// İki şeyi birlikte izler: yoklamanın gördüğü hub sürümü (`headSha`) ve
+/// senkronun tamamlanma sayacı (`version`). İkincisi olmadan, değişiklik
+/// görüldüğü anda okunan yerel kopya henüz eski olurdu ve ekran senkron
+/// bitince kendiliğinden tazelenmezdi.
+void _watchHubVersion(Ref ref) {
   ref.watch(hubWatcherProvider.select((s) => s.headSha));
+  ref.watch(hubSyncProvider.select((s) => s.version));
+}
+
+final sessionsProvider = FutureProvider<List<HubDoc>>((ref) {
+  _watchHubVersion(ref);
   return ref.watch(browseRepoProvider).sessions();
 });
 
 final artifactsProvider = FutureProvider<List<HubDoc>>((ref) {
-  ref.watch(hubWatcherProvider.select((s) => s.headSha));
+  _watchHubVersion(ref);
   return ref.watch(browseRepoProvider).artifactsWithMetadata();
 });
 
 final knowledgeProvider =
     FutureProvider.family<List<KnowledgeEntry>, KnowledgeFile>((ref, file) {
-  ref.watch(hubWatcherProvider.select((s) => s.headSha));
+  _watchHubVersion(ref);
   return ref.watch(browseRepoProvider).knowledge(file);
 });
 
 /// Tek belgenin ham içeriği (markdown görüntüleyici).
 final docContentProvider =
     FutureProvider.autoDispose.family<String, String>((ref, path) {
-  ref.watch(hubWatcherProvider.select((s) => s.headSha));
+  _watchHubVersion(ref);
   return ref.watch(browseRepoProvider).readDoc(path);
 });

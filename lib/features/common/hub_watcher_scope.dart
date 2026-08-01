@@ -1,6 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../hub/hub_sync.dart';
 import '../../hub/hub_watcher.dart';
 import '../../hub/outbox.dart';
 
@@ -25,7 +26,13 @@ class _HubWatcherScopeState extends ConsumerState<HubWatcherScope>
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted) ref.read(hubWatcherProvider.notifier).start();
+      if (mounted) {
+        ref.read(hubWatcherProvider.notifier).start();
+        // Senkronun ayağa kalkması gerekiyor: hub değişikliğini dinleyen ve
+        // yerel kopyayı güncelleyen o (B-057). Kimse okumazsa provider hiç
+        // kurulmaz ve indirme kendiliğinden hiç başlamazdı.
+        ref.read(hubSyncProvider);
+      }
     });
   }
 
