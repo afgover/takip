@@ -253,6 +253,21 @@ toplanır ve gerekiyorsa Faz 6 maddelerini (B-060…B-064) yeniden sıralar.
 **Durum:**
 - 2026-08-01: Aşama açıldı. Uygulama release derlemesi olarak cihazda,
   `afgover/takip`'e bağlı ve çoklu repo destekli.
+- 2026-08-01: Günlük kullanımın ilk sürtünmesi daha ilk saatte çıktı ve
+  giderildi: her kurulumda ve her yeni repoda token girmek zorunda kalmak.
+  Üç iş yapıldı — kaldırmayan kurulum scripti (B-054), parolayla şifreli
+  bağlantı yedeği (B-055), yeni repoda kayıtlı token'ı yeniden kullanma
+  (B-056). Ölçüm önemliydi: `flutter install`'ın kaldırması yapısal
+  sanılmıştı, kaynağa bakılıp cihazda üç senaryo denenince bunun aracın hata
+  yolu olduğu görüldü ve L-014 düzeltildi (L-016). 236 test.
+  → S-2026-08-01-token-kaliciligi, K-019, R-006, L-015, L-016
 
 **Kararlar:**
-- (henüz yok)
+- **K-019:** Kolaylık için token'ın korumasız bir dizeye çevrilmesine izin
+  verilmez. Çok repolu kurulumda veri kaybı sonrası token'ları tek tek yeniden
+  girmek sistemi kullanılamaz kılıyordu; çözüm olarak yedekleme eklendi ama
+  **yalnızca parolayla şifreli** biçimde (kullanıcı seçimi). Düz metin dışa
+  aktarma, kullanıcı isteseydi bile eklenmeyecek: yedek metni token'ların
+  kendisidir, panoya düşen bir dize repolara yazma yetkisinin kendisi olurdu.
+  Şifreleme elle yazılmaz, denenmiş bir kütüphaneden gelir. Koşullar R-006'da.
+  → B-055, S-2026-08-01-token-kaliciligi
