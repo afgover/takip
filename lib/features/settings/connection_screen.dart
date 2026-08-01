@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/errors.dart';
 import '../../hub/hub_access.dart';
 import '../../hub/hub_config.dart';
+import '../../hub/hub_connections.dart';
 import '../../hub/hub_watcher.dart';
 
 /// Ekran ne yapıyor: yeni repo mu ekliyor, var olanı mı düzenliyor (T-003).
@@ -30,6 +31,7 @@ class ConnectionScreen extends ConsumerStatefulWidget {
   static const repoFieldKey = Key('connection-repo-field');
   static const labelFieldKey = Key('connection-label-field');
   static const tokenFieldKey = Key('connection-token-field');
+  static const reuseTokenKey = Key('connection-reuse-token');
   static const submitKey = Key('connection-submit');
   static const errorKey = Key('connection-error');
 
@@ -46,6 +48,9 @@ class _ConnectionScreenState extends ConsumerState<ConnectionScreen> {
   bool _busy = false;
   bool _showToken = false;
   String? _error;
+
+  /// Ekleme kipinde seçilen "mevcut token" — null ise token elle girilir.
+  HubConfig? _reusedFrom;
 
   bool get _isAdd => widget.mode == ConnectionMode.add;
 
@@ -77,12 +82,17 @@ class _ConnectionScreenState extends ConsumerState<ConnectionScreen> {
     final typedToken = _tokenCtrl.text.trim();
     final typedLabel = _labelCtrl.text.trim();
 
-    // Düzenlemede token alanı boş bırakılırsa mevcut token korunur; eklemede
-    // token zorunludur (doğrulayacak bir şey olmalı).
+    // Token'ın kaynağı üç yerden biri olabilir: elle yazılan değer, ekleme
+    // kipinde seçilen mevcut bağlantının token'ı, ya da düzenlemede alan boş
+    // bırakıldığında korunan eski token.
+    final token = typedToken.isNotEmpty
+        ? typedToken
+        : (_reusedFrom?.token ?? current?.token ?? '');
+
     final candidate = HubConfig(
       owner: parsed.owner,
       repo: parsed.repo,
-      token: typedToken.isEmpty ? (current?.token ?? '') : typedToken,
+      token: token,
       label: typedLabel.isEmpty ? null : typedLabel,
     );
 
@@ -172,6 +182,17 @@ class _ConnectionScreenState extends ConsumerState<ConnectionScreen> {
                 prefixIcon: Icon(Icons.label_outline),
               ),
             ),
+            if (_isAdd) ...[
+              const SizedBox(height: 16),
+              _ReuseTokenField(
+                selected: _reusedFrom,
+                enabled: !_busy,
+                onChanged: (value) => setState(() {
+                  _reusedFrom = value;
+                  if (value != null) _tokenCtrl.clear();
+                }),
+              ),
+            ],
             const SizedBox(height: 16),
             TextFormField(
               key: ConnectionScreen.tokenFieldKey,
@@ -181,9 +202,11 @@ class _ConnectionScreenState extends ConsumerState<ConnectionScreen> {
               autocorrect: false,
               enableSuggestions: false,
               decoration: InputDecoration(
-                labelText: _isAdd
-                    ? 'Fine-grained token'
-                    : 'Yeni token (boş bırakılırsa değişmez)',
+                labelText: switch ((_isAdd, _reusedFrom)) {
+                  (true, null) => 'Fine-grained token',
+                  (true, _) => 'Farklı token kullan (isteğe bağlı)',
+                  _ => 'Yeni token (boş bırakılırsa değişmez)',
+                },
                 border: const OutlineInputBorder(),
                 prefixIcon: const Icon(Icons.key_outlined),
                 suffixIcon: IconButton(
@@ -193,9 +216,11 @@ class _ConnectionScreenState extends ConsumerState<ConnectionScreen> {
                   onPressed: () => setState(() => _showToken = !_showToken),
                 ),
               ),
-              validator: (v) => _isAdd && (v == null || v.trim().isEmpty)
-                  ? 'Token gerekli'
-                  : null,
+              // Mevcut bir token seçildiyse alanın boş kalması normaldir.
+              validator: (v) =>
+                  _isAdd && _reusedFrom == null && (v == null || v.trim().isEmpty)
+                      ? 'Token gerekli'
+                      : null,
             ),
             if (_error != null) ...[
               const SizedBox(height: 16),
@@ -216,6 +241,65 @@ class _ConnectionScreenState extends ConsumerState<ConnectionScreen> {
           ],
         ),
       ),
+    );
+  }
+}
+
+/// Kayıtlı bir bağlantının token'ını yeni repo için yeniden kullanma seçici.
+///
+/// Fine-grained token'lar **birden çok repoyu** kapsayabildiği için, kullanıcı
+/// çoğu zaman zaten elindeki token'la yeni repoya erişebiliyor. Bunu sunmamak,
+/// her repo eklemede token üretmeye zorlardı — çoklu reponun asıl sürtünmesi
+/// buydu.
+///
+/// Güvenlik tarafı gevşemiyor: seçilen token yine `verifyHubAccess`'ten
+/// geçiyor, yani repoyu kapsamıyorsa kaydedilmiyor ve kullanıcı sebebini
+/// görüyor (B-022, B-026).
+class _ReuseTokenField extends ConsumerWidget {
+  const _ReuseTokenField({
+    required this.selected,
+    required this.enabled,
+    required this.onChanged,
+  });
+
+  final HubConfig? selected;
+  final bool enabled;
+  final ValueChanged<HubConfig?> onChanged;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final connections =
+        ref.watch(hubConnectionsProvider).valueOrNull?.connections ?? const [];
+    if (connections.isEmpty) return const SizedBox.shrink();
+
+    return DropdownButtonFormField<String?>(
+      key: ConnectionScreen.reuseTokenKey,
+      initialValue: selected?.slug,
+      isExpanded: true,
+      decoration: const InputDecoration(
+        labelText: 'Token',
+        helperText: 'Aynı token birden çok repoyu kapsıyorsa yeniden kullan.',
+        border: OutlineInputBorder(),
+        prefixIcon: Icon(Icons.vpn_key_outlined),
+      ),
+      items: [
+        const DropdownMenuItem(value: null, child: Text('Yeni token gireceğim')),
+        for (final c in connections)
+          DropdownMenuItem(
+            value: c.slug,
+            child: Text(
+              '${c.displayName} token\'ını kullan',
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+      ],
+      onChanged: enabled
+          ? (slug) => onChanged(
+                slug == null
+                    ? null
+                    : connections.firstWhere((c) => c.slug == slug),
+              )
+          : null,
     );
   }
 }
