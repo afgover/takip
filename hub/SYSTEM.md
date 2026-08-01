@@ -5,7 +5,7 @@ ve hangi şemaya uyacağını** tanımlar. Agent ve kullanıcı uygulaması bu s
 dışına çıkmaz. Sözleşme değişiklikleri `EVOLUTION.md`'ye kaydedilir ve bu dosyanın
 başındaki sürüm numarası artırılır.
 
-**Sözleşme sürümü:** 1.3
+**Sözleşme sürümü:** 1.4
 **Zaman biçimi:** her yerde ISO 8601, UTC (`2026-07-30T14:05:00Z`)
 **Dil:** doküman içerikleri Türkçe; alan adları (frontmatter anahtarları) İngilizce
 **Dosya adları:** küçük harf, Türkçe karakter yok, boşluk yerine tire (`gorev-adi`)
@@ -110,8 +110,21 @@ Oturumdan bağımsız, kalıcı referans dokümanlar (mimari kararlar gibi)
 ```
 tasks/inbox/     # yeni: kullanıcı (app) veya agent ekledi, henüz ele alınmadı
 tasks/active/    # agent ele aldı, üzerinde çalışılıyor
+tasks/waiting/   # agent kullanıcıyı bekliyor — top kullanıcıda (v1.4)
 tasks/done/      # tamamlandı (arşiv — silinmez)
 ```
+
+> **`waiting/` neden var (v1.4, K-022):** Sözleşme 1.3'e kadar sistem yalnız
+> **kullanıcı → agent** yönünü modelliyordu; `inbox` ve `active`'in ikisi de
+> "agent ele alacak" demekti. Agent'ın kullanıcıdan beklediği işler (token
+> üret, cihazı bağla, karar ver, onayla) yalnızca `BACKLOG.md`'de `(user)`
+> etiketiyle duruyordu ve uygulamada hiçbir yerde görünmüyordu — kullanıcı
+> ancak sohbette söylenirse haberdar oluyordu. `waiting/`, bu yönü de
+> klasörle temsil eder ve "durum = klasör" ilkesini korur.
+>
+> Ölçek ayrımı: `waiting/` **somut ve kısa vadeli** işler içindir ("token
+> üret"). Yol haritası ölçeğindeki kullanıcı işleri (`(user)` maddeleri,
+> örn. "bir hafta gerçek kullanım") `BACKLOG.md`'de kalır.
 
 Dosya adı: `<YYYY-MM-DD>-<slug>.md` (örn. `2026-07-30-market-listesi.md`).
 
@@ -145,12 +158,45 @@ result: none                 # tamamlanınca: sonucun 1 satır özeti veya artif
 ```
 
 Kurallar:
-- **App yalnızca `tasks/inbox/`'a yazar**; başka klasöre dokunmaz.
-- Klasörler arası taşımayı yalnızca agent yapar (`inbox → active → done`).
+- **App yalnızca `tasks/inbox/`'a yazar**; başka klasöre dokunmaz. Bu, v1.4'te
+  de değişmedi: kullanıcı bekleyen bir işi bitirdiğinde app o dosyayı
+  taşımaz, **inbox'a bir bildirim görevi** yazar (aşağıya bakın).
+- Klasörler arası taşımayı yalnızca agent yapar
+  (`inbox → active → waiting → active → done`; sıra bunlarla sınırlı değil,
+  ama her geçişi agent yapar).
 - Taşıma = eski yolu silme + yeni yola yazma (Contents API'de iki çağrı);
   commit mesajı: `task(T-001): active → done`.
 - `done/` içindeki dosyalar silinmez; yılda bir `done/arsiv-<yil>/` altına
   toplanabilir.
+
+### `waiting/` kullanımı
+
+**Agent, bir görevi ancak kullanıcıdan somut bir şey beklerken `waiting/`e
+taşır** ve `## Notlar`a ne beklediğini tek satırda yazar. Beklenen şey
+belirsizse görev `active/`te kalır — "belki kullanıcı bir şey yapar" durumu
+`waiting/` değildir.
+
+Kullanıcı işi bitirdiğinde uygulamadaki **"Yaptım"** düğmesine basar; app
+`tasks/inbox/`'a şu şemada bir bildirim görevi yazar:
+
+```markdown
+---
+id: pending
+title: "<orijinal başlık> — yapıldı"
+created_by: user
+category: gorev
+tags: [waiting-done]
+...
+---
+
+## İstek
+`tasks/waiting/<dosya>.md` (T-00X) görevinde beklenen iş yapıldı.
+```
+
+Agent bu bildirimi gördüğünde asıl görevi `waiting/` → `done/` taşır (ya da iş
+devam ediyorsa `active/`e alır) ve bildirim görevini `done/`a kapatır.
+Bildirimin ayrı bir görev olmasının nedeni R-001: app'in yazma alanı tek
+klasördür ve bu garanti derleme zamanı sabitidir.
 
 ## 5. `knowledge/` — bilgi tabanı
 
@@ -214,7 +260,7 @@ Uygulamanın "göz atma" ekranı şu kategorileri klasörlerden türetir:
 
 | Kategori | Kaynak |
 |---|---|
-| Bekleyen görevler | `tasks/inbox/` + `tasks/active/` |
+| Bekleyen görevler | `tasks/inbox/` + `tasks/active/` + `tasks/waiting/` |
 | Tamamlananlar | `tasks/done/` |
 | Oturumlar | `sessions/` |
 | Raporlar & Planlar | `artifacts/` (frontmatter `type`'a göre alt filtre) |

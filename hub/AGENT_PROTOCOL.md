@@ -26,6 +26,14 @@ tanımlanır. Prosedür, oturumun konusu ne olursa olsun geçerlidir.
 7. Yeni bir kural, skill veya ders ortaya çıktığında `knowledge/` altındaki
    ilgili dosyaya ID'li kayıt ekle. "Sonra yazarım" yok — çıktığı anda yazılır.
 8. Görev durum değişikliklerini klasör taşımayla ve doğru commit mesajıyla işle.
+9. **Kullanıcıdan bir şey bekliyorsan görev aç ve `tasks/waiting/`e koy.**
+   Sohbette söylemek yeterli değildir: sohbet kapanır, kullanıcı telefonunda
+   hiçbir iz görmez. Kural şu — *"kullanıcı yapmadan ilerleyemiyorsam, bu bir
+   `waiting/` görevidir."* Beklenen şeyi `## Notlar`a tek satırda, yapılabilir
+   biçimde yaz ("GitHub'da fine-grained token üret; Contents: Read and write").
+   Belirsiz beklentiler (`belki bir gün bakar`) `waiting/`e konmaz.
+   Kullanıcı uygulamadan **"Yaptım"** dediğinde inbox'a bildirim görevi düşer;
+   onu görünce asıl görevi `waiting/`ten çıkar ve bildirimi kapat.
 
 ## Oturum kapanışında
 
