@@ -261,6 +261,17 @@ toplanır ve gerekiyorsa Faz 6 maddelerini (B-060…B-064) yeniden sıralar.
   sanılmıştı, kaynağa bakılıp cihazda üç senaryo denenince bunun aracın hata
   yolu olduğu görüldü ve L-014 düzeltildi (L-016). 236 test.
   → S-2026-08-01-token-kaliciligi, K-019, R-006, L-015, L-016
+- 2026-08-01: **Sisteme ikinci proje ekleme yolu açıldı.** Yeni proje ekleme
+  prosedürü kalıcı belge oldu (`artifacts/reference/proje-ekleme.md`) ve bunu
+  yazarken sözleşmeyle uygulama arasında bir çelişki bulundu: sözleşme "hub
+  kökü `<proje>_takip` reposunun kökü" diyordu, uygulama `hub/` klasörünü
+  sabit arıyordu — o hâliyle ikinci bir repo hiç eklenemezdi. Sözleşme 1.3'e
+  güncellendi (K-020). Ayrıca Project Taskr arşive kaldırıldığı için oradaki
+  35 belge takip hub'ına referans arşiv olarak taşındı (K-021); arşivde
+  bulunmayan şey de kayda geçti: Project Taskr'ın yönettiği projelerin
+  (CoPilot, Financer, Sarraf, DataSources) verisi repoda değil, uygulamanın
+  veritabanındaydı. 247 test.
+  → S-2026-08-01-proje-ekleme-ve-arsiv, K-020, K-021
 
 **Kararlar:**
 - **K-019:** Kolaylık için token'ın korumasız bir dizeye çevrilmesine izin
@@ -271,3 +282,22 @@ toplanır ve gerekiyorsa Faz 6 maddelerini (B-060…B-064) yeniden sıralar.
   kendisidir, panoya düşen bir dize repolara yazma yetkisinin kendisi olurdu.
   Şifreleme elle yazılmaz, denenmiş bir kütüphaneden gelir. Koşullar R-006'da.
   → B-055, S-2026-08-01-token-kaliciligi
+- **K-020:** **Hub kökü her repoda `hub/` klasörüdür** — istisnasız. Sözleşme
+  1.2 "diğer projeler için hub, `<proje>_takip` reposunun köküdür" diyordu;
+  ikinci proje eklenirken bunun uygulamayla çeliştiği görüldü: app hub kökünü
+  `hub/` diye **sabit** tutuyor (`Hub.basePath`) ve bağlantı başına
+  ayarlanamıyor, dolayısıyla kök yerleşimli bir repo onboarding'de
+  reddedilirdi. İki çıkış vardı — sözleşmeyi uygulamaya uydurmak ya da
+  uygulamaya bağlantı başına `basePath` eklemek. Birincisi seçildi (kullanıcı
+  kararı): tek kural her repoda geçerli olur, app hiç değişmez ve "yalnız
+  `hub/tasks/inbox`'a yazar" garantisi derleme zamanı sabiti olarak kalır.
+  Bedeli, yalnız hub verisi içeren bir repoda bir seviye fazladan klasör.
+  → Sözleşme 1.3, `artifacts/reference/proje-ekleme.md`
+- **K-021:** Arşive kaldırılan bir projenin belgeleri, o proje için ayrı hub
+  reposu açılmadan **takip hub'ında referans arşiv** olarak tutulur
+  (`artifacts/reference/<proje>/`). Project Taskr'da uygulandı: proje arşive
+  kaldırıldığı için `project_taskr_takip` açılmadı, 35 belge kaynak yolları
+  belirtilerek olduğu gibi taşındı. Gerekçe: ölü bir proje için ayrı repo +
+  token + bağlantı bakımı, salt okunur tarihçe karşılığında fazla yük. Proje
+  yeniden canlanırsa belgeler kendi `<proje>_takip` hub'ına taşınır.
+  → `artifacts/reference/project-taskr/arsiv-dizini.md`
