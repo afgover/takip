@@ -147,6 +147,10 @@ agent'ın ele alması, sonucun app'te görünmesi. (Backlog Faz 2–3.)
 - **Agent tarafında açık iş kalmadı.** Kalanların hepsi kullanıcıya bağlı:
   B-015 (token), B-020 (SDK + `android/`), B-034'ün cihaz ayağı, B-052 (bir
   haftalık kullanım) ve ona bağlı B-053/B-035.
+- 2026-07-30: Çalışma ortamı kapatıldı; devir notu yazıldı
+  (`artifacts/reference/kurulum-ve-devir.md`) — Mac'te kurulum adımları, token
+  üretimi, ilk gerçek döngü ve yeni oturum için okuma sırası.
+  → S-2026-07-30-kapanis-ve-devir
 - Sıradaki: kullanıcı adımlarından sonra B-034'ün cihaz koşumu ve B-035;
   ardından Faz 4 (hub tarayıcı) — B-026 de aradan alınabilir.
 
