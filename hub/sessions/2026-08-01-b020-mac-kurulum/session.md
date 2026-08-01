@@ -125,3 +125,33 @@ Doğrulama ve cihaza kurulum:
 
 Derleme ~2 GB tüketti (14 GB → 12 GB boş). Sırada B-015: kullanıcı token'ı
 üretip **doğrudan telefona** girecek; token agent'a iletilmeyecek (R-005).
+
+### Kullanıcı
+> uygulamayi test ettim basarili bir sekilde takip reposuna baglandi
+
+### Agent
+Onboarding çalıştı: token üretildi, uygulama `afgover/takip`'e bağlandı. Bu,
+B-022'nin okuma doğrulamasının ve B-026'nın yazma izni yoklamasının gerçek
+GitHub'a karşı ilk kez geçtiği an — o iki madde bugüne kadar yalnızca taklit
+hub üzerinde sınanmıştı.
+
+**Doğrulamanın kaynağı:** kullanıcı beyanı. Telefon bu sırada USB'den ayrılmıştı
+(`adb: device not found`), ekran görüntüsüyle teyit edilemedi. Uygulamanın
+ayakta olduğu ve crash etmediği ise bağlantı kopmadan önce doğrudan ölçülmüştü.
+
+**B-015 ✅** ve **B-020 ✅** işaretlendi. Bunlarla birlikte **Faz 1 ve Faz 2
+tamamen kapandı** — ikisinde de açık madde kalmadı.
+
+Oturumun ürettiği knowledge kayıtları:
+
+- **L-010** — `flutter create` INTERNET iznini release manifest'ine koymaz.
+  Sessiz tuzak: debug'da çalışır, yalnızca release'te patlar.
+- **L-011** — `flutter install` `--debug` olmadan release APK arar.
+- **SK-007** — Var olan projede `flutter create` sonrası artık temizliği
+  (temiz ağaçla başla, `git status` + `git diff` ayrı oku, `widget_test.dart`
+  sil, `.metadata` tut, manifest'i elle oku, `applicationId`'yi doğrula).
+- **SK-008** — Katlanabilir cihazda `adb exec-out screencap` bozuk PNG üretir;
+  cihaza yazıp `adb pull` ile alınır.
+
+Kalan: **B-034'ün cihaz ayağı** — telefondan görev ekleme ve
+inbox → active → done döngüsünün gerçek GitHub üzerinden koşması.
