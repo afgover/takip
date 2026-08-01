@@ -208,3 +208,18 @@ Biçim: `SYSTEM.md` §5.
   `MediaQueryData(padding: ...)` ile yazılır. Yazılan testin gerçekten
   koruduğu, düzeltme geri alınıp testin kırıldığı görülerek sınanır — geçen
   test ile yakalayan test aynı şey değildir.
+
+## L-018 — Tek yönlü modellenmiş bir akış, eksik yönü sessizce sohbete yıkar
+- **Tarih:** 2026-08-01
+- **Kaynak:** S-2026-08-01-bekleyen-isler (B-065)
+- **Açıklama:** Görev sistemi `inbox → active → done` olarak kuruldu; üçü de
+  "agent ele alacak" demekti. Agent'ın **kullanıcıdan** beklediği işler için
+  hiçbir durum yoktu, dolayısıyla o işler `BACKLOG.md`'de `(user)` etiketiyle
+  yaşadı ve uygulamada hiçbir yerde görünmedi. Sonuç: sistemin taşıması
+  gereken bir yükü sohbet taşıdı — B-015 (token) ve B-020 (SDK) 30 Temmuz'dan
+  1 Ağustos'a kadar bekledi ve yalnızca agent sohbette hatırlattığı için
+  ilerledi. Kullanıcının telefonunda hiçbir iz yoktu.
+  **Kural:** iki tarafı olan bir akış modellenirken **her iki yön de** temsil
+  edilmeli. Eksik yön yok olmaz; en kırılgan kanala (sohbet, hafıza, "sonra
+  söylerim") kayar ve orada kaybolur. Tarama sorusu: "bu akışta karşı taraf
+  bir şey yapmalıysa, sistemde nerede duruyor?"
