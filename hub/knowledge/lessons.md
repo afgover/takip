@@ -223,3 +223,22 @@ Biçim: `SYSTEM.md` §5.
   edilmeli. Eksik yön yok olmaz; en kırılgan kanala (sohbet, hafıza, "sonra
   söylerim") kayar ve orada kaybolur. Tarama sorusu: "bu akışta karşı taraf
   bir şey yapmalıysa, sistemde nerede duruyor?"
+
+## L-019 — Adres ve kimlik farklı anlarda okunursa eşleşmeyebilir
+- **Tarih:** 2026-08-01
+- **Kaynak:** S-2026-08-01-coklu-repo-404
+- **Açıklama:** GitHub istemcisinde isteğin **adresi** (`owner/repo`) sağlayıcı
+  kurulurken sabitleniyordu; **token** ise `onRequest` içinde, istek
+  gönderilirken okunuyordu. Token'ı geç okumak bilinçli bir tercihti (B-051:
+  kullanıcı token'ı değiştirince elde eski token kalmasın). Tek repo varken
+  zararsızdı — okunan token her zaman o tek reponundu.
+  Çoklu repoda (T-003) bu iki okuma arasına **aktif bağlantının değişmesi**
+  girebiliyor: sonuç, A reposunun adresine B reposunun token'ıyla gitmek.
+  Private repoda GitHub'ın cevabı **404**, yani kullanıcıya "Bulunamadı" —
+  yetki hatası gibi bile görünmüyor. Belirti geçiciydi (bir sonraki yoklamada
+  siliniyordu), bu yüzden kolayca "ağ dalgalanması" sanılabilirdi.
+  **Kural:** bir isteğin **adresi ile kimliği aynı kaynaktan ve aynı anda**
+  belirlenmeli. Geç okunan bir değer, erken sabitlenmiş bir değerle eşleşmek
+  zorundaysa, ikisini birbirine bağla — burada token isteğin **yolundan**
+  seçilerek bağlandı. Tarama sorusu: "bu iki değer farklı anlarda okunuyorsa,
+  arada değişirlerse ne olur?"
