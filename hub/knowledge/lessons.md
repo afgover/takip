@@ -193,3 +193,18 @@ Biçim: `SYSTEM.md` §5.
   kaldırma hiç ihtimal dışı kalır. **Genel ders:** "araç şöyle yapıyor" diye
   kaydedilen bir davranış, aracın kaynağına bakılarak ve tekrar denenerek
   doğrulanmadan kalıcı kural sayılmamalı — L-014 tek gözleme dayanıyordu.
+
+## L-017 — Testin geçmesi arayüzün doğru göründüğü anlamına gelmez
+- **Tarih:** 2026-08-01
+- **Kaynak:** S-2026-08-01-cihazda-dogrulama
+- **Açıklama:** Çoklu repo şeridi 237 testten geçiyordu ama gerçek cihazda
+  **durum çubuğunun altına giriyordu**: repo adı saatin ve pil ikonunun
+  üzerine biniyordu. Sebep, kabuğun `AppBar`sız başlaması ve güvenli alanın
+  bırakılmamasıydı. Widget testleri varsayılan olarak sistem alanı (`padding`)
+  olmayan bir ekranda koşuyor, dolayısıyla bu sınıf hatayı **yapısal olarak**
+  göremez.
+  **Kural:** ekranın en üstüne ya da en altına yerleşen her yeni bileşen
+  cihazda gözle doğrulanır; doğrulandıktan sonra da testi
+  `MediaQueryData(padding: ...)` ile yazılır. Yazılan testin gerçekten
+  koruduğu, düzeltme geri alınıp testin kırıldığı görülerek sınanır — geçen
+  test ile yakalayan test aynı şey değildir.
