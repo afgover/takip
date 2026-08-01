@@ -272,6 +272,14 @@ toplanır ve gerekiyorsa Faz 6 maddelerini (B-060…B-064) yeniden sıralar.
   (CoPilot, Financer, Sarraf, DataSources) verisi repoda değil, uygulamanın
   veritabanındaydı. 247 test.
   → S-2026-08-01-proje-ekleme-ve-arsiv, K-020, K-021
+- 2026-08-01: **Görev mekanizmasının eksik yönü kapatıldı.** Kullanıcının
+  "agent'ın benden beklediği işler bekleyenlerde görünüyor mu?" sorusu
+  ölçüldü: görünmüyordu. `inbox` ve `active`'in ikisi de "agent ele alacak"
+  demekti; agent→user işleri yalnız `BACKLOG.md`'de `(user)` etiketiyle
+  duruyordu (50 maddenin 2'si) ve uygulamada hiçbir yerde yoktu. Sözleşme
+  1.4 ile `tasks/waiting/` eklendi (K-022), uygulama bu klasörü de okuyor ve
+  "Yaptım" düğmesi kapatma yolunu sohbetten çıkarıyor. 258 test.
+  → S-2026-08-01-bekleyen-isler, K-022, L-018
 
 **Kararlar:**
 - **K-019:** Kolaylık için token'ın korumasız bir dizeye çevrilmesine izin
@@ -301,3 +309,15 @@ toplanır ve gerekiyorsa Faz 6 maddelerini (B-060…B-064) yeniden sıralar.
   token + bağlantı bakımı, salt okunur tarihçe karşılığında fazla yük. Proje
   yeniden canlanırsa belgeler kendi `<proje>_takip` hub'ına taşınır.
   → `artifacts/reference/project-taskr/arsiv-dizini.md`
+- **K-022:** Görev akışı **iki yönlü** modellenir: `tasks/waiting/`,
+  agent'ın kullanıcıdan somut bir şey beklediği durumdur. Alternatifler
+  elendi — (a) frontmatter alanı (`waiting_on: user`): durumun bir kısmı
+  klasörde bir kısmı alanda olurdu, "durum = klasör" (K-004) bozulurdu ve
+  listeler dosya indirmeden çizilemezdi; (b) yalnız `BACKLOG.md`'nin `(user)`
+  maddelerini yüzeye çıkarmak: backlog yol haritası ölçeğinde, günlük
+  "token üret" işiyle karışırdı. Ölçek ayrımı korundu: kısa vadeli somut
+  işler `waiting/`, yol haritası işleri backlog.
+  **R-001 gevşetilmedi:** kullanıcı işi bitirince app dosyayı taşımaz,
+  inbox'a bildirim görevi yazar; taşımayı agent yapar. App'in yazma alanı
+  tek klasör kalır ve bu garanti derleme zamanı sabitidir.
+  → Sözleşme 1.4, B-065, L-018
