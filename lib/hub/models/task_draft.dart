@@ -14,6 +14,7 @@ class TaskDraft {
     required this.commitMessage,
     required this.title,
     required this.createdAt,
+    this.repoSlug,
   });
 
   /// Kullanıcı girdisinden sözleşmeye uygun taslak üretir (SYSTEM.md §4, §8).
@@ -59,6 +60,7 @@ class TaskDraft {
         commitMessage: json['commitMessage'] as String,
         title: json['title'] as String,
         createdAt: DateTime.parse(json['createdAt'] as String),
+        repoSlug: json['repoSlug'] as String?,
       );
 
   final String fileName;
@@ -69,12 +71,25 @@ class TaskDraft {
   final String title;
   final DateTime createdAt;
 
+  /// Taslağın **hangi repoya** ait olduğu (`owner/ad`), kuyruğa alınırken
+  /// damgalanır (T-003).
+  ///
+  /// Çoklu repoda bu alan olmadan kuyruk yanlış hedefe boşalırdı: çevrimdışıyken
+  /// A reposuna yazılan görev, kullanıcı B'ye geçtikten sonra bağlantı gelince
+  /// B'ye giderdi. Görevin yanlış projeye düşmesi sessiz bir veri hatasıdır —
+  /// kullanıcı kaybolduğunu bile fark etmez, yalnızca "eklemiştim ama yok" der.
+  ///
+  /// T-003 öncesi kuyruğa girmiş taslaklarda null olabilir; o kayıtlar aktif
+  /// repoya ait sayılır (tek repo varken kuyruğa girmişlerdir).
+  final String? repoSlug;
+
   Map<String, dynamic> toJson() => {
         'fileName': fileName,
         'content': content,
         'commitMessage': commitMessage,
         'title': title,
         'createdAt': createdAt.toIso8601String(),
+        if (repoSlug != null) 'repoSlug': repoSlug,
       };
 
   /// Aynı taslağın farklı dosya adıyla kopyası — ad çakışmasında kullanılır
@@ -85,6 +100,17 @@ class TaskDraft {
         commitMessage: commitMessage,
         title: title,
         createdAt: createdAt,
+        repoSlug: repoSlug,
+      );
+
+  /// Kuyruğa alınırken hedef repoyu damgalar.
+  TaskDraft forRepo(String slug) => TaskDraft(
+        fileName: fileName,
+        content: content,
+        commitMessage: commitMessage,
+        title: title,
+        createdAt: createdAt,
+        repoSlug: slug,
       );
 
   static String _body(String title, String description) => '# $title\n\n'

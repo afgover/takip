@@ -3,16 +3,18 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../github/client.dart';
 import '../../hub/hub_config.dart';
+import '../../hub/hub_connections.dart';
 import '../../hub/hub_watcher.dart';
 import '../../hub/outbox.dart';
 import '../../hub/settings.dart';
 import '../common/hub_error_view.dart';
-import 'connection_screen.dart';
+import 'connections_screen.dart';
 
 /// Ayarlar (B-051): bağlantı, yoklama aralığı, önbellek, durum.
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
 
+  static const reposKey = Key('settings-repos');
   static const intervalKey = Key('settings-poll-interval');
   static const clearCacheKey = Key('settings-clear-cache');
   static const resetKey = Key('settings-reset');
@@ -23,6 +25,8 @@ class SettingsScreen extends ConsumerWidget {
     final status = ref.watch(hubWatcherProvider);
     final interval = ref.watch(appSettingsProvider).pollInterval;
     final queued = ref.watch(outboxProvider).valueOrNull ?? const [];
+    final connectionCount =
+        ref.watch(hubConnectionsProvider).valueOrNull?.length ?? 1;
 
     return Scaffold(
       appBar: AppBar(title: const Text('Ayarlar')),
@@ -30,13 +34,18 @@ class SettingsScreen extends ConsumerWidget {
         children: [
           const _SectionTitle('Bağlantı'),
           ListTile(
-            leading: const Icon(Icons.link),
-            title: const Text('Hub reposu'),
-            subtitle: Text(config?.slug ?? '—'),
+            key: reposKey,
+            leading: const Icon(Icons.folder_copy_outlined),
+            title: const Text('Repolar'),
+            subtitle: Text(
+              connectionCount <= 1
+                  ? (config?.displayName ?? '—')
+                  : '${config?.displayName ?? '—'} · $connectionCount repo kayıtlı',
+            ),
             trailing: const Icon(Icons.chevron_right),
             onTap: () => Navigator.of(context).push(
               MaterialPageRoute<void>(
-                builder: (_) => const ConnectionScreen(),
+                builder: (_) => const ConnectionsScreen(),
               ),
             ),
           ),
@@ -109,9 +118,18 @@ class SettingsScreen extends ConsumerWidget {
           ListTile(
             key: resetKey,
             leading: const Icon(Icons.logout),
-            title: const Text('Bağlantıyı sıfırla'),
-            subtitle: const Text('Token silinir, onboarding\'e dönülür'),
-            onTap: () => _confirmReset(context, ref, queued.length),
+            title: Text(
+              connectionCount <= 1
+                  ? 'Bağlantıyı sıfırla'
+                  : 'Tüm bağlantıları sıfırla',
+            ),
+            subtitle: Text(
+              connectionCount <= 1
+                  ? 'Token silinir, onboarding\'e dönülür'
+                  : '$connectionCount reponun token\'ı silinir, onboarding\'e dönülür',
+            ),
+            onTap: () =>
+                _confirmReset(context, ref, queued.length, connectionCount),
           ),
         ],
       ),
@@ -122,15 +140,24 @@ class SettingsScreen extends ConsumerWidget {
     BuildContext context,
     WidgetRef ref,
     int queuedCount,
+    int connectionCount,
   ) async {
+    final scope = connectionCount <= 1
+        ? 'Token cihazdan silinir'
+        : '$connectionCount reponun token\'ı cihazdan silinir';
+
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Bağlantı sıfırlansın mı?'),
+        title: Text(
+          connectionCount <= 1
+              ? 'Bağlantı sıfırlansın mı?'
+              : 'Bütün bağlantılar sıfırlansın mı?',
+        ),
         content: Text(
           queuedCount == 0
-              ? 'Token cihazdan silinir ve onboarding ekranına dönersin.'
-              : 'Token cihazdan silinir. Kuyrukta bekleyen $queuedCount görev '
+              ? '$scope ve onboarding ekranına dönersin.'
+              : '$scope. Kuyrukta bekleyen $queuedCount görev '
                   'gönderilemeden kalır.',
         ),
         actions: [

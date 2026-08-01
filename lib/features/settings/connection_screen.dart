@@ -8,15 +8,27 @@ import '../../hub/hub_access.dart';
 import '../../hub/hub_config.dart';
 import '../../hub/hub_watcher.dart';
 
-/// Bağlantıyı değiştirme: repo ve/veya token (B-051).
+/// Ekran ne yapıyor: yeni repo mu ekliyor, var olanı mı düzenliyor (T-003).
+enum ConnectionMode { add, edit }
+
+/// Bağlantı ekleme / değiştirme: repo, ad ve token (B-051, T-003).
 ///
 /// Onboarding'le aynı kural: yeni bilgiler **doğrulanmadan kaydedilmez**
 /// (B-022). Çalışan bir kurulumu bozup kullanıcıyı boş listelerle bırakmak,
 /// hiç değiştirmemekten kötü.
 class ConnectionScreen extends ConsumerStatefulWidget {
-  const ConnectionScreen({super.key});
+  const ConnectionScreen({
+    super.key,
+    this.mode = ConnectionMode.edit,
+    this.initial,
+  });
+
+  /// Düzenlenecek bağlantı. Verilmezse aktif bağlantı düzenlenir.
+  final HubConfig? initial;
+  final ConnectionMode mode;
 
   static const repoFieldKey = Key('connection-repo-field');
+  static const labelFieldKey = Key('connection-label-field');
   static const tokenFieldKey = Key('connection-token-field');
   static const submitKey = Key('connection-submit');
   static const errorKey = Key('connection-error');
@@ -28,22 +40,31 @@ class ConnectionScreen extends ConsumerStatefulWidget {
 class _ConnectionScreenState extends ConsumerState<ConnectionScreen> {
   final _formKey = GlobalKey<FormState>();
   late final TextEditingController _repoCtrl;
+  late final TextEditingController _labelCtrl;
   final _tokenCtrl = TextEditingController();
 
   bool _busy = false;
   bool _showToken = false;
   String? _error;
 
+  bool get _isAdd => widget.mode == ConnectionMode.add;
+
+  /// Düzenlenen bağlantı; ekleme kipinde null.
+  HubConfig? get _target =>
+      _isAdd ? null : (widget.initial ?? ref.read(hubConfigProvider).value);
+
   @override
   void initState() {
     super.initState();
-    final config = ref.read(hubConfigProvider).value;
-    _repoCtrl = TextEditingController(text: config?.slug ?? '');
+    final target = _target;
+    _repoCtrl = TextEditingController(text: _isAdd ? '' : (target?.slug ?? ''));
+    _labelCtrl = TextEditingController(text: target?.label ?? '');
   }
 
   @override
   void dispose() {
     _repoCtrl.dispose();
+    _labelCtrl.dispose();
     _tokenCtrl.dispose();
     super.dispose();
   }
@@ -51,15 +72,18 @@ class _ConnectionScreenState extends ConsumerState<ConnectionScreen> {
   Future<void> _save() async {
     if (_busy || !_formKey.currentState!.validate()) return;
 
-    final current = ref.read(hubConfigProvider).value;
+    final current = _target;
     final parsed = HubConfig.parseRepo(_repoCtrl.text)!;
     final typedToken = _tokenCtrl.text.trim();
+    final typedLabel = _labelCtrl.text.trim();
 
-    // Token alanı boş bırakıldıysa yalnız repo değişiyor demektir.
+    // Düzenlemede token alanı boş bırakılırsa mevcut token korunur; eklemede
+    // token zorunludur (doğrulayacak bir şey olmalı).
     final candidate = HubConfig(
       owner: parsed.owner,
       repo: parsed.repo,
       token: typedToken.isEmpty ? (current?.token ?? '') : typedToken,
+      label: typedLabel.isEmpty ? null : typedLabel,
     );
 
     if (candidate.token.isEmpty) {
@@ -82,7 +106,9 @@ class _ConnectionScreenState extends ConsumerState<ConnectionScreen> {
       if (!mounted) return;
       Navigator.of(context).pop();
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Bağlantı güncellendi.')),
+        SnackBar(
+          content: Text(_isAdd ? 'Repo eklendi.' : 'Bağlantı güncellendi.'),
+        ),
       );
     } on HubError catch (e) {
       if (mounted) setState(() => _error = e.message);
@@ -98,14 +124,20 @@ class _ConnectionScreenState extends ConsumerState<ConnectionScreen> {
     // Ekran, yapılandırma henüz yüklenirken açılmış olabilir; geldiğinde repo
     // alanını doldur (kullanıcı yazmaya başlamadıysa).
     ref.listen<AsyncValue<HubConfig?>>(hubConfigProvider, (previous, next) {
+      if (_isAdd || widget.initial != null) return;
       final config = next.value;
       if (config != null && _repoCtrl.text.trim().isEmpty) {
         _repoCtrl.text = config.slug;
       }
     });
 
+    // Var olan bir bağlantının reposu değiştirilemez: değiştirilseydi kayıt
+    // "başka bir repo" olurdu ve eski bağlantı listede öksüz kalırdı. Repo
+    // değiştirmek isteyen ekler, sonra eskisini kaldırır.
+    final repoLocked = !_isAdd && _target != null;
+
     return Scaffold(
-      appBar: AppBar(title: const Text('Bağlantı')),
+      appBar: AppBar(title: Text(_isAdd ? 'Repo ekle' : 'Bağlantı')),
       body: Form(
         key: _formKey,
         child: ListView(
@@ -114,16 +146,31 @@ class _ConnectionScreenState extends ConsumerState<ConnectionScreen> {
             TextFormField(
               key: ConnectionScreen.repoFieldKey,
               controller: _repoCtrl,
-              enabled: !_busy,
+              enabled: !_busy && !repoLocked,
               autocorrect: false,
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 labelText: 'Repo (owner/ad)',
-                border: OutlineInputBorder(),
-                prefixIcon: Icon(Icons.folder_outlined),
+                border: const OutlineInputBorder(),
+                prefixIcon: const Icon(Icons.folder_outlined),
+                helperText: repoLocked
+                    ? 'Repo değiştirilemez — yeni repo eklemek için "Repo ekle".'
+                    : null,
               ),
               validator: (v) => HubConfig.parseRepo(v ?? '') == null
                   ? 'owner/ad biçiminde girin'
                   : null,
+            ),
+            const SizedBox(height: 16),
+            TextFormField(
+              key: ConnectionScreen.labelFieldKey,
+              controller: _labelCtrl,
+              enabled: !_busy,
+              decoration: const InputDecoration(
+                labelText: 'Ad (isteğe bağlı)',
+                helperText: 'Repo seçicide görünür; boşsa owner/ad gösterilir.',
+                border: OutlineInputBorder(),
+                prefixIcon: Icon(Icons.label_outline),
+              ),
             ),
             const SizedBox(height: 16),
             TextFormField(
@@ -134,7 +181,9 @@ class _ConnectionScreenState extends ConsumerState<ConnectionScreen> {
               autocorrect: false,
               enableSuggestions: false,
               decoration: InputDecoration(
-                labelText: 'Yeni token (boş bırakılırsa değişmez)',
+                labelText: _isAdd
+                    ? 'Fine-grained token'
+                    : 'Yeni token (boş bırakılırsa değişmez)',
                 border: const OutlineInputBorder(),
                 prefixIcon: const Icon(Icons.key_outlined),
                 suffixIcon: IconButton(
@@ -144,6 +193,9 @@ class _ConnectionScreenState extends ConsumerState<ConnectionScreen> {
                   onPressed: () => setState(() => _showToken = !_showToken),
                 ),
               ),
+              validator: (v) => _isAdd && (v == null || v.trim().isEmpty)
+                  ? 'Token gerekli'
+                  : null,
             ),
             if (_error != null) ...[
               const SizedBox(height: 16),

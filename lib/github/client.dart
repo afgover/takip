@@ -232,11 +232,23 @@ final etagCacheProvider = Provider<EtagCache>((ref) {
 final githubDioProvider = Provider<Dio>((ref) {
   final cache = ref.watch(etagCacheProvider);
 
-  // Repo ya da token değişirse önceki hesabın gövdeleri elde kalmasın.
+  // Önbellek anahtarı isteğin **tam URI'sidir** (bkz. [EtagCache.keyFor]), yani
+  // repo adı anahtarın içindedir ve farklı repoların gövdeleri birbirine
+  // karışamaz. Bu yüzden repo değiştirmek önbelleği geçersiz kılmaz — T-003'te
+  // repolar arası geçiş sık bir hareket hâline geldiği için her geçişte
+  // temizlemek, her geçişi baştan indirmeye çevirirdi.
+  //
+  // Temizlenmesi gereken iki durum kaldı:
+  //   1. Aynı repo için token değişti → gövdeler başka bir kimliğe ait olabilir.
+  //   2. Bağlantı tümden sıfırlandı → elde eski hesabın verisi kalmasın.
   ref.listen<AsyncValue<HubConfig?>>(hubConfigProvider, (prev, next) {
     final before = prev?.value;
     final after = next.value;
-    if (before?.slug != after?.slug || before?.token != after?.token) {
+    if (after == null) {
+      if (before != null) cache.clear();
+      return;
+    }
+    if (before != null && before.slug == after.slug && before.token != after.token) {
       cache.clear();
     }
   });

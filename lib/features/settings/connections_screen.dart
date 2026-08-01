@@ -1,0 +1,138 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../../hub/hub_config.dart';
+import '../../hub/hub_connections.dart';
+import '../../hub/outbox.dart';
+import '../common/repo_switcher.dart';
+import 'connection_screen.dart';
+
+/// Kayıtlı repoların listesi: geçiş, düzenleme, silme, ekleme (T-003).
+class ConnectionsScreen extends ConsumerWidget {
+  const ConnectionsScreen({super.key});
+
+  static const addKey = Key('connections-add');
+  static Key removeKey(String slug) => Key('connections-remove-$slug');
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final state =
+        ref.watch(hubConnectionsProvider).valueOrNull ?? const HubConnectionsState();
+    final activeSlug = state.active?.slug;
+    final queued = ref.watch(outboxProvider).valueOrNull ?? const [];
+
+    return Scaffold(
+      appBar: AppBar(title: const Text('Repolar')),
+      body: ListView(
+        children: [
+          for (final connection in state.connections)
+            ListTile(
+              leading: Icon(
+                connection.slug == activeSlug
+                    ? Icons.check_circle
+                    : Icons.circle_outlined,
+              ),
+              title: Text(connection.displayName),
+              subtitle: Text(connection.slug),
+              onTap: connection.slug == activeSlug
+                  ? null
+                  : () => switchToRepo(ref, connection.slug),
+              trailing: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  IconButton(
+                    tooltip: 'Düzenle',
+                    icon: const Icon(Icons.edit_outlined),
+                    onPressed: () => Navigator.of(context).push(
+                      MaterialPageRoute<void>(
+                        builder: (_) => ConnectionScreen(
+                          mode: ConnectionMode.edit,
+                          initial: connection,
+                        ),
+                      ),
+                    ),
+                  ),
+                  IconButton(
+                    key: removeKey(connection.slug),
+                    tooltip: 'Kaldır',
+                    icon: const Icon(Icons.delete_outline),
+                    onPressed: () => _confirmRemove(
+                      context,
+                      ref,
+                      connection,
+                      queued
+                          .where((d) => (d.repoSlug ?? activeSlug) == connection.slug)
+                          .length,
+                      isLast: state.length == 1,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          const Divider(),
+          ListTile(
+            key: addKey,
+            leading: const Icon(Icons.add),
+            title: const Text('Repo ekle'),
+            onTap: () => Navigator.of(context).push(
+              MaterialPageRoute<void>(
+                builder: (_) => const ConnectionScreen(mode: ConnectionMode.add),
+              ),
+            ),
+          ),
+          const Padding(
+            padding: EdgeInsets.fromLTRB(16, 8, 16, 24),
+            child: Text(
+              'Her repo kendi token\'ıyla saklanır. Bir token yalnızca kendi '
+              'reposunu kapsamalı — tek token\'ı bütün repolara yetkilendirmek, '
+              'telefonu kaybettiğinde kaybın büyümesi demektir.',
+              style: TextStyle(fontSize: 12),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _confirmRemove(
+    BuildContext context,
+    WidgetRef ref,
+    HubConfig connection,
+    int queuedCount, {
+    required bool isLast,
+  }) async {
+    final messenger = ScaffoldMessenger.of(context);
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: Text('${connection.displayName} kaldırılsın mı?'),
+        content: Text(
+          [
+            'Bu reponun token\'ı cihazdan silinir.',
+            if (queuedCount > 0)
+              'Kuyrukta bu repoya ait $queuedCount görev var; '
+                  'repo kaldırılırsa gönderilemezler.',
+            if (isLast) 'Bu son repo — kaldırırsan onboarding ekranına dönersin.',
+          ].join('\n\n'),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(false),
+            child: const Text('Vazgeç'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.of(dialogContext).pop(true),
+            child: const Text('Kaldır'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed ?? false) {
+      await ref.read(hubConnectionsProvider.notifier).remove(connection.slug);
+      messenger.showSnackBar(
+        SnackBar(content: Text('${connection.displayName} kaldırıldı.')),
+      );
+    }
+  }
+}

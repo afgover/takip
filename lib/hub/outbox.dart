@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../core/errors.dart';
+import 'hub_connections.dart';
 import 'models/task_draft.dart';
 import 'task_repo.dart';
 
@@ -38,8 +39,18 @@ class Outbox extends AsyncNotifier<List<TaskDraft>> {
         .toList();
   }
 
+  /// Taslağı kuyruğa alır ve **o anki aktif repoyu damgalar** (T-003).
+  /// Damga burada basılır çünkü "hangi repoya gidecek" sorusunun cevabı,
+  /// görevin yazıldığı andaki bağlamdır — gönderildiği andaki değil.
   Future<void> add(TaskDraft draft) async {
-    final current = [...(state.valueOrNull ?? const <TaskDraft>[]), draft];
+    // Senkron okuma bilinçli: kabuk (`app.dart`) yalnızca aktif bağlantı
+    // çözüldükten sonra çiziliyor, dolayısıyla kullanıcı görev ekleyebildiği
+    // anda değer zaten elde. `.future` beklemek buraya bir platform kanalı
+    // bağımlılığı sokardı — yazma yolu, güvenli depo cevap vermezse
+    // askıda kalmamalı.
+    final active = ref.read(hubConnectionsProvider).valueOrNull?.active;
+    final stamped = active == null ? draft : draft.forRepo(active.slug);
+    final current = [...(state.valueOrNull ?? const <TaskDraft>[]), stamped];
     await _persist(current);
   }
 
@@ -64,7 +75,11 @@ class Outbox extends AsyncNotifier<List<TaskDraft>> {
     _flushing = true;
     final remaining = <TaskDraft>[];
     try {
-      final repo = ref.read(taskRepoProvider);
+      // Tek doğru kaynak bağlantı listesi. `hubConfigProvider` buradan
+      // **asenkron** türediği için repo değiştikten hemen sonra bayat kalır;
+      // ona bakan bir boşaltma, geçişin hemen ardından yanlış repoya yazabilir.
+      final connections = ref.read(hubConnectionsProvider).valueOrNull ??
+          const HubConnectionsState();
       var offline = false;
 
       for (final draft in queued) {
@@ -72,8 +87,32 @@ class Outbox extends AsyncNotifier<List<TaskDraft>> {
           remaining.add(draft);
           continue;
         }
+
+        // Damgalı taslak **her zaman** kendi bağlantısına, açıkça gönderilir —
+        // aktif repoya ait olsa bile. Paylaşılan depoyu (`taskRepoProvider`)
+        // kullanmak, onun da `hubConfigProvider` üzerinden bayat kalabilmesi
+        // yüzünden hedefi tahmine bağlardı; hedefi tahmin etmenin bedeli
+        // görevin yanlış projeye düşmesi.
+        //
+        // Damgasız taslak (T-003 öncesi kuyruğa girmiş) için elimizde hedef
+        // yok; tek makul yer paylaşılan depodur.
+        final slug = draft.repoSlug;
+        final target = slug == null ? null : connections.bySlug(slug);
+
+        if (slug != null && target == null) {
+          // Bağlantı kaldırılmış: gönderilecek yer yok. Taslak kuyrukta kalır;
+          // kullanıcı repoyu geri eklerse kendiliğinden gider. Sessizce
+          // atmıyoruz — kullanıcının yazdığı iş kaybolmamalı.
+          remaining.add(draft);
+          continue;
+        }
+
         try {
-          await repo.send(draft);
+          if (target == null) {
+            await ref.read(taskRepoProvider).send(draft);
+          } else {
+            await ref.read(draftSenderProvider)(target, draft);
+          }
         } on HubNetworkError {
           offline = true; // hâlâ ağ yok; kalanları deneme
           remaining.add(draft);

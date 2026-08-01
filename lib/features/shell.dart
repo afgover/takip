@@ -3,13 +3,16 @@ import 'package:flutter/material.dart';
 import 'add_task/add_task_screen.dart';
 import 'browse/browse_screen.dart';
 import 'common/hub_status_banner.dart';
+import 'common/repo_switcher.dart';
 import 'pending/pending_screen.dart';
 import 'settings/settings_screen.dart';
 
 /// Alt gezinmeli ana kabuk: Bekleyenler · Ekle · Tarayıcı · Ayarlar.
 ///
-/// Durum şeridi (B-050) sekmelerin üstünde, yani hangi ekranda olursa olsun
-/// görünür.
+/// Repo şeridi (T-003) ve durum şeridi (B-050) sekmelerin üstünde, yani hangi
+/// ekranda olursa olsun görünür. Sıra bilinçli: "hangi repodayım" sorusu
+/// "bağlantı iyi mi" sorusundan önce gelir — ikincisinin cevabı birincisine
+/// bağlıdır.
 class AppShell extends StatefulWidget {
   const AppShell({super.key});
 
@@ -34,6 +37,7 @@ class _AppShellState extends State<AppShell> {
     return Scaffold(
       body: Column(
         children: [
+          const RepoSwitcher(),
           HubStatusBanner(
             onOpenSettings: () =>
                 setState(() => _index = AppShell.settingsTabIndex),

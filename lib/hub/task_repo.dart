@@ -2,7 +2,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../core/constants.dart';
 import '../core/errors.dart';
+import '../github/client.dart';
 import '../github/contents_api.dart';
+import 'hub_config.dart';
 import 'hub_watcher.dart';
 import 'models/task.dart';
 import 'models/task_draft.dart';
@@ -181,6 +183,38 @@ class TaskRepo {
 
 final taskRepoProvider =
     Provider<TaskRepo>((ref) => TaskRepo(ref.watch(contentsApiProvider)));
+
+/// **Aktif olmayan** bir bağlantıya yazmak için tek seferlik görev deposu
+/// (T-003). Outbox, kuyrukta başka repolara ait taslak varken kullanır.
+///
+/// Kendi Dio'sunu açıp kapatır; paylaşılan istemci kullanılamaz çünkü o,
+/// token'ı her istekte **aktif** bağlantıdan okur. ETag önbelleğinden
+/// yararlanmaması sorun değil: buradan yalnız PUT geçer, önbellek GET'lidir.
+Future<T> withTaskRepoFor<T>(
+  HubConfig config,
+  Future<T> Function(TaskRepo repo) body,
+) async {
+  final dio = buildGithubDio(() => config.token);
+  try {
+    return await body(
+      TaskRepo(ContentsApi(dio, owner: config.owner, repo: config.repo)),
+    );
+  } finally {
+    dio.close();
+  }
+}
+
+/// Bir taslağı belirli bir bağlantıya gönderir.
+typedef DraftSender = Future<void> Function(HubConfig target, TaskDraft draft);
+
+/// Outbox'ın aktif olmayan repoya yazarken kullandığı gönderici.
+///
+/// Provider olarak veriliyor ki testler ağa çıkmadan hedef repoyu
+/// doğrulayabilsin — [withTaskRepoFor] kendi Dio'sunu açtığı için doğrudan
+/// çağrılsa sahte adaptörle değiştirilemezdi.
+final draftSenderProvider = Provider<DraftSender>(
+  (ref) => (target, draft) => withTaskRepoFor(target, (repo) => repo.send(draft)),
+);
 
 /// Bekleyen görevler. Yoklama hub'da değişiklik görürse (B-024) `headSha`
 /// değişir ve liste kendiliğinden tazelenir.
