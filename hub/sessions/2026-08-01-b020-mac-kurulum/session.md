@@ -1,16 +1,45 @@
 ---
 id: S-2026-08-01-b020-mac-kurulum
 date: 2026-08-01
-status: open
-topics: [kurulum, flutter, android, b020, b015]
+status: closed
+topics: [kurulum, flutter, android, b020, b015, b034, coklu-repo]
 artifacts: []
-tasks_touched: []
+tasks_touched: [T-003]
 ---
 
 # Oturum: B-020 — Mac'te Flutter kurulumu ve ilk cihaz koşumu
 
 ## Özet
-(Oturum kapanırken doldurulacak.)
+Projenin en uzun süren eşiği aşıldı: uygulama **ilk kez gerçek bir cihazda
+çalıştı** ve ilk gerçek görev döngüsü uçtan uca koştu.
+
+Kurulum beklenenden kısa sürdü — Flutter 3.35.4 ve Android Studio makinede
+zaten kuruluydu, SDK kurulumu gerekmedi. `android/` üretildi
+(`us.gover.takip`, domain `gover.us`), sürüm sıçraması (3.27.1 → 3.35.4) tek bir
+deprecation'la atlatıldı. Üretilen manifest'te INTERNET izni eksikti: debug'da
+hiç görünmeyecek, yalnızca release'te patlayacak bir tuzak. Bulundu, giderildi
+ve release APK üzerinde `aapt2` ile doğrulandı (L-010).
+
+Token üretildi (B-015) ve uygulama `afgover/takip`'e bağlandı — B-022'nin okuma
+doğrulamasıyla B-026'nın yazma yoklamasının gerçek GitHub'a karşı ilk geçişi.
+Ardından kullanıcı telefondan görev ekledi; dosya sözleşmeye birebir uygun
+şekilde inbox'a düştü, agent T-003 atayıp `inbox → active → done` geçirdi ve
+sonuç app'te "Tamamlananlar"da göründü (B-034).
+
+Görevin içeriği gerçek bir istekti — *"birden çok repo eklemek için arayüzü
+geliştir"* — ve kullanıcının kararıyla aynı oturumda uygulandı. Çoklu repo,
+uygulamanın "o an hangi repodayız" darboğazının (`hubConfigProvider`) **altına**
+bir katman olarak kondu; böylece istemci, API'ler, yoklama ve görev deposu hiç
+değişmedi (SK-009). Asıl iş bağlam taşıyan kalıcı kayıtlarda çıktı: outbox
+repo-farkında yapıldı, yoksa çevrimdışı yazılan görev yanlış projeye düşerdi
+(L-012). 191 → **219 test**, `analyze` temiz.
+
+Kapanışta release derlemesi kuruldu; derleme türü değişikliği uygulamayı
+kaldırdığı için token silindi ve yeniden girildi (L-014) — sıralama hatası,
+release token'dan önce kurulmalıydı.
+
+**Kapananlar:** B-015, B-020, B-034, B-035, T-003 · **Faz 1, Faz 2, Faz 3** ·
+**Aşama 2**. Aşama 4 (Günlük Kullanım) açıldı; sıradaki iş B-052.
 
 ## Kayıt
 
@@ -212,3 +241,29 @@ cevap vermezse görev eklemenin askıda kalacak olmasıydı (→ L-013).
 Release APK derlendi ve **INTERNET izninin release paketinde bulunduğu
 `aapt2` ile doğrulandı** — sabahki manifest düzeltmesi teorik değil, ölçülmüş.
 Telefon bu sırada USB'den ayrık olduğu için yeni sürüm cihaza kurulamadı.
+
+### Kullanıcı
+> t 003 sonucunu gordum, telefon bagli
+
+### Agent
+**B-034 kapandı, Aşama 2 tamamlandı.** Zincirin tamamı gerçek GitHub üzerinden
+koştu: app görevi inbox'a yazdı → agent ID atayıp `inbox → active → done`
+geçirdi → sonuç app'te "Tamamlananlar"da göründü. B-035 de kapatıldı (bu
+oturumun dersleri: L-010…L-014, SK-007…SK-009). **Faz 3 kapandı.**
+
+Release derlemesi cihaza kuruldu ve çalıştığı doğrulandı: uygulama crash'siz
+açıldı, arayüz düzgün çiziliyor.
+
+**Kurulumun bedeli oldu:** `flutter install --release`, cihazdaki debug
+derlemesini **kaldırıp** yeniden kurdu ("Uninstalling old version..."). Android'de
+kaldırma uygulama verisini de sildiği için token gitti ve kullanıcı onboarding'e
+döndü — token yeniden girildi. Bu, derleme türü değişikliğinin kaçınılmaz
+sonucu; ama sıralama hatasıydı: release, kullanıcı sabah token girmeden **önce**
+kurulmalıydı (→ L-014).
+
+İkinci yan sonuç: T-003'ün eski anahtar göçü **cihazda sınanamadı** — kaldırma,
+göçün okuyacağı eski kaydı da sildi. Göç yalnız birim testiyle doğrulanmış
+durumda (`hub_connections_test.dart`).
+
+Aşama 4 (Günlük Kullanım) açıldı: sıradaki iş kod yazmak değil, B-052 —
+bir hafta gerçek kullanım ve sürtünmelerin inbox'a görev olarak atılması.
