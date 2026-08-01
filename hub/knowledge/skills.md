@@ -107,3 +107,23 @@ Biçim: `SYSTEM.md` §5.
   kuyruk, önbellek, ayarlar. Her biri için tek soru sorulur — "bu kayıt hangi X'e
   ait?" Cevabı kaydın içinde değilse (bizde outbox taslağında değildi) oraya
   yazılmalıdır; yoksa kayıt yanlış bağlama uygulanır (→ L-012).
+
+## SK-010 — Ağaç farkıyla artımlı içerik senkronu
+- **Tarih:** 2026-08-01
+- **Kaynak:** S-2026-08-01-cevrimdisi-tarayici (B-057)
+- **Açıklama:** Bir depoyu cihazda güncel tutmanın ucuz yolu, dosyaları tek tek
+  "değişti mi?" diye sormak değil; **ağacı bir kez isteyip SHA'ları
+  karşılaştırmaktır.** Git Trees API özyinelemeli çağrıldığında her dosyanın
+  blob SHA'sını tek yanıtta verir; SHA değişmemişse içerik de değişmemiştir.
+  Böylece her senkronun maliyeti = 1 ağaç isteği + **değişen dosya sayısı**
+  kadar indirme. Ağaç isteği ETag'li olduğu için değişiklik yokken istek
+  limitinden de düşmez (SK-002).
+  Uygulama sırası önemli: **ağaç en sona yazılır.** İndirme yarıda kalırsa
+  (ağ koptu, uygulama kapandı) yerel ağaç eski kalır ve bir sonraki senkron
+  eksikleri yeniden dener; ağaç önce yazılsaydı sistem "her şey güncel"
+  sanırdı. Ayrıca uzaktan silinen yollar yerel kopyadan düşürülür, yoksa
+  kullanıcı artık var olmayan bir belgeyi listede görmeye devam eder.
+  **Önbellek ile kopya ayrımı:** ETag önbelleği (B-046) gidilen yolu
+  ucuzlatır — yalnız açılmış şeyi tutar. Çevrimdışı kopya ise **kasıtlı**
+  indirmedir. İkisi aynı yerde tutulmaya çalışılırsa hangi kaydın niçin
+  orada olduğu belirsizleşir; ayrı tutuldular.
