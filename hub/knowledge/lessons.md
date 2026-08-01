@@ -114,3 +114,29 @@ Biçim: `SYSTEM.md` §5.
   `flutter install -d <cihaz>` çağırmak "APK does not exist" hatası verir; komut
   `--debug` bayrağı olmadan `app-release.apk` arar. Derleme ve kurulum
   bayraklarının eşleşmesi gerekir: `flutter install -d <cihaz> --debug`.
+
+## L-012 — Türetilmiş asenkron provider, kaynağının bir adım gerisindedir
+- **Tarih:** 2026-08-01
+- **Kaynak:** S-2026-08-01-b020-mac-kurulum (T-003)
+- **Açıklama:** `hubConfigProvider` (aktif bağlantı) `hubConnectionsProvider`
+  (liste) üzerinden **asenkron** türüyor: liste değiştiğinde türetilmiş
+  provider'ın yeni değeri bir sonraki mikro-görevde oluşur. Repo değiştirildiği
+  anda `ref.read(hubConfigProvider).value` hâlâ **eski** repoyu verir. Outbox
+  boşaltmasında bu, geçişin hemen ardından görevin yanlış repoya yazılması
+  demekti — test bunu yakaladı. **Kural:** bir yazma işleminin hedefi
+  belirlenirken türetilmiş değil **kaynak** provider okunur; kaynak
+  (`state = AsyncData(next)`) senkron güncellenir. Daha genel hâli: "hangi
+  bağlama yazıyorum?" sorusu asla gecikmeli bir değere dayanmamalı.
+
+## L-013 — `testWidgets` içinde platform kanalına inen `.future` beklemesi asar
+- **Tarih:** 2026-08-01
+- **Kaynak:** S-2026-08-01-b020-mac-kurulum (T-003)
+- **Açıklama:** Outbox'ın yazma yolunda aktif bağlantıyı `.future` ile beklemek,
+  o yola bir `flutter_secure_storage` bağımlılığı soktu. Mock kurulmamış
+  testlerde kanal cevaplamadığı için `pumpAndSettle` zaman aşımına uğradı — ve
+  aynı risk gerçek cihazda da var: güvenli depo cevap vermezse görev ekleme
+  askıda kalır. L-008'in kardeşi: orada gerçek async iş doğrudan bekleniyordu,
+  burada **platform kanalı** dolaylı olarak bekleniyor. **Kural:** kullanıcı
+  etkileşiminin bulunduğu yol, platform kanalı çözülmesini beklememeli; değer
+  zaten çözülmüş olmalı (burada kabuk `app.dart` bunu garanti ediyor) ve
+  senkron okunmalı.

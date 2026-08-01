@@ -92,3 +92,18 @@ Biçim: `SYSTEM.md` §5.
   baytlarının başına karışır. Çözüm, çıktıyı cihaz üzerinde dosyaya yazıp
   çekmek: `adb shell screencap -p /sdcard/x.png && adb pull /sdcard/x.png`.
   Doğrulama: `file x.png` → "PNG image data" demeli.
+
+## SK-009 — Var olan darboğazın altına boyut eklemek
+- **Tarih:** 2026-08-01
+- **Kaynak:** S-2026-08-01-b020-mac-kurulum (T-003)
+- **Açıklama:** "Tek X" varsayımını "çok X"e çevirirken (tek repo → çok repo,
+  tek hesap → çok hesap) kodun tamamını dolaşmak gerekmez; önce **tek
+  darboğazı** bulunur: uygulamanın "o anki X" sorusunu sorduğu tek yer. Burada
+  `hubConfigProvider`'dı. Yöntem: darboğazın *imzası korunur*, altına liste
+  katmanı konur ve darboğaz "listenin aktif elemanı"nı yayınlar. Böylece
+  tüketiciler (istemci, API'ler, yoklama, depo) ve testlerindeki override'lar
+  hiç değişmez; iş, listenin kendisine ve arayüze iner.
+  Darboğazdan sonra kalan gerçek iş, **bağlam taşıyan kalıcı kayıtlardır**:
+  kuyruk, önbellek, ayarlar. Her biri için tek soru sorulur — "bu kayıt hangi X'e
+  ait?" Cevabı kaydın içinde değilse (bizde outbox taslağında değildi) oraya
+  yazılmalıdır; yoksa kayıt yanlış bağlama uygulanır (→ L-012).
