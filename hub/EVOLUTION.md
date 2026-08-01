@@ -153,6 +153,21 @@ agent'ın ele alması, sonucun app'te görünmesi. (Backlog Faz 2–3.)
   → S-2026-07-30-kapanis-ve-devir
 - Sıradaki: kullanıcı adımlarından sonra B-034'ün cihaz koşumu ve B-035;
   ardından Faz 4 (hub tarayıcı) — B-026 de aradan alınabilir.
+- 2026-08-01: **Uygulama ilk kez gerçek cihazda çalıştı.** B-020 tamamlandı:
+  SDK kurulumu gerekmedi (Flutter 3.35.4 ve Android Studio hazırdı), `android/`
+  üretildi (`us.gover.takip`, domain `gover.us`), debug APK derlenip SM F731B'ye
+  (Android 16) kuruldu ve crash'siz açıldı. Sürüm sıçraması (3.27.1 → 3.35.4)
+  tek bir deprecation'la atlatıldı; `analyze` temiz, 191 test geçiyor. Üretilen
+  manifest'te INTERNET izni eksikti — debug'da görünmeyecek, yalnızca release'te
+  patlayacak bir tuzak; bulunup giderildi (L-010). B-015 tamamlandı: kullanıcı
+  fine-grained token'ı üretip cihaza girdi, uygulama `afgover/takip`'e bağlandı.
+  Bu, B-022'nin okuma doğrulamasının ve B-026'nın yazma yoklamasının **gerçek
+  GitHub'a karşı** ilk geçişiydi — ikisi de bugüne dek yalnızca taklit hub'da
+  sınanmıştı. **Faz 1 ve Faz 2 kapandı.**
+  → S-2026-08-01-b020-mac-kurulum, L-010, L-011, SK-007, SK-008
+- **Aşama 2'yi kapatmak için kalan tek madde: B-034'ün cihaz ayağı** — telefondan
+  eklenen görevin gerçek GitHub üzerinden inbox → active → done döngüsünden
+  geçmesi.
 
 **Kararlar:**
 - **K-013:** Repo rolleri netleştirildi (kullanıcı cevabı). `taskr` salt
