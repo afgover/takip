@@ -143,9 +143,12 @@ başlığına ✅ ve tarih yazılır.
       testi (ekle → agent taşır → app'te durum değişir → tamamlananlarda
       sonucuyla görünür) + ağ kesintisi senaryosu; (2) gerçek hub'da T-002:
       dosya app'in `TaskDraft` üreticisinden çıktığı gibi inbox → active →
-      done geçirildi, biçim bozulmadı. **Kalan:** gerçek GitHub üzerinden
-      cihazda koşum — B-015 (token) ve B-020 (SDK + `flutter create .`)
-      tamamlanınca yapılacak. → L-008
+      done geçirildi, biçim bozulmadı. → L-008
+      · ⏳ 2026-08-01: **cihaz ayağının çoğu koştu.** Kullanıcı telefondan görev
+      ekledi → dosya gerçek GitHub'da inbox'a düştü (45cc3a5, sözleşmeye uygun)
+      → agent T-003 atayıp `inbox → active → done` geçirdi. **Kalan:** görevin
+      app'te "Tamamlananlar"da sonucuyla göründüğünün kullanıcı tarafından
+      doğrulanması. → S-2026-08-01-b020-mac-kurulum
 - [ ] B-035 · (agent) Test çıktılarını `knowledge/lessons.md`'ye işle —
       döngü testinden çıkan ders L-008 olarak işlendi; cihaz koşumundan sonra
       tekrar bakılacak
@@ -205,7 +208,10 @@ başlığına ✅ ve tarih yazılır.
 - [ ] B-061 · (agent) GitHub App'e geçiş değerlendirmesi (çok kullanıcı olursa)
 - [ ] B-062 · (agent) `done/` yıllık arşivleme otomasyonu
 - [ ] B-063 · (agent) Çoklu proje desteği (`projects/<ad>/` yapısına geçiş
-      değerlendirmesi)
+      değerlendirmesi) — ℹ 2026-08-01: aynı ihtiyacın **ayrı repo** cevabı
+      T-003'te uygulandı (K-018). Bu madde tek repoda çoklu proje seçeneği
+      olarak açık kalıyor; ön koşulu, ayrı repo modelinin gerçek kullanımda
+      (B-052) yetersiz kaldığının görülmesi
 - [ ] B-064 · (agent+user) "Pro versiyon" değerlendirmesinin yeniden açılması —
       K-017 ile ertelendi. **Ön koşul:** B-052 (bir haftalık gerçek kullanım).
       Kararı yeniden açacak kanıtlar: GitHub hesabı olmayan kullanıcılar,
