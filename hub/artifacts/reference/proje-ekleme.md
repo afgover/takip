@@ -38,6 +38,10 @@ Ad kuralı önemli: uygulama repoyu adından tanımıyor, ama insan tarafında
 
 ## 3. Hub iskeletini kur (agent)
 
+> Agent'a verilecek **tek parça talimat**:
+> [`agent-kurulum-talimati.md`](agent-kurulum-talimati.md) — kendi kendine
+> yeten, olduğu gibi yapıştırılabilir. Masaüstünde de bir kopyası var.
+
 Agent şu yapıyı `<proje>_takip` reposunun `hub/` klasörüne kurar:
 
 ```
@@ -50,6 +54,7 @@ hub/
   artifacts/README.md
   tasks/inbox/README.md
   tasks/active/README.md
+  tasks/waiting/README.md   # agent kullanıcıyı bekliyor (sözleşme 1.4)
   tasks/done/README.md
   knowledge/rules.md
   knowledge/skills.md
