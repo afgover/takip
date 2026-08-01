@@ -60,10 +60,14 @@ class BrowseRepo {
   /// Artifact'ın türü ve gerçek başlığı frontmatter'dadır; liste ağaçtan
   /// çizildikten sonra bunlar tek tek okunur (B-042).
   ///
-  /// Bu, kayıt sayısı kadar istek demek. Artifact'lar yavaş biriktiği ve
-  /// ETag'li önbellek ikinci ziyareti bedava yaptığı için kabul edildi;
-  /// yine de üst sınır konuldu, ötesi türsüz listelenir.
-  static const artifactMetadataLimit = 40;
+  /// Sınırın gerekçesi başta "kayıt sayısı kadar **istek**"ti. B-057'den beri
+  /// hub'ın tamamı cihazda duruyor ve bu okumalar yerelden geliyor — yani
+  /// maliyet ağ değil, yalnız ayrıştırma. Sınır bu yüzden yükseltildi:
+  /// arşiv taşımaları (örn. project-taskr'ın 35 belgesi) listeyi bir anda
+  /// büyütebiliyor ve 40'ta kalsaydı yeni artifact'lar başlıksız listelenirdi.
+  /// Sıfır yapılmadı: ilk senkron bitmeden liste açılırsa okumalar yine ağa
+  /// gider, o durumda bir üst sınır gerekiyor.
+  static const artifactMetadataLimit = 150;
 
   Future<List<HubDoc>> artifactsWithMetadata() async {
     final docs = await artifacts();
