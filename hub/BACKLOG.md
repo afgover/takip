@@ -215,6 +215,14 @@ başlığına ✅ ve tarih yazılır.
       ✅ 2026-08-01 · takip@2730ea4; fine-grained token birden çok repoyu
       kapsayabildiği için "her repo için yeni token" zorunluluğu kalktı.
       Doğrulama gevşetilmedi (B-022, B-026 yolundan geçiyor)
+- [x] B-057 · (agent) Tarayıcı içeriği cihaza insin, çevrimdışı çalışsın ve
+      kendiliğinden güncellensin — ✅ 2026-08-01 · takip@1161e2b;
+      S-2026-08-01-cevrimdisi-tarayici. Hub'ın tamamı (`hub/**.md`) indiriliyor,
+      ağaç farkıyla yalnız değişen dosya yeniden iniyor. Kopya repo başına ayrı.
+      Ayarlar → Çevrimdışı: durum + elle indirme. → SK-010
+      · ℹ Görev listeleri (Bekleyenler/Tamamlananlar) bu kopyadan okunmuyor;
+      onlar hâlâ ETag önbelleğiyle (B-046) çalışıyor, yani çevrimdışı yalnız
+      daha önce görülen hâli gösteriyor. Gerekirse ayrı madde açılır
 
 ## Faz 6 — 2. Plan (şimdilik bekliyor)
 
