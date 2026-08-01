@@ -165,9 +165,13 @@ agent'ın ele alması, sonucun app'te görünmesi. (Backlog Faz 2–3.)
   GitHub'a karşı** ilk geçişiydi — ikisi de bugüne dek yalnızca taklit hub'da
   sınanmıştı. **Faz 1 ve Faz 2 kapandı.**
   → S-2026-08-01-b020-mac-kurulum, L-010, L-011, SK-007, SK-008
-- **Aşama 2'yi kapatmak için kalan tek madde: B-034'ün cihaz ayağı** — telefondan
-  eklenen görevin gerçek GitHub üzerinden inbox → active → done döngüsünden
-  geçmesi.
+- 2026-08-01: **İlk gerçek görev döngüsü koştu.** Kullanıcı telefondan görev
+  ekledi (`task(pending): inbox'a eklendi (app)`, 45cc3a5); dosya sözleşmeye
+  uygun geldi. Agent T-003 ID'sini atayıp `inbox → active → done` geçirdi.
+  Görevin içeriği gerçek bir istekti — "birden çok repo eklemek için arayüzü
+  geliştir" — ve kullanıcının kararıyla aynı oturumda uygulandı (takip@d5c206e).
+  219 test, analyze temiz. → S-2026-08-01-b020-mac-kurulum, K-018, L-012, L-013,
+  SK-009
 
 **Kararlar:**
 - **K-013:** Repo rolleri netleştirildi (kullanıcı cevabı). `taskr` salt
@@ -195,6 +199,15 @@ agent'ın ele alması, sonucun app'te görünmesi. (Backlog Faz 2–3.)
   kullanıcılar, düzenli medya eki (Contents API 1 MB sınırı + git'te binary
   maliyeti), saniyeler mertebesinde bildirim ihtiyacı, repo dışı entegrasyon.
   → S-2026-07-30-versiyon-stratejisi, B-064
+- **K-018:** Çoklu proje ihtiyacı **ayrı repo** modeliyle karşılanır: her proje
+  kendi reposu, kendi `hub/` klasörü, kendi token'ı. Gerekçe: (1) kullanıcının
+  isteği açıkça repo düzeyindeydi; (2) izin izolasyonu, B-003'te ayrı repo
+  kararının zaten gerekçesiydi — tek repoda `projects/<ad>/` olsaydı bir
+  token'ın kapsamı bütün projeler olurdu ve telefon kaybında kayıp büyürdü;
+  (3) sözleşmeye (`SYSTEM.md`) hiç dokunulmadı, çünkü hub kökü tanımı zaten
+  repo başına. Tek repoda çoklu proje seçeneği (B-063) kapanmadı: ayrı repo
+  modeli gerçek kullanımda (B-052) yetersiz kalırsa yeniden açılır.
+  → T-003, S-2026-08-01-b020-mac-kurulum
 
 ## Aşama 3 — Hub Tarayıcı ✅ (2026-07-30)
 
