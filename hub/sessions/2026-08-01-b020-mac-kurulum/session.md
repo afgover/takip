@@ -34,9 +34,10 @@ değişmedi (SK-009). Asıl iş bağlam taşıyan kalıcı kayıtlarda çıktı:
 repo-farkında yapıldı, yoksa çevrimdışı yazılan görev yanlış projeye düşerdi
 (L-012). 191 → **219 test**, `analyze` temiz.
 
-Kapanışta release derlemesi kuruldu; derleme türü değişikliği uygulamayı
-kaldırdığı için token silindi ve yeniden girildi (L-014) — sıralama hatası,
-release token'dan önce kurulmalıydı.
+Kapanışta release derlemesi kuruldu ve çalıştığı doğrulandı; ancak derleme türü
+değişikliği uygulamayı kaldırdığı için token silindi (L-014) — sıralama hatası,
+release token'dan önce kurulmalıydı. Kullanıcının token'ı yeniden girmesi
+gerekiyor; oturum kapanırken bu doğrulanamadı.
 
 **Kapananlar:** B-015, B-020, B-034, B-035, T-003 · **Faz 1, Faz 2, Faz 3** ·
 **Aşama 2**. Aşama 4 (Günlük Kullanım) açıldı; sıradaki iş B-052.
@@ -256,10 +257,14 @@ açıldı, arayüz düzgün çiziliyor.
 
 **Kurulumun bedeli oldu:** `flutter install --release`, cihazdaki debug
 derlemesini **kaldırıp** yeniden kurdu ("Uninstalling old version..."). Android'de
-kaldırma uygulama verisini de sildiği için token gitti ve kullanıcı onboarding'e
-döndü — token yeniden girildi. Bu, derleme türü değişikliğinin kaçınılmaz
-sonucu; ama sıralama hatasıydı: release, kullanıcı sabah token girmeden **önce**
-kurulmalıydı (→ L-014).
+kaldırma uygulama verisini de sildiği için token gitti ve uygulama onboarding
+ekranına döndü (ekran görüntüsüyle doğrulandı). Bu, derleme türü değişikliğinin
+kaçınılmaz sonucu; ama sıralama hatasıydı: release, kullanıcı sabah token
+girmeden **önce** kurulmalıydı (→ L-014).
+
+**Açık kalan tek adım:** kullanıcının token'ı yeniden girmesi. Oturum
+kapanırken telefon kilitli olduğu için bağlantının kurulduğu doğrulanamadı;
+bu satır, doğrulanmamış bir şeyi "yapıldı" diye kaydetmemek için burada.
 
 İkinci yan sonuç: T-003'ün eski anahtar göçü **cihazda sınanamadı** — kaldırma,
 göçün okuyacağı eski kaydı da sildi. Göç yalnız birim testiyle doğrulanmış

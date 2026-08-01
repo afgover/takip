@@ -178,10 +178,11 @@ agent'ın ele alması, sonucun app'te görünmesi. (Backlog Faz 2–3.)
   sonucun app'te görünmesi") gerçek cihaz ve gerçek GitHub üzerinde uçtan uca
   doğrulandı. Aşamanın açılışından beri süren "hiçbir gerçek cihazda hiç
   çalışmadı" eşiği bugün aşıldı.
-  Kapanışta release derlemesi cihaza kuruldu; derleme türü değişikliği
-  uygulamayı kaldırıp yeniden kurduğu için token silindi ve yeniden girildi
-  (→ L-014). Bunun bir yan sonucu: T-003'ün eski anahtar göçü **cihazda
-  sınanamadı**, yalnız birim testiyle doğrulanmış durumda.
+  Kapanışta release derlemesi cihaza kuruldu ve çalıştığı doğrulandı; ancak
+  derleme türü değişikliği uygulamayı kaldırıp yeniden kurduğu için token
+  silindi ve yeniden girilmesi gerekti (→ L-014). Bunun bir yan sonucu:
+  T-003'ün eski anahtar göçü **cihazda sınanamadı**, yalnız birim testiyle
+  doğrulanmış durumda.
 
 **Kararlar:**
 - **K-013:** Repo rolleri netleştirildi (kullanıcı cevabı). `taskr` salt
