@@ -147,7 +147,7 @@ class _AddTaskScreenState extends ConsumerState<AddTaskScreen> {
             ),
             const SizedBox(height: 16),
             DropdownButtonFormField<String>(
-              value: _priority,
+              initialValue: _priority,
               decoration: const InputDecoration(
                 labelText: 'Öncelik',
                 border: OutlineInputBorder(),
@@ -161,7 +161,7 @@ class _AddTaskScreenState extends ConsumerState<AddTaskScreen> {
             const SizedBox(height: 16),
             DropdownButtonFormField<String>(
               key: AddTaskScreen.categoryFieldKey,
-              value: _category,
+              initialValue: _category,
               decoration: const InputDecoration(
                 labelText: 'Kategori',
                 border: OutlineInputBorder(),
