@@ -5,16 +5,23 @@ ve hangi şemaya uyacağını** tanımlar. Agent ve kullanıcı uygulaması bu s
 dışına çıkmaz. Sözleşme değişiklikleri `EVOLUTION.md`'ye kaydedilir ve bu dosyanın
 başındaki sürüm numarası artırılır.
 
-**Sözleşme sürümü:** 1.2
+**Sözleşme sürümü:** 1.3
 **Zaman biçimi:** her yerde ISO 8601, UTC (`2026-07-30T14:05:00Z`)
 **Dil:** doküman içerikleri Türkçe; alan adları (frontmatter anahtarları) İngilizce
 **Dosya adları:** küçük harf, Türkçe karakter yok, boşluk yerine tire (`gorev-adi`)
 
-> **Hub kökü (v1.2, K-012):** Bu sözleşmedeki tüm yollar hub köküne görelidir.
-> `takip` projesi için hub kökü, `takip` reposundaki **`hub/`** klasörüdür
-> (kendi kendini barındıran özel durum; `takip_takip` diye ek repo açılmaz).
-> Diğer projeler için işleyiş değişmez: hub, ayrı bir `<proje>_takip`
-> reposunun köküdür.
+> **Hub kökü (v1.3, K-020):** Bu sözleşmedeki tüm yollar hub köküne görelidir
+> ve hub kökü **her zaman** reponun içindeki **`hub/`** klasörüdür — istisnasız.
+>
+> - Her proje için ayrı bir takip reposu açılır: **`<proje>_takip`**
+>   (örn. `financer_takip`), hub içeriği o reponun `hub/` klasörüne kurulur.
+> - `takip` projesi kendi hub'ını kendi reposunda barındırır (K-012); yapı
+>   aynıdır, `takip/hub/`.
+>
+> ~~v1.2: diğer projeler için hub, `<proje>_takip` reposunun köküdür.~~
+> Geçersiz: uygulama hub kökünü `hub/` diye sabit tutuyor ve bağlantı başına
+> ayarlanamıyor; kök yerleşimli bir repo onboarding'de reddedilirdi. Tek kural
+> her repoda geçerli olsun diye sözleşme uygulamaya uyduruldu (K-020).
 
 ---
 
