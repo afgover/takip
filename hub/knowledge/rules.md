@@ -40,3 +40,17 @@ Projede uyulacak kalıcı kurallar. Kayıtlar silinmez; geçersizleşen kural ü
   da yazabilir — bilinçli tercih (K-012); app davranış olarak yalnızca
   `hub/tasks/inbox/`'a yazar (R-001, yol öneki `hub/`). Diğer projelerde ayrı
   `<proje>_takip` repo modeli ve eski scope kuralı geçerlidir.
+
+## R-006 — Token cihaz dışına yalnızca parolayla şifreli yedek olarak çıkar
+- **Tarih:** 2026-08-01
+- **Kaynak:** S-2026-08-01-token-kaliciligi
+- **Açıklama:** R-005 token'ın hiçbir dosyaya ve commit'e yazılmamasını
+  söylüyor. Yedekleme özelliği bunun **tek istisnası**dır ve koşulları
+  bağlayıcıdır: (1) dışa aktarılan metin PBKDF2 + AES-GCM ile, kullanıcının
+  belirlediği parolayla şifrelenir — düz metin dışa aktarma eklenmez;
+  (2) yedek hiçbir yere kendiliğinden yazılmaz (dosya yok, ağ yok), yalnız
+  ekranda gösterilir ve kullanıcı isterse panoya alır; (3) ekranda, metnin
+  token taşıdığı ve parola yöneticisine konması gerektiği açıkça söylenir.
+  Gerekçe: çok repolu kurulumda veri kaybı sonrası token'ları tek tek yeniden
+  girmek sistemi kullanılamaz kılıyordu; ama kolaylık, token'ı korumasız bir
+  dizeye çevirmeyi haklı çıkarmaz.

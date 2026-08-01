@@ -147,8 +147,13 @@ Biçim: `SYSTEM.md` §5.
 - **Açıklama:** `flutter install --release`, cihazda debug derlemesi varken
   paketi **kaldırıp** yeniden kurar ("Uninstalling old version..."). Android'de
   kaldırma uygulama verisini de siler; `flutter_secure_storage`'daki token
-  gider ve kullanıcı onboarding'e döner. Sürüm yükseltmesi değil, **derleme
-  türü değişikliği** olduğu için kaçınılmaz.
+  gider ve kullanıcı onboarding'e döner. ~~Sürüm yükseltmesi değil, **derleme
+  türü değişikliği** olduğu için kaçınılmaz.~~
+  **Düzeltme (2026-08-01, L-016):** "kaçınılmaz" kısmı yanlıştı. Kaldırma,
+  derleme türü değişikliğinin zorunlu sonucu değil; `flutter install`'ın
+  yerinde güncelleme başarısız olunca girdiği **hata yolu**. `adb install -r`
+  ile kurulduğunda debug↔release geçişi de veriyi korur (`tool/install.sh`).
+  Kaydın geri kalanı (kaldırma olursa veri gider, göç yolu sınanamaz) geçerli.
   **Sonuç:** derleme türü değiştirilecekse kullanıcıya *önceden* söylenir
   ("token'ı yeniden gireceksin") ve mümkünse token girilmeden **önce** yapılır.
   Bu oturumda tersi yapıldı: kullanıcı sabah debug sürüme token girdi, akşam
@@ -157,3 +162,34 @@ Biçim: `SYSTEM.md` §5.
   göçü) bu şekilde **sınanamaz** — kaldırma, göçün okuyacağı eski kaydı da
   siler. Göç yolu ancak birim testiyle ya da aynı derleme türünde sürüm
   yükseltmesiyle doğrulanabilir.
+
+## L-015 — Test ekranında tembel liste alt alanları hiç oluşturmaz
+- **Tarih:** 2026-08-01
+- **Kaynak:** S-2026-08-01-token-kaliciligi
+- **Açıklama:** `ListView` içindeki bir widget, varsayılan test ekranının
+  (800x600) dışında kalıyorsa **hiç oluşturulmaz**; `find.byKey` boş döner ve
+  hata "widget yok" gibi görünür — oysa widget vardır, sadece çizilmemiştir.
+  Ekrana bir satır eklemek, alakasız görünen bir testi bu yüzden kırabilir.
+  İki çözüm, ikisi de yerinde:
+  - `tester.scrollUntilVisible(finder, delta)` — listeyi kaydırıp oluşturur.
+    `ensureVisible` **işe yaramaz**, çünkü o widget'ın zaten ağaçta olmasını
+    ister.
+  - Uzun formlarda `tester.view.physicalSize` ile test ekranını yükseltmek;
+    her etkileşimden önce kaydırmaktan kısa ve okunur. `addTearDown` ile
+    `resetPhysicalSize` unutulmamalı.
+
+## L-016 — `flutter install`'ın kaldırması kaçınılmaz değil, hata yoludur
+- **Tarih:** 2026-08-01
+- **Kaynak:** S-2026-08-01-token-kaliciligi
+- **Açıklama:** L-014'te "derleme türü değişikliği veriyi siler" diye
+  kaydedilmişti; kaynak okunup ölçülünce tablo değişti.
+  `flutter_tools/.../android_device.dart` içinde `installApp` önce
+  `adb install -t -r` deniyor ve **yalnızca** çıktısında `Failure` görürse
+  "Uninstalling old version..." diyor. Gerçek cihazda release→release,
+  debug→release ve release→debug'ın üçü de yerinde güncellemeyle başarılı
+  oldu; imzalar da aynıydı. Yani veri kaybının sebebi derleme türü değil,
+  aracın tek bir başarısızlıkta kaldırmaya kendi başına karar vermesiydi.
+  **Sonuç:** kurulum `adb install -r` ile yapılır (`tool/install.sh`), böylece
+  kaldırma hiç ihtimal dışı kalır. **Genel ders:** "araç şöyle yapıyor" diye
+  kaydedilen bir davranış, aracın kaynağına bakılarak ve tekrar denenerek
+  doğrulanmadan kalıcı kural sayılmamalı — L-014 tek gözleme dayanıyordu.
