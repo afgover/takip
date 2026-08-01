@@ -140,3 +140,20 @@ Biçim: `SYSTEM.md` §5.
   etkileşiminin bulunduğu yol, platform kanalı çözülmesini beklememeli; değer
   zaten çözülmüş olmalı (burada kabuk `app.dart` bunu garanti ediyor) ve
   senkron okunmalı.
+
+## L-014 — Debug'dan release'e geçmek uygulama verisini siler (token dahil)
+- **Tarih:** 2026-08-01
+- **Kaynak:** S-2026-08-01-b020-mac-kurulum
+- **Açıklama:** `flutter install --release`, cihazda debug derlemesi varken
+  paketi **kaldırıp** yeniden kurar ("Uninstalling old version..."). Android'de
+  kaldırma uygulama verisini de siler; `flutter_secure_storage`'daki token
+  gider ve kullanıcı onboarding'e döner. Sürüm yükseltmesi değil, **derleme
+  türü değişikliği** olduğu için kaçınılmaz.
+  **Sonuç:** derleme türü değiştirilecekse kullanıcıya *önceden* söylenir
+  ("token'ı yeniden gireceksin") ve mümkünse token girilmeden **önce** yapılır.
+  Bu oturumda tersi yapıldı: kullanıcı sabah debug sürüme token girdi, akşam
+  release kurulunca yeniden girmek zorunda kaldı.
+  **Yan etki:** cihazda tutulan göç yolları (burada T-003'ün eski anahtar
+  göçü) bu şekilde **sınanamaz** — kaldırma, göçün okuyacağı eski kaydı da
+  siler. Göç yolu ancak birim testiyle ya da aynı derleme türünde sürüm
+  yükseltmesiyle doğrulanabilir.
