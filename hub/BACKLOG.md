@@ -203,6 +203,12 @@ başlığına ✅ ve tarih yazılır.
 - [ ] B-052 · (user) Bir hafta gerçek kullanım; sürtünme noktalarını görev olarak
       inbox'a at — B-015, B-020 ve B-034'ün cihaz ayağı tamamlandıktan sonra
 - [ ] B-053 · (agent) Kullanım geri bildirimlerine göre revizyon turu
+- [x] B-066 · (agent) Çoklu repoda geçiş sonrası "Bulunamadı" hatası —
+      ✅ 2026-08-01 · takip@98f21be; S-2026-08-01-coklu-repo-404.
+      Kök neden: isteğin adresi sağlayıcı kurulurken, token'ı istek
+      gönderilirken okunuyordu; repo değişimi araya girince adres ve token
+      farklı bağlantılara ait olabiliyordu (private repoda karşılığı 404).
+      Token artık isteğin yolundan seçiliyor. → L-019
 - [x] B-065 · (agent) Agent'ın kullanıcıdan beklediği işler uygulamada
       görünsün — ✅ 2026-08-01 · takip@90b9d42; sözleşme 1.4, `tasks/waiting/`
       (K-022). Sistem o güne kadar yalnız kullanıcı→agent yönünü modelliyordu;
