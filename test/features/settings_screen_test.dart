@@ -133,6 +133,11 @@ void main() {
     await tester.pumpWidget(built.widget);
     await tester.pumpAndSettle();
 
+    // Ayarlar listesi uzadıkça sıfırlama satırı görünür alanın dışına
+    // düşüyor ve tembel liste onu hiç oluşturmuyor — `ensureVisible` işe
+    // yaramaz, önce kaydırıp oluşturmak gerekiyor.
+    await tester.scrollUntilVisible(find.byKey(SettingsScreen.resetKey), 200);
+    await tester.pumpAndSettle();
     await tester.tap(find.byKey(SettingsScreen.resetKey));
     await tester.pumpAndSettle();
 
@@ -142,6 +147,11 @@ void main() {
     await tester.pumpAndSettle();
     expect(built.config.clears, 0);
 
+    // Ayarlar listesi uzadıkça sıfırlama satırı görünür alanın dışına
+    // düşüyor ve tembel liste onu hiç oluşturmuyor — `ensureVisible` işe
+    // yaramaz, önce kaydırıp oluşturmak gerekiyor.
+    await tester.scrollUntilVisible(find.byKey(SettingsScreen.resetKey), 200);
+    await tester.pumpAndSettle();
     await tester.tap(find.byKey(SettingsScreen.resetKey));
     await tester.pumpAndSettle();
     await tester.tap(find.text('Sıfırla'));

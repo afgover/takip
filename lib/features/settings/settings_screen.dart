@@ -8,6 +8,7 @@ import '../../hub/hub_watcher.dart';
 import '../../hub/outbox.dart';
 import '../../hub/settings.dart';
 import '../common/hub_error_view.dart';
+import 'backup_screen.dart';
 import 'connections_screen.dart';
 
 /// Ayarlar (B-051): bağlantı, yoklama aralığı, önbellek, durum.
@@ -15,6 +16,7 @@ class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
 
   static const reposKey = Key('settings-repos');
+  static const backupKey = Key('settings-backup');
   static const intervalKey = Key('settings-poll-interval');
   static const clearCacheKey = Key('settings-clear-cache');
   static const resetKey = Key('settings-reset');
@@ -87,6 +89,18 @@ class SettingsScreen extends ConsumerWidget {
               'Değişiklik yokken kontroller GitHub istek limitinden düşmez, '
               'bu yüzden sık yoklamanın maliyeti yalnız batarya.',
               style: TextStyle(fontSize: 12),
+            ),
+          ),
+          ListTile(
+            key: backupKey,
+            leading: const Icon(Icons.shield_outlined),
+            title: const Text('Yedekleme'),
+            subtitle: const Text(
+              'Bağlantıları parolayla şifreli tek metne çevir / geri yükle',
+            ),
+            trailing: const Icon(Icons.chevron_right),
+            onTap: () => Navigator.of(context).push(
+              MaterialPageRoute<void>(builder: (_) => const BackupScreen()),
             ),
           ),
           const Divider(),
