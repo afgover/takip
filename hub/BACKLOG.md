@@ -27,7 +27,7 @@ başlığına ✅ ve tarih yazılır.
 - [x] B-005 · (agent) Contents API maliyet değerlendirmesi — ✅ 2026-07-30 ·
       Görev yazma = tek PUT; rate limit ve gecikme açısından sorunsuz.
 
-## Faz 1 — Hub Tasarımı & Kurulumu
+## Faz 1 — Hub Tasarımı & Kurulumu ✅ (2026-08-01)
 
 - [x] B-010 · (agent) Format sözleşmesi (`SYSTEM.md`) taslağı — ✅ 2026-07-30
 - [x] B-011 · (agent) Agent kayıt prosedürü (`AGENT_PROTOCOL.md`) taslağı — ✅ 2026-07-30
@@ -36,9 +36,13 @@ başlığına ✅ ve tarih yazılır.
       `afgover/taskr_takip` (önce yanlışlıkla `takip` kullanıldı; bkz. K-007, L-003)
 - [x] B-014 · (agent) `hub-template/` içeriğini yeni repoya taşı, ilk commit'leri
       sözleşme kurallarıyla at — ✅ 2026-07-30 · S-2026-07-30-hub-tasima
-- [ ] B-015 · (user) Uygulama için fine-grained token üret — Only select
+- [x] B-015 · (user) Uygulama için fine-grained token üret — Only select
       repositories → `takip`; `Contents: R&W`, `Metadata: R` (K-012)
-      · ⏸ 2026-07-30 kullanıcı kararıyla ertelendi; Faz 2 öncesi yapılacak
+      — ✅ 2026-08-01 · S-2026-08-01-b020-mac-kurulum; token üretildi ve
+      cihazdaki onboarding ekranından doğrulandı: uygulama hem okuma hem yazma
+      kontrolünü (B-022, B-026) geçip `afgover/takip`'e bağlandı. Token
+      yalnızca cihazın güvenli deposunda; hiçbir kayda veya commit'e girmedi
+      (R-005)
 - [x] B-016 · (agent+user) Sözleşmeyi ilk gerçek oturumla test et: bir oturum
       kaydı + bir görev döngüsü (inbox → active → done) elle işlet, pürüzleri
       `knowledge/lessons.md`'ye yaz — ✅ 2026-07-30 · T-001,
@@ -46,16 +50,21 @@ başlığına ✅ ve tarih yazılır.
 - [x] B-017 · (agent) Sözleşme test sonuçlarına göre `SYSTEM.md` 1.1 revizyonu
       (gerekirse) — ✅ 2026-07-30 · revizyon ihtiyacı çıkmadı, sözleşme 1.0 kaldı
 
-## Faz 2 — Flutter Uygulama İskeleti
+## Faz 2 — Flutter Uygulama İskeleti ✅ (2026-08-01)
 
-- [ ] B-020 · (user) Flutter ortamı hazırlığı (SDK kurulumu) — platform kararı
+- [x] B-020 · (user) Flutter ortamı hazırlığı (SDK kurulumu) — platform kararı
       verildi: Android öncelikli (K-009). İlk kurulum: `takip` reposunda
       `flutter create . --platforms=android && flutter pub get &&
       flutter analyze` (iskeletin derleme doğrulaması dahil)
-      · ℹ 2026-07-30: derleme doğrulaması kısmı agent ortamında yapıldı
-      (Flutter 3.27.1 / Dart 3.6, `pubspec.lock` repoda). Sende kalan:
-      SDK kurulumu + `flutter create .` ile `android/` üretimi + cihazda
-      `flutter run`. Kod tarafı artık her oturumda analiz+test'ten geçiyor (L-006)
+      — ✅ 2026-08-01 · S-2026-08-01-b020-mac-kurulum; takip@212c294.
+      SDK kurulumu gerekmedi (Flutter 3.35.4 ve Android Studio zaten kuruluydu).
+      `android/` üretildi, paket adı **`us.gover.takip`** (domain `gover.us`).
+      Debug APK derlendi, gerçek cihaza (SM F731B, Android 16) kuruldu ve
+      çalıştırıldı; onboarding'den repoya bağlanma doğrulandı. Sürüm farkı
+      (3.27.1 → 3.35.4) tek deprecation üretti, düzeltildi: `analyze` temiz,
+      191 test geçiyor. Üretilen manifest'te INTERNET izni eksikliği bulunup
+      giderildi (→ L-010), `flutter create`'in bıraktığı artıklar temizlendi
+      (→ SK-007). Ayrıca L-011, SK-008
 - [x] B-021 · (agent) Proje iskeleti (`afgover/takip` çatı reposunda, K-011):
       klasör yapısı, state management (Riverpod), tema, navigasyon —
       `artifacts/reference/flutter-app-design.md` §3'e göre — ✅ 2026-07-30 ·
