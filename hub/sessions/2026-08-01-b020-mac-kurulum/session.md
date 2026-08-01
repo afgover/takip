@@ -155,3 +155,60 @@ Oturumun ürettiği knowledge kayıtları:
 
 Kalan: **B-034'ün cihaz ayağı** — telefondan görev ekleme ve
 inbox → active → done döngüsünün gerçek GitHub üzerinden koşması.
+
+### Kullanıcı
+> gorev ekledim
+
+### Agent
+Görev geldi: `hub/tasks/inbox/2026-08-01-ilk-gorev.md`, commit `45cc3a5`
+(`task(pending): inbox'a eklendi (app)`). **Uygulama gerçek GitHub'a yazdı.**
+Dosya sözleşmeye birebir uygun: `id: pending`, UTC zaman damgaları, §8 commit
+öneki. İçerik gerçek bir istekti: *"birden çok repo eklemek için arayüzü
+geliştir"*.
+
+`T-003` atanıp `inbox → active` taşındı (`9eaec76`). İstek yüzeyde arayüz işi
+gibi görünse de sözleşmenin hub kökü tanımına (K-012) dokunduğu ve backlog'da
+aynı ihtiyacın farklı bir cevabı (B-063, tek repoda `projects/<ad>/`) durduğu
+için kapsam kullanıcıya soruldu. Kullanıcı **"şimdi tamamen uygula"** dedi.
+
+### Agent — T-003 uygulaması
+Çatal **ayrı repo** yönünde çözüldü (K-018): istek açıkça repo düzeyindeydi ve
+izin izolasyonu zaten B-003'te ayrı repo kararının gerekçesiydi — tek repoda
+`projects/` olsaydı bir token bütün projeleri kapsardı.
+
+Kod okumasının bulduğu kilit nokta: uygulamanın "o an hangi repodayız" sorusunu
+sorduğu **tek** yer `hubConfigProvider`. Çoklu repo bu darboğazın *altına* bir
+katman olarak kondu (`hub/hub_connections.dart`); darboğazın imzası korunduğu
+için istemci, Contents/Commits/Trees API'leri, yoklama ve görev deposu ile
+testlerindeki override'lar hiç değişmedi (→ SK-009).
+
+Asıl iş, **bağlam taşıyan kalıcı kayıtlarda** çıktı:
+
+- **Outbox repo-farkında yapıldı.** Taslak kuyruğa alınırken hedef repo
+  damgalanıyor, boşaltmada her zaman kendi bağlantısına açıkça gönderiliyor.
+  İki ayrı sessiz veri hatası bu sayede kapandı: (a) damga olmasaydı çevrimdışı
+  yazılan görev, repo değiştikten sonra yanlış projeye düşerdi; (b) paylaşılan
+  depoya güvenilseydi hedef, `hubConfigProvider`'ın **asenkron gecikmesine**
+  bağlı kalırdı — testin yakaladığı gerçek kusur buydu (→ L-012).
+- **Bağlantısı kaldırılan taslak** kuyrukta kalıyor, atılmıyor.
+- **ETag önbelleği** artık repo geçişinde temizlenmiyor: anahtar isteğin tam
+  URI'si olduğu için repolar zaten karışamıyor. Geçiş anında önbellekten
+  çiziliyor.
+- **Göç:** T-003 öncesi tek bağlantı anahtarları ilk açılışta listeye taşınıyor
+  — kullanıcı token'ı yeniden girmiyor.
+
+Arayüz: her ekranın üstünde aktif repoyu gösteren şerit (dokununca repo
+listesi), repo yönetim ekranı, bağlantı ekranında isteğe bağlı ad ve repo başına
+token.
+
+Yol boyunca bir tasarım hatası testle yakalanıp geri alındı: yazma yolunda aktif
+bağlantıyı `.future` ile beklemek, oraya bir `flutter_secure_storage` bağımlılığı
+sokuyordu — iki widget testi asıldı, ama asıl mesele gerçek cihazda güvenli depo
+cevap vermezse görev eklemenin askıda kalacak olmasıydı (→ L-013).
+
+`flutter analyze` temiz, **219 test** geçiyor (28 yeni). takip@d5c206e.
+`T-003` `active → done` taşındı (`115cd12`).
+
+Release APK derlendi ve **INTERNET izninin release paketinde bulunduğu
+`aapt2` ile doğrulandı** — sabahki manifest düzeltmesi teorik değil, ölçülmüş.
+Telefon bu sırada USB'den ayrık olduğu için yeni sürüm cihaza kurulamadı.
