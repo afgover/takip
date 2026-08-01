@@ -86,3 +86,42 @@ açacak. İlk koşum hedefi gerçek telefon olarak belirlendi.
 
 Beklerken bağımsız iş kapatıldı: deprecation düzeltmesi + güncellenen
 `pubspec.lock` commit'lendi.
+
+### Kullanıcı
+> domainim gover.us buna gore org adini gir
+
+### Agent
+Ters alan adı kuralıyla `--org us.gover` → paket adı **`us.gover.takip`**
+(`gover.us.takip` değil). Disk de kullanıcı tarafından açılmıştı: 2,6 GB → 14 GB.
+
+`flutter create . --platforms=android --org us.gover` çalıştırıldı. Devir
+notunun §2.3 uyarısı kısmen gerçekleşti — komut `.gitignore`, `README.md` ve
+`pubspec.yaml`'a **dokunmadı** (tracked diff boş), ama üç yeni dosya bıraktı:
+
+- `android/` — hedef, `applicationId = "us.gover.takip"` doğrulandı.
+- `.metadata` — Flutter'ın kendi proje dosyası, versiyon kontrolüne girmeli.
+- `test/widget_test.dart` — **silindi.** Varsayılan sayaç şablonu, projede
+  olmayan `MyApp` sınıfını çağırıyor; bırakılsa test paketini kırardı.
+
+Üretilen manifest'te bir eksik bulundu ve düzeltildi: Flutter şablonu INTERNET
+iznini yalnızca `debug/` ve `profile/` manifestlerine koyuyor, `main/`'e değil.
+Uygulamanın tek işlevi `api.github.com` ile konuşmak olduğu için (K-001) release
+derlemesinde ağ erişimi **sessizce kapalı** kalırdı — debug koşumunda fark
+edilmeyecek, ancak yayına çıkarken ortaya çıkacak bir hata. İzin `main`
+manifest'ine gerekçesiyle eklendi.
+
+Doğrulama ve cihaza kurulum:
+
+- `flutter analyze` temiz, **191 test** geçiyor.
+- `flutter build apk --debug` → 43,9 sn'de başarılı. Uyarılar zararsız (SDK XML
+  sürüm farkı; eklenti bağımlılıklarından gelen Java 8 hedefi).
+- `flutter install -d R5CW71GRKPB` ilk denemede başarısız: komut varsayılan
+  olarak **release** APK arıyor. `--debug` ile kuruldu.
+- Uygulama `am start` ile başlatıldı: **PID 13566, çalışıyor, logcat'te crash
+  veya `E/flutter` kaydı yok.**
+- Ekran görüntüsü alınamadı: telefon kilit ekranında. (Yan bulgu: Z Flip 5
+  katlanabilir olduğu için `adb exec-out screencap` stdout'a "Multiple displays"
+  uyarısı basıp PNG'yi bozuyor; cihaza yazıp `adb pull` ile almak gerekiyor.)
+
+Derleme ~2 GB tüketti (14 GB → 12 GB boş). Sırada B-015: kullanıcı token'ı
+üretip **doğrudan telefona** girecek; token agent'a iletilmeyecek (R-005).
