@@ -35,15 +35,21 @@ class _AppShellState extends State<AppShell> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        children: [
-          const RepoSwitcher(),
-          HubStatusBanner(
-            onOpenSettings: () =>
-                setState(() => _index = AppShell.settingsTabIndex),
-          ),
-          Expanded(child: _screens[_index]),
-        ],
+      // Gövde `AppBar`sız başlıyor: en üstteki şerit, korunmazsa durum
+      // çubuğunun (saat, pil) altına girip okunmaz hâle geliyor. Alt taraf
+      // hariç tutuldu — orayı `bottomNavigationBar` zaten kendi hallediyor.
+      body: SafeArea(
+        bottom: false,
+        child: Column(
+          children: [
+            const RepoSwitcher(),
+            HubStatusBanner(
+              onOpenSettings: () =>
+                  setState(() => _index = AppShell.settingsTabIndex),
+            ),
+            Expanded(child: _screens[_index]),
+          ],
+        ),
       ),
       bottomNavigationBar: NavigationBar(
         selectedIndex: _index,
