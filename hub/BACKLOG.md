@@ -203,6 +203,11 @@ başlığına ✅ ve tarih yazılır.
 - [ ] B-052 · (user) Bir hafta gerçek kullanım; sürtünme noktalarını görev olarak
       inbox'a at — B-015, B-020 ve B-034'ün cihaz ayağı tamamlandıktan sonra
 - [ ] B-053 · (agent) Kullanım geri bildirimlerine göre revizyon turu
+- [x] B-071 · (agent) Seçim menüsü sadeleştirilsin — ✅ 2026-08-02 ·
+      S-2026-08-02-secim-menusu; menü yalnız dört eylem: sarı işaretle,
+      kırmızı çiz, görev oluştur, kopyala. Sistem öğeleri (arama, çeviri,
+      asistanlar) eklenmiyor — cihazda asıl eylemleri taşma menüsünün dibine
+      düşürüyorlardı
 - [x] B-067 · (agent) Bekleyenler tüm repolardaki işleri göstersin —
       ✅ 2026-08-02 · takip@ec267a3; senkron tüm bağlı repoları kapsıyor,
       liste yerel kopyadan çiziliyor
