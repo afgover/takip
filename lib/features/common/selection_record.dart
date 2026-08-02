@@ -76,37 +76,29 @@ class _SelectionRecordSheetState extends ConsumerState<SelectionRecordSheet> {
       _error = null;
     });
 
-    final draft = TaskDraft.fromSelection(
-      quote: widget.quote,
-      sourcePath: widget.sourcePath,
-      kind: _kind.category,
-      mark: _mark,
-      note: _noteCtrl.text,
-      priority: _priority,
+    // Sayfayı önce kapat: kayıt yolu ortak (`createSelectionRecord`) ve
+    // sonucu snackbar'la bildiriyor; sayfa açık kalsaydı bildirim onun
+    // altında kalırdı.
+    final navigator = Navigator.of(context);
+    final quote = widget.quote;
+    final sourcePath = widget.sourcePath;
+    final kind = _kind;
+    final note = _noteCtrl.text;
+    final priority = _priority;
+    final mark = _mark;
+    navigator.pop();
+
+    await createSelectionRecord(
+      ref: ref,
+      context: navigator.context,
+      quote: quote,
+      sourcePath: sourcePath,
+      kind: kind.category,
+      mark: mark,
+      note: note,
+      priority: priority,
+      successLabel: kind.label,
     );
-
-    try {
-      await ref.read(taskRepoProvider).send(draft);
-      _finish('${_kind.label} kaydedildi.');
-    } on HubNetworkError {
-      // Ağ yokken kayıt kaybolmasın: normal görevlerle aynı kuyruk (B-032).
-      await ref.read(outboxProvider.notifier).add(draft);
-      _finish('Ağ yok — kayıt kuyruğa alındı.');
-    } on HubError catch (e) {
-      if (mounted) setState(() => _error = e.message);
-    } catch (e) {
-      if (mounted) setState(() => _error = 'Beklenmeyen hata: $e');
-    } finally {
-      if (mounted) setState(() => _busy = false);
-    }
-  }
-
-  void _finish(String message) {
-    ref.invalidate(allPendingTasksProvider);
-    if (!mounted) return;
-    Navigator.of(context).pop();
-    ScaffoldMessenger.of(context)
-        .showSnackBar(SnackBar(content: Text(message)));
   }
 
   @override
@@ -246,6 +238,49 @@ class _SelectionRecordSheetState extends ConsumerState<SelectionRecordSheet> {
       ),
     );
   }
+}
+
+/// Seçimden kayıt üretip hub'a gönderir; sonucu kullanıcıya bildirir.
+///
+/// Hem hızlı işaretleme (menüden tek dokunuş) hem de ayrıntılı sayfa bunu
+/// kullanır — yazma yolu tek olsun diye. Ağ yoksa kayıt kuyruğa alınır
+/// (B-032), yani seçim hiçbir durumda kaybolmaz.
+Future<void> createSelectionRecord({
+  required WidgetRef ref,
+  required BuildContext context,
+  required String quote,
+  required String sourcePath,
+  required String kind,
+  required TaskMark mark,
+  String note = '',
+  String priority = 'normal',
+  String? successLabel,
+}) async {
+  final messenger = ScaffoldMessenger.of(context);
+  final draft = TaskDraft.fromSelection(
+    quote: quote,
+    sourcePath: sourcePath,
+    kind: kind,
+    mark: mark,
+    note: note,
+    priority: priority,
+  );
+
+  String message;
+  try {
+    await ref.read(taskRepoProvider).send(draft);
+    message = '${successLabel ?? 'Kayıt'} eklendi.';
+  } on HubNetworkError {
+    await ref.read(outboxProvider.notifier).add(draft);
+    message = 'Ağ yok — ${(successLabel ?? 'kayıt').toLowerCase()} kuyruğa alındı.';
+  } on HubError catch (e) {
+    message = e.message;
+  } catch (e) {
+    message = 'Beklenmeyen hata: $e';
+  }
+
+  ref.invalidate(allPendingTasksProvider);
+  messenger.showSnackBar(SnackBar(content: Text(message)));
 }
 
 /// Seçilen metinden kayıt oluşturma sayfasını açar.
