@@ -9,7 +9,7 @@ import 'package:takip/features/common/repo_switcher.dart';
 import 'package:takip/features/shell.dart';
 import 'package:takip/hub/hub_connections.dart';
 import 'package:takip/hub/models/task.dart';
-import 'package:takip/hub/task_repo.dart';
+import 'package:takip/hub/all_tasks.dart';
 
 void main() {
   setUp(() {
@@ -29,7 +29,7 @@ void main() {
     // isteği açıyor ve testin sonunda askıda zamanlayıcı kalıyor.
     final container = ProviderContainer(
       overrides: [
-        pendingTasksProvider.overrideWith((ref) async => const <TaskSummary>[]),
+        allPendingTasksProvider.overrideWith((ref) async => const <TaskSummary>[]),
       ],
     );
     addTearDown(container.dispose);

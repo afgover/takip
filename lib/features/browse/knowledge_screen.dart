@@ -3,8 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../hub/browse_repo.dart';
 import '../../hub/models/hub_doc.dart';
+import '../common/annotated_document.dart';
 import '../common/hub_error_view.dart';
-import '../common/hub_markdown.dart';
 
 /// Bilgi tabanı (B-043): kurallar, skiller, dersler.
 ///
@@ -56,7 +56,8 @@ class _KnowledgeTab extends ConsumerWidget {
       AsyncData(:final value) => ListView.separated(
           itemCount: value.length,
           separatorBuilder: (_, __) => const Divider(height: 1),
-          itemBuilder: (context, i) => _EntryTile(entry: value[i]),
+          itemBuilder: (context, i) =>
+              _EntryTile(entry: value[i], sourcePath: file.path),
         ),
       AsyncError(:final error) => HubErrorView(
           error: error,
@@ -68,9 +69,12 @@ class _KnowledgeTab extends ConsumerWidget {
 }
 
 class _EntryTile extends StatelessWidget {
-  const _EntryTile({required this.entry});
+  const _EntryTile({required this.entry, required this.sourcePath});
 
   final KnowledgeEntry entry;
+
+  /// Kaydın okunduğu bilgi tabanı dosyası (`hub/knowledge/rules.md` gibi).
+  final String sourcePath;
 
   @override
   Widget build(BuildContext context) {
@@ -100,7 +104,10 @@ class _EntryTile extends StatelessWidget {
       children: [
         Align(
           alignment: Alignment.centerLeft,
-          child: HubMarkdown(entry.body),
+          child: AnnotatedDocument(
+            data: entry.body,
+            sourcePath: sourcePath,
+          ),
         ),
       ],
     );

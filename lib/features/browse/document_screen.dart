@@ -3,8 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../hub/browse_repo.dart';
 import '../../hub/frontmatter.dart';
+import '../common/annotated_document.dart';
 import '../common/hub_error_view.dart';
-import '../common/hub_markdown.dart';
 
 /// Hub'daki herhangi bir markdown dosyasını gösteren ortak görüntüleyici
 /// (oturumlar, artifact'lar, yol haritası).
@@ -29,7 +29,7 @@ class DocumentScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(title: Text(title)),
       body: switch (content) {
-        AsyncData(:final value) => _Document(raw: value),
+        AsyncData(:final value) => _Document(raw: value, path: path),
         AsyncError(:final error) => HubErrorView(
             error: error,
             onRetry: () => ref.invalidate(docContentProvider(path)),
@@ -41,9 +41,12 @@ class DocumentScreen extends ConsumerWidget {
 }
 
 class _Document extends StatelessWidget {
-  const _Document({required this.raw});
+  const _Document({required this.raw, required this.path});
 
   final String raw;
+
+  /// Belgenin hub yolu — seçimden üretilen kaydın `source` alanı olur.
+  final String path;
 
   @override
   Widget build(BuildContext context) {
@@ -65,7 +68,11 @@ class _Document extends StatelessWidget {
           const SizedBox(height: 8),
           const Divider(),
         ],
-        HubMarkdown(fm.body, padding: const EdgeInsets.only(top: 8)),
+        AnnotatedDocument(
+          data: fm.body,
+          sourcePath: path,
+          padding: const EdgeInsets.only(top: 8),
+        ),
       ],
     );
   }

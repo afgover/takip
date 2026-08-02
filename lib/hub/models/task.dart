@@ -2,6 +2,22 @@ import '../../core/constants.dart';
 import '../../core/utils.dart';
 import '../frontmatter.dart';
 
+/// Belgedeki işaretin biçimi (sözleşme 1.5).
+enum TaskMark {
+  highlight('Sarı işaret'),
+  underline('Kırmızı altı çizili');
+
+  const TaskMark(this.label);
+  final String label;
+
+  static TaskMark? parse(String? value) {
+    for (final m in TaskMark.values) {
+      if (m.name == value) return m;
+    }
+    return null;
+  }
+}
+
 /// Görev durumu — sözleşmede durum = klasör (SYSTEM.md §4).
 enum TaskStatus {
   inbox('Yeni'),
@@ -40,6 +56,10 @@ class TaskSummary {
     required this.status,
     required this.date,
     required this.title,
+    this.repoSlug,
+    this.repoLabel,
+    this.priority,
+    this.category,
   });
 
   /// Klasör listesindeki kayıttan üretir; görev dosyası değilse null
@@ -79,15 +99,54 @@ class TaskSummary {
   /// detay açılınca görünür; liste için dosya adı yeterlidir.
   final String title;
 
+  /// Görevin hangi repoda olduğu (`owner/ad`) ve listede görünen adı.
+  /// Bekleyenler artık tüm repoları birleştirdiği için gerekli.
+  final String? repoSlug;
+  final String? repoLabel;
+
+  /// Frontmatter'dan gelen etiketler. Yalnız **cihazdaki kopyadan** okunmuş
+  /// görevlerde dolu olur; klasör listesinden çizilen görevlerde null kalır
+  /// (dosya indirilmeden bilinemezler, B-031).
+  final String? priority;
+  final String? category;
+
+  String get repoName => repoLabel ?? repoSlug ?? '';
+
+  TaskSummary withContext({
+    String? repoSlug,
+    String? repoLabel,
+    String? priority,
+    String? category,
+    String? title,
+  }) =>
+      TaskSummary(
+        path: path,
+        fileName: fileName,
+        sha: sha,
+        status: status,
+        date: date,
+        title: title ?? this.title,
+        repoSlug: repoSlug ?? this.repoSlug,
+        repoLabel: repoLabel ?? this.repoLabel,
+        priority: priority ?? this.priority,
+        category: category ?? this.category,
+      );
+
   // Detay provider'ı bu nesneyi anahtar olarak kullanıyor: liste her
   // tazelendiğinde yeni örnek üretiliyor, değer eşitliği olmazsa aynı görev
   // için yeni bir provider açılırdı.
+  // Repo da kimliğin parçası: iki farklı hub'da aynı yol bulunabilir
+  // (`hub/tasks/inbox/2026-08-01-x.md` her repoda olabilir) ve bunlar aynı
+  // görev değildir.
   @override
   bool operator ==(Object other) =>
-      other is TaskSummary && other.path == path && other.sha == sha;
+      other is TaskSummary &&
+      other.path == path &&
+      other.sha == sha &&
+      other.repoSlug == repoSlug;
 
   @override
-  int get hashCode => Object.hash(path, sha);
+  int get hashCode => Object.hash(path, sha, repoSlug);
 
   static final _namePattern = RegExp(r'^(\d{4}-\d{2}-\d{2})-(.+)$');
 }
@@ -109,6 +168,9 @@ class HubTask {
     required this.path,
     this.body = '',
     this.sha,
+    this.source,
+    this.quote,
+    this.mark,
   });
 
   /// Hub'dan gelen dosyayı sözleşme şemasına göre okur. Eksik alanlar
@@ -136,6 +198,9 @@ class HubTask {
       path: path,
       body: fm.body,
       sha: sha,
+      source: fm.str('source'),
+      quote: fm.str('quote'),
+      mark: TaskMark.parse(fm.str('mark')),
     );
   }
 
@@ -156,8 +221,18 @@ class HubTask {
   /// Dosyanın o anki sha'sı — güncelleme yaparken gerekir (B-033).
   final String? sha;
 
+  /// Bağlam alanları (sözleşme 1.5): kayıt bir belgeden seçilerek üretildiyse
+  /// dolu olur. Üçü birlikte anlamlıdır; biri eksikse işaret çizilmez.
+  final String? source;
+  final String? quote;
+  final TaskMark? mark;
+
   bool get isPending => id == 'pending';
   bool get hasResult => result.isNotEmpty && result != 'none';
+
+  /// Belgede işaretlenecek bir kayıt mı?
+  bool get isAnnotation =>
+      source != null && quote != null && quote!.isNotEmpty && mark != null;
 
   Map<String, dynamic> toFrontmatter() => {
         'id': id,
@@ -170,6 +245,10 @@ class HubTask {
         'tags': tags,
         'session': session,
         'result': result,
+        // Sözleşme: bağlam alanları yalnız seçimden üretilmiş kayıtlarda yazılır.
+        if (source != null) 'source': source,
+        if (quote != null) 'quote': quote,
+        if (mark != null) 'mark': mark!.name,
       };
 
   /// Sözleşmeye uygun dosya içeriği (frontmatter + gövde).

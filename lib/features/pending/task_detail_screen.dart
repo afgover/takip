@@ -6,8 +6,8 @@ import '../../hub/models/task.dart';
 import '../../hub/models/task_draft.dart';
 import '../../hub/outbox.dart';
 import '../../hub/task_repo.dart';
+import '../common/annotated_document.dart';
 import '../common/hub_error_view.dart';
-import '../common/hub_markdown.dart';
 import 'pending_screen.dart' show TaskStatusChip;
 
 /// Görev detayı — dosya ancak bu ekran açılınca indirilir (B-031).
@@ -103,7 +103,11 @@ class _TaskBody extends StatelessWidget {
         ],
         const SizedBox(height: 8),
         const Divider(),
-        HubMarkdown(task.body, padding: const EdgeInsets.only(top: 8)),
+        AnnotatedDocument(
+          data: task.body,
+          sourcePath: task.path,
+          padding: const EdgeInsets.only(top: 8),
+        ),
       ],
     );
   }

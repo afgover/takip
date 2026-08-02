@@ -39,3 +39,11 @@ String titleFromSlug(String slug) {
   if (words.isEmpty) return slug;
   return words[0].toUpperCase() + words.substring(1);
 }
+
+/// Ardışık boşlukları teke indirir ve kırpar.
+///
+/// Seçilen metin satır sonları ve girintiler içerebiliyor; `quote` alanı
+/// belgede aranacağı için bunların korunması gerekir — ama baştaki/sondaki
+/// boşluk seçimin kazası olur, alıntının parçası değildir.
+String collapseWhitespace(String value) =>
+    value.trim().replaceAll(RegExp(r'[ \t]+'), ' ');

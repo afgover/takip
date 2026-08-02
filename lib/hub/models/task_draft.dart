@@ -54,6 +54,69 @@ class TaskDraft {
     );
   }
 
+  /// Bir belgeden seçilen metinden üretilen kayıt (sözleşme 1.5).
+  ///
+  /// Görev, yorum, düzeltme, tartışma — hepsi aynı yoldan gider ve `category`
+  /// ile ayrılır. `source`/`quote`/`mark` alanları sayesinde uygulama belgeyi
+  /// bir daha açtığında işareti bu kayıttan çizer; işaret ayrıca saklanmaz.
+  factory TaskDraft.fromSelection({
+    required String quote,
+    required String sourcePath,
+    required String kind,
+    required TaskMark mark,
+    String note = '',
+    String priority = 'normal',
+    DateTime? now,
+  }) {
+    final at = now ?? DateTime.parse(isoNow());
+    final trimmedNote = note.trim();
+    // Başlık alıntıdan türer: kullanıcı ayrıca başlık yazmak zorunda kalmasın,
+    // ama liste okunur olsun diye kısaltılır.
+    final title = _titleFromQuote(quote);
+
+    final task = HubTask(
+      id: 'pending',
+      title: title,
+      createdBy: 'user',
+      created: isoNow(),
+      updated: isoNow(),
+      priority: priority,
+      category: kind,
+      tags: const ['secim'],
+      session: 'none',
+      result: 'none',
+      status: TaskStatus.inbox,
+      path: '',
+      source: sourcePath,
+      quote: quote,
+      mark: mark,
+      body: '# $title\n\n'
+          '## İstek\n'
+          '${trimmedNote.isEmpty ? '(not girilmedi)' : trimmedNote}\n\n'
+          '## Alıntı\n'
+          '`$sourcePath` belgesinden:\n\n'
+          '> ${quote.replaceAll('\n', '\n> ')}\n\n'
+          '## Notlar\n',
+    );
+
+    return TaskDraft(
+      fileName: taskFileName(at, title),
+      content: task.toFileContent(),
+      commitMessage: "task(pending): inbox'a eklendi (app)",
+      title: title,
+      createdAt: at,
+    );
+  }
+
+  /// Alıntının ilk anlamlı parçası — dosya adı ve liste başlığı için.
+  static String _titleFromQuote(String quote) {
+    final flat = quote.replaceAll(RegExp(r'\s+'), ' ').trim();
+    if (flat.length <= 60) return flat;
+    final cut = flat.substring(0, 60);
+    final lastSpace = cut.lastIndexOf(' ');
+    return '${lastSpace > 20 ? cut.substring(0, lastSpace) : cut}…';
+  }
+
   /// `waiting/`teki bir görev için "kullanıcı yaptı" bildirimi (sözleşme 1.4).
   ///
   /// Ayrı bir görev olarak gider çünkü app asıl dosyayı taşıyamaz (R-001).

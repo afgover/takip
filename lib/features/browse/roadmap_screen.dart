@@ -3,8 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/constants.dart';
 import '../../hub/browse_repo.dart';
+import '../common/annotated_document.dart';
 import '../common/hub_error_view.dart';
-import '../common/hub_markdown.dart';
 
 /// Yol haritası (B-044): `BACKLOG.md` ve `EVOLUTION.md`.
 ///
@@ -51,7 +51,7 @@ class _MarkdownTab extends ConsumerWidget {
     return switch (content) {
       AsyncData(:final value) => ListView(
           padding: const EdgeInsets.all(16),
-          children: [HubMarkdown(value)],
+          children: [AnnotatedDocument(data: value, sourcePath: path)],
         ),
       AsyncError(:final error) => HubErrorView(
           error: error,

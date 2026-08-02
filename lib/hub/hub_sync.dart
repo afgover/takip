@@ -5,8 +5,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../core/constants.dart';
 import '../core/errors.dart';
+import '../github/client.dart';
 import '../github/contents_api.dart';
 import '../github/trees_api.dart';
+import 'hub_config.dart';
+import 'hub_connections.dart';
 import 'hub_watcher.dart';
 import 'offline_store.dart';
 
@@ -104,15 +107,59 @@ class HubSync extends Notifier<SyncStatus> {
       entry.path.startsWith('${Hub.basePath}/') &&
       entry.path.endsWith('.md');
 
+  /// **Bağlı bütün repoları** günceller (aktif olanla başlar).
+  ///
+  /// Tümü indiriliyor çünkü Bekleyenler artık repolar arası: kullanıcı hangi
+  /// repoda olursa olsun bütün açık işlerini görüyor. Yalnız aktif repo
+  /// inseydi, liste ancak o repoya geçildiğinde dolardı.
   Future<void> syncNow() async {
     if (_inFlight) return;
-    final store = ref.read(offlineStoreProvider);
-    if (store == null) return;
+    final connections =
+        ref.read(hubConnectionsProvider).valueOrNull ?? const HubConnectionsState();
+    final active = connections.active;
+    if (active == null) return;
 
     _inFlight = true;
     state = state.copyWith(syncing: true, done: 0, total: 0, clearError: true);
     try {
-      final tree = await ref.read(treesApiProvider).recursive();
+      await _syncConnection(active);
+      for (final other in connections.connections) {
+        if (other.slug == active.slug) continue;
+        // Bir repo indirilemezse (token kapsamıyor, ağ koptu) diğerleri
+        // etkilenmesin; hata aktif repodan geliyorsa zaten yukarı çıkar.
+        try {
+          await _syncConnection(other);
+        } on HubError {
+          continue;
+        }
+      }
+      state = state.copyWith(syncing: false, version: state.version + 1);
+    } on HubError catch (e) {
+      // Ağ yoksa bu beklenen durumdur: elde eski kopya varken hata göstermek
+      // yerine sessizce bırakılır, bağlantı gelince yeniden denenir.
+      state = state.copyWith(syncing: false, error: e);
+    } finally {
+      _inFlight = false;
+    }
+  }
+
+  Future<void> _syncConnection(HubConfig connection) async {
+    final store = OfflineStore(connection.slug);
+    // İlerleme ve "son güncelleme" göstergeleri aktif repoyu anlatır; arka
+    // planda inen diğer repolar sayacı oynatmaz.
+    final isActive = connection.slug ==
+        ref.read(hubConnectionsProvider).valueOrNull?.active?.slug;
+
+    // Paylaşılan istemci her repo için kullanılabiliyor: L-019 düzeltmesinden
+    // beri token isteğin **yolundan** seçiliyor. Ayrı bir Dio açmak ETag
+    // önbelleğini de kaybettirirdi — değişmemiş ağaç 304 dönüyor ve istek
+    // limitinden düşmüyor (SK-002).
+    final dio = ref.read(githubDioProvider);
+    final contents =
+        ContentsApi(dio, owner: connection.owner, repo: connection.repo);
+    final trees = TreesApi(dio, owner: connection.owner, repo: connection.repo);
+    {
+      final tree = await trees.recursive();
       final wanted = tree.where(isSyncable).toList();
 
       // Silinmiş dosyalar yerel kopyadan da düşsün; yoksa kullanıcı hub'da
@@ -129,9 +176,8 @@ class HubSync extends Notifier<SyncStatus> {
         if (existing == null || existing.sha != entry.sha) stale.add(entry);
       }
 
-      state = state.copyWith(total: stale.length);
+      if (isActive) state = state.copyWith(total: stale.length);
 
-      final contents = ref.read(contentsApiProvider);
       var done = 0;
       for (final entry in stale) {
         final file = await contents.getFile(entry.path);
@@ -140,7 +186,7 @@ class HubSync extends Notifier<SyncStatus> {
           StoredDoc(sha: entry.sha, content: file.content),
         );
         done++;
-        state = state.copyWith(done: done);
+        if (isActive) state = state.copyWith(done: done);
       }
 
       // Ağaç en sona yazılır: indirme yarıda kalırsa ağaç eski kalsın ve
@@ -158,19 +204,13 @@ class HubSync extends Notifier<SyncStatus> {
       );
       await store.writeMeta(meta);
 
-      state = state.copyWith(
-        syncing: false,
-        syncedAt: meta.syncedAt,
-        docCount: meta.docCount,
-        clearError: true,
-        version: state.version + 1,
-      );
-    } on HubError catch (e) {
-      // Ağ yoksa bu beklenen durumdur: elde eski kopya varken hata göstermek
-      // yerine sessizce bırakılır, bağlantı gelince yeniden denenir.
-      state = state.copyWith(syncing: false, error: e);
-    } finally {
-      _inFlight = false;
+      if (isActive) {
+        state = state.copyWith(
+          syncedAt: meta.syncedAt,
+          docCount: meta.docCount,
+          clearError: true,
+        );
+      }
     }
   }
 

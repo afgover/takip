@@ -5,9 +5,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:takip/github/contents_api.dart';
-import 'package:takip/github/trees_api.dart';
+import 'package:takip/github/client.dart';
 import 'package:takip/hub/browse_repo.dart';
+import 'package:takip/hub/hub_config.dart';
 import 'package:takip/hub/hub_connections.dart';
 import 'package:takip/hub/hub_sync.dart';
 import 'package:takip/hub/offline_store.dart';
@@ -85,18 +85,15 @@ Future<({ProviderContainer container, FakeRemote remote})> boot(
   final dio = Dio(BaseOptions(baseUrl: 'https://api.github.com'))
     ..httpClientAdapter = FakeAdapter(remote.handle);
 
+  // Senkron artık API'lerini paylaşılan istemciden kendi kuruyor (her repo
+  // için ayrı owner/repo), o yüzden override edilen şey istemcinin kendisi.
   final container = ProviderContainer(
-    overrides: [
-      treesApiProvider.overrideWithValue(
-        TreesApi(dio, owner: 'afgover', repo: 'takip'),
-      ),
-      contentsApiProvider.overrideWithValue(
-        ContentsApi(dio, owner: 'afgover', repo: 'takip'),
-      ),
-    ],
+    overrides: [githubDioProvider.overrideWithValue(dio)],
   );
   addTearDown(container.dispose);
   await container.read(hubConnectionsProvider.future);
+  // Türetilmiş aktif bağlantı da çözülmeli: API sağlayıcıları onu izliyor.
+  await container.read(hubConfigProvider.future);
   return (container: container, remote: remote);
 }
 
