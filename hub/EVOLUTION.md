@@ -281,6 +281,16 @@ toplanır ve gerekiyorsa Faz 6 maddelerini (B-060…B-064) yeniden sıralar.
   "Yaptım" düğmesi kapatma yolunu sohbetten çıkarıyor. 258 test.
   → S-2026-08-01-bekleyen-isler, K-022, L-018
 
+- 2026-08-02: **Kayıt sistemi iki yönden genişledi.** (a) Bekleyenler artık
+  bütün repoların işlerini tek listede gösteriyor; repo/öncelik/kategori
+  filtresi ve satır etiketleri eklendi (B-067, B-068). Bu, yerel kopya (B-057)
+  sayesinde mümkün oldu — etiketler dosya indirilmeden bilinemezdi. (b) Herhangi
+  bir belgede metin seçip **görev/yorum/düzeltme/tartışma** kaydı oluşturulabiliyor;
+  işaret (sarı/kırmızı) kayıttan türüyor, ayrıca saklanmıyor (B-069, K-023).
+  Ayrıca sözleşmenin ana kopyası tanımlandı ve geriden gelen hub'lar hem agent
+  hem uygulama tarafından yakalanıyor (B-070, K-024, L-020). Sözleşme 1.5.
+  284 test. → S-2026-08-02-secim-filtre-sozlesme
+
 **Kararlar:**
 - **K-019:** Kolaylık için token'ın korumasız bir dizeye çevrilmesine izin
   verilmez. Çok repolu kurulumda veri kaybı sonrası token'ları tek tek yeniden
@@ -321,3 +331,21 @@ toplanır ve gerekiyorsa Faz 6 maddelerini (B-060…B-064) yeniden sıralar.
   inbox'a bildirim görevi yazar; taşımayı agent yapar. App'in yazma alanı
   tek klasör kalır ve bu garanti derleme zamanı sabitidir.
   → Sözleşme 1.4, B-065, L-018
+- **K-023:** Belgeden seçilerek üretilen kayıtlar **normal görevdir**; ayrı
+  bir dosya türü veya klasör açılmadı. R-001 korunuyor (app yalnız `inbox/`a
+  yazar) ve agent bunları zaten bildiği döngüde ele alıyor. Ayırt edici olan
+  `category` (gorev/yorum/duzeltme/tartisma) ve üç bağlam alanı
+  (`source`/`quote`/`mark`).
+  **İşaret ayrıca saklanmıyor, kayıttan türüyor.** Alternatif — işareti
+  cihazda ya da ayrı bir dosyada tutmak — işaret ile kaydın ayrışmasına açıktı:
+  kayıt kapanır işaret kalır, ya da cihaz değişir işaret gider. Türetilmiş
+  olduğu için böyle bir tutarsızlık **mümkün değil**. Bedeli: alıntı belgede
+  bulunamazsa işaret çizilmez; bu kabul edildi çünkü belge değişmesi normal ve
+  kayıt yine geçerli kalıyor. → Sözleşme 1.5, B-069
+- **K-024:** Sözleşmenin **ana kopyası** `afgover/takip`'tedir; diğer hub'lar
+  ondan türer. Bayatlama kaçınılmaz olduğu için **fark edilmesi** iki yerden
+  garantiye alındı: agent her oturum açılışında sürümü karşılaştırıp
+  güncelliyor, uygulama da geride kalan repoyu Ayarlar → Repolar'da
+  işaretliyor. Tek yere bırakılsaydı — yalnız agent'a — atlandığında kimse
+  görmezdi; `financer_takip` tam olarak böyle 1.3'te kalmıştı (L-020).
+  Sözleşme yalnız ana kopyada değiştirilir. → Sözleşme 1.5 §10, B-070
