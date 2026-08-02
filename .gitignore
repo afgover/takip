@@ -16,3 +16,7 @@ ios/.symlinks/
 # Gizli
 *.keystore
 key.properties
+
+# macOS Finder artigi — projeyle ilgisi yok, Finder her bakista degistiriyor
+.DS_Store
+**/.DS_Store
