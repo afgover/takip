@@ -242,3 +242,34 @@ Biçim: `SYSTEM.md` §5.
   zorundaysa, ikisini birbirine bağla — burada token isteğin **yolundan**
   seçilerek bağlandı. Tarama sorusu: "bu iki değer farklı anlarda okunuyorsa,
   arada değişirlerse ne olur?"
+
+## L-020 — Kopyalanan sözleşme geriden gelir ve bunu kimse fark etmez
+- **Tarih:** 2026-08-02
+- **Kaynak:** S-2026-08-02-secim-filtre-sozlesme
+- **Açıklama:** Her proje hub'ı `SYSTEM.md`'nin bir **kopyasını** taşıyor.
+  Ana kopya güncellendiğinde diğerleri kendiliğinden güncellenmiyor ve
+  aradaki fark hiçbir yerde görünmüyordu. `financer_takip` bunun canlı
+  örneğiydi: sözleşmesi 1.3'te kalmışken `tasks/waiting/` klasörünü
+  kullanıyordu — yani **kullandığı klasörü kendi sözleşmesi tanımlamıyordu.**
+  Oraya bakan yeni bir agent `waiting/`in ne olduğunu bilemez, dolayısıyla
+  mekanizmayı sürdüremezdi.
+  Kopyalanan bir sözleşmenin bayatlaması kaçınılmaz; **fark edilmemesi**
+  düzeltilebilir. İki yönlü kapatıldı: agent her oturum açılışında sürümü ana
+  kopyayla karşılaştırıp güncelliyor (§10), uygulama da geride kalan repoyu
+  Ayarlar → Repolar'da işaretliyor. Agent atlarsa kullanıcı görüyor.
+  **Genel kural:** bir şeyin kopyası dağıtılıyorsa, "kopya bayat mı?"
+  sorusunun cevabı sistemde bir yerde **görünür** olmalı. Görünmeyen fark,
+  olmayan fark gibi davranır.
+
+## L-021 — Sırayla yerine koymak, iç içe geçen aralıkları bozar
+- **Tarih:** 2026-08-02
+- **Kaynak:** S-2026-08-02-secim-filtre-sozlesme (B-069)
+- **Açıklama:** Belgedeki alıntıları işaretlerken her kaydı sırayla
+  `replaceRange` ile sarmak yeterli sanılmıştı. Uzun alıntı önce işaretlenip
+  kısa alıntı onun **içine** düşünce dıştaki işaret ikiye bölünüyor ve hiçbiri
+  doğru çizilmiyordu. Uzunu önce işlemek tek başına yetmedi — sorun sıralama
+  değil, **her adımın metni değiştirmesiydi.**
+  Çözüm: konumlar **özgün metin üzerinde** toplanır, çakışanlar elenir, sonra
+  hepsi sondan başa doğru tek seferde uygulanır. **Genel kural:** aynı diziyi
+  birden çok kez değiştiren bir işlemde, konumlar her adımda kayar; önce
+  aralıkları hesapla, sonra uygula.
