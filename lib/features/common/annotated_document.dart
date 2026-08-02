@@ -56,7 +56,10 @@ class _AnnotatedDocumentState extends ConsumerState<AnnotatedDocument> {
         return AdaptiveTextSelectionToolbar.buttonItems(
           anchors: state.contextMenuAnchors,
           buttonItems: [
-            ...state.contextMenuButtonItems,
+            // **En başta**: Android seçim menüsü cihazdaki uygulamalarla
+            // (tarayıcılar, çevirmenler, parola yöneticileri) doluyor ve sona
+            // eklenen öğe taşma menüsünün dibine düşüyor. Bu ekranda seçim
+            // yapmanın asıl sebebi kayıt oluşturmak; görünür yerde olmalı.
             if (selection.isNotEmpty)
               ContextMenuButtonItem(
                 label: AnnotatedDocument.menuLabel,
@@ -69,6 +72,7 @@ class _AnnotatedDocumentState extends ConsumerState<AnnotatedDocument> {
                   );
                 },
               ),
+            ...state.contextMenuButtonItems,
           ],
         );
       },
