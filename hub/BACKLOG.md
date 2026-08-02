@@ -203,6 +203,20 @@ başlığına ✅ ve tarih yazılır.
 - [ ] B-052 · (user) Bir hafta gerçek kullanım; sürtünme noktalarını görev olarak
       inbox'a at — B-015, B-020 ve B-034'ün cihaz ayağı tamamlandıktan sonra
 - [ ] B-053 · (agent) Kullanım geri bildirimlerine göre revizyon turu
+- [x] B-067 · (agent) Bekleyenler tüm repolardaki işleri göstersin —
+      ✅ 2026-08-02 · takip@ec267a3; senkron tüm bağlı repoları kapsıyor,
+      liste yerel kopyadan çiziliyor
+- [x] B-068 · (agent) Bekleyenlerde repo/öncelik/kategori filtresi ve satır
+      etiketleri — ✅ 2026-08-02 · takip@ec267a3; seçenekler listede gerçekten
+      geçen değerlerden türüyor, etiketi bilinmeyen görev filtreye takılmıyor
+- [x] B-069 · (agent) Metin seçince kayıt oluşturma (görev/yorum/düzeltme/
+      tartışma) ve sarı/kırmızı işaretleme — ✅ 2026-08-02 · takip@ec267a3;
+      sözleşme 1.5 (K-023). İşaret kayıttan türüyor, ayrıca saklanmıyor.
+      → L-021
+- [x] B-070 · (agent) Sözleşme sürüm kontrolü ve güncelleme kuralı —
+      ✅ 2026-08-02 · sözleşme 1.5 §10 (K-024); agent her oturum açılışında
+      ana kopyayla karşılaştırıyor, uygulama geride kalan repoyu işaretliyor.
+      → L-020
 - [x] B-066 · (agent) Çoklu repoda geçiş sonrası "Bulunamadı" hatası —
       ✅ 2026-08-01 · takip@98f21be; S-2026-08-01-coklu-repo-404.
       Kök neden: isteğin adresi sağlayıcı kurulurken, token'ı istek
