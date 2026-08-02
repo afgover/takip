@@ -43,6 +43,30 @@ https://raw.githubusercontent.com/afgover/takip/main/hub/AGENT_PROTOCOL.md
 İkisini de **baştan sona oku.** Aşağıdakiler özettir, sözleşmenin yerine
 geçmez.
 
+### Her oturum açılışında: sürümü karşılaştır
+
+Bu kopyalar zamanla **geriden gelir** ve bu sessiz bir tuzaktır: kendi
+hub'ındaki sözleşmeyi okursun, orada olmayan bir klasörü bilmezsin ve son
+sürümün öngördüğü davranışı hiç göstermezsin. Bir projede gerçekten yaşandı —
+hub 1.3'te kalmışken 1.4'ün klasörünü kullanıyordu, yani kullandığı klasörü
+kendi sözleşmesi tanımlamıyordu.
+
+Bu yüzden **her oturum açılışında**:
+
+1. Kendi `hub/SYSTEM.md`'ndeki **Sözleşme sürümü**nü oku.
+2. Ana kopyadakiyle karşılaştır (yukarıdaki raw adres).
+3. Aynıysa devam et.
+4. **Geridesen:** ana kopyayı `SYSTEM.md` ve `AGENT_PROTOCOL.md` üzerine yaz,
+   yeni sürümün getirdiği klasörleri oluştur, commit et
+   (`system: sözleşme 1.3 → 1.5 güncellendi`), `EVOLUTION.md`'ye tek satır not
+   düş ve kullanıcıya **ne değiştiğini** bir cümleyle söyle.
+5. **İleridesen:** üzerine yazma. Ana kopya güncellenmeden yapılmış yerel bir
+   değişiklik var demektir; kullanıcıya bildir ve ana kopyaya taşınmasını öner.
+
+Sözleşmeyi **yalnızca ana kopyada** değiştir. Bir projede yeni ihtiyaç çıkarsa
+önce kullanıcıya öner; onaylanırsa `afgover/takip`'te sürüm artar, diğer
+hub'lar bir sonraki oturumlarında yakalar.
+
 ## 2. İskeleti kur
 
 Hub kökü **her zaman** reponun içindeki `hub/` klasörüdür — istisnasız
@@ -111,6 +135,25 @@ gerisi sende.
 
 Uygulamanın yazdığı görevde `id: pending` olur — **ID'yi sen atarsın**, ilk
 ele alışta sıradaki `T-00X`'i verirsin.
+
+### Belgeden seçilerek gelen kayıtlar (v1.5)
+
+Kullanıcı uygulamada herhangi bir belgede metin seçip kayıt oluşturabiliyor.
+Bu kayıtlar `inbox/`a normal görev olarak düşer ama üç ek alan taşır:
+`source` (hangi belge), `quote` (birebir alıntı), `mark` (sarı/kırmızı).
+
+`category` ne olduğunu söyler ve **nasıl ele alacağını belirler**:
+
+| Kategori | Senden beklenen |
+|---|---|
+| `gorev` | İşi yap |
+| `yorum` | Not olarak dikkate al; genelde yapılacak iş yoktur |
+| `duzeltme` | Alıntılanan yer yanlış — **`source` belgesini düzelt**, sonra kaydı kapat |
+| `tartisma` | Açık soru — cevabını yaz, gerekiyorsa kullanıcıya `waiting/` ile dön |
+
+İşaret ayrıca saklanmaz, kayıttan türer: kaydı `done/`a taşırsan işaret de
+belgeden kalkar. Bu yüzden bir `duzeltme` kaydını kapatmadan önce düzeltmeyi
+gerçekten yapmış ol.
 
 ## 4. Kayıt disiplini
 
