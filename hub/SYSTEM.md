@@ -5,7 +5,9 @@ ve hangi şemaya uyacağını** tanımlar. Agent ve kullanıcı uygulaması bu s
 dışına çıkmaz. Sözleşme değişiklikleri `EVOLUTION.md`'ye kaydedilir ve bu dosyanın
 başındaki sürüm numarası artırılır.
 
-**Sözleşme sürümü:** 1.4
+**Sözleşme sürümü:** 1.5
+**Ana kopya (master):** `afgover/takip` → `hub/SYSTEM.md`
+(bkz. §10 — her hub kendi kopyasını buradan günceller)
 **Zaman biçimi:** her yerde ISO 8601, UTC (`2026-07-30T14:05:00Z`)
 **Dil:** doküman içerikleri Türkçe; alan adları (frontmatter anahtarları) İngilizce
 **Dosya adları:** küçük harf, Türkçe karakter yok, boşluk yerine tire (`gorev-adi`)
@@ -140,12 +142,19 @@ created: 2026-07-30T14:05:00Z
 updated: 2026-07-30T16:00:00Z
 priority: normal             # low | normal | high | urgent
 category: gorev              # varsayılanlar: gorev, arastirma, gelistirme, hata,
-                             # fikir — serbest değer de geçerli (kullanıcı tanımlı).
+                             # fikir, yorum, duzeltme, tartisma (son üçü v1.5) —
+                             # serbest değer de geçerli (kullanıcı tanımlı).
                              # App, seçim listesini varsayılanlar + mevcut
                              # görevlerde geçen kategorilerden türetir. (v1.1)
 tags: []
 session: none                # ele alındığı oturumun ID'si (agent doldurur)
 result: none                 # tamamlanınca: sonucun 1 satır özeti veya artifact linki
+
+# --- Bağlam alanları (v1.5) — yalnızca bir belgeden seçilerek üretilmiş
+# kayıtlarda bulunur; normal görevlerde hiç yazılmaz. Üçü birlikte anlamlıdır.
+source: hub/sessions/2026-08-01-x/session.md   # kaydın bağlı olduğu belge
+quote: "işaretlenen metnin tamamı"             # o belgeden birebir alıntı
+mark: highlight              # highlight | underline — belgede nasıl çizilecek
 ---
 
 # <başlık>
@@ -197,6 +206,35 @@ Agent bu bildirimi gördüğünde asıl görevi `waiting/` → `done/` taşır (
 devam ediyorsa `active/`e alır) ve bildirim görevini `done/`a kapatır.
 Bildirimin ayrı bir görev olmasının nedeni R-001: app'in yazma alanı tek
 klasördür ve bu garanti derleme zamanı sabitidir.
+
+### Belgeden seçilerek üretilen kayıtlar (v1.5, K-023)
+
+Kullanıcı uygulamada herhangi bir belgede (oturum, rapor, bilgi tabanı, görev,
+yol haritası) bir metin seçip **kayıt oluşturabilir**. Oluşan şey yine normal
+bir görevdir — R-001 gereği `tasks/inbox/`'a yazılır — ama üç ek alan taşır:
+
+| Alan | Anlamı |
+|---|---|
+| `source` | Kaydın bağlı olduğu belgenin hub içindeki yolu |
+| `quote` | O belgeden **birebir** alıntı; işaretin yeri bununla bulunur |
+| `mark` | `highlight` (sarı) veya `underline` (kırmızı) |
+
+`category` kaydın **ne olduğunu** söyler: `gorev` (yapılacak iş), `yorum`,
+`duzeltme` (yanlış olduğu düşünülen yer), `tartisma` (açık soru) ya da serbest
+bir değer.
+
+**İşaret kayıttan türer, ayrıca saklanmaz.** Uygulama bir belgeyi çizerken o
+belgeyi `source` alan kayıtları bulur ve `quote` metnini belgede işaretler.
+Böylece işaret ile kayıt hiçbir zaman ayrışamaz: kayıt silinirse işaret de
+gider, kayıt başka cihazda görünürse işaret de görünür.
+
+Kurallar:
+- `quote` belgede bulunamazsa işaret çizilmez; **kayıt yine geçerlidir** ve
+  listelerde görünür. Belge değişmiş olabilir — bu beklenen bir durumdur.
+- Aynı belgede birden çok kayıt olabilir; her biri kendi `quote`'unu işaretler.
+- Agent bu kayıtları normal görev gibi ele alır: ID atar, `active`'e taşır,
+  `result` yazar. `duzeltme` kayıtlarında düzeltme yapıldıysa `source`
+  belgesinin kendisi de güncellenir.
 
 ## 5. `knowledge/` — bilgi tabanı
 
@@ -266,3 +304,42 @@ Uygulamanın "göz atma" ekranı şu kategorileri klasörlerden türetir:
 | Raporlar & Planlar | `artifacts/` (frontmatter `type`'a göre alt filtre) |
 | Bilgi tabanı | `knowledge/` |
 | Yol haritası | `BACKLOG.md`, `EVOLUTION.md` |
+
+## 10. Sözleşme sürümü ve güncelleme (v1.5, K-024)
+
+Bu dosyanın **ana kopyası** `afgover/takip` reposundaki `hub/SYSTEM.md`'dir.
+Diğer projelerin hub'larındaki kopyalar ondan türer ve **geriden gelebilir**.
+
+Geriden gelen bir kopya sessiz bir tuzaktır: agent kendi hub'ındaki sözleşmeyi
+okur, orada olmayan bir klasörü (örn. `tasks/waiting/`) bilmez ve sözleşmenin
+son hâlinin öngördüğü davranışı hiç göstermez. Bu gerçekten yaşandı —
+`financer_takip` 1.3'te kalmışken `waiting/` klasörünü kullanıyordu, yani
+kullandığı klasörü kendi sözleşmesi tanımlamıyordu (L-020).
+
+### Kural dizisi
+
+Her agent, **her oturum açılışında** şunu yapar:
+
+1. Kendi hub'ındaki `hub/SYSTEM.md`'nin ilk satırlarındaki
+   **Sözleşme sürümü**nü oku.
+2. Ana kopyanınkiyle karşılaştır:
+   `https://raw.githubusercontent.com/afgover/takip/main/hub/SYSTEM.md`
+3. **Sürümler aynıysa** bir şey yapma.
+4. **Kendi kopyan geridyse:**
+   - Ana kopyayı olduğu gibi al, `hub/SYSTEM.md`'nin üzerine yaz.
+   - `hub/AGENT_PROTOCOL.md`'yi de aynı şekilde tazele (o da ana kopyadan gelir).
+   - Yeni sürümün getirdiği klasörler yoksa oluştur (örn. `tasks/waiting/`).
+   - Commit: `system: sözleşme <eski> → <yeni> güncellendi`
+   - `EVOLUTION.md`'ye tek satır not düş: hangi sürümden hangisine geçildi.
+   - Kullanıcıya **ne değiştiğini** bir cümleyle söyle.
+5. **Kendi kopyan ileriyse** (ana kopyadan yeni): üzerine yazma. Bu, ana kopya
+   güncellenmeden yapılmış yerel bir değişiklik demektir; kullanıcıya bildir ve
+   değişikliğin ana kopyaya taşınmasını öner.
+
+Sözleşmeyi **yalnızca ana kopyada** değiştir. Bir projede yeni bir ihtiyaç
+çıkarsa önce kullanıcıya öner, onaylanırsa `afgover/takip`'te sürümü artır;
+diğer hub'lar bir sonraki oturumlarında kendiliğinden yakalar.
+
+> **Uygulama tarafı:** app her bağlantının sözleşme sürümünü okur ve ana
+> kopyadan geride kalanı **Ayarlar → Repolar**'da işaretler. Böylece geriden
+> gelen bir hub, agent fark etmese bile kullanıcıya görünür.
