@@ -25,6 +25,7 @@ class HubMarkdown extends StatelessWidget {
     this.selectable = true,
     this.padding = EdgeInsets.zero,
     this.annotations = const [],
+    this.onTapAnnotation,
   });
 
   final String data;
@@ -32,12 +33,21 @@ class HubMarkdown extends StatelessWidget {
   /// Bu belgeye bağlı kayıtlar; metinde işaretlenirler (sözleşme 1.5).
   final List<Annotation> annotations;
 
+  /// İşarete dokunulunca çağrılır — kaydı gösterip silmek için.
+  final void Function(Annotation annotation)? onTapAnnotation;
+
   /// Bağlantıya dokunma. Hub içi göreli bağlantılar (`artifacts/…md`) Faz 4'te
   /// uygulama içi gezinmeye bağlanacak; burada karar verilmez, yukarı iletilir.
   final void Function(String text, String? href, String title)? onTapLink;
 
   final bool selectable;
   final EdgeInsets padding;
+
+  /// İşaretin taşıdığı sıra numarasını kayda çevirir.
+  void _tap(int index) {
+    if (index < 0 || index >= annotations.length) return;
+    onTapAnnotation?.call(annotations[index]);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -54,8 +64,8 @@ class HubMarkdown extends StatelessWidget {
           _MarkSyntax(_underlineOpen, _underlineClose, markUnderlineTag),
         ],
         builders: {
-          markHighlightTag: _MarkBuilder(TaskMark.highlight),
-          markUnderlineTag: _MarkBuilder(TaskMark.underline),
+          markHighlightTag: _MarkBuilder(TaskMark.highlight, _tap),
+          markUnderlineTag: _MarkBuilder(TaskMark.underline, _tap),
         },
       ),
     );
@@ -71,7 +81,7 @@ MarkdownStyleSheet hubMarkdownStyleSheet(ThemeData theme) {
     fontSize: (theme.textTheme.bodyMedium?.fontSize ?? 14) - 1,
   );
 
-  return MarkdownStyleSheet.fromTheme(theme).copyWith(
+  final sheet = MarkdownStyleSheet.fromTheme(theme).copyWith(
     p: theme.textTheme.bodyMedium?.copyWith(height: 1.45),
     h1: theme.textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w700),
     h2: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w700),
@@ -105,6 +115,8 @@ MarkdownStyleSheet hubMarkdownStyleSheet(ThemeData theme) {
     ),
     listBullet: theme.textTheme.bodyMedium,
   );
+
+  return sheet;
 }
 
 // İşaretler markdown kaynağına, metinde geçmesi mümkün olmayan **özel kullanım
@@ -141,7 +153,7 @@ String markAnnotations(String source, List<Annotation> annotations) {
   // Aralıklar **özgün metin üzerinde** toplanıp en sonda uygulanıyor. Sırayla
   // yerine koymak, ikinci alıntının birincinin işaretinin içine düşmesine ve
   // dıştaki işaretin bölünmesine yol açıyordu (L-021).
-  final claimed = <({int start, int end, TaskMark mark})>[];
+  final claimed = <({int start, int end, TaskMark mark, int index})>[];
 
   for (final annotation in ordered) {
     final range = _locate(source, projection, annotation.quote);
@@ -151,7 +163,15 @@ String markAnnotations(String source, List<Annotation> annotations) {
         claimed.any((r) => range.start < r.end && range.end > r.start);
     if (overlaps) continue;
 
-    claimed.add((start: range.start, end: range.end, mark: annotation.mark));
+    claimed.add((
+      start: range.start,
+      end: range.end,
+      mark: annotation.mark,
+      // Kaydın listedeki sırası işaretin içine gömülüyor: kullanıcı işarete
+      // dokununca hangi kaydı sildiğimizi bilmek zorundayız. Metinden geri
+      // bulmak, aynı kelime birden çok kayıtta geçtiğinde belirsiz olurdu.
+      index: annotations.indexOf(annotation),
+    ));
   }
 
   // Sondan başa doğru ekle ki daha önceki konumlar kaymasın.
@@ -164,7 +184,8 @@ String markAnnotations(String source, List<Annotation> annotations) {
     out = out.replaceRange(
       range.start,
       range.end,
-      '$open${source.substring(range.start, range.end)}$close',
+      '$open${range.index}$_markIdSeparator'
+      '${source.substring(range.start, range.end)}$close',
     );
   }
   return out;
@@ -258,34 +279,58 @@ String _flatten(String value) {
 
 const _emphasis = {'*', '_', '`', '~'};
 
+/// İşaretin içindeki sıra numarasını metinden ayıran görünmez karakter.
+const _markIdSeparator = '\u001F';
+
 class _MarkSyntax extends md.InlineSyntax {
   _MarkSyntax(this.open, this.close, this.tag)
-      : super('${RegExp.escape(open)}([^${RegExp.escape(close)}]+)'
-            '${RegExp.escape(close)}');
+      : super('${RegExp.escape(open)}(\\d+)$_markIdSeparator'
+            '([^${RegExp.escape(close)}]+)${RegExp.escape(close)}');
 
   final String open;
   final String close;
   final String tag;
 
+  /// İşaret **kelime kelime** yayılıyor; aradaki boşluklar düz metin kalıyor.
+  ///
+  /// Sebebi flutter_markdown'ın builder çıktısını `WidgetSpan` olarak
+  /// gömmesi: WidgetSpan satır içinde bölünemeyen tek bir kutudur, dolayısıyla
+  /// çok kelimeli bir işaret satır sonuna sığmayınca **tamamı** alt satıra
+  /// iniyor ve arkasındaki kelimeyi de itiyordu (L-028). Kelime başına ayrı
+  /// kutu + aradaki düz boşluklar, satırın normal yerlerinden kırılmasını
+  /// sağlıyor.
   @override
   bool onMatch(md.InlineParser parser, Match match) {
-    parser.addNode(md.Element.text(tag, match[1]!));
+    final id = match[1]!;
+    final parts = match[2]!.split(' ');
+    for (var i = 0; i < parts.length; i++) {
+      if (parts[i].isNotEmpty) {
+        parser.addNode(
+          md.Element.text(tag, parts[i])..attributes['ann'] = id,
+        );
+      }
+      if (i < parts.length - 1) parser.addNode(md.Text(' '));
+    }
     return true;
   }
 }
 
 class _MarkBuilder extends MarkdownElementBuilder {
-  _MarkBuilder(this.mark);
+  _MarkBuilder(this.mark, this.onTap);
 
   final TaskMark mark;
+  final void Function(int index) onTap;
 
   @override
   Widget visitElementAfter(md.Element element, TextStyle? preferredStyle) {
+    final index = int.tryParse(element.attributes['ann'] ?? '') ?? -1;
     return Builder(
       builder: (context) {
         final colors = Theme.of(context).colorScheme;
         final base = preferredStyle ?? Theme.of(context).textTheme.bodyMedium;
-        return Text(
+        return GestureDetector(
+          onTap: () => onTap(index),
+          child: Text(
           element.textContent,
           style: mark == TaskMark.highlight
               ? base?.copyWith(
@@ -297,6 +342,7 @@ class _MarkBuilder extends MarkdownElementBuilder {
                   decorationColor: colors.error,
                   decorationThickness: 2,
                 ),
+          ),
         );
       },
     );

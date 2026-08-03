@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/constants.dart';
 import '../../core/errors.dart';
 import '../../core/utils.dart';
 import '../../hub/all_tasks.dart';
@@ -232,14 +233,20 @@ class _SelectionRecordSheetState extends ConsumerState<SelectionRecordSheet> {
 
 /// Seçimden kayıt üretir: **işaret hemen görünür**, gönderim arka planda.
 ///
+/// `WidgetRef` değil `ProviderContainer` alıyor. Sebebi somut: kullanıcı yorum
+/// kutusunda yazarken arkada bir yoklama belgeyi tazeliyor, ekran widget'ı
+/// disposed oluyor ve onun `ref`'iyle yapılan iş sessizce düşüyordu — "yorum
+/// eklendi" deyip hiçbir şey olmamasının sebebi buydu (L-029). Container ve
+/// messenger widget yaşam döngüsüne bağlı değil.
+///
 /// Beklemeli yapılırsa (gönder → sonra çiz) kullanıcı sarıya bastıktan sonra
 /// ağ turu kadar boş ekrana bakıyor; bu, okurken not almanın akışını bozuyor
 /// (L-026). İşaret önce yerel katmana yazılıyor, gönderim arkada sürüyor.
 /// Kalıcı bir hata olursa işaret geri alınıyor — yalancı bir iz bırakmaktansa
 /// kaybolması dürüst.
 void createSelectionRecord({
-  required WidgetRef ref,
-  required BuildContext context,
+  required ProviderContainer container,
+  required ScaffoldMessengerState messenger,
   required String quote,
   required String sourcePath,
   required RecordKind kind,
@@ -250,18 +257,8 @@ void createSelectionRecord({
   String? repoSlug,
 }) {
   final normalized = collapseWhitespace(quote);
-  final messenger = ScaffoldMessenger.of(context);
 
-  final annotation = Annotation(
-    quote: normalized,
-    mark: mark,
-    title: normalized,
-    category: kind.category,
-    path: '',
-  );
-  ref.read(freshAnnotationsProvider.notifier).add(sourcePath, annotation);
-
-  final draft = TaskDraft.fromSelection(
+  final draftForPath = TaskDraft.fromSelection(
     quote: normalized,
     sourcePath: sourcePath,
     kind: kind.category,
@@ -271,26 +268,39 @@ void createSelectionRecord({
     section: section,
     repoSlug: repoSlug,
   );
+  // Yol baştan biliniyor: kullanıcı işareti hemen silmek isterse hangi dosyayı
+  // kaldıracağımızı senkronu beklemeden bilmeliyiz.
+  final annotation = Annotation(
+    quote: normalized,
+    mark: mark,
+    title: normalized,
+    category: kind.category,
+    path: '${Hub.inboxDir}/${draftForPath.fileName}',
+    sourcePath: sourcePath,
+  );
+  container.read(freshAnnotationsProvider.notifier).add(sourcePath, annotation);
+
+  final draft = draftForPath;
 
   unawaited(() async {
     try {
-      await ref.read(taskRepoProvider).send(draft);
+      await container.read(taskRepoProvider).send(draft);
     } on HubNetworkError {
       // Ağ yok: kuyruğa alınır, işaret kalır — kayıt kaybolmadı (B-032).
-      await ref.read(outboxProvider.notifier).add(draft);
+      await container.read(outboxProvider.notifier).add(draft);
       messenger.showSnackBar(
         const SnackBar(content: Text('Ağ yok — kayıt kuyruğa alındı.')),
       );
     } on HubError catch (e) {
-      ref.read(freshAnnotationsProvider.notifier).remove(sourcePath, annotation);
+      container.read(freshAnnotationsProvider.notifier).remove(sourcePath, annotation);
       messenger.showSnackBar(SnackBar(content: Text(e.message)));
     } catch (e) {
-      ref.read(freshAnnotationsProvider.notifier).remove(sourcePath, annotation);
+      container.read(freshAnnotationsProvider.notifier).remove(sourcePath, annotation);
       messenger.showSnackBar(
         SnackBar(content: Text('Beklenmeyen hata: $e')),
       );
     }
-    ref.invalidate(allPendingTasksProvider);
+    container.invalidate(allPendingTasksProvider);
   }());
 }
 
@@ -382,3 +392,100 @@ Future<SelectionRequest?> openCommentBox(
 
 const commentFieldKey = Key('selection-comment-field');
 const commentSubmitKey = Key('selection-comment-submit');
+
+/// İşarete dokununca açılan kayıt kartı: ne olduğunu gösterir, silmeyi sunar.
+///
+/// Silme yalnız `inbox/`ta duran kayıtlar için mümkün (sözleşme 1.7). Agent
+/// kaydı `active/`e almışsa dosya orada değildir; o zaman kullanıcıya
+/// "agent ele almış" denir ve dokunulmaz — ele alınmış bir işi sessizce yok
+/// etmek agent'ın çalışmasını çöpe atardı.
+Future<bool> openAnnotationCard(
+  BuildContext context, {
+  required Annotation annotation,
+  required ProviderContainer container,
+  required ScaffoldMessengerState messenger,
+}) async {
+  final deleted = await showModalBottomSheet<bool>(
+    context: context,
+    showDragHandle: true,
+    builder: (sheetContext) {
+      final theme = Theme.of(sheetContext);
+      return SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Icon(
+                    annotation.mark == TaskMark.highlight
+                        ? Icons.brush_outlined
+                        : Icons.format_underlined,
+                    size: 18,
+                    color: theme.colorScheme.primary,
+                  ),
+                  const SizedBox(width: 8),
+                  Text(annotation.category, style: theme.textTheme.titleSmall),
+                ],
+              ),
+              const SizedBox(height: 12),
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: theme.colorScheme.surfaceContainerHighest,
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border(
+                    left: BorderSide(color: theme.colorScheme.primary, width: 3),
+                  ),
+                ),
+                child: Text(annotation.quote,
+                    style: theme.textTheme.bodySmall, maxLines: 6,
+                    overflow: TextOverflow.ellipsis),
+              ),
+              const SizedBox(height: 16),
+              SizedBox(
+                width: double.infinity,
+                child: FilledButton.tonalIcon(
+                  key: annotationDeleteKey,
+                  onPressed: () => Navigator.of(sheetContext).pop(true),
+                  icon: const Icon(Icons.delete_outline),
+                  label: const Text('İşareti sil'),
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    },
+  );
+
+  if (deleted != true) return false;
+
+  // Yerel katmandan hemen kalksın: silme ağ turunu beklerken işaret ekranda
+  // durursa kullanıcı "silinmedi" sanır.
+  container.read(freshAnnotationsProvider.notifier).remove(
+        annotation.sourcePath,
+        annotation,
+      );
+
+  final fileName = annotation.path.split('/').last;
+  var message = 'İşaret silindi.';
+  try {
+    final removed =
+        await container.read(taskRepoProvider).deleteFromInbox(fileName);
+    if (!removed) {
+      message = 'Agent bu kaydı ele almış; işaret hub\'da duruyor.';
+    }
+  } on HubError catch (e) {
+    message = e.message;
+  }
+
+  container.invalidate(allPendingTasksProvider);
+  messenger.showSnackBar(SnackBar(content: Text(message)));
+  return true;
+}
+
+const annotationDeleteKey = Key('annotation-delete');

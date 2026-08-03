@@ -145,6 +145,35 @@ class TaskRepo {
     return _sorted(lists.expand((e) => e).toList());
   }
 
+  /// Kullanıcının kendi eklediği bir kaydı **inbox'tan** siler (sözleşme 1.7).
+  ///
+  /// Yalnız `inbox/` — agent kaydı `active/`e almışsa dosya orada değildir ve
+  /// silme sessizce başarısız olur; bu bilinçli, çünkü ele alınmış bir işi yok
+  /// etmek agent'ın çalışmasını çöpe atardı.
+  ///
+  /// Yol değil dosya adı alır: R-001'in yapısal kapısı burada da geçerli,
+  /// app'in başka bir klasöre dokunması mümkün olmasın diye.
+  Future<bool> deleteFromInbox(String fileName) async {
+    if (fileName.contains('/')) {
+      throw ArgumentError.value(
+        fileName,
+        'fileName',
+        'Yol değil, dosya adı bekleniyor (R-001).',
+      );
+    }
+    try {
+      final file = await _api.getFile('${Hub.inboxDir}/$fileName');
+      await _api.deleteFile(
+        '${Hub.inboxDir}/$fileName',
+        sha: file.sha,
+        commitMessage: "task(pending): inbox'tan silindi (app)",
+      );
+      return true;
+    } on HubNotFoundError {
+      return false; // agent almış olabilir; dokunmuyoruz
+    }
+  }
+
   /// Kullanıcı "Yaptım" dediğinde `inbox/`a yazılan bildirim görevi
   /// (sözleşme 1.4).
   ///

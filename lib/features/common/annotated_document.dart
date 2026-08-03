@@ -68,33 +68,67 @@ class _AnnotatedDocumentState extends ConsumerState<AnnotatedDocument> {
   /// Kaydı **bu ekran** oluşturur; sayfa/kutu yalnız seçimi döndürür.
   /// Sebebi: onların `ref`'i kapandığı anda ölüyor ve işaret hiç eklenmiyordu
   /// (L-025).
-  void _create(SelectionRequest request, String selection) {
+  void _create(
+    SelectionRequest request,
+    String selection, {
+    ProviderContainer? container,
+    ScaffoldMessengerState? messenger,
+    String? section,
+    String? repoSlug,
+  }) {
     createSelectionRecord(
-      ref: ref,
-      context: context,
+      container: container ?? ProviderScope.containerOf(context, listen: false),
+      messenger: messenger ?? ScaffoldMessenger.of(context),
       quote: selection,
       sourcePath: widget.sourcePath,
       kind: request.kind,
       mark: request.mark,
       note: request.note,
       priority: request.priority,
-      section: sectionOf(widget.data, selection),
-      repoSlug: ref.read(hubConfigProvider).value?.slug,
+      section: section ?? sectionOf(widget.data, selection),
+      repoSlug: repoSlug ?? ref.read(hubConfigProvider).value?.slug,
     );
   }
 
+  /// Diyalog/sayfa açmadan **önce** yaşam döngüsünden bağımsız olan her şeyi
+  /// topla: kullanıcı yazarken bu ekran yeniden kurulabilir ve `context`/`ref`
+  /// geçersizleşebilir (L-029).
+  ({
+    ProviderContainer container,
+    ScaffoldMessengerState messenger,
+    String? section,
+    String? repoSlug,
+  }) _capture(String selection) => (
+        container: ProviderScope.containerOf(context, listen: false),
+        messenger: ScaffoldMessenger.of(context),
+        section: sectionOf(widget.data, selection),
+        repoSlug: ref.read(hubConfigProvider).value?.slug,
+      );
+
   Future<void> _openSheet(String selection) async {
+    final captured = _capture(selection);
     final request = await openSelectionRecord(
       context,
       quote: selection,
       sourcePath: widget.sourcePath,
     );
-    if (request != null && mounted) _create(request, selection);
+    if (request == null) return;
+    _create(request, selection,
+        container: captured.container,
+        messenger: captured.messenger,
+        section: captured.section,
+        repoSlug: captured.repoSlug);
   }
 
   Future<void> _openComment(String selection) async {
+    final captured = _capture(selection);
     final request = await openCommentBox(context, quote: selection);
-    if (request != null && mounted) _create(request, selection);
+    if (request == null) return;
+    _create(request, selection,
+        container: captured.container,
+        messenger: captured.messenger,
+        section: captured.section,
+        repoSlug: captured.repoSlug);
   }
 
   @override
@@ -164,6 +198,15 @@ class _AnnotatedDocumentState extends ConsumerState<AnnotatedDocument> {
       },
       child: HubMarkdown(
         widget.data,
+        onTapAnnotation: (annotation) {
+          final captured = _capture('');
+          openAnnotationCard(
+            context,
+            annotation: annotation,
+            container: captured.container,
+            messenger: captured.messenger,
+          );
+        },
         // Seçim dıştaki `SelectionArea` tarafından yönetiliyor; markdown'ın
         // kendi seçimi açık kalsaydı iki seçim katmanı çakışırdı.
         selectable: false,

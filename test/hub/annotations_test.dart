@@ -26,14 +26,16 @@ void main() {
         'Bu bir cümledir ve içinde alıntı vardır.',
         [ann('alıntı', TaskMark.highlight)],
       );
-      expect(out, contains('${hlOpen}alıntı$hlClose'));
+      expect(out, contains('alıntı$hlClose'));
+      expect(out, contains(hlOpen));
     });
 
     test('altı çizili ayrı işaret kullanır', () {
       final out = markAnnotations('yanlış olan yer', [
         ann('yanlış', TaskMark.underline),
       ]);
-      expect(out, contains('${ulOpen}yanlış$ulClose'));
+      expect(out, contains('yanlış$ulClose'));
+      expect(out, contains(ulOpen));
       expect(out, isNot(contains(hlOpen)));
     });
 
@@ -54,7 +56,7 @@ void main() {
         ann('kırmızı', TaskMark.highlight),
         ann('kırmızı altı çizili', TaskMark.underline),
       ]);
-      expect(out, contains('${ulOpen}kırmızı altı çizili$ulClose'));
+      expect(out, contains('kırmızı altı çizili$ulClose'));
       expect(out.split(ulOpen).length - 1, 1);
     });
 
@@ -63,8 +65,8 @@ void main() {
         ann('bir', TaskMark.highlight),
         ann('iki', TaskMark.underline),
       ]);
-      expect(out, contains('${hlOpen}bir$hlClose'));
-      expect(out, contains('${ulOpen}iki$ulClose'));
+      expect(out, contains('bir$hlClose'));
+      expect(out, contains('iki$ulClose'));
     });
 
     test('boş alıntı yok sayılır', () {
@@ -76,13 +78,13 @@ void main() {
   group('isContractStale', () {
     test('eski sürüm geride sayılır', () {
       expect(isContractStale('1.3'), isTrue);
-      expect(isContractStale('1.5'), isTrue);
+      expect(isContractStale('1.6'), isTrue);
       expect(isContractStale('0.9'), isTrue);
     });
 
     test('güncel ve ileri sürümler geride sayılmaz', () {
-      expect(isContractStale('1.6'), isFalse);
       expect(isContractStale('1.7'), isFalse);
+      expect(isContractStale('1.8'), isFalse);
       expect(isContractStale('2.0'), isFalse);
     });
 
@@ -209,7 +211,8 @@ void main() {
     test('birebir eşleşme varken izdüşüme düşülmez', () {
       const source = 'düz bir cümle';
       final out = markAnnotations(source, [ann('düz bir', TaskMark.highlight)]);
-      expect(out, '${hlOpen}düz bir$hlClose cümle');
+      expect(out, contains('düz bir$hlClose cümle'));
+      expect(out, startsWith(hlOpen));
     });
 
     test('gerçekten olmayan metin yine bulunamaz', () {

@@ -17,6 +17,7 @@ class Annotation {
     required this.title,
     required this.category,
     required this.path,
+    this.sourcePath = '',
   });
 
   final String quote;
@@ -24,8 +25,11 @@ class Annotation {
   final String title;
   final String category;
 
-  /// Kaydın kendi dosyasının yolu — detayına gitmek için.
+  /// Kaydın kendi dosyasının yolu — silerken gerekiyor.
   final String path;
+
+  /// İşaretin bulunduğu belge; yerel katmandan kaldırırken anahtar.
+  final String sourcePath;
 }
 
 /// Verilen belgeyi `source` alan kayıtlar (aktif repodan).
@@ -75,6 +79,7 @@ Future<List<Annotation>> annotationsFrom(
       title: fm.str('title') ?? '',
       category: fm.str('category') ?? 'gorev',
       path: entry.path,
+      sourcePath: sourcePath,
     ));
   }
   return found;
