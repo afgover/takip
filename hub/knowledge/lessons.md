@@ -386,3 +386,22 @@ Biçim: `SYSTEM.md` §5.
   ikisi de widget ağacından bağımsız yaşıyor ve diyalog açmadan **önce**
   yakalanıyor. **Tarama sorusu:** "kullanıcı burada 10 saniye durursa ve ekran
   bu arada yenilenirse ne olur?"
+
+## L-030 — Satır içi widget, paragrafı `Wrap`'e çevirip metin akışını bozar
+- **Tarih:** 2026-08-03
+- **Kaynak:** S-2026-08-03-akis-ve-renk
+- **Açıklama:** İşaretlenen kelimeden sonraki metin alt satıra düşüyordu.
+  İlk düzeltme (işareti kelime kelime yayma) yetmedi ve **ölçüm sebebi
+  gösterdi**: `flutter_markdown` bir paragrafta satır içi widget varsa
+  paragrafı tek `RichText` yerine **`Wrap`** olarak kuruyor. `Wrap` çocuklarını
+  atomik öğe sayar; işaretten sonraki metin tek büyük parça olduğu için kalan
+  boşluğa sığmıyor ve **tamamı** alt satıra iniyor. İşaretin boyutu değil,
+  **komşusunun** boyutu sorundu.
+  Doğru görünen yol (stil sözlüğüne özel etiket yazmak, gerçek `TextSpan`
+  üretir) paket tarafından kapalı: `MarkdownWidget` kendi merge adımında
+  `copyWith` ile sözlüğü sıfırdan kurup tanımadığı etiketleri düşürüyor.
+  **Çözüm:** işaretli satırdaki *işaretsiz* kelimeler de kutulanıyor, böylece
+  `Wrap`'in bütün öğeleri kelime boyunda ve akış normal metne benziyor.
+  **Genel kural:** bir düzen sorununda yalnız suçlanan öğeyi değil, onunla
+  aynı kapta duran komşularını da ölç. Ve bir düzeltmenin işe yaradığını
+  varsayma — aynı ölçümü tekrarla.
