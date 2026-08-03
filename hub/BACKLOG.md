@@ -203,6 +203,14 @@ başlığına ✅ ve tarih yazılır.
 - [ ] B-052 · (user) Bir hafta gerçek kullanım; sürtünme noktalarını görev olarak
       inbox'a at — B-015, B-020 ve B-034'ün cihaz ayağı tamamlandıktan sonra
 - [ ] B-053 · (agent) Kullanım geri bildirimlerine göre revizyon turu
+- [x] B-080 · (agent) İşaretlenen kelimeden sonrası alt satıra düşüyordu —
+      ✅ 2026-08-03; işaret kelime kelime yayılıyor. → L-028
+- [x] B-081 · (agent) Yorum kaydı oluşmuyordu — ✅ 2026-08-03; kullanıcı
+      yazarken ekran yeniden kurulunca iş düşüyordu. Kayıt artık widget
+      yaşam döngüsünden bağımsız. → L-029
+- [x] B-082 · (agent) İşaret/yorum silme — ✅ 2026-08-03; işarete dokununca
+      kayıt kartı, "İşareti sil" inbox'taki dosyayı kaldırıyor.
+      Sözleşme 1.7 (K-026); agent ele almışsa dokunulmuyor
 - [x] B-076 · (agent) İşaretlemede gecikme — ✅ 2026-08-03; işaret ağ turunu
       bekliyordu. İyimser çizim + arkada gönderim, kalıcı hatada geri alma.
       → L-026
