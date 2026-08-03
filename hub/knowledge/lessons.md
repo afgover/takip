@@ -317,3 +317,40 @@ Biçim: `SYSTEM.md` §5.
   kendini temizliyor. **Genel kural:** yazdığın yer ile okuduğun yer farklıysa,
   aradaki gecikmeyi kullanıcı görmemeli — ya okuma kaynağı hemen güncellenir
   ya da arada bir köprü katman olur.
+
+## L-025 — Kapanan bir diyalogun `ref`'iyle iş yapılmaz
+- **Tarih:** 2026-08-03
+- **Kaynak:** S-2026-08-03-menu-ve-gecikme
+- **Açıklama:** "Yorum eklendi" mesajı çıkıyor ama işaret ekranda hiç
+  görünmüyordu. Sebep: kaydı **diyalogun kendi** `ref`'iyle oluşturuyordum ve
+  diyalog kapandığı anda o `ref` ölüyordu; hub'a yazma tamamlanıyor ama yerel
+  işaret katmanına ekleme sessizce düşüyordu. Aynı hata görev sayfasında da
+  vardı — orada fark edilmemesinin nedeni, görevin zaten listede görünmesiydi.
+  **Kural:** bir diyalog/sayfa **karar toplar**, işi yapmaz. Sonucu döndürür;
+  işi, ondan uzun yaşayan ekran yapar. Kapanan bir widget'ın `ref`'i üzerinden
+  yapılan her iş, "başarılı göründü ama olmadı" sınıfına girer.
+
+## L-026 — Ağı beklemek, geri bildirimi de bekletiyor
+- **Tarih:** 2026-08-03
+- **Kaynak:** S-2026-08-03-menu-ve-gecikme
+- **Açıklama:** İşaretleme "gönder → sonra çiz" sırasıyla çalışıyordu;
+  kullanıcı sarıya basıp bir ağ turu kadar boş ekrana bakıyordu. Okurken not
+  alma akışı için bu gecikme kabul edilemez — işaretlemenin tek amacı hızlı
+  olmasıdır.
+  Sıra tersine çevrildi: **işaret hemen çizilir, gönderim arkada sürer.**
+  Kalıcı hatada işaret geri alınır. **Kural:** kullanıcının anlık geri bildirim
+  beklediği eylemlerde ağ, geri bildirimin önüne konmaz; iyimser çiz, hata
+  olursa geri al. Geri alınabilir olması şart — geri alınamayacak bir işlemde
+  iyimserlik yalan olur.
+
+## L-027 — Yatay araç çubuğu, sığmayanı gizler
+- **Tarih:** 2026-08-03
+- **Kaynak:** S-2026-08-03-menu-ve-gecikme
+- **Açıklama:** Seçim menüsü `AdaptiveTextSelectionToolbar` ile yatay
+  çiziliyordu ve sığmayan eylemler üç nokta arkasına düşüyordu. Ekran
+  genişliğine bağlı bir davranış: aynı menü bir cihazda beş öğe gösterirken
+  diğerinde ikide kesiliyor. Kullanıcı gizlenen eylemleri "yok" sayıyor.
+  **Çözüm:** dikey liste (`TextSelectionToolbarLayoutDelegate` ile
+  konumlandırılmış bir kart). Eylem sayısı arttıkça liste uzuyor, hiçbiri
+  gizlenmiyor. **Kural:** eylem sayısı sabitse ve hepsi eşit önemdeyse,
+  düzeni ekran genişliğine bağlı bırakma.
