@@ -1,5 +1,5 @@
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:takip/features/common/hub_markdown.dart';
 import 'package:takip/hub/annotations.dart';
@@ -217,31 +217,37 @@ flutter analyze
         hasLength(1), reason: 'kırmızı altı çizili');
   });
 
-  testWidgets('işarete dokununca kayıt geri veriliyor', (tester) async {
+  testWidgets('işarete dokunma SelectionArea altında da ulaşıyor',
+      (tester) async {
+    // İşaret artık kendi widget'ı değil, metin akışındaki bir `TextSpan`.
+    // Dokunma `TapGestureRecognizer` ile geliyor ve belgeler her yerde
+    // `SelectionArea` içinde çiziliyor; seçim katmanının dokunmayı yutmadığı
+    // burada sınanıyor — `onTap`'i elle çağırmak bunu göstermezdi.
     Annotation? tapped;
-    final annotation = annotationOf('iki uc', TaskMark.highlight);
+    final annotation = annotationOf('ikinci', TaskMark.highlight);
 
-    await tester.pumpWidget(wrap(HubMarkdown(
-      'Bir iki uc dort.',
-      selectable: false,
-      annotations: [annotation],
-      onTapAnnotation: (a) => tapped = a,
+    await tester.pumpWidget(wrap(SelectionArea(
+      child: HubMarkdown(
+        'Bir ikinci ucuncu dort.',
+        selectable: false,
+        annotations: [annotation],
+        onTapAnnotation: (a) => tapped = a,
+      ),
     )));
     await tester.pumpAndSettle();
 
-    final rich = tester.widget<RichText>(find.byType(RichText).first);
-    TapGestureRecognizer? recognizer;
-    void walk(InlineSpan span) {
-      if (span is TextSpan) {
-        recognizer ??= span.recognizer as TapGestureRecognizer?;
-        span.children?.forEach(walk);
-      }
-    }
-    walk(rich.text);
+    final finder = find.byType(RichText).first;
+    final paragraph = tester.renderObject(finder) as RenderParagraph;
+    final at = paragraph.text.toPlainText().indexOf('ikinci');
+    final box = paragraph
+        .getBoxesForSelection(
+            TextSelection(baseOffset: at, extentOffset: at + 'ikinci'.length))
+        .first;
 
-    expect(recognizer, isNotNull, reason: 'işaret dokunulabilir olmalı');
-    recognizer!.onTap!();
-    expect(tapped?.quote, 'iki uc');
+    await tester.tapAt(box.toRect().center + tester.getTopLeft(finder));
+    await tester.pumpAndSettle();
+
+    expect(tapped?.quote, 'ikinci');
   });
 }
 
