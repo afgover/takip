@@ -210,6 +210,19 @@ başlığına ✅ ve tarih yazılır.
       aldığı not agent'ın iş kuyruğuna düşüyordu. R-001 özü korunarak
       genişletildi (`HubFolder`), `AGENT_PROTOCOL.md` madde 10 eklendi.
       Sarı işaret/kırmızı çizgi bilerek göreve gitmeye devam ediyor. → K-029
+- [x] B-096 · (agent) LICENSE ve README — ✅ 2026-08-03; MIT lisansı eklendi,
+      README baştan yazıldı (eskisi başlangıçtan kalmaydı: `project-taskr`,
+      `flutter create` ile android üretme talimatı). Public'e açma kararı
+      **verilmedi**, yalnız ön hazırlık. → B-097
+- [ ] B-097 · (user+agent) Repoyu public yapma kararı — ön koşullar ve bilinen
+      sonuçlar: (a) `hub/` de public olur; 31 oturum kaydı, notlar ve kararlar
+      görünür hâle gelir ve bundan sonra yazılacaklar da. Sistemin "her şeyi
+      hub'a yaz" ilkesiyle sürtüşür — public bir hub'da dürüst not almak zorlaşır
+      ve bu sessiz bir bozulmadır. (b) §10 zinciri
+      `raw.githubusercontent.com/afgover/takip/main/hub/SYSTEM.md`'yi işaret
+      ediyor; public olunca başkalarının agent'ları bu repoyu poll eder ve
+      sözleşmede kırıcı değişiklik yapma özgürlüğü biter (bugün 1.8→1.11 tek
+      günde yapıldı). Git geçmişi token deseni açısından tarandı: temiz
 - [x] B-095 · (agent) Aktif olmayan repodaki değişiklik uygulamada
       görünmüyordu — ✅ 2026-08-03; senkron tüm repoları indiriyordu ama
       yoklama yalnız aktif reponun başına bakıyordu, yani sinyal hiç

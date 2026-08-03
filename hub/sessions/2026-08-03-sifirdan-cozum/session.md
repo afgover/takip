@@ -238,5 +238,41 @@ yakaladığı doğrulandı (`eski içerik` ≠ `güvenlik duruşu belgesi`).
 
 `flutter analyze` temiz, **349 test**.
 
+### Kullanıcı
+> bu repoyu public yapsam ve uygulamayi da storelara yuklesem ve herkese
+> ucretsiz yapsam nasil olur?
+> license ve readme ekle daha sonra public yapmak icin karar verecegiz
+
+### Agent
+İki ayrı karar olduğu ve cevaplarının farklı olduğu söylendi.
+
+Ücretsizlik mimari gereği sürdürülebilir: backend yok, her kullanıcı kendi
+token'ıyla kendi GitHub kotasını kullanıyor, ETag sayesinde yoklama pratikte
+bedava. Kullanıcı sayısı maliyeti değiştirmiyor.
+
+Store çıkışının önündeki asıl engel **token modeli**: uygulama kullanıcıdan PAT
+isteyip yapıştırmasını bekliyor ve **kapsamını doğrulamıyor** (SEC-006 zaten
+açık kayıt). Genel dağıtımda bu, kullanıcının bütün GitHub hesabını yazma
+yetkisiyle vermesi ve uyarılmaması demek. Doğrusu GitHub App/OAuth — backlog'da
+B-061 olarak duruyor ve tetikleyicisi tam olarak "çok kullanıcı olursa". Yanında:
+iOS hiç denenmedi (`ios/` yok), i18n yok, gizlilik politikası ve store formları
+gerekiyor. Ara adım olarak GitHub Releases / Play açık test önerildi.
+
+Repoyu public yapmanın iki sessiz sonucu ayrıca söylendi: `hub/` de public olur
+(sistemin "her şeyi hub'a yaz" ilkesiyle sürtüşür) ve §10 zinciri bu reponun raw
+adresini işaret ettiği için başkalarının agent'ları burayı poll etmeye başlar —
+sözleşmede kırıcı değişiklik özgürlüğü biter.
+
+Kullanıcı LICENSE ve README istedi; public kararı ertelendi. MIT seçildi
+(izin verici, kısa, spec benimsenmesi için uygun). README baştan yazıldı —
+eskisi başlangıçtan kalmaydı ve yanlıştı (`project-taskr`, artık geçersiz
+`flutter create` talimatı). Yeni README ne olduğunu, neden var olduğunu, akış
+şemasını, kendi projende kurmayı, çalıştırmayı ve **dürüstçe sınırları**
+anlatıyor (Android/tek dil, token kapsamı doğrulanmıyor, çevrimdışı kopya
+şifresiz). README'deki her yol ve her ID (B-061, SEC-006, SEC-007, sözleşme
+1.11) dosyalara karşı doğrulandı.
+
+Git geçmişi token deseni açısından tarandı: temiz.
+
 ## Sonraki adım
-Cihaza kuruldu. `financer_takip` sözleşmesi 1.11'e yükseltildi.
+Public yapma kararı kullanıcıda (B-097). `financer_takip` sözleşmesi 1.11'de.
