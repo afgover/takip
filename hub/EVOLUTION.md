@@ -358,3 +358,11 @@ toplanır ve gerekiyorsa Faz 6 maddelerini (B-060…B-064) yeniden sıralar.
   silerdi. Bu olay §10'daki sürüm kontrolünün eksiğini de gösterdi: iki hub
   aynı numarayı farklı değişikliklerle almıştı (L-022).
   → Sözleşme 1.6, B-072
+- **K-026:** App, **kendi yazdığı ve hâlâ `inbox/`ta duran** bir kaydı
+  silebilir (sözleşme 1.7). R-001 gevşemedi: app'in dokunduğu tek klasör hâlâ
+  `inbox/` ve silme yol değil dosya adı alıyor, yani başka klasöre uzanması
+  yapısal olarak mümkün değil. Agent kaydı `active/`e almışsa dosya orada
+  değildir ve silme çalışmaz — ele alınmış bir işi sessizce yok etmek agent'ın
+  çalışmasını çöpe atardı. Gerekçe: kullanıcı yanlışlıkla koyduğu bir işareti
+  geri alabilmeli; bunun için agent'a görev açmak, tek dokunuşluk bir hatayı
+  iki tarafın işine çevirirdi. → B-082
