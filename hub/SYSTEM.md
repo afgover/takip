@@ -5,7 +5,7 @@ ve hangi şemaya uyacağını** tanımlar. Agent ve kullanıcı uygulaması bu s
 dışına çıkmaz. Sözleşme değişiklikleri `EVOLUTION.md`'ye kaydedilir ve bu dosyanın
 başındaki sürüm numarası artırılır.
 
-**Sözleşme sürümü:** 1.5
+**Sözleşme sürümü:** 1.6
 **Ana kopya (master):** `afgover/takip` → `hub/SYSTEM.md`
 (bkz. §10 — her hub kendi kopyasını buradan günceller)
 **Zaman biçimi:** her yerde ISO 8601, UTC (`2026-07-30T14:05:00Z`)
@@ -52,6 +52,8 @@ sessions/<YYYY-MM-DD>-<slug>/
 id: S-2026-07-30-altyapi-tasarimi
 date: 2026-07-30
 status: open            # open | closed
+reconstructed: false    # (v1.6) opsiyonel; true = sıkıştırma sonrası geriye
+                        # dönük yazıldı
 topics: [mimari, github-api]
 artifacts:              # bu oturumda üretilen dosyaların yolları
   - artifacts/S-2026-07-30-altyapi-tasarimi/rapor.md
@@ -81,6 +83,13 @@ Kurallar:
 - Oturum kapanırken `status: closed` yapılır ve `## Özet` doldurulur.
 - Bir oturum dosyası kapandıktan sonra değiştirilmez (düzeltme gerekirse yeni
   oturumdan link verilir).
+- **(v1.6) Yeniden kurulmuş oturum.** Bir oturum bağlam sıkıştırması yüzünden
+  gerçek zamanlı kaydedilemediyse geriye dönük yazılabilir; ama o zaman
+  frontmatter'a `reconstructed: true` konur. Bu, "kayıt dışı iş yok" kuralının
+  istisnası **değil** — kaydın nasıl üretildiğini dürüstçe işaretlemek içindir:
+  geriye dönük yazılmış bir kayıt, gerçek zamanlı kaydın taşıdığı zaman damgası
+  doğruluğunu iddia edemez. Zaman damgaları atlanabilir ya da yaklaşık verilir.
+  *(Kural `financer_takip`'te doğdu, ana kopyaya oradan alındı — K-025.)*
 
 ## 3. `artifacts/` — üretilen dosyalar
 
@@ -335,6 +344,14 @@ Her agent, **her oturum açılışında** şunu yapar:
 5. **Kendi kopyan ileriyse** (ana kopyadan yeni): üzerine yazma. Bu, ana kopya
    güncellenmeden yapılmış yerel bir değişiklik demektir; kullanıcıya bildir ve
    değişikliğin ana kopyaya taşınmasını öner.
+6. **Sürümler eşit ama içerik farklıysa (ayrışma):** en tehlikeli durum budur
+   ve yalnız sürüm numarasına bakan bir kontrol onu **göremez**. İki hub aynı
+   numarayı farklı değişikliklerle almış demektir. Üzerine yazma; farkı
+   kullanıcıya göster, yerel eklemeyi ana kopyaya taşı, ana kopyanın sürümünü
+   artır ve sonra güncelle. Gerçekten yaşandı: `financer_takip` 1.4'ü
+   "`reconstructed` alanı", ana kopya 1.4'ü "`tasks/waiting/`" için kullanmıştı
+   (L-022). **Bu yüzden sürüm karşılaştırması yeterli değil; güncellemeden önce
+   içerik de karşılaştırılır.**
 
 Sözleşmeyi **yalnızca ana kopyada** değiştir. Bir projede yeni bir ihtiyaç
 çıkarsa önce kullanıcıya öner, onaylanırsa `afgover/takip`'te sürümü artır;

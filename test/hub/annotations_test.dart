@@ -76,13 +76,13 @@ void main() {
   group('isContractStale', () {
     test('eski sürüm geride sayılır', () {
       expect(isContractStale('1.3'), isTrue);
-      expect(isContractStale('1.4'), isTrue);
+      expect(isContractStale('1.5'), isTrue);
       expect(isContractStale('0.9'), isTrue);
     });
 
     test('güncel ve ileri sürümler geride sayılmaz', () {
-      expect(isContractStale('1.5'), isFalse);
       expect(isContractStale('1.6'), isFalse);
+      expect(isContractStale('1.7'), isFalse);
       expect(isContractStale('2.0'), isFalse);
     });
 
