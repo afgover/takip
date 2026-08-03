@@ -203,6 +203,16 @@ başlığına ✅ ve tarih yazılır.
 - [ ] B-052 · (user) Bir hafta gerçek kullanım; sürtünme noktalarını görev olarak
       inbox'a at — B-015, B-020 ve B-034'ün cihaz ayağı tamamlandıktan sonra
 - [ ] B-053 · (agent) Kullanım geri bildirimlerine göre revizyon turu
+- [x] B-076 · (agent) İşaretlemede gecikme — ✅ 2026-08-03; işaret ağ turunu
+      bekliyordu. İyimser çizim + arkada gönderim, kalıcı hatada geri alma.
+      → L-026
+- [x] B-077 · (agent) Yorum ekleme kayıt oluşturmuyordu — ✅ 2026-08-03;
+      kayıt kapanan diyalogun `ref`'iyle yapılıyordu. Sayfa/kutu artık yalnız
+      seçimi döndürüyor. → L-025
+- [x] B-078 · (agent) Görev gövdesine "nerede" bilgisi — ✅ 2026-08-03;
+      repo, dosya yolu ve alıntının bulunduğu başlık yazılıyor
+- [x] B-079 · (agent) Seçim menüsünde üç nokta kalksın — ✅ 2026-08-03;
+      beş eylem alt alta tek menüde, taşma yok. → L-027
 - [x] B-072 · (agent) financer_takip sözleşmesini ana kopyayla güncelle —
       ✅ 2026-08-03 · 1.4 → 1.6. Sürüm çakışması bulundu: o hub 1.4'ü
       `reconstructed` alanı için kullanmıştı. Alan ana kopyaya taşındı (1.6),
