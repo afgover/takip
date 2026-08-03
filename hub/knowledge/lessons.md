@@ -273,3 +273,47 @@ Biçim: `SYSTEM.md` §5.
   hepsi sondan başa doğru tek seferde uygulanır. **Genel kural:** aynı diziyi
   birden çok kez değiştiren bir işlemde, konumlar her adımda kayar; önce
   aralıkları hesapla, sonra uygula.
+
+## L-022 — Kopyalar ayrışınca sürüm numarası aynı kalabilir
+- **Tarih:** 2026-08-03
+- **Kaynak:** S-2026-08-03-sozlesme-ve-isaretler
+- **Açıklama:** §10'daki sürüm kontrolü "geride mi, ileride mi?" diye
+  soruyordu. Gerçekte üçüncü bir durum çıktı: **aynı numara, farklı içerik.**
+  `financer_takip` 1.4'ü `reconstructed` alanı için kullanmıştı, ana kopya
+  1.4'ü `tasks/waiting/` için. İki hub da "1.4" diyordu ve yalnız numaraya
+  bakan bir kontrol farkı **göremezdi**; ana kopya körü körüne üzerine
+  yazılsaydı iyi bir kural sessizce silinecekti.
+  **Kural:** dağıtılan kopyalarda sürüm numarası eşitliği "içerik aynı"
+  demek değildir. Güncellemeden önce içerik de karşılaştırılır; ayrışma
+  varsa yerel ekleme önce ana kopyaya taşınır, sürüm oradan artar
+  (bu olayda `reconstructed` 1.6 olarak ana kopyaya alındı). §10'a 6. madde
+  bu yüzden eklendi.
+
+## L-023 — Kullanıcı çizilmiş metni seçer, kod ham kaynakta arar
+- **Tarih:** 2026-08-03
+- **Kaynak:** S-2026-08-03-sozlesme-ve-isaretler
+- **Açıklama:** Seçimden üretilen kayıtların işareti çizilmiyordu; kırmızı
+  hiç görünmüyor, sarı bazen görünüyordu. Render doğruydu — test, arka plan
+  renginin ve alt çizginin widget ağacında olduğunu gösterdi. Sorun
+  **alıntının belgede bulunamamasıydı:** kullanıcı ekrandaki *çizilmiş*
+  metni seçiyor, kod *ham markdown*'da `indexOf` yapıyordu. Üç fark eşleşmeyi
+  sessizce bozuyor: `**kalın**` işaretleri seçimde yok, satır sarması
+  kaynakta `\n` ama seçimde boşluk, girintiler seçimde yok. Kırmızının hiç
+  görünmemesi tesadüf değildi — kullanıcı kalın yazılmış bir yeri seçmişti.
+  **Çözüm:** kaynağın vurgu işaretleri atılmış, boşlukları teke inmiş bir
+  izdüşümünde aranıp konum geri haritalanıyor. **Genel kural:** kullanıcının
+  gördüğü metinle programın işlediği metin aynı değilse, eşleştirme ikisinin
+  **ortak normalleştirilmiş** biçimi üzerinden yapılır.
+
+## L-024 — Yazma başarılı olsa da ekran kaynağı okumaya devam eder
+- **Tarih:** 2026-08-03
+- **Kaynak:** S-2026-08-03-sozlesme-ve-isaretler
+- **Açıklama:** İşaret ancak sayfadan çıkıp tekrar girince görünüyordu. Kayıt
+  hub'a gidiyordu ama ekran işaretleri **yerel kopyadan** okuyor ve yerel
+  kopya bir sonraki senkrona kadar yeni kaydı bilmiyordu. Yazma yolu ile
+  okuma yolu farklı kaynaklara bakınca, başarılı bir yazma bile ekranda
+  görünmüyor.
+  **Çözüm:** az önce oluşturulanları tutan ince bir katman; senkron yetişince
+  kendini temizliyor. **Genel kural:** yazdığın yer ile okuduğun yer farklıysa,
+  aradaki gecikmeyi kullanıcı görmemeli — ya okuma kaynağı hemen güncellenir
+  ya da arada bir köprü katman olur.
