@@ -66,6 +66,8 @@ class TaskDraft {
     required TaskMark mark,
     String note = '',
     String priority = 'normal',
+    String? section,
+    String? repoSlug,
     DateTime? now,
   }) {
     final at = now ?? DateTime.parse(isoNow());
@@ -90,11 +92,18 @@ class TaskDraft {
       source: sourcePath,
       quote: quote,
       mark: mark,
+      // Kaydın **nereden geldiği** gövdede açıkça yazıyor: repo, dosya yolu ve
+      // alıntının altında bulunduğu başlık. Agent bunları okuyup doğrudan o
+      // yere gidebilsin diye — yoksa alıntıyı bütün hub'da aramak zorunda
+      // kalır.
       body: '# $title\n\n'
           '## İstek\n'
           '${trimmedNote.isEmpty ? '(not girilmedi)' : trimmedNote}\n\n'
-          '## Alıntı\n'
-          '`$sourcePath` belgesinden:\n\n'
+          '## Nerede\n'
+          '${repoSlug == null ? '' : '- **Repo:** `$repoSlug`\n'}'
+          '- **Dosya:** `$sourcePath`\n'
+          '${section == null || section.isEmpty ? '' : '- **Bölüm:** $section\n'}'
+          '\n## Alıntı\n\n'
           '> ${quote.replaceAll('\n', '\n> ')}\n\n'
           '## Notlar\n',
     );

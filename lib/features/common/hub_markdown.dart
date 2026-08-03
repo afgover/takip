@@ -302,3 +302,21 @@ class _MarkBuilder extends MarkdownElementBuilder {
     );
   }
 }
+
+/// Alıntının altında bulunduğu en yakın markdown başlığı.
+///
+/// Kayda "nerede" bilgisi olarak yazılıyor: agent alıntıyı bütün belgede
+/// aramak yerine doğrudan o bölüme gidebilsin diye. Başlık bulunamazsa null.
+String? sectionOf(String source, String quote) {
+  final projection = _plainProjection(source);
+  final range = _locate(source, projection, quote);
+  if (range == null) return null;
+
+  String? heading;
+  for (final match in RegExp(r'^#{1,6}\s+(.+)$', multiLine: true)
+      .allMatches(source)) {
+    if (match.start > range.start) break;
+    heading = match.group(1)?.trim();
+  }
+  return heading;
+}

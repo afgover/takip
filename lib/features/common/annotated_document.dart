@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../hub/annotations.dart';
+import '../../hub/hub_config.dart';
 import '../../hub/models/task.dart';
 import 'hub_markdown.dart';
 import 'selection_record.dart';
@@ -61,15 +62,39 @@ class _AnnotatedDocumentState extends ConsumerState<AnnotatedDocument> {
     required TaskMark mark,
   }) {
     state.hideToolbar();
+    _create(SelectionRequest(kind: kind, mark: mark), selection);
+  }
+
+  /// Kaydı **bu ekran** oluşturur; sayfa/kutu yalnız seçimi döndürür.
+  /// Sebebi: onların `ref`'i kapandığı anda ölüyor ve işaret hiç eklenmiyordu
+  /// (L-025).
+  void _create(SelectionRequest request, String selection) {
     createSelectionRecord(
       ref: ref,
       context: context,
       quote: selection,
       sourcePath: widget.sourcePath,
-      kind: kind.category,
-      mark: mark,
-      successLabel: kind.label,
+      kind: request.kind,
+      mark: request.mark,
+      note: request.note,
+      priority: request.priority,
+      section: sectionOf(widget.data, selection),
+      repoSlug: ref.read(hubConfigProvider).value?.slug,
     );
+  }
+
+  Future<void> _openSheet(String selection) async {
+    final request = await openSelectionRecord(
+      context,
+      quote: selection,
+      sourcePath: widget.sourcePath,
+    );
+    if (request != null && mounted) _create(request, selection);
+  }
+
+  Future<void> _openComment(String selection) async {
+    final request = await openCommentBox(context, quote: selection);
+    if (request != null && mounted) _create(request, selection);
   }
 
   @override
@@ -88,68 +113,48 @@ class _AnnotatedDocumentState extends ConsumerState<AnnotatedDocument> {
       onSelectionChanged: (content) => _selected = content?.plainText,
       contextMenuBuilder: (context, state) {
         final selection = _selected?.trim() ?? '';
-        // Sıra bilinçli: iki hızlı işaret önce (araç çubuğuna sığanlar),
-        // ayrıntı isteyen eylemler sonra (taşma menüsüne düşenler).
-        //
-        // Menü **tamamen** bu uygulamanın: sistemin varsayılan öğeleri
-        // (tarayıcılarda arama, çeviri, parola yöneticisi, yapay zekâ
-        // asistanları…) hiç eklenmiyor. Cihazda denendiğinde o liste bir düzine
-        // öğeye çıkıyor ve buradaki asıl eylemler taşma menüsünün dibine
-        // düşüyordu. Belge okurken metin seçmenin sebebi işaretlemek ya da iş
-        // açmaktır; menü bunu söylemeli.
-        if (selection.isEmpty) {
-          return AdaptiveTextSelectionToolbar.buttonItems(
-            anchors: state.contextMenuAnchors,
-            buttonItems: const [],
-          );
-        }
+        if (selection.isEmpty) return const SizedBox.shrink();
 
-        return AdaptiveTextSelectionToolbar.buttonItems(
+        // Menü **tamamen** bu uygulamanın ve **taşma yok**: beş eylem alt
+        // alta, hepsi tek bakışta. Varsayılan araç çubuğu yatay olduğu için
+        // sığmayanları üç noktaya gizliyordu; cihazda asıl eylemler o
+        // menünün dibine düşüyordu (L-027). Dikey liste bunu ortadan
+        // kaldırıyor — ekran genişliğine bağımlı değil.
+        return _SelectionMenu(
           anchors: state.contextMenuAnchors,
-          buttonItems: [
-            ContextMenuButtonItem(
-              label: AnnotatedDocument.highlightLabel,
-              onPressed: () => _quickMark(
-                state,
-                selection,
-                kind: RecordKind.yorum,
-                mark: TaskMark.highlight,
-              ),
+          actions: [
+            (
+              AnnotatedDocument.highlightLabel,
+              Icons.brush_outlined,
+              () => _quickMark(state, selection,
+                  kind: RecordKind.yorum, mark: TaskMark.highlight),
             ),
-            ContextMenuButtonItem(
-              label: AnnotatedDocument.underlineLabel,
-              onPressed: () => _quickMark(
-                state,
-                selection,
-                kind: RecordKind.duzeltme,
-                mark: TaskMark.underline,
-              ),
+            (
+              AnnotatedDocument.underlineLabel,
+              Icons.format_underlined,
+              () => _quickMark(state, selection,
+                  kind: RecordKind.duzeltme, mark: TaskMark.underline),
             ),
-            ContextMenuButtonItem(
-              label: AnnotatedDocument.commentLabel,
-              onPressed: () {
+            (
+              AnnotatedDocument.commentLabel,
+              Icons.chat_bubble_outline,
+              () {
                 state.hideToolbar();
-                openCommentBox(
-                  context,
-                  quote: selection,
-                  sourcePath: widget.sourcePath,
-                );
+                _openComment(selection);
               },
             ),
-            ContextMenuButtonItem(
-              label: AnnotatedDocument.taskLabel,
-              onPressed: () {
+            (
+              AnnotatedDocument.taskLabel,
+              Icons.add_task,
+              () {
                 state.hideToolbar();
-                openSelectionRecord(
-                  context,
-                  quote: selection,
-                  sourcePath: widget.sourcePath,
-                );
+                _openSheet(selection);
               },
             ),
-            ContextMenuButtonItem(
-              label: AnnotatedDocument.copyLabel,
-              onPressed: () {
+            (
+              AnnotatedDocument.copyLabel,
+              Icons.copy_all_outlined,
+              () {
                 state.hideToolbar();
                 Clipboard.setData(ClipboardData(text: selection));
               },
@@ -165,6 +170,63 @@ class _AnnotatedDocumentState extends ConsumerState<AnnotatedDocument> {
         padding: widget.padding,
         annotations: annotations,
         onTapLink: widget.onTapLink,
+      ),
+    );
+  }
+}
+
+/// Seçim menüsü: beş eylem **alt alta**, taşma menüsü yok.
+///
+/// Konumlandırma `TextSelectionToolbarLayoutDelegate` ile yapılıyor —
+/// seçimin üstünde yer varsa üstte, yoksa altında çizilir; ekran dışına
+/// taşmaz.
+class _SelectionMenu extends StatelessWidget {
+  const _SelectionMenu({required this.anchors, required this.actions});
+
+  final TextSelectionToolbarAnchors anchors;
+  final List<(String, IconData, VoidCallback)> actions;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final anchorBelow = anchors.secondaryAnchor ?? anchors.primaryAnchor;
+
+    return CustomSingleChildLayout(
+      delegate: TextSelectionToolbarLayoutDelegate(
+        anchorAbove: anchors.primaryAnchor,
+        anchorBelow: anchorBelow,
+      ),
+      child: Card(
+        margin: EdgeInsets.zero,
+        elevation: 4,
+        clipBehavior: Clip.antiAlias,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: IntrinsicWidth(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              for (final (label, icon, onTap) in actions)
+                InkWell(
+                  key: Key('selection-menu-$label'),
+                  onTap: onTap,
+                  child: Padding(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    child: Row(
+                      children: [
+                        Icon(icon, size: 18, color: theme.colorScheme.primary),
+                        const SizedBox(width: 12),
+                        Text(label, style: theme.textTheme.bodyMedium),
+                      ],
+                    ),
+                  ),
+                ),
+            ],
+          ),
+        ),
       ),
     );
   }

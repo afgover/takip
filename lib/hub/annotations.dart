@@ -146,6 +146,16 @@ class FreshAnnotations extends Notifier<Map<String, List<Annotation>>> {
       sourcePath: [...(state[sourcePath] ?? const []), annotation],
     };
   }
+
+  /// Gönderim kalıcı olarak başarısız olduysa iyimser işareti geri alır.
+  void remove(String sourcePath, Annotation annotation) {
+    final current = state[sourcePath];
+    if (current == null) return;
+    state = {
+      ...state,
+      sourcePath: current.where((a) => a.quote != annotation.quote).toList(),
+    };
+  }
 }
 
 final freshAnnotationsProvider =

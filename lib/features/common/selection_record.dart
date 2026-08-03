@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -32,6 +34,22 @@ enum RecordKind {
   final TaskMark defaultMark;
 }
 
+/// Kullanıcının seçimden ne üretmek istediği. Sayfa/kutu bunu döndürür;
+/// kaydı çağıran ekran oluşturur.
+class SelectionRequest {
+  const SelectionRequest({
+    required this.kind,
+    required this.mark,
+    this.note = '',
+    this.priority = 'normal',
+  });
+
+  final RecordKind kind;
+  final TaskMark mark;
+  final String note;
+  final String priority;
+}
+
 /// Seçilen metinden kayıt oluşturma sayfası.
 class SelectionRecordSheet extends ConsumerStatefulWidget {
   const SelectionRecordSheet({
@@ -61,8 +79,6 @@ class _SelectionRecordSheetState extends ConsumerState<SelectionRecordSheet> {
   RecordKind _kind = RecordKind.gorev;
   late TaskMark _mark = _kind.defaultMark;
   String _priority = 'normal';
-  bool _busy = false;
-  String? _error;
 
   @override
   void dispose() {
@@ -70,35 +86,21 @@ class _SelectionRecordSheetState extends ConsumerState<SelectionRecordSheet> {
     super.dispose();
   }
 
-  Future<void> _submit() async {
-    if (_busy) return;
-    setState(() {
-      _busy = true;
-      _error = null;
-    });
-
-    // Sayfayı önce kapat: kayıt yolu ortak (`createSelectionRecord`) ve
-    // sonucu snackbar'la bildiriyor; sayfa açık kalsaydı bildirim onun
-    // altında kalırdı.
-    final navigator = Navigator.of(context);
-    final quote = widget.quote;
-    final sourcePath = widget.sourcePath;
-    final kind = _kind;
-    final note = _noteCtrl.text;
-    final priority = _priority;
-    final mark = _mark;
-    navigator.pop();
-
-    await createSelectionRecord(
-      ref: ref,
-      context: navigator.context,
-      quote: quote,
-      sourcePath: sourcePath,
-      kind: kind.category,
-      mark: mark,
-      note: note,
-      priority: priority,
-      successLabel: kind.label,
+  /// Sayfa kaydı **kendisi oluşturmuyor**, kullanıcının seçimini geri
+  /// döndürüyor.
+  ///
+  /// Kayıt oluşturmak sayfanın `ref`'iyle yapılırsa, sayfa kapandığı anda o
+  /// `ref` ölüyor ve işaret hiç eklenmiyordu — "yorum eklendi" deyip ekranda
+  /// hiçbir şey görünmemesinin sebebi buydu (L-025). Kaydı, sayfayı açan ve
+  /// ondan uzun yaşayan ekran oluşturur.
+  void _submit() {
+    Navigator.of(context).pop(
+      SelectionRequest(
+        kind: _kind,
+        mark: _mark,
+        note: _noteCtrl.text,
+        priority: _priority,
+      ),
     );
   }
 
@@ -175,7 +177,6 @@ class _SelectionRecordSheetState extends ConsumerState<SelectionRecordSheet> {
             TextField(
               key: SelectionRecordSheet.noteFieldKey,
               controller: _noteCtrl,
-              enabled: !_busy,
               maxLines: 3,
               textCapitalization: TextCapitalization.sentences,
               decoration: InputDecoration(
@@ -207,30 +208,18 @@ class _SelectionRecordSheetState extends ConsumerState<SelectionRecordSheet> {
                       for (final p in ['low', 'normal', 'high', 'urgent'])
                         DropdownMenuItem(value: p, child: Text(p)),
                     ],
-                    onChanged: _busy
-                        ? null
-                        : (v) => setState(() => _priority = v ?? 'normal'),
+                    onChanged: (v) => setState(() => _priority = v ?? 'normal'),
                   ),
                 ),
               ],
             ),
-            if (_error != null) ...[
-              const SizedBox(height: 12),
-              Text(_error!, style: TextStyle(color: theme.colorScheme.error)),
-            ],
             const SizedBox(height: 16),
             SizedBox(
               width: double.infinity,
               child: FilledButton.icon(
                 key: SelectionRecordSheet.submitKey,
-                onPressed: _busy ? null : _submit,
-                icon: _busy
-                    ? const SizedBox(
-                        height: 16,
-                        width: 16,
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      )
-                    : Icon(_kind.icon),
+                onPressed: _submit,
+                icon: Icon(_kind.icon),
                 label: Text('${_kind.label} oluştur'),
               ),
             ),
@@ -241,164 +230,150 @@ class _SelectionRecordSheetState extends ConsumerState<SelectionRecordSheet> {
   }
 }
 
-/// Seçimden kayıt üretip hub'a gönderir; sonucu kullanıcıya bildirir.
+/// Seçimden kayıt üretir: **işaret hemen görünür**, gönderim arka planda.
 ///
-/// Hem hızlı işaretleme (menüden tek dokunuş) hem de ayrıntılı sayfa bunu
-/// kullanır — yazma yolu tek olsun diye. Ağ yoksa kayıt kuyruğa alınır
-/// (B-032), yani seçim hiçbir durumda kaybolmaz.
-Future<void> createSelectionRecord({
+/// Beklemeli yapılırsa (gönder → sonra çiz) kullanıcı sarıya bastıktan sonra
+/// ağ turu kadar boş ekrana bakıyor; bu, okurken not almanın akışını bozuyor
+/// (L-026). İşaret önce yerel katmana yazılıyor, gönderim arkada sürüyor.
+/// Kalıcı bir hata olursa işaret geri alınıyor — yalancı bir iz bırakmaktansa
+/// kaybolması dürüst.
+void createSelectionRecord({
   required WidgetRef ref,
   required BuildContext context,
   required String quote,
   required String sourcePath,
-  required String kind,
+  required RecordKind kind,
   required TaskMark mark,
   String note = '',
   String priority = 'normal',
-  String? successLabel,
-}) async {
+  String? section,
+  String? repoSlug,
+}) {
+  final normalized = collapseWhitespace(quote);
   final messenger = ScaffoldMessenger.of(context);
+
+  final annotation = Annotation(
+    quote: normalized,
+    mark: mark,
+    title: normalized,
+    category: kind.category,
+    path: '',
+  );
+  ref.read(freshAnnotationsProvider.notifier).add(sourcePath, annotation);
+
   final draft = TaskDraft.fromSelection(
-    quote: collapseWhitespace(quote),
+    quote: normalized,
     sourcePath: sourcePath,
-    kind: kind,
+    kind: kind.category,
     mark: mark,
     note: note,
     priority: priority,
+    section: section,
+    repoSlug: repoSlug,
   );
 
-  // Alıntı tek yerde normalleştiriliyor: hızlı işaretleme ile sayfadan
-  // oluşturma aynı metni yazsın diye.
-  final normalized = collapseWhitespace(quote);
-
-  String message;
-  var created = false;
-  try {
-    await ref.read(taskRepoProvider).send(draft);
-    created = true;
-    message = '${successLabel ?? 'Kayıt'} eklendi.';
-  } on HubNetworkError {
-    await ref.read(outboxProvider.notifier).add(draft);
-    // Kuyruğa girse de işaret hemen görünmeli: kayıt kaybolmadı.
-    created = true;
-    message = 'Ağ yok — ${(successLabel ?? 'kayıt').toLowerCase()} kuyruğa alındı.';
-  } on HubError catch (e) {
-    message = e.message;
-  } catch (e) {
-    message = 'Beklenmeyen hata: $e';
-  }
-
-  if (created) {
-    ref.read(freshAnnotationsProvider.notifier).add(
-          sourcePath,
-          Annotation(
-            quote: normalized,
-            mark: mark,
-            title: normalized,
-            category: kind,
-            path: '',
-          ),
-        );
-  }
-
-  ref.invalidate(allPendingTasksProvider);
-  messenger.showSnackBar(SnackBar(content: Text(message)));
+  unawaited(() async {
+    try {
+      await ref.read(taskRepoProvider).send(draft);
+    } on HubNetworkError {
+      // Ağ yok: kuyruğa alınır, işaret kalır — kayıt kaybolmadı (B-032).
+      await ref.read(outboxProvider.notifier).add(draft);
+      messenger.showSnackBar(
+        const SnackBar(content: Text('Ağ yok — kayıt kuyruğa alındı.')),
+      );
+    } on HubError catch (e) {
+      ref.read(freshAnnotationsProvider.notifier).remove(sourcePath, annotation);
+      messenger.showSnackBar(SnackBar(content: Text(e.message)));
+    } catch (e) {
+      ref.read(freshAnnotationsProvider.notifier).remove(sourcePath, annotation);
+      messenger.showSnackBar(
+        SnackBar(content: Text('Beklenmeyen hata: $e')),
+      );
+    }
+    ref.invalidate(allPendingTasksProvider);
+  }());
 }
 
-/// Seçilen metinden kayıt oluşturma sayfasını açar.
-Future<void> openSelectionRecord(
+/// Seçilen metinden kayıt oluşturma sayfasını açar; kullanıcının seçimini
+/// döndürür (vazgeçilirse null). Kaydı çağıran ekran oluşturur.
+Future<SelectionRequest?> openSelectionRecord(
   BuildContext context, {
   required String quote,
   required String sourcePath,
 }) {
-  final trimmed = collapseWhitespace(quote);
-  return showModalBottomSheet<void>(
+  return showModalBottomSheet<SelectionRequest>(
     context: context,
     isScrollControlled: true,
     showDragHandle: true,
     builder: (_) => SelectionRecordSheet(
-      quote: trimmed,
+      quote: collapseWhitespace(quote),
       sourcePath: sourcePath,
     ),
   );
 }
 
-/// Seçime hızlıca yorum yazma kutusu.
+/// Seçime hızlıca yorum yazma kutusu; yazılan notu döndürür.
 ///
 /// Tam sayfadan (tür, işaret, öncelik) daha hafif: okurken bir not düşmek
-/// isteyen kullanıcıyı beş alanla karşılamamak için ayrı tutuldu. Kayıt yine
-/// aynı yoldan gider — `yorum` kategorisi, sarı işaret.
-Future<void> openCommentBox(
+/// isteyen kullanıcıyı beş alanla karşılamamak için ayrı tutuldu.
+Future<SelectionRequest?> openCommentBox(
   BuildContext context, {
   required String quote,
-  required String sourcePath,
 }) {
   final controller = TextEditingController();
   final normalized = collapseWhitespace(quote);
 
-  return showDialog<void>(
+  return showDialog<SelectionRequest>(
     context: context,
     builder: (dialogContext) => AlertDialog(
       title: const Text('Yorum ekle'),
-      content: Consumer(
-        builder: (context, ref, _) => Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.surfaceContainerHighest,
-                borderRadius: BorderRadius.circular(6),
-              ),
-              child: Text(
-                normalized,
-                maxLines: 3,
-                overflow: TextOverflow.ellipsis,
-                style: Theme.of(context).textTheme.bodySmall,
-              ),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: Theme.of(dialogContext).colorScheme.surfaceContainerHighest,
+              borderRadius: BorderRadius.circular(6),
             ),
-            const SizedBox(height: 12),
-            TextField(
-              key: commentFieldKey,
-              controller: controller,
-              autofocus: true,
+            child: Text(
+              normalized,
               maxLines: 3,
-              textCapitalization: TextCapitalization.sentences,
-              decoration: const InputDecoration(
-                hintText: 'Not olarak ne kalsın?',
-                border: OutlineInputBorder(),
-              ),
+              overflow: TextOverflow.ellipsis,
+              style: Theme.of(dialogContext).textTheme.bodySmall,
             ),
-          ],
-        ),
+          ),
+          const SizedBox(height: 12),
+          TextField(
+            key: commentFieldKey,
+            controller: controller,
+            autofocus: true,
+            maxLines: 3,
+            textCapitalization: TextCapitalization.sentences,
+            decoration: const InputDecoration(
+              hintText: 'Not olarak ne kalsın?',
+              border: OutlineInputBorder(),
+            ),
+          ),
+        ],
       ),
       actions: [
         TextButton(
           onPressed: () => Navigator.of(dialogContext).pop(),
           child: const Text('Vazgeç'),
         ),
-        Consumer(
-          builder: (context, ref, _) => FilledButton(
-            key: commentSubmitKey,
-            onPressed: () {
-              final note = controller.text;
-              final navigator = Navigator.of(dialogContext);
-              navigator.pop();
-              createSelectionRecord(
-                ref: ref,
-                context: navigator.context,
-                quote: normalized,
-                sourcePath: sourcePath,
-                kind: RecordKind.yorum.category,
-                mark: TaskMark.highlight,
-                note: note,
-                successLabel: RecordKind.yorum.label,
-              );
-            },
-            child: const Text('Ekle'),
+        FilledButton(
+          key: commentSubmitKey,
+          onPressed: () => Navigator.of(dialogContext).pop(
+            SelectionRequest(
+              kind: RecordKind.yorum,
+              mark: TaskMark.highlight,
+              note: controller.text,
+            ),
           ),
+          child: const Text('Ekle'),
         ),
       ],
     ),
