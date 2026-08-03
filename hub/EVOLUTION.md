@@ -349,3 +349,12 @@ toplanır ve gerekiyorsa Faz 6 maddelerini (B-060…B-064) yeniden sıralar.
   işaretliyor. Tek yere bırakılsaydı — yalnız agent'a — atlandığında kimse
   görmezdi; `financer_takip` tam olarak böyle 1.3'te kalmıştı (L-020).
   Sözleşme yalnız ana kopyada değiştirilir. → Sözleşme 1.5 §10, B-070
+- **K-025:** Bir projede doğan iyi bir sözleşme kuralı **ana kopyaya taşınır**,
+  o projede bırakılmaz. `financer_takip`'in agent'ı `reconstructed` alanını
+  kendi kopyasına eklemişti (bağlam sıkıştırması yüzünden geriye dönük yazılan
+  oturumu dürüstçe işaretlemek için). Kural iyiydi; ana kopyaya alınıp sürüm
+  1.6'ya çıkarıldı, sonra o hub güncellendi — yani yerel ekleme kaybolmadı,
+  herkese yayıldı. Alternatif (körü körüne üzerine yazmak) kuralı sessizce
+  silerdi. Bu olay §10'daki sürüm kontrolünün eksiğini de gösterdi: iki hub
+  aynı numarayı farklı değişikliklerle almıştı (L-022).
+  → Sözleşme 1.6, B-072
