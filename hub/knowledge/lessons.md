@@ -400,8 +400,70 @@ Biçim: `SYSTEM.md` §5.
   Doğru görünen yol (stil sözlüğüne özel etiket yazmak, gerçek `TextSpan`
   üretir) paket tarafından kapalı: `MarkdownWidget` kendi merge adımında
   `copyWith` ile sözlüğü sıfırdan kurup tanımadığı etiketleri düşürüyor.
-  **Çözüm:** işaretli satırdaki *işaretsiz* kelimeler de kutulanıyor, böylece
-  `Wrap`'in bütün öğeleri kelime boyunda ve akış normal metne benziyor.
+  ~~**Çözüm:** işaretli satırdaki *işaretsiz* kelimeler de kutulanıyor, böylece
+  `Wrap`'in bütün öğeleri kelime boyunda ve akış normal metne benziyor.~~
+  **Düzeltme (2026-08-03, L-032):** teşhis (satır içi widget → `Wrap`) doğru,
+  çözüm yanlıştı. Kelime kutulama yalnız düz nesirde uygulanabildiği için
+  gerçek hub metinlerinde (`**kalın**`, `` `kod` `` dolu) hemen hiç devreye
+  girmiyordu; kullanıcıda hiçbir şey değişmedi. Doğru çözüm L-032'de.
   **Genel kural:** bir düzen sorununda yalnız suçlanan öğeyi değil, onunla
   aynı kapta duran komşularını da ölç. Ve bir düzeltmenin işe yaradığını
   varsayma — aynı ölçümü tekrarla.
+
+## L-031 — Liste birleşti ama detay hâlâ tek repodan okuyordu
+- **Tarih:** 2026-08-03
+- **Kaynak:** S-2026-08-03-sifirdan-cozum
+- **Açıklama:** Bekleyenler tüm repoların işlerini birlikte göstermeye başladı
+  (B-084); financer görevleri listede göründü ama dokununca "bulunamadı"
+  çıkıyordu. Sebep: liste çoklu repoya geçirilirken **detay okuma yolu**
+  geçirilmemişti — `taskDetailProvider` hâlâ aktif reponun deposunu
+  kullanıyordu ve o repoda o dosya yok.
+  **Çözüm:** `taskRepoForSlugProvider(slug)` — görevin kendi bağlantısından
+  depo üretir, `repoSlug` yoksa aktif repoya düşer. Detay, "Yaptım" bildirimi,
+  işaret silme ve seçimden kayıt — dördü de artık kaydın **kendi** reposuna
+  gidiyor.
+  **Genel kural:** bir listeyi çok kaynaklı hâle getirirken listenin
+  **kendisi** işin yarısı; o listeden açılan her yol da çok kaynaklı olmak
+  zorunda. Tarama sorusu: "bu listeden nereye gidiliyor ve oralar hangi
+  kaynağı varsayıyor?"
+
+## L-032 — `flutter_markdown` satır içi çocuğu `Text` ise metin akışına kaynatır
+- **Tarih:** 2026-08-03
+- **Kaynak:** S-2026-08-03-sifirdan-cozum
+- **Açıklama:** L-030'un çözümü işe yaramadı; kullanıcı üçüncü kez aynı
+  sorunu bildirdi ("sorunları 0'dan ele al, gerekirse algoritmayı değiştir").
+  Paketin kaynağı bu kez `_MarkSyntax`/`Wrap` yerine **`_mergeInlineChildren`**
+  tarafından okundu ve karar noktası oradaymış: fonksiyon her satır içi çocuğu
+  `_getInlineSpanFromText` ile sınıyor; çocuk `Text`/`RichText`/`SelectableText`
+  ise span'ları çıkarılıp **komşularıyla tek `RichText`e kaynıyor**, değilse
+  `Wrap` içinde atomik kutu olarak kalıyor.
+  Yani sorun "satır içi widget olması" değil, **hangi tür** widget olduğuydu.
+  `MarkdownElementBuilder` `Text.rich(...)` döndürünce işaret kendi stiliyle
+  ve kendi `TapGestureRecognizer`'ıyla aynı metin akışının parçası oluyor.
+  Ölçüm: işaretli ve işaretsiz metin 300px genişlikte **birebir aynı
+  yükseklikte** (120.0), paragrafın tamamı **tek** `RichText`.
+  Denenip elenen iki yol da kayda değer: (1) blok (`p`) çizicisiyle paragrafı
+  baştan çizmek — paketin `_inlines` yığınını dengesiz bırakıp assert
+  patlatıyor; (2) `styleSheet.styles`'a özel etiket yazmak — `MarkdownWidget`
+  `fallback.merge(widget.styleSheet)` derken sözlüğü constructor'dan yeniden
+  kuruyor ve özel anahtarlar düşüyor.
+  **Genel kural:** bir kütüphane "şunu yapamıyor" diye kabullenmeden önce
+  kararın **verildiği satırı** bul. Burada üç deneme, karar noktasını okumadan
+  yapılmıştı; kaynağın doğru yerini okumak işi tek denemede bitirdi.
+
+## L-033 — Parçaların hepsi yeşilken zincir kopuk olabilir
+- **Tarih:** 2026-08-03
+- **Kaynak:** S-2026-08-03-sifirdan-cozum
+- **Açıklama:** Yorum ekleme özelliği için üç ayrı test vardı ve üçü de
+  geçiyordu: menü kuruluyor mu, kutu notu döndürüyor mu, depo PUT atıyor mu.
+  Buna rağmen kullanıcıda "yorum çalışmıyor"du. Testlerin hiçbiri **aralara**
+  bakmıyordu; menü testi gerçek seçim bile yapmıyor, yalnız etiket sabitlerini
+  doğruluyordu. Uçtan uca test yazılınca hata ilk koşuda çıktı: kutu
+  `TaskMark.highlight` döndürüyordu, yani yorum sarı işaretten ayırt
+  edilemiyordu — kullanıcının "çalışmıyor" dediği şey buydu.
+  **Çözüm:** `test/features/selection_flow_test.dart` — gerçek metin seçimi
+  (uzun bas + sürükle), gerçek menü dokunuşu, sahte GitHub'a giden PUT'un
+  gövdesinin doğrulanması. Aynı dosya sarı işaret yolunu da sürüyor.
+  **Genel kural:** kullanıcı "çalışmıyor" diyorsa ve parça testleri yeşilse,
+  hata neredeyse kesinlikle parçaların **arasındadır**. Yeni parça testi
+  yazmak yerine zinciri baştan sona süren bir test yaz.

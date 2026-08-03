@@ -205,9 +205,24 @@ başlığına ✅ ve tarih yazılır.
 - [ ] B-053 · (agent) Kullanım geri bildirimlerine göre revizyon turu
 - [x] B-083 · (agent) Yorum kendi rengini alsın — ✅ 2026-08-03; sözleşme 1.8,
       `mark: comment` (yeşil). Sarı ile yorum ayırt edilemiyordu
-- [x] B-084 · (agent) İşaretten sonraki metin alt satıra kayıyordu —
+- [x] B-085 · (agent) Bekleyenler'deki başka repo görevine dokununca
+      "bulunamadı" — ✅ 2026-08-03; liste çoklu repoya geçmişti ama detay
+      okuma yolu geçmemişti. Görev artık kendi reposundan okunuyor
+      (`taskRepoForSlugProvider`); "Yaptım", işaret silme ve seçimden kayıt
+      da aynı yoldan. → L-031
+- [x] B-086 · (agent) İşaretten sonraki metin alt satıra kayıyordu (3. tur) —
+      ✅ 2026-08-03; algoritma değişti. İşaret artık `Text.rich` döndürüyor ve
+      `_mergeInlineChildren` onu komşu metinle **tek `RichText`e** kaynatıyor;
+      `Wrap` hiç oluşmuyor. Ölçüm: işaretli/işaretsiz aynı yükseklik. → L-032
+- [x] B-087 · (agent) Yorum eklemek çalışmıyordu (3. tur) — ✅ 2026-08-03;
+      yorum kutusu `TaskMark.highlight` döndürdüğü için yorum sarı işaretten
+      ayırt edilemiyordu. Parça testleri yeşilken zincir kopuktu; uçtan uca
+      test eklendi. → L-033
+- [x] ~~B-084 · (agent) İşaretten sonraki metin alt satıra kayıyordu —
       ✅ 2026-08-03; paragraf `Wrap`'e dönüştüğü için komşu metin atomik
-      öğeydi. İşaretli satırdaki tüm kelimeler kutulanıyor. → L-030
+      öğeydi. İşaretli satırdaki tüm kelimeler kutulanıyor. → L-030~~
+      · ℹ Çözüm gerçek hub metinlerinde devreye girmiyordu; B-086 ile
+      değiştirildi
 - [x] B-080 · (agent) İşaretlenen kelimeden sonrası alt satıra düşüyordu —
       ✅ 2026-08-03; işaret kelime kelime yayılıyor. → L-028
 - [x] B-081 · (agent) Yorum kaydı oluşmuyordu — ✅ 2026-08-03; kullanıcı

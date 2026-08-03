@@ -366,3 +366,16 @@ toplanır ve gerekiyorsa Faz 6 maddelerini (B-060…B-064) yeniden sıralar.
   çalışmasını çöpe atardı. Gerekçe: kullanıcı yanlışlıkla koyduğu bir işareti
   geri alabilmeli; bunun için agent'a görev açmak, tek dokunuşluk bir hatayı
   iki tarafın işine çevirirdi. → B-082
+- **K-027:** İşaretler artık `MarkdownElementBuilder`'ın döndürdüğü
+  `Text.rich` ile çiziliyor; `flutter_markdown` `Text` türündeki satır içi
+  çocukları komşu metinle tek bir `RichText`e kaynattığı için işaret, metin
+  akışının doğal parçası oluyor. Üç turdur çözülemeyen "alt satıra kayma"
+  sorununun kalıcı cevabı bu. Alternatifler (paragrafı blok çiziciyle baştan
+  çizmek, stil sözlüğüne özel etiket eklemek) paket tarafından kapalı; ikisi
+  de denenip ölçümle elendi. → L-032, B-086
+- **K-028:** Çok kaynaklı bir liste, listeden **açılan yolları** da çok
+  kaynaklı yapmayı zorunlu kılıyor. Bekleyenler tüm repoları birleştirdiğinde
+  detay okuma hâlâ aktif repoya bakıyordu ve başka repodaki görev "bulunamadı"
+  diyordu. Artık kayıtla birlikte taşınan `repoSlug`, okuma/yazma/silmenin
+  hepsinde hedefi belirliyor. → L-031, B-085
+
