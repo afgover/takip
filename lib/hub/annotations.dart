@@ -18,6 +18,7 @@ class Annotation {
     required this.category,
     required this.path,
     this.sourcePath = '',
+    this.repoSlug,
   });
 
   final String quote;
@@ -30,6 +31,9 @@ class Annotation {
 
   /// İşaretin bulunduğu belge; yerel katmandan kaldırırken anahtar.
   final String sourcePath;
+
+  /// Kaydın hangi repoda olduğu — silerken doğru hub'a gitmek için.
+  final String? repoSlug;
 }
 
 /// Verilen belgeyi `source` alan kayıtlar (aktif repodan).
@@ -80,6 +84,7 @@ Future<List<Annotation>> annotationsFrom(
       category: fm.str('category') ?? 'gorev',
       path: entry.path,
       sourcePath: sourcePath,
+      repoSlug: connection.slug,
     ));
   }
   return found;

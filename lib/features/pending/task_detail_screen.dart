@@ -139,9 +139,14 @@ class _WaitingBannerState extends ConsumerState<_WaitingBanner> {
       _error = null;
     });
 
-    final draft = TaskDraft.waitingDone(widget.task);
+    // Bildirim, görevin **kendi** reposuna gider; aktif repo başkası olabilir
+    // çünkü bekleyenler listesi çoklu repo (L-031).
+    final slug = widget.summary.repoSlug;
+    final draft = slug == null
+        ? TaskDraft.waitingDone(widget.task)
+        : TaskDraft.waitingDone(widget.task).forRepo(slug);
     try {
-      await ref.read(taskRepoProvider).send(draft);
+      await ref.read(taskRepoForSlugProvider(slug)).send(draft);
       _finish('Agent\'a bildirildi.');
     } on HubNetworkError {
       // Ağ yokken bildirim kaybolmasın: normal görevlerle aynı kuyruk (B-032).

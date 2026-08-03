@@ -281,6 +281,7 @@ void createSelectionRecord({
     category: kind.category,
     path: '${Hub.inboxDir}/${draftForPath.fileName}',
     sourcePath: sourcePath,
+    repoSlug: repoSlug,
   );
   container.read(freshAnnotationsProvider.notifier).add(sourcePath, annotation);
 
@@ -288,7 +289,7 @@ void createSelectionRecord({
 
   unawaited(() async {
     try {
-      await container.read(taskRepoProvider).send(draft);
+      await container.read(taskRepoForSlugProvider(repoSlug)).send(draft);
     } on HubNetworkError {
       // Ağ yok: kuyruğa alınır, işaret kalır — kayıt kaybolmadı (B-032).
       await container.read(outboxProvider.notifier).add(draft);
@@ -478,8 +479,9 @@ Future<bool> openAnnotationCard(
   final fileName = annotation.path.split('/').last;
   var message = 'İşaret silindi.';
   try {
-    final removed =
-        await container.read(taskRepoProvider).deleteFromInbox(fileName);
+    final removed = await container
+        .read(taskRepoForSlugProvider(annotation.repoSlug))
+        .deleteFromInbox(fileName);
     if (!removed) {
       message = 'Agent bu kaydı ele almış; işaret hub\'da duruyor.';
     }

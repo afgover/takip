@@ -5,6 +5,7 @@ import '../core/errors.dart';
 import '../github/client.dart';
 import '../github/contents_api.dart';
 import 'hub_config.dart';
+import 'hub_connections.dart';
 import 'hub_watcher.dart';
 import 'models/task.dart';
 import 'models/task_draft.dart';
@@ -236,6 +237,28 @@ class TaskRepo {
 final taskRepoProvider =
     Provider<TaskRepo>((ref) => TaskRepo(ref.watch(contentsApiProvider)));
 
+/// **Belirli bir repo** için görev deposu.
+///
+/// Bekleyenler artık bütün repoların işlerini gösteriyor; bir göreve
+/// dokunulduğunda onu **kendi** reposundan okumak gerekiyor. Aktif repodan
+/// okumak, başka repodaki bir görevi açarken "Bulunamadı" veriyordu (L-031).
+///
+/// Paylaşılan istemci kullanılıyor: token isteğin yolundan seçildiği için
+/// (L-019) her repo için doğru kimlikle gidiyor ve ETag önbelleği korunuyor.
+final taskRepoForSlugProvider =
+    Provider.family<TaskRepo, String?>((ref, slug) {
+  final connections = ref.watch(hubConnectionsProvider).valueOrNull;
+  final connection =
+      slug == null ? null : connections?.bySlug(slug);
+  if (connection == null) return ref.watch(taskRepoProvider);
+
+  return TaskRepo(ContentsApi(
+    ref.watch(githubDioProvider),
+    owner: connection.owner,
+    repo: connection.repo,
+  ));
+});
+
 /// **Aktif olmayan** bir bağlantıya yazmak için tek seferlik görev deposu
 /// (T-003). Outbox, kuyrukta başka repolara ait taslak varken kullanır.
 ///
@@ -284,5 +307,7 @@ final doneTasksProvider = FutureProvider<List<TaskSummary>>((ref) {
 final taskDetailProvider =
     FutureProvider.autoDispose.family<HubTask, TaskSummary>((ref, summary) {
   ref.watch(hubWatcherProvider.select((s) => s.headSha));
-  return ref.watch(taskRepoProvider).read(summary);
+  // Görev kendi reposundan okunur; liste çoklu repo olduğu için aktif repo
+  // doğru kaynak değil.
+  return ref.watch(taskRepoForSlugProvider(summary.repoSlug)).read(summary);
 });
