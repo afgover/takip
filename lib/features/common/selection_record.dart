@@ -384,7 +384,9 @@ Future<SelectionRequest?> openCommentBox(
           onPressed: () => Navigator.of(dialogContext).pop(
             SelectionRequest(
               kind: RecordKind.yorum,
-              mark: TaskMark.highlight,
+              // Yorumun kendi rengi — sarı işaretle aynı olursa "işaretledim"
+              // ile "not düştüm" ekranda ayırt edilemiyor (sözleşme 1.8).
+              mark: RecordKind.yorum.defaultMark,
               note: controller.text,
             ),
           ),

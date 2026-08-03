@@ -47,6 +47,14 @@ class AnnotatedDocument extends ConsumerStatefulWidget {
   ConsumerState<AnnotatedDocument> createState() => _AnnotatedDocumentState();
 }
 
+/// Diyalog açılmadan önce toplanan, widget yaşam döngüsünden bağımsız bağlam.
+typedef _Captured = ({
+  ProviderContainer container,
+  ScaffoldMessengerState messenger,
+  String? section,
+  String? repoSlug,
+});
+
 class _AnnotatedDocumentState extends ConsumerState<AnnotatedDocument> {
   String? _selected;
 
@@ -61,49 +69,47 @@ class _AnnotatedDocumentState extends ConsumerState<AnnotatedDocument> {
     required RecordKind kind,
     required TaskMark mark,
   }) {
+    final captured = _capture(selection);
     state.hideToolbar();
-    _create(SelectionRequest(kind: kind, mark: mark), selection);
+    _create(SelectionRequest(kind: kind, mark: mark), selection, captured);
   }
+
+  /// Diyalog/sayfa açmadan **önce** yaşam döngüsünden bağımsız olan her şeyi
+  /// topla: kullanıcı yazarken bu ekran yeniden kurulabilir ve `context`/`ref`
+  /// geçersizleşebilir (L-029).
+  _Captured _capture(String selection) => (
+        container: ProviderScope.containerOf(context, listen: false),
+        messenger: ScaffoldMessenger.of(context),
+        section: sectionOf(widget.data, selection),
+        repoSlug: ref.read(hubConfigProvider).value?.slug,
+      );
 
   /// Kaydı **bu ekran** oluşturur; sayfa/kutu yalnız seçimi döndürür.
   /// Sebebi: onların `ref`'i kapandığı anda ölüyor ve işaret hiç eklenmiyordu
   /// (L-025).
+  ///
+  /// Yakalanan değerler **zorunlu** — "yoksa `ref`'ten oku" gibi bir yedek yol
+  /// bırakılmadı. Öyle bir yedek, yakalanan değer meşru olarak null olduğunda
+  /// (bağlı repo yokken `repoSlug`) sessizce devreye girip ölmüş bir `ref`e
+  /// uzanıyordu; hata da kullanıcıya "eklendi" dedikten sonra çıkıyordu.
   void _create(
     SelectionRequest request,
-    String selection, {
-    ProviderContainer? container,
-    ScaffoldMessengerState? messenger,
-    String? section,
-    String? repoSlug,
-  }) {
+    String selection,
+    _Captured captured,
+  ) {
     createSelectionRecord(
-      container: container ?? ProviderScope.containerOf(context, listen: false),
-      messenger: messenger ?? ScaffoldMessenger.of(context),
+      container: captured.container,
+      messenger: captured.messenger,
       quote: selection,
       sourcePath: widget.sourcePath,
       kind: request.kind,
       mark: request.mark,
       note: request.note,
       priority: request.priority,
-      section: section ?? sectionOf(widget.data, selection),
-      repoSlug: repoSlug ?? ref.read(hubConfigProvider).value?.slug,
+      section: captured.section,
+      repoSlug: captured.repoSlug,
     );
   }
-
-  /// Diyalog/sayfa açmadan **önce** yaşam döngüsünden bağımsız olan her şeyi
-  /// topla: kullanıcı yazarken bu ekran yeniden kurulabilir ve `context`/`ref`
-  /// geçersizleşebilir (L-029).
-  ({
-    ProviderContainer container,
-    ScaffoldMessengerState messenger,
-    String? section,
-    String? repoSlug,
-  }) _capture(String selection) => (
-        container: ProviderScope.containerOf(context, listen: false),
-        messenger: ScaffoldMessenger.of(context),
-        section: sectionOf(widget.data, selection),
-        repoSlug: ref.read(hubConfigProvider).value?.slug,
-      );
 
   Future<void> _openSheet(String selection) async {
     final captured = _capture(selection);
@@ -113,22 +119,14 @@ class _AnnotatedDocumentState extends ConsumerState<AnnotatedDocument> {
       sourcePath: widget.sourcePath,
     );
     if (request == null) return;
-    _create(request, selection,
-        container: captured.container,
-        messenger: captured.messenger,
-        section: captured.section,
-        repoSlug: captured.repoSlug);
+    _create(request, selection, captured);
   }
 
   Future<void> _openComment(String selection) async {
     final captured = _capture(selection);
     final request = await openCommentBox(context, quote: selection);
     if (request == null) return;
-    _create(request, selection,
-        container: captured.container,
-        messenger: captured.messenger,
-        section: captured.section,
-        repoSlug: captured.repoSlug);
+    _create(request, selection, captured);
   }
 
   @override

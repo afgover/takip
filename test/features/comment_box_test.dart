@@ -42,7 +42,9 @@ void main() {
     expect(result, isNotNull, reason: 'kutu seçimi döndürmeli');
     expect(result!.note, 'buraya dikkat');
     expect(result!.kind, RecordKind.yorum);
-    expect(result!.mark, TaskMark.highlight);
+    // Yorum sarıdan ayrı bir renkte olmalı; aynı sarı olursa kullanıcı
+    // "işaretledim" ile "not düştüm"ü ekranda ayırt edemiyor.
+    expect(result!.mark, TaskMark.comment);
   });
 
   testWidgets('vazgeçilince null döner', (tester) async {
