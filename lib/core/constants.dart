@@ -19,6 +19,10 @@ abstract final class Hub {
   static const backlogFile = '$basePath/BACKLOG.md';
   static const evolutionFile = '$basePath/EVOLUTION.md';
 
+  /// Güvenlik logu (sözleşme 1.10 §12): taramalar, önlemler, açıklar,
+  /// yapılacaklar.
+  static const securityFile = '$basePath/SECURITY.md';
+
   /// Onboarding'de öneri olarak gelen repo (K-012: kod ve hub aynı repoda).
   static const defaultRepo = 'afgover/takip';
 
@@ -37,7 +41,7 @@ abstract final class Hub {
 
   /// Sözleşmenin bu uygulamanın bildiği sürümü. Bağlantıların `hub/SYSTEM.md`
   /// sürümü bununla karşılaştırılır (§10).
-  static const contractVersion = '1.9';
+  static const contractVersion = '1.10';
   static const systemFile = '$basePath/SYSTEM.md';
 
   static const priorities = ['low', 'normal', 'high', 'urgent'];

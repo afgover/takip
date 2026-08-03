@@ -41,6 +41,13 @@ tanımlanır. Prosedür, oturumun konusu ne olursa olsun geçerlidir.
    gerçekten iş içeriyorsa kendiliğinden görev açma — kullanıcıya sor, gerekirse
    `tasks/waiting/`e bir soru koy. Kuralın nedeni somut: kullanıcı kendine not
    alırken agent'a iş açmış olmak istemiyor.
+11. **Güvenlikle ilgili her iş `SECURITY.md`'ye kayıt düşer (§12).** Bağımlılık
+   taraması, izin değişikliği, token/kimlik dokunuşu, veri saklama kararı,
+   bulunan bir açık — hepsi. Yalnız oturum kaydına yazmak yetmez: "bu konuda ne
+   yapmıştık" sorusunun cevabı oturumlara dağılmamalı. Giderilen bir açık
+   silinmez, `Durum: kapali` yapılır ve nasıl giderildiği yazılır.
+   **Sır yazılmaz** — kayıt neyin korunduğunu anlatır, korunan şeyin kendisini
+   değil.
 
 ## Oturum kapanışında
 

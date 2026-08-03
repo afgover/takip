@@ -5,7 +5,7 @@ ve hangi şemaya uyacağını** tanımlar. Agent ve kullanıcı uygulaması bu s
 dışına çıkmaz. Sözleşme değişiklikleri `EVOLUTION.md`'ye kaydedilir ve bu dosyanın
 başındaki sürüm numarası artırılır.
 
-**Sözleşme sürümü:** 1.9
+**Sözleşme sürümü:** 1.10
 **Ana kopya (master):** `afgover/takip` → `hub/SYSTEM.md`
 (bkz. §10 — her hub kendi kopyasını buradan günceller)
 **Zaman biçimi:** her yerde ISO 8601, UTC (`2026-07-30T14:05:00Z`)
@@ -35,6 +35,7 @@ başındaki sürüm numarası artırılır.
 | `AGENT_PROTOCOL.md` | Agent'ın kayıt prosedürü | agent (kullanıcı onayıyla) |
 | `BACKLOG.md` | Yapılacak işler listesi — tek doğru kaynak | agent |
 | `EVOLUTION.md` | Projenin aşama aşama evrimi | agent |
+| `SECURITY.md` | Güvenlik logu — taramalar, önlemler, açıklar (§12) | agent |
 
 ## 2. `sessions/` — oturum kayıtları
 
@@ -419,3 +420,49 @@ Belgeden seçilmeden alınan bir notta bu üç alan olmayabilir.
 **App kuralları:** R-001'in yazma alanı v1.9'da ikiye çıktı — `tasks/inbox/`
 ve `notes/`. İkisi de yapısal olarak kapalı: app yol değil dosya adı verir,
 klasörü seçemez.
+
+## 12. `SECURITY.md` — güvenlik logu (v1.10)
+
+Projenin güvenliğine dair **yapılan ve yapılması gereken her şey** tek bir
+canlı dosyada, ID'li kayıtlar hâlinde tutulur. Amaç: "bu konuda ne yapmıştık"
+sorusunun cevabı oturum kayıtlarına dağılmasın, tek yerden okunabilsin.
+
+Kayıt biçimi `knowledge/` ile aynı (§5), iki ek alanla:
+
+```markdown
+## SEC-001 — Token yalnızca cihazın güvenli deposunda
+- **Tarih:** 2026-08-03
+- **Tür:** onlem
+- **Durum:** kapali
+- **Kaynak:** S-2026-08-01-token-kaliciligi
+- **Açıklama:** Token `flutter_secure_storage`'da tutulur; dosyaya, commit'e
+  ve log'a hiçbir koşulda yazılmaz.
+```
+
+| Alan | Değerler | Anlamı |
+|---|---|---|
+| `Tür` | `tarama` | Yapılan denetim/tarama ve bulguları |
+| | `onlem` | Alınan koruma, sertleştirme, kural |
+| | `acik` | Bilinen zafiyet ya da riskli davranış |
+| | `yapilacak` | Yapılması gereken güvenlik işi |
+| `Durum` | `acik` | Henüz kapanmadı — ekranda öne alınır |
+| | `kapali` | Tamamlandı ya da giderildi |
+
+Türkçe karakter kullanılmaz (dosya adı kuralıyla aynı gerekçe); ekranda
+okunabilir karşılıkları gösterilir.
+
+**Agent kuralları:**
+- Güvenlikle ilgili **her** iş buraya kayıt düşer: bağımlılık taraması, izin
+  değişikliği, token/kimlik dokunuşu, veri saklama kararı, bulunan bir açık.
+  Yalnız oturum kaydına yazmak yetmez — güvenlik geçmişi tek yerden okunabilir
+  olmalı.
+- Bir `acik` kaydı giderildiğinde **silinmez**: `Durum` `kapali` yapılır ve
+  altına nasıl giderildiği yazılır. Geçersizleşen kayıt R-004'teki gibi
+  `~~üstü çizilir~~` ve nedeni yazılır.
+- `yapilacak` kayıtları aynı zamanda `BACKLOG.md`'ye de girer; burada güvenlik
+  bağlamıyla, orada iş sırasıyla durur. İkisi çelişirse doğru kaynak
+  `BACKLOG.md`'dir.
+- **Sır yazılmaz.** Token, parola, anahtar, özel URL — hiçbiri bu dosyaya
+  (ya da başka bir hub dosyasına) yazılmaz. Kayıt "neyin korunduğunu" anlatır,
+  korunan şeyin kendisini değil.
+- Kullanıcı uygulamada bu logu **Tarayıcı → Security** altında görür.

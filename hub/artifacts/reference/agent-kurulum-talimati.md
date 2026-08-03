@@ -167,6 +167,26 @@ kullanıcıya sor, gerekirse `tasks/waiting/`e bir soru koy.
 
 Ayrım kullanıcının niyeti: görev "sen şunu yap", not "ben bunu hatırlayayım".
 
+### `SECURITY.md` — güvenlik logu (v1.10)
+
+Güvenlikle ilgili **her** iş buraya ID'li bir kayıt olarak düşer: yapılan
+taramalar, alınan önlemler, bilinen açıklar, yapılacak güvenlik işleri.
+Biçim `knowledge/` ile aynı, iki ek alanla:
+
+```markdown
+## SEC-001 — Kısa başlık
+- **Tarih:** 2026-08-03
+- **Tür:** tarama | onlem | acik | yapilacak
+- **Durum:** acik | kapali
+- **Kaynak:** S-2026-08-03-...
+- **Açıklama:** ...
+```
+
+Kurallar: giderilen bir açık **silinmez**, `Durum: kapali` yapılır ve nasıl
+giderildiği yazılır. `yapilacak` kayıtları `BACKLOG.md`'ye de girer.
+**Sır yazılmaz** — kayıt neyin korunduğunu anlatır, korunan şeyin kendisini
+değil. Kullanıcı bunu uygulamada **Tarayıcı → Security** altında görür.
+
 ## 4. Kayıt disiplini
 
 `AGENT_PROTOCOL.md`'nin tamamı bağlayıcıdır. En sık atlanan dördü:

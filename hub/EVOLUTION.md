@@ -389,4 +389,15 @@ toplanır ve gerekiyorsa Faz 6 maddelerini (B-060…B-064) yeniden sıralar.
   Sarı işaret ve kırmızı çizgi bilinçli olarak **göreve gitmeye devam ediyor**:
   onlar agent'a sinyaldir ("buraya bak", "burası yanlış"). Ayrımı kullanıcının
   niyeti belirliyor, işaretin rengi değil. → B-088
+- **K-030:** Güvenlik geçmişi tek bir canlı dosyada tutuluyor (`SECURITY.md`,
+  sözleşme 1.10 §12): taramalar, alınan önlemler, bilinen açıklar ve yapılacak
+  güvenlik işleri ID'li kayıtlar hâlinde. Gerekçe: bu bilgi şimdiye kadar
+  oturum kayıtlarına ve `knowledge/rules.md`'ye dağılmıştı ve "bu konuda ne
+  yapmıştık" sorusunun tek bir cevabı yoktu. Biçim `knowledge/` ile bilinçli
+  olarak ortak — ayrı bir çözümleyici yazmak aynı fikrin iki yerde
+  ayrışmasına yol açardı; nitekim ilk denemede kopyalanan regex bozuktu.
+  Uygulamada Tarayıcı → Security altında, açık kayıtlar üstte listeleniyor.
+  Tarayıcıdaki "Bekleyen görevler" kutusu kaldırıldı: alt menüde kendi sekmesi
+  var ve aynı ekrana iki kapı, ikisinden birinin bayat kalmasına yol açıyor.
+  → B-090
 

@@ -141,5 +141,43 @@ eklenirken atlanmış), artık kendi ikonu.
 
 `flutter analyze` temiz, **324 test**.
 
+### Kullanıcı
+> tamam, denedim çalışıyor
+> Tarayici sekmesindeki Bekleyen gorevler butonunu kaldir(zaten alt menude
+> var) onun yerine Security isimli bir buton koy, sozlesmeyi projenin security
+> ile alakali alinan onlemleri, yapilan calismalari burada ayri bir security
+> logu altinda loglama yapacagi bir madde ekle, yapilan taramalar, alinan
+> onlemler, olasi aciklar, yapilmasi gereken isler ve benzeri kayitlar tutulup
+> burda listelensin
+
+### Agent
+Sözleşme 1.10 §12: `SECURITY.md` — tek canlı dosya, ID'li kayıtlar
+(`SEC-001`), `Tür` (tarama/onlem/acik/yapilacak) ve `Durum` (acik/kapali)
+alanlarıyla. Biçim `knowledge/` ile **bilinçli olarak ortak**: ayrı bir
+çözümleyici yazmak aynı "ID'li canlı liste" fikrinin iki yerde ayrışmasına yol
+açardı. Nitekim ilk denemede alan okuyucusu kopyalanmıştı ve kopyadaki
+kaçışlar bozuktu — ortak `KnowledgeEntry.field` yapılıp sorun kaynağında
+çözüldü. Paylaşılan başlık deseni de `SEC-` gibi üç harfli ID'yi tanımıyordu
+(`[A-Z]{1,2}`); ID uzunluğuna göre daraltılmış bir desen, yeni bir kayıt
+ailesi eklendiğinde başlığı sessizce ayrıştırmadan geçiriyor.
+
+Ekran açık kayıtları **üste** alıyor ve üstte "N açık kayıt" uyarısı
+gösteriyor. Gerekçe: ekranın işi arşivi güzel göstermek değil, kapanmamış
+güvenlik işini görünür kılmak — kronolojik sıra bir açığı kapanmış on kaydın
+altına gömerdi. Türe göre filtre var; yalnız dosyada gerçekten geçen türler
+çipe dönüşüyor.
+
+Log boş açılmadı: projede gerçekten alınmış dört önlem (token'ın yalnız güvenli
+depoda durması, şifreli yedek, yazma alanının yapısal kapalılığı, token'ın
+isteğin yoluna göre seçilmesi) ve dürüstçe **üç açık kayıt** yazıldı — bağımlılık
+taraması hiç koşulmadı, token kapsamı doğrulanmıyor, cihazdaki kopya şifresiz.
+Son ikisi backlog'a da girdi (B-091, B-092). Test, dosyada token benzeri bir
+değer geçmediğini de sınıyor (§12: sır yazılmaz).
+
+Tarayıcıdaki "Bekleyen görevler" kutusu kaldırıldı — alt menüde kendi sekmesi
+var ve aynı ekrana iki kapı, ikisinden birinin bayat kalmasına yol açıyor.
+
+`flutter analyze` temiz, **334 test**.
+
 ## Sonraki adım
-Cihaza kuruldu. `financer_takip` sözleşmesi 1.9'a yükseltildi.
+Cihaza kuruldu. `financer_takip` sözleşmesi 1.10'a yükseltildi.

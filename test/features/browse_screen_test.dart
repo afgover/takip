@@ -35,7 +35,7 @@ void main() {
     await tester.pumpWidget(app(const BrowseScreen()));
 
     for (final title in [
-      'Bekleyen görevler',
+      'Security',
       'Tamamlananlar',
       'Oturumlar',
       'Raporlar & Planlar',

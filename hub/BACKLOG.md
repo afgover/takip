@@ -210,6 +210,15 @@ başlığına ✅ ve tarih yazılır.
       aldığı not agent'ın iş kuyruğuna düşüyordu. R-001 özü korunarak
       genişletildi (`HubFolder`), `AGENT_PROTOCOL.md` madde 10 eklendi.
       Sarı işaret/kırmızı çizgi bilerek göreve gitmeye devam ediyor. → K-029
+- [x] B-090 · (agent) Güvenlik logu — ✅ 2026-08-03; sözleşme 1.10 §12 +
+      `hub/SECURITY.md`. Tarayıcıdaki "Bekleyen görevler" kutusu Security ile
+      değiştirildi (alt menüde zaten var). Açık kayıtlar üstte, türe göre
+      filtre. Log yedi kayıtla açıldı; üçü açık (SEC-005 bağımlılık taraması,
+      SEC-006 token kapsamı, SEC-007 cihazdaki kopya şifresiz). → K-030
+- [ ] B-091 · (agent) SEC-005: bağımlılık ve zafiyet taraması koşulup bulgular
+      `SECURITY.md`'ye `tarama` kaydı olarak yazılacak
+- [ ] B-092 · (agent) SEC-006: onboarding'de token kapsamı sınanıp gereğinden
+      geniş kapsamda kullanıcı uyarılacak
 - [x] B-089 · (agent) İşaret kartı notun içeriğini göstermiyordu —
       ✅ 2026-08-03; kart kullanıcının zaten belgede gördüğü alıntıyı tekrar
       edip asıl taşıması gereken metni atlıyordu. `Annotation.note` eklendi,

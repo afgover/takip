@@ -118,7 +118,17 @@ class KnowledgeEntry {
     return entries;
   }
 
-  static final _heading = RegExp(r'^([A-Z]{1,2}-\d+)\s*—\s*(.*)$');
+  // `SEC-001` gibi üç harfli ID'ler de kayıt: desen ID uzunluğuna göre
+  // daraltılmamalı, yoksa yeni bir kayıt ailesi eklendiğinde başlık sessizce
+  // ayrıştırılmadan geçiyor (ID'nin tamamı başlık sanılıyor).
+  static final _heading = RegExp(r'^([A-Z]{1,4}-\d+)\s*—\s*(.*)$');
+
+  /// Kayıt gövdesindeki `- **<ad>:** değer` satırını okur.
+  ///
+  /// Public: güvenlik logu (§12) aynı biçimi `Tür`/`Durum` alanları için
+  /// kullanıyor. Ayrı bir kopya yazmak, aynı deseni iki yerde ayrıştırmak
+  /// olurdu — nitekim ilk denemede kopyadaki kaçışlar bozuktu.
+  String? field(String name) => _field(body, name);
 
   static String? _field(String body, String label) {
     final match = RegExp(

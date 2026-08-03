@@ -94,6 +94,9 @@ class BrowseRepo {
   Future<List<KnowledgeEntry>> knowledge(KnowledgeFile file) async =>
       KnowledgeEntry.parseFile(await readDoc(file.path));
 
+  Future<List<KnowledgeEntry>> security() async =>
+      KnowledgeEntry.parseFile(await readDoc(Hub.securityFile));
+
   Future<String> readDoc(String path) async {
     final stored = await _store?.readDoc(path);
     if (stored != null) return stored.content;
@@ -153,6 +156,16 @@ final sessionsProvider = FutureProvider<List<HubDoc>>((ref) {
 final artifactsProvider = FutureProvider<List<HubDoc>>((ref) {
   _watchHubVersion(ref);
   return ref.watch(browseRepoProvider).artifactsWithMetadata();
+});
+
+/// Güvenlik logundaki kayıtlar (sözleşme 1.10 §12).
+///
+/// Ayrıştırıcı `knowledge/` ile ortak: ikisi de "`## ID — başlık` + alan
+/// satırları" biçiminde canlı dosyalar. Ayrı bir çözümleyici yazmak aynı
+/// biçimin iki yerde ayrışmasına yol açardı.
+final securityProvider = FutureProvider<List<KnowledgeEntry>>((ref) {
+  _watchHubVersion(ref);
+  return ref.watch(browseRepoProvider).security();
 });
 
 final knowledgeProvider =

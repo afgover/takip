@@ -3,12 +3,12 @@ import 'package:flutter/material.dart';
 import '../../core/constants.dart';
 import '../../hub/browse_repo.dart';
 import '../pending/done_screen.dart';
-import '../pending/pending_screen.dart';
 import 'activity_screen.dart';
 import 'doc_list_screen.dart';
 import 'document_screen.dart';
 import 'knowledge_screen.dart';
 import 'roadmap_screen.dart';
+import 'security_screen.dart';
 
 /// Hub tarayıcı — SYSTEM.md §9'daki kategoriler (B-040).
 class BrowseScreen extends StatelessWidget {
@@ -17,11 +17,13 @@ class BrowseScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final categories = <_Category>[
+      // Bekleyen görevler burada **yok**: alt menüde kendi sekmesi var ve
+      // aynı ekrana iki kapı, ikisinden birinin bayat kalmasına yol açıyor.
       _Category(
-        'Bekleyen görevler',
-        Icons.pending_actions,
-        'tasks/inbox + active',
-        (_) => const PendingScreen(),
+        'Security',
+        Icons.shield_outlined,
+        'SECURITY.md',
+        (_) => const SecurityScreen(),
       ),
       _Category(
         'Tamamlananlar',
