@@ -37,7 +37,8 @@ class AnnotatedDocument extends ConsumerStatefulWidget {
   final void Function(String text, String? href, String title)? onTapLink;
 
   static const highlightLabel = 'Sarı işaretle';
-  static const underlineLabel = 'Kırmızı çiz';
+  static const underlineLabel = 'Kırmızı çizgi';
+  static const commentLabel = 'Yorum ekle';
   static const taskLabel = 'Görev oluştur';
   static const copyLabel = 'Kopyala';
 
@@ -75,14 +76,21 @@ class _AnnotatedDocumentState extends ConsumerState<AnnotatedDocument> {
   Widget build(BuildContext context) {
     // İşaretler kayıtlardan türüyor; okunamazsa belge yine çizilir, yalnız
     // işaretsiz kalır — kayıt katmanının sorunu belgeyi gizlememeli.
-    final annotations =
+    final stored =
         ref.watch(annotationsForProvider(widget.sourcePath)).valueOrNull ??
-            const [];
+            const <Annotation>[];
+    // Az önce oluşturulanlar senkron yetişene kadar buradan gelir.
+    final fresh =
+        ref.watch(freshAnnotationsProvider)[widget.sourcePath] ?? const [];
+    final annotations = [...stored, ...fresh];
 
     return SelectionArea(
       onSelectionChanged: (content) => _selected = content?.plainText,
       contextMenuBuilder: (context, state) {
         final selection = _selected?.trim() ?? '';
+        // Sıra bilinçli: iki hızlı işaret önce (araç çubuğuna sığanlar),
+        // ayrıntı isteyen eylemler sonra (taşma menüsüne düşenler).
+        //
         // Menü **tamamen** bu uygulamanın: sistemin varsayılan öğeleri
         // (tarayıcılarda arama, çeviri, parola yöneticisi, yapay zekâ
         // asistanları…) hiç eklenmiyor. Cihazda denendiğinde o liste bir düzine
@@ -116,6 +124,17 @@ class _AnnotatedDocumentState extends ConsumerState<AnnotatedDocument> {
                 kind: RecordKind.duzeltme,
                 mark: TaskMark.underline,
               ),
+            ),
+            ContextMenuButtonItem(
+              label: AnnotatedDocument.commentLabel,
+              onPressed: () {
+                state.hideToolbar();
+                openCommentBox(
+                  context,
+                  quote: selection,
+                  sourcePath: widget.sourcePath,
+                );
+              },
             ),
             ContextMenuButtonItem(
               label: AnnotatedDocument.taskLabel,

@@ -174,4 +174,50 @@ void main() {
       expect(draft.content, isNot(contains('mark:')));
     });
   });
+
+  group('çizilmiş metin ↔ ham markdown eşleşmesi (L-023)', () {
+    test('kalın yazı içindeki seçim işaretlenir', () {
+      // Kullanıcı ekranda "canlıya alınmasıyla" görüyor; kaynakta yıldızlar var.
+      const source = 'Financer bir sunucuda **canlıya alınmasıyla** bitti.';
+      final out = markAnnotations(
+        source,
+        [ann('canlıya alınmasıyla', TaskMark.underline)],
+      );
+      expect(out, contains(ulOpen));
+      expect(out, contains(ulClose));
+    });
+
+    test('satır sarmasını aşan seçim işaretlenir', () {
+      // Seçimde tek boşluk var, kaynakta satır sonu.
+      const source = 'Uzun bir cümlenin\nikinci satıra taşan kısmı.';
+      final out = markAnnotations(
+        source,
+        [ann('cümlenin ikinci satıra', TaskMark.highlight)],
+      );
+      expect(out, contains(hlOpen));
+    });
+
+    test('kod işareti içeren seçim işaretlenir', () {
+      const source = 'Sorun `nginx.conf` dosyasındaydı.';
+      final out = markAnnotations(
+        source,
+        [ann('nginx.conf dosyasındaydı', TaskMark.highlight)],
+      );
+      expect(out, contains(hlOpen));
+    });
+
+    test('birebir eşleşme varken izdüşüme düşülmez', () {
+      const source = 'düz bir cümle';
+      final out = markAnnotations(source, [ann('düz bir', TaskMark.highlight)]);
+      expect(out, '${hlOpen}düz bir$hlClose cümle');
+    });
+
+    test('gerçekten olmayan metin yine bulunamaz', () {
+      const source = 'Belge sonradan değişmiş olabilir.';
+      expect(
+        markAnnotations(source, [ann('bambaşka bir cümle', TaskMark.highlight)]),
+        source,
+      );
+    });
+  });
 }

@@ -131,6 +131,8 @@ const markUnderlineTag = 'hubMarkUnderline';
 String markAnnotations(String source, List<Annotation> annotations) {
   if (annotations.isEmpty) return source;
 
+  final projection = _plainProjection(source);
+
   // Uzun alıntı önce: kısa bir alıntı uzununun içinde geçiyorsa, önce kısayı
   // işaretlemek uzunu bulunamaz hâle getirirdi.
   final ordered = [...annotations]
@@ -138,21 +140,18 @@ String markAnnotations(String source, List<Annotation> annotations) {
 
   // Aralıklar **özgün metin üzerinde** toplanıp en sonda uygulanıyor. Sırayla
   // yerine koymak, ikinci alıntının birincinin işaretinin içine düşmesine ve
-  // dıştaki işaretin bölünmesine yol açıyordu.
+  // dıştaki işaretin bölünmesine yol açıyordu (L-021).
   final claimed = <({int start, int end, TaskMark mark})>[];
 
   for (final annotation in ordered) {
-    final quote = annotation.quote.trim();
-    if (quote.isEmpty) continue;
+    final range = _locate(source, projection, annotation.quote);
+    if (range == null) continue; // belge değişmiş olabilir — kayıt yine geçerli
 
-    final start = source.indexOf(quote);
-    if (start < 0) continue; // belge değişmiş olabilir — kayıt yine geçerli
-    final end = start + quote.length;
-
-    final overlaps = claimed.any((r) => start < r.end && end > r.start);
+    final overlaps =
+        claimed.any((r) => range.start < r.end && range.end > r.start);
     if (overlaps) continue;
 
-    claimed.add((start: start, end: end, mark: annotation.mark));
+    claimed.add((start: range.start, end: range.end, mark: annotation.mark));
   }
 
   // Sondan başa doğru ekle ki daha önceki konumlar kaymasın.
@@ -170,6 +169,94 @@ String markAnnotations(String source, List<Annotation> annotations) {
   }
   return out;
 }
+
+/// Alıntının kaynak metindeki yeri.
+///
+/// **Neden düz arama yetmiyor:** kullanıcı *çizilmiş* metni seçiyor, biz *ham
+/// markdown*'da arıyoruz. Aradaki üç fark eşleşmeyi sessizce bozuyordu:
+/// `**kalın**` işaretleri seçimde yok, satır sarmaları kaynakta `\n` ama
+/// seçimde boşluk, girintiler seçimde yok. Sonuç: kayıt oluşuyor ama işaret
+/// hiç çizilmiyordu (L-023).
+///
+/// Çözüm: kaynağın **düzleştirilmiş** bir izdüşümünde aranıp konum geri
+/// haritalanıyor. Önce birebir arama denenir; tutarsa daha kesindir.
+({int start, int end})? _locate(
+  String source,
+  _Projection projection,
+  String rawQuote,
+) {
+  final quote = rawQuote.trim();
+  if (quote.isEmpty) return null;
+
+  final exact = source.indexOf(quote);
+  if (exact >= 0) return (start: exact, end: exact + quote.length);
+
+  final flatQuote = _flatten(quote);
+  if (flatQuote.isEmpty) return null;
+
+  final at = projection.plain.indexOf(flatQuote);
+  if (at < 0) return null;
+
+  return (
+    start: projection.map[at],
+    end: projection.map[at + flatQuote.length - 1] + 1,
+  );
+}
+
+class _Projection {
+  const _Projection(this.plain, this.map);
+
+  /// Vurgu işaretleri atılmış, boşlukları teke inmiş metin.
+  final String plain;
+
+  /// `plain` içindeki her karakterin kaynak metindeki konumu.
+  final List<int> map;
+}
+
+/// Markdown vurgu işaretleri atılırken her karakterin kaynaktaki yeri
+/// saklanıyor; işaret sonunda **kaynağa** uygulanacak.
+_Projection _plainProjection(String source) {
+  final buffer = StringBuffer();
+  final map = <int>[];
+  var lastWasSpace = true;
+
+  for (var i = 0; i < source.length; i++) {
+    final ch = source[i];
+    if (_emphasis.contains(ch)) continue;
+    if (ch == ' ' || ch == '\n' || ch == '\t' || ch == '\r') {
+      if (lastWasSpace) continue;
+      buffer.write(' ');
+      map.add(i);
+      lastWasSpace = true;
+      continue;
+    }
+    buffer.write(ch);
+    map.add(i);
+    lastWasSpace = false;
+  }
+  return _Projection(buffer.toString(), map);
+}
+
+/// Alıntıyı izdüşümle aynı kurallara göre düzleştirir.
+String _flatten(String value) {
+  final buffer = StringBuffer();
+  var lastWasSpace = true;
+  for (var i = 0; i < value.length; i++) {
+    final ch = value[i];
+    if (_emphasis.contains(ch)) continue;
+    if (ch == ' ' || ch == '\n' || ch == '\t' || ch == '\r') {
+      if (lastWasSpace) continue;
+      buffer.write(' ');
+      lastWasSpace = true;
+      continue;
+    }
+    buffer.write(ch);
+    lastWasSpace = false;
+  }
+  return buffer.toString().trim();
+}
+
+const _emphasis = {'*', '_', '`', '~'};
 
 class _MarkSyntax extends md.InlineSyntax {
   _MarkSyntax(this.open, this.close, this.tag)

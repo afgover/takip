@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/errors.dart';
 import '../../core/utils.dart';
 import '../../hub/all_tasks.dart';
+import '../../hub/annotations.dart';
 import '../../hub/models/task.dart';
 import '../../hub/models/task_draft.dart';
 import '../../hub/outbox.dart';
@@ -258,7 +259,7 @@ Future<void> createSelectionRecord({
 }) async {
   final messenger = ScaffoldMessenger.of(context);
   final draft = TaskDraft.fromSelection(
-    quote: quote,
+    quote: collapseWhitespace(quote),
     sourcePath: sourcePath,
     kind: kind,
     mark: mark,
@@ -266,17 +267,38 @@ Future<void> createSelectionRecord({
     priority: priority,
   );
 
+  // Alıntı tek yerde normalleştiriliyor: hızlı işaretleme ile sayfadan
+  // oluşturma aynı metni yazsın diye.
+  final normalized = collapseWhitespace(quote);
+
   String message;
+  var created = false;
   try {
     await ref.read(taskRepoProvider).send(draft);
+    created = true;
     message = '${successLabel ?? 'Kayıt'} eklendi.';
   } on HubNetworkError {
     await ref.read(outboxProvider.notifier).add(draft);
+    // Kuyruğa girse de işaret hemen görünmeli: kayıt kaybolmadı.
+    created = true;
     message = 'Ağ yok — ${(successLabel ?? 'kayıt').toLowerCase()} kuyruğa alındı.';
   } on HubError catch (e) {
     message = e.message;
   } catch (e) {
     message = 'Beklenmeyen hata: $e';
+  }
+
+  if (created) {
+    ref.read(freshAnnotationsProvider.notifier).add(
+          sourcePath,
+          Annotation(
+            quote: normalized,
+            mark: mark,
+            title: normalized,
+            category: kind,
+            path: '',
+          ),
+        );
   }
 
   ref.invalidate(allPendingTasksProvider);
@@ -300,3 +322,88 @@ Future<void> openSelectionRecord(
     ),
   );
 }
+
+/// Seçime hızlıca yorum yazma kutusu.
+///
+/// Tam sayfadan (tür, işaret, öncelik) daha hafif: okurken bir not düşmek
+/// isteyen kullanıcıyı beş alanla karşılamamak için ayrı tutuldu. Kayıt yine
+/// aynı yoldan gider — `yorum` kategorisi, sarı işaret.
+Future<void> openCommentBox(
+  BuildContext context, {
+  required String quote,
+  required String sourcePath,
+}) {
+  final controller = TextEditingController();
+  final normalized = collapseWhitespace(quote);
+
+  return showDialog<void>(
+    context: context,
+    builder: (dialogContext) => AlertDialog(
+      title: const Text('Yorum ekle'),
+      content: Consumer(
+        builder: (context, ref, _) => Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                borderRadius: BorderRadius.circular(6),
+              ),
+              child: Text(
+                normalized,
+                maxLines: 3,
+                overflow: TextOverflow.ellipsis,
+                style: Theme.of(context).textTheme.bodySmall,
+              ),
+            ),
+            const SizedBox(height: 12),
+            TextField(
+              key: commentFieldKey,
+              controller: controller,
+              autofocus: true,
+              maxLines: 3,
+              textCapitalization: TextCapitalization.sentences,
+              decoration: const InputDecoration(
+                hintText: 'Not olarak ne kalsın?',
+                border: OutlineInputBorder(),
+              ),
+            ),
+          ],
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(dialogContext).pop(),
+          child: const Text('Vazgeç'),
+        ),
+        Consumer(
+          builder: (context, ref, _) => FilledButton(
+            key: commentSubmitKey,
+            onPressed: () {
+              final note = controller.text;
+              final navigator = Navigator.of(dialogContext);
+              navigator.pop();
+              createSelectionRecord(
+                ref: ref,
+                context: navigator.context,
+                quote: normalized,
+                sourcePath: sourcePath,
+                kind: RecordKind.yorum.category,
+                mark: TaskMark.highlight,
+                note: note,
+                successLabel: RecordKind.yorum.label,
+              );
+            },
+            child: const Text('Ekle'),
+          ),
+        ),
+      ],
+    ),
+  );
+}
+
+const commentFieldKey = Key('selection-comment-field');
+const commentSubmitKey = Key('selection-comment-submit');

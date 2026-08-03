@@ -117,3 +117,38 @@ bool isContractStale(String version) {
   if (major(version) != major(current)) return major(version) < major(current);
   return minor(version) < minor(current);
 }
+
+/// Henüz senkronlanmamış, **az önce oluşturulmuş** işaretler.
+///
+/// Kayıt hub'a gidiyor ama yerel kopya onu ancak bir sonraki senkronda
+/// görüyor; o ana kadar işaret çizilmiyordu ve kullanıcı "işaretledim ama
+/// görünmedi" diyordu (L-024). Bu katman aradaki boşluğu dolduruyor: kayıt
+/// başarıyla gönderildiği anda işaret ekranda beliriyor, senkron yetişince
+/// aynı işaret depodan gelmeye başlıyor.
+///
+/// Çift çizim olmuyor: `markAnnotations` çakışan aralıkları eliyor.
+class FreshAnnotations extends Notifier<Map<String, List<Annotation>>> {
+  @override
+  Map<String, List<Annotation>> build() {
+    // Senkron tamamlandığında bu katmana gerek kalmaz; depodan gelen kayıt
+    // artık aynı işareti taşıyor.
+    ref.listen<int>(hubSyncProvider.select((s) => s.version), (previous, next) {
+      if (previous != null && previous != next && state.isNotEmpty) {
+        state = const {};
+      }
+    });
+    return const {};
+  }
+
+  void add(String sourcePath, Annotation annotation) {
+    state = {
+      ...state,
+      sourcePath: [...(state[sourcePath] ?? const []), annotation],
+    };
+  }
+}
+
+final freshAnnotationsProvider =
+    NotifierProvider<FreshAnnotations, Map<String, List<Annotation>>>(
+  FreshAnnotations.new,
+);

@@ -38,13 +38,15 @@ void main() {
     expect(find.textContaining('Seçilebilir bir cümle'), findsOneWidget);
   });
 
-  testWidgets('menü etiketleri sözleşmeyle uyumlu ve dört tane', (tester) async {
+  testWidgets('menü tam olarak beş eylemden oluşur', (tester) async {
     await pumpDoc(tester);
 
     // Etiketler tek yerde tanımlı; menüyü kuran kod bunları kullanıyor.
-    // Sistem öğeleri hiç eklenmediği için menü tam olarak bu dörttür.
+    // Sistem öğeleri hiç eklenmediği için menü tam olarak bunlardır.
+    // Sıra da anlamlı: iki hızlı işaret önce, ayrıntı isteyenler sonra.
     expect(AnnotatedDocument.highlightLabel, 'Sarı işaretle');
-    expect(AnnotatedDocument.underlineLabel, 'Kırmızı çiz');
+    expect(AnnotatedDocument.underlineLabel, 'Kırmızı çizgi');
+    expect(AnnotatedDocument.commentLabel, 'Yorum ekle');
     expect(AnnotatedDocument.taskLabel, 'Görev oluştur');
     expect(AnnotatedDocument.copyLabel, 'Kopyala');
   });
