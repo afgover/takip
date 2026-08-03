@@ -20,7 +20,7 @@ import '../../hub/task_repo.dart';
 /// `duzeltme` belgeyi düzeltmeyi, `tartisma` cevap vermeyi gerektirir.
 enum RecordKind {
   gorev('Görev', 'gorev', Icons.add_task, TaskMark.highlight),
-  yorum('Yorum', 'yorum', Icons.chat_bubble_outline, TaskMark.highlight),
+  yorum('Yorum', 'yorum', Icons.chat_bubble_outline, TaskMark.comment),
   duzeltme('Düzeltme', 'duzeltme', Icons.edit_outlined, TaskMark.underline),
   tartisma('Tartışma', 'tartisma', Icons.forum_outlined, TaskMark.highlight);
 
@@ -167,7 +167,11 @@ class _SelectionRecordSheetState extends ConsumerState<SelectionRecordSheet> {
                     padding: const EdgeInsets.only(right: 8),
                     child: ChoiceChip(
                       key: SelectionRecordSheet.markKey(mark),
-                      label: Text(mark == TaskMark.highlight ? 'Sarı' : 'Kırmızı'),
+                      label: Text(switch (mark) {
+                        TaskMark.highlight => 'Sarı',
+                        TaskMark.underline => 'Kırmızı',
+                        TaskMark.comment => 'Yeşil',
+                      }),
                       selected: _mark == mark,
                       onSelected: (_) => setState(() => _mark = mark),
                     ),

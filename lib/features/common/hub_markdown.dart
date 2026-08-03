@@ -62,10 +62,14 @@ class HubMarkdown extends StatelessWidget {
         inlineSyntaxes: [
           _MarkSyntax(_highlightOpen, _highlightClose, markHighlightTag),
           _MarkSyntax(_underlineOpen, _underlineClose, markUnderlineTag),
+          _MarkSyntax(_commentOpen, _commentClose, markCommentTag),
+          _PlainSyntax(),
         ],
         builders: {
           markHighlightTag: _MarkBuilder(TaskMark.highlight, _tap),
           markUnderlineTag: _MarkBuilder(TaskMark.underline, _tap),
+          markCommentTag: _MarkBuilder(TaskMark.comment, _tap),
+          markPlainTag: _PlainBuilder(),
         },
       ),
     );
@@ -127,9 +131,27 @@ const _highlightOpen = '\uE000';
 const _highlightClose = '\uE001';
 const _underlineOpen = '\uE002';
 const _underlineClose = '\uE003';
+const _commentOpen = '\uE004';
+const _commentClose = '\uE005';
+// İşaretli satırdaki **işaretsiz** kelimeler de kutuya alınıyor; gerekçesi
+// `_splitLineIntoWords`da.
+const _plainOpen = '\uE006';
+const _plainClose = '\uE007';
 
 const markHighlightTag = 'hubMarkHighlight';
 const markUnderlineTag = 'hubMarkUnderline';
+const markCommentTag = 'hubMarkComment';
+const markPlainTag = 'hubMarkPlain';
+
+({String open, String close, String tag}) _delimitersFor(TaskMark mark) =>
+    switch (mark) {
+      TaskMark.highlight =>
+        (open: _highlightOpen, close: _highlightClose, tag: markHighlightTag),
+      TaskMark.underline =>
+        (open: _underlineOpen, close: _underlineClose, tag: markUnderlineTag),
+      TaskMark.comment =>
+        (open: _commentOpen, close: _commentClose, tag: markCommentTag),
+    };
 
 /// Kayıtlardaki alıntıları markdown kaynağında işaretler.
 ///
@@ -178,17 +200,91 @@ String markAnnotations(String source, List<Annotation> annotations) {
   claimed.sort((a, b) => b.start.compareTo(a.start));
   var out = source;
   for (final range in claimed) {
-    final (open, close) = range.mark == TaskMark.highlight
-        ? (_highlightOpen, _highlightClose)
-        : (_underlineOpen, _underlineClose);
+    final d = _delimitersFor(range.mark);
     out = out.replaceRange(
       range.start,
       range.end,
-      '$open${range.index}$_markIdSeparator'
-      '${source.substring(range.start, range.end)}$close',
+      '${d.open}${range.index}$_markIdSeparator'
+      '${source.substring(range.start, range.end)}${d.close}',
     );
   }
-  return out;
+  return _splitMarkedLines(out);
+}
+
+/// İşaret içeren satırlarda **işaretsiz kelimeleri de** ayrı kutulara böler.
+///
+/// Sebebi flutter_markdown'ın yapısı: bir paragrafta satır içi widget varsa
+/// paragraf `Wrap` olarak kuruluyor ve metin parçaları **atomik öğe** oluyor.
+/// İşaretten sonraki metin tek büyük parça kaldığı için kalan boşluğa
+/// sığmıyor ve **tamamı** alt satıra iniyordu (L-030). Her kelime ayrı öğe
+/// olunca `Wrap` normal metin gibi akıyor.
+///
+/// Yalnız **düz nesir** satırlarına uygulanıyor: satırda başka markdown
+/// sözdizimi (vurgu, kod, bağlantı, tablo) varsa dokunulmuyor, çünkü kelime
+/// kelime bölmek onları ortadan ikiye ayırıp belgeyi bozardı. O satırlarda
+/// eski davranış sürüyor — işaret çalışıyor, akış biraz kayabiliyor.
+String _splitMarkedLines(String source) {
+  const markers = [_highlightOpen, _underlineOpen, _commentOpen];
+  final lines = source.split('\n');
+
+  for (var i = 0; i < lines.length; i++) {
+    final line = lines[i];
+    if (!markers.any(line.contains)) continue;
+
+    // Liste imi, alıntı imi ve girinti korunuyor.
+    final prefixMatch = RegExp(r'^(\s*(?:[-*+]\s+|\d+\.\s+|>\s*)?)')
+        .firstMatch(line)!;
+    final prefix = prefixMatch.group(1)!;
+    final rest = line.substring(prefix.length);
+
+    if (RegExp(r'[*_`\[\]<>|]').hasMatch(rest)) continue;
+
+    lines[i] = prefix + _splitLineIntoWords(rest);
+  }
+  return lines.join('\n');
+}
+
+String _splitLineIntoWords(String line) {
+  final buffer = StringBuffer();
+  var index = 0;
+
+  while (index < line.length) {
+    final ch = line[index];
+    final marker = [
+      (_highlightOpen, _highlightClose),
+      (_underlineOpen, _underlineClose),
+      (_commentOpen, _commentClose),
+    ].where((d) => d.$1 == ch).firstOrNull;
+
+    if (marker != null) {
+      // İşaretli bölge olduğu gibi geçer; kelimelere kendi sözdizimi bölecek.
+      final end = line.indexOf(marker.$2, index);
+      if (end < 0) {
+        buffer.write(line.substring(index));
+        break;
+      }
+      buffer.write(line.substring(index, end + 1));
+      index = end + 1;
+      continue;
+    }
+
+    // İşaretsiz parça: kelimelere bölünüp her biri kutuya alınır.
+    var next = line.length;
+    for (final open in [_highlightOpen, _underlineOpen, _commentOpen]) {
+      final at = line.indexOf(open, index);
+      if (at >= 0 && at < next) next = at;
+    }
+    final segment = line.substring(index, next);
+    for (final part in segment.split(' ')) {
+      if (part.isEmpty) {
+        buffer.write(' ');
+      } else {
+        buffer.write('$_plainOpen$part$_plainClose');
+      }
+    }
+    index = next;
+  }
+  return buffer.toString();
 }
 
 /// Alıntının kaynak metindeki yeri.
@@ -315,6 +411,25 @@ class _MarkSyntax extends md.InlineSyntax {
   }
 }
 
+/// İşaretli satırdaki işaretsiz kelimeler.
+class _PlainSyntax extends md.InlineSyntax {
+  _PlainSyntax()
+      : super('${RegExp.escape(_plainOpen)}([^${RegExp.escape(_plainClose)}]*)'
+            '${RegExp.escape(_plainClose)}');
+
+  @override
+  bool onMatch(md.InlineParser parser, Match match) {
+    parser.addNode(md.Element.text(markPlainTag, match[1]!));
+    return true;
+  }
+}
+
+class _PlainBuilder extends MarkdownElementBuilder {
+  @override
+  Widget visitElementAfter(md.Element element, TextStyle? preferredStyle) =>
+      Text(element.textContent, style: preferredStyle);
+}
+
 class _MarkBuilder extends MarkdownElementBuilder {
   _MarkBuilder(this.mark, this.onTap);
 
@@ -331,17 +446,24 @@ class _MarkBuilder extends MarkdownElementBuilder {
         return GestureDetector(
           onTap: () => onTap(index),
           child: Text(
-          element.textContent,
-          style: mark == TaskMark.highlight
-              ? base?.copyWith(
+            element.textContent,
+            style: switch (mark) {
+              TaskMark.highlight => base?.copyWith(
                   backgroundColor: const Color(0xFFFFE082),
                   color: Colors.black87,
-                )
-              : base?.copyWith(
+                ),
+              // Yorumun kendi rengi (sözleşme 1.8): "işaretledim" ile
+              // "not düştüm" ekranda ayırt edilebilmeli.
+              TaskMark.comment => base?.copyWith(
+                  backgroundColor: const Color(0xFFA5D6A7),
+                  color: Colors.black87,
+                ),
+              TaskMark.underline => base?.copyWith(
                   decoration: TextDecoration.underline,
                   decorationColor: colors.error,
                   decorationThickness: 2,
                 ),
+            },
           ),
         );
       },

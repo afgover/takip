@@ -5,7 +5,11 @@ import '../frontmatter.dart';
 /// Belgedeki işaretin biçimi (sözleşme 1.5).
 enum TaskMark {
   highlight('Sarı işaret'),
-  underline('Kırmızı altı çizili');
+  underline('Kırmızı altı çizili'),
+
+  /// Yorumun kendi rengi (v1.8): sarıdan ayrı olmalı, yoksa "işaretledim" ile
+  /// "not düştüm" ekranda aynı görünüyor.
+  comment('Yeşil yorum');
 
   const TaskMark(this.label);
   final String label;

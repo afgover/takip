@@ -33,7 +33,7 @@ abstract final class Hub {
 
   /// Sözleşmenin bu uygulamanın bildiği sürümü. Bağlantıların `hub/SYSTEM.md`
   /// sürümü bununla karşılaştırılır (§10).
-  static const contractVersion = '1.7';
+  static const contractVersion = '1.8';
   static const systemFile = '$basePath/SYSTEM.md';
 
   static const priorities = ['low', 'normal', 'high', 'urgent'];

@@ -78,13 +78,13 @@ void main() {
   group('isContractStale', () {
     test('eski sürüm geride sayılır', () {
       expect(isContractStale('1.3'), isTrue);
-      expect(isContractStale('1.6'), isTrue);
+      expect(isContractStale('1.7'), isTrue);
       expect(isContractStale('0.9'), isTrue);
     });
 
     test('güncel ve ileri sürümler geride sayılmaz', () {
-      expect(isContractStale('1.7'), isFalse);
       expect(isContractStale('1.8'), isFalse);
+      expect(isContractStale('1.9'), isFalse);
       expect(isContractStale('2.0'), isFalse);
     });
 
@@ -211,8 +211,10 @@ void main() {
     test('birebir eşleşme varken izdüşüme düşülmez', () {
       const source = 'düz bir cümle';
       final out = markAnnotations(source, [ann('düz bir', TaskMark.highlight)]);
-      expect(out, contains('düz bir$hlClose cümle'));
+      // Artık işaretsiz kelimeler de kutulanıyor; işaretin kendisi yerinde.
+      expect(out, contains('düz bir$hlClose'));
       expect(out, startsWith(hlOpen));
+      expect(out, contains('cümle'));
     });
 
     test('gerçekten olmayan metin yine bulunamaz', () {
@@ -221,6 +223,48 @@ void main() {
         markAnnotations(source, [ann('bambaşka bir cümle', TaskMark.highlight)]),
         source,
       );
+    });
+  });
+
+  group('akış ve üçüncü renk (L-030)', () {
+    test('işaretli satırda işaretsiz kelimeler de kutulanır', () {
+      final out = markAnnotations(
+        'bir iki uc dort bes',
+        [ann('iki uc', TaskMark.highlight)],
+      );
+      // İşaretsiz kelimeler ayrı kutulara alınıyor ki `Wrap` metin gibi
+      // aksın; yoksa işaretten sonraki metin tek parça kalıp alt satıra
+      // düşüyordu.
+      expect(out, contains('\uE006bir\uE007'));
+      expect(out, contains('\uE006dort\uE007'));
+      expect(out, contains('\uE006bes\uE007'));
+    });
+
+    test('başka markdown içeren satıra dokunulmaz', () {
+      // Kelime kelime bölmek `**kalın**` gibi yapıları ortadan ikiye ayırıp
+      // belgeyi bozardı; o satırlarda eski davranış sürüyor.
+      final out = markAnnotations(
+        'bir **kalın** iki uc dort',
+        [ann('iki uc', TaskMark.highlight)],
+      );
+      expect(out, isNot(contains('\uE006')));
+      expect(out, contains('\uE000'));
+    });
+
+    test('liste imi korunur', () {
+      final out = markAnnotations(
+        '- bir iki uc',
+        [ann('iki', TaskMark.comment)],
+      );
+      expect(out, startsWith('- '));
+      expect(out, contains('\uE004'));
+    });
+
+    test('yorum kendi işaretini kullanır', () {
+      final out = markAnnotations('bir iki', [ann('iki', TaskMark.comment)]);
+      expect(out, contains('\uE004'));
+      expect(out, isNot(contains('\uE000')));
+      expect(out, isNot(contains('\uE002')));
     });
   });
 }
