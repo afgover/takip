@@ -34,6 +34,13 @@ tanımlanır. Prosedür, oturumun konusu ne olursa olsun geçerlidir.
    Belirsiz beklentiler (`belki bir gün bakar`) `waiting/`e konmaz.
    Kullanıcı uygulamadan **"Yaptım"** dediğinde inbox'a bildirim görevi düşer;
    onu görünce asıl görevi `waiting/`ten çıkar ve bildirimi kapat.
+10. **`notes/` senin işin değil (sözleşme 1.9 §11).** Oradaki dosyalar
+   kullanıcının kendine aldığı notlardır: ID atama, taşıma, `result` yazma,
+   "yapıldı" deme, silme, düzenleme. Bağlam olarak **okuyabilirsin** ("kullanıcı
+   burada şunu not almış") ve oturum kaydında buna dayanabilirsin. Bir not
+   gerçekten iş içeriyorsa kendiliğinden görev açma — kullanıcıya sor, gerekirse
+   `tasks/waiting/`e bir soru koy. Kuralın nedeni somut: kullanıcı kendine not
+   alırken agent'a iş açmış olmak istemiyor.
 
 ## Oturum kapanışında
 

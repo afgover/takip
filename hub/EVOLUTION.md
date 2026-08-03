@@ -378,4 +378,15 @@ toplanır ve gerekiyorsa Faz 6 maddelerini (B-060…B-064) yeniden sıralar.
   detay okuma hâlâ aktif repoya bakıyordu ve başka repodaki görev "bulunamadı"
   diyordu. Artık kayıtla birlikte taşınan `repoSlug`, okuma/yazma/silmenin
   hepsinde hedefi belirliyor. → L-031, B-085
+- **K-029:** Not, görev değildir (sözleşme 1.9, §11). Kullanıcı bir belgede
+  metin seçip kendine not aldığında bu kayıt `notes/`a gidiyor; agent'ın iş
+  kuyruğuna girmiyor. Önceki hâlde tek yazma alanı `tasks/inbox/` olduğu için
+  kullanıcının kendine yazdığı her satır otomatik olarak agent'a iş oluyordu ve
+  Bekleyenler'de görünüyordu — kullanıcının bildirdiği sorun buydu.
+  R-001'in **özü korunarak** genişletildi: alan hâlâ kapalı bir küme
+  (`HubFolder` enum'u) ve app yol değil dosya adı veriyor, yani üçüncü bir
+  klasöre yazması tip düzeyinde imkânsız.
+  Sarı işaret ve kırmızı çizgi bilinçli olarak **göreve gitmeye devam ediyor**:
+  onlar agent'a sinyaldir ("buraya bak", "burası yanlış"). Ayrımı kullanıcının
+  niyeti belirliyor, işaretin rengi değil. → B-088
 

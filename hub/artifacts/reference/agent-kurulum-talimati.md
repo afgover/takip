@@ -140,7 +140,7 @@ ele alışta sıradaki `T-00X`'i verirsin.
 
 Kullanıcı uygulamada herhangi bir belgede metin seçip kayıt oluşturabiliyor.
 Bu kayıtlar `inbox/`a normal görev olarak düşer ama üç ek alan taşır:
-`source` (hangi belge), `quote` (birebir alıntı), `mark` (sarı/kırmızı).
+`source` (hangi belge), `quote` (birebir alıntı), `mark` (sarı/kırmızı/yeşil).
 
 `category` ne olduğunu söyler ve **nasıl ele alacağını belirler**:
 
@@ -154,6 +154,18 @@ Bu kayıtlar `inbox/`a normal görev olarak düşer ama üç ek alan taşır:
 İşaret ayrıca saklanmaz, kayıttan türer: kaydı `done/`a taşırsan işaret de
 belgeden kalkar. Bu yüzden bir `duzeltme` kaydını kapatmadan önce düzeltmeyi
 gerçekten yapmış ol.
+
+### `notes/` — kullanıcının kendi notları (v1.9)
+
+Kullanıcı aynı menüden **"Not ekle"** derse kayıt `tasks/` altına **girmez**,
+`notes/`a yazılır ve alıntı yeşil işaretlenir.
+
+**Bu klasör senin işin değil.** ID atama, taşıma, `result` yazma, "yapıldı"
+deme, silme, düzenleme. Bağlam olarak okuyabilir ve oturum kaydında buna
+dayanabilirsin. Bir not gerçekten iş içeriyorsa kendiliğinden görev açma —
+kullanıcıya sor, gerekirse `tasks/waiting/`e bir soru koy.
+
+Ayrım kullanıcının niyeti: görev "sen şunu yap", not "ben bunu hatırlayayım".
 
 ## 4. Kayıt disiplini
 

@@ -205,6 +205,11 @@ başlığına ✅ ve tarih yazılır.
 - [ ] B-053 · (agent) Kullanım geri bildirimlerine göre revizyon turu
 - [x] B-083 · (agent) Yorum kendi rengini alsın — ✅ 2026-08-03; sözleşme 1.8,
       `mark: comment` (yeşil). Sarı ile yorum ayırt edilemiyordu
+- [x] B-088 · (agent) "Yorum ekle" → "Not ekle"; not görev olmaktan çıktı —
+      ✅ 2026-08-03; sözleşme 1.9 + `notes/` klasörü. Kullanıcının kendine
+      aldığı not agent'ın iş kuyruğuna düşüyordu. R-001 özü korunarak
+      genişletildi (`HubFolder`), `AGENT_PROTOCOL.md` madde 10 eklendi.
+      Sarı işaret/kırmızı çizgi bilerek göreve gitmeye devam ediyor. → K-029
 - [x] B-085 · (agent) Bekleyenler'deki başka repo görevine dokununca
       "bulunamadı" — ✅ 2026-08-03; liste çoklu repoya geçmişti ama detay
       okuma yolu geçmemişti. Görev artık kendi reposundan okunuyor

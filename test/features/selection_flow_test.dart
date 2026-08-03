@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:takip/core/constants.dart';
 import 'package:takip/features/common/annotated_document.dart';
 import 'package:takip/features/common/selection_record.dart';
 import 'package:takip/github/client.dart';
@@ -85,36 +86,59 @@ void main() {
     await selectText(tester);
 
     expect(
-      find.text(AnnotatedDocument.commentLabel),
+      find.text(AnnotatedDocument.noteLabel),
       findsOneWidget,
       reason: 'seçim yapıldığında menü açılmalı',
     );
   });
 
-  testWidgets('yorum ekleme hub\'a kayıt gönderiyor', (tester) async {
+  testWidgets('not `notes/`a yazılır, görev olarak yazılmaz', (tester) async {
     final t = buildDoc();
     await tester.pumpWidget(t.widget);
     await tester.pumpAndSettle();
 
     await selectText(tester);
-    await tester.tap(find.text(AnnotatedDocument.commentLabel));
+    await tester.tap(find.text(AnnotatedDocument.noteLabel));
     await tester.pumpAndSettle();
 
-    expect(find.byKey(commentFieldKey), findsOneWidget,
-        reason: 'yorum kutusu açılmalı');
-    await tester.enterText(find.byKey(commentFieldKey), 'buraya dikkat');
-    await tester.tap(find.byKey(commentSubmitKey));
+    expect(find.byKey(noteFieldKey), findsOneWidget,
+        reason: 'not kutusu açılmalı');
+    await tester.enterText(find.byKey(noteFieldKey), 'buraya dikkat');
+    await tester.tap(find.byKey(noteSubmitKey));
     await tester.pumpAndSettle();
 
     final puts = t.adapter.requests.where((r) => r.method == 'PUT').toList();
-    expect(puts, hasLength(1), reason: 'kayıt hub\'a yazılmalı');
+    expect(puts, hasLength(1), reason: 'not hub\'a yazılmalı');
+
+    // Kullanıcının asıl şikâyeti buydu: kendine aldığı not agent'ın iş
+    // kuyruğuna düşüyordu. Notun `tasks/` altına **hiç** yazılmaması gerek.
+    final path = Uri.decodeFull(puts.single.uri.path);
+    expect(path, contains('/${Hub.notesDir}/'));
+    expect(path, isNot(contains('/tasks/')),
+        reason: 'not görev değil — iş kuyruğuna girmemeli');
 
     final body = jsonDecode(jsonEncode(puts.single.data)) as Map;
     final content = utf8.decode(base64.decode(body['content'] as String));
-    expect(content, contains('category: yorum'));
     expect(content, contains('mark: comment'),
-        reason: 'yorumun kendi rengi olmalı — sarı işaretten ayrılmalı');
+        reason: 'notun kendi rengi olmalı — sarı işaretten ayrılmalı');
     expect(content, contains('buraya dikkat'));
+    expect(content, isNot(contains('priority:')),
+        reason: 'notun önceliği/durumu yok — görev şeması taşımamalı');
+  });
+
+  testWidgets('sarı işaret hâlâ göreve gidiyor', (tester) async {
+    // Not ayrıldı diye işaret/çizgi de ayrılmadı: onlar bilinçli olarak
+    // agent'a sinyaldir ("buraya bak", "burası yanlış").
+    final t = buildDoc();
+    await tester.pumpWidget(t.widget);
+    await tester.pumpAndSettle();
+
+    await selectText(tester);
+    await tester.tap(find.text(AnnotatedDocument.highlightLabel));
+    await tester.pumpAndSettle();
+
+    final puts = t.adapter.requests.where((r) => r.method == 'PUT');
+    expect(Uri.decodeFull(puts.single.uri.path), contains(Hub.inboxDir));
   });
 
   testWidgets('sarı işaretle tek dokunuşta kayıt gönderiyor', (tester) async {

@@ -80,6 +80,10 @@ class TaskFilterNotifier extends Notifier<TaskFilter> {
 }
 
 /// Yolun bir görev dosyası olup olmadığı (dört durum klasöründen biri).
+/// Kullanıcının kendi notu mu? Not **görev değildir**: bekleyen işlerde
+/// görünmez, ama belgede işaretini taşır (sözleşme 1.9 §11).
+bool isNotePath(String path) => path.startsWith('${Hub.notesDir}/');
+
 bool isTaskPath(String path) =>
     path.startsWith('${Hub.inboxDir}/') ||
     path.startsWith('${Hub.activeDir}/') ||

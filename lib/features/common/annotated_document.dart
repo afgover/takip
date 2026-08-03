@@ -13,9 +13,12 @@ import 'selection_record.dart';
 /// İki şeyi birlikte yapar:
 /// - Belgeye bağlı kayıtların alıntılarını metinde işaretler (sarı/kırmızı).
 /// - Metin seçilince menüyü **tamamen değiştirir**: sarı işaretle, kırmızı
-///   çiz, görev oluştur, kopyala. Sistemin varsayılan öğeleri (arama, çeviri,
-///   asistanlar) eklenmez — cihazda o liste bir düzine öğeye çıkıp asıl
+///   çiz, not ekle, görev oluştur, kopyala. Sistemin varsayılan öğeleri (arama,
+///   çeviri, asistanlar) eklenmez — cihazda o liste bir düzine öğeye çıkıp asıl
 ///   eylemleri taşma menüsünün dibine düşürüyordu.
+///
+/// Beş eylemin dördü agent'a gider (işaret, çizgi, görev), biri gitmez:
+/// **not** kullanıcının kendisi içindir ve `notes/`a yazılır (sözleşme 1.9).
 ///
 /// Oturumlar, raporlar, bilgi tabanı, yol haritası ve görev detayı — hepsi
 /// bunu kullanır, böylece davranış her yerde aynıdır.
@@ -39,7 +42,7 @@ class AnnotatedDocument extends ConsumerStatefulWidget {
 
   static const highlightLabel = 'Sarı işaretle';
   static const underlineLabel = 'Kırmızı çizgi';
-  static const commentLabel = 'Yorum ekle';
+  static const noteLabel = 'Not ekle';
   static const taskLabel = 'Görev oluştur';
   static const copyLabel = 'Kopyala';
 
@@ -122,11 +125,21 @@ class _AnnotatedDocumentState extends ConsumerState<AnnotatedDocument> {
     _create(request, selection, captured);
   }
 
-  Future<void> _openComment(String selection) async {
+  /// Kendine not (sözleşme 1.9 §11) — görev değil, bu yüzden görev yolundan
+  /// değil `createNote`'tan geçiyor ve Bekleyenler'de görünmüyor.
+  Future<void> _openNote(String selection) async {
     final captured = _capture(selection);
-    final request = await openCommentBox(context, quote: selection);
-    if (request == null) return;
-    _create(request, selection, captured);
+    final note = await openNoteBox(context, quote: selection);
+    if (note == null) return;
+    createNote(
+      container: captured.container,
+      messenger: captured.messenger,
+      quote: selection,
+      sourcePath: widget.sourcePath,
+      note: note,
+      section: captured.section,
+      repoSlug: captured.repoSlug,
+    );
   }
 
   @override
@@ -168,11 +181,11 @@ class _AnnotatedDocumentState extends ConsumerState<AnnotatedDocument> {
                   kind: RecordKind.duzeltme, mark: TaskMark.underline),
             ),
             (
-              AnnotatedDocument.commentLabel,
-              Icons.chat_bubble_outline,
+              AnnotatedDocument.noteLabel,
+              Icons.sticky_note_2_outlined,
               () {
                 state.hideToolbar();
-                _openComment(selection);
+                _openNote(selection);
               },
             ),
             (

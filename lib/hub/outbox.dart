@@ -109,7 +109,8 @@ class Outbox extends AsyncNotifier<List<TaskDraft>> {
 
         try {
           if (target == null) {
-            await ref.read(taskRepoProvider).send(draft);
+            // Taslak kendi hedefini taşıyor (görev → inbox, not → notes).
+            await ref.read(taskRepoProvider).sendDraft(draft);
           } else {
             await ref.read(draftSenderProvider)(target, draft);
           }

@@ -9,6 +9,10 @@ abstract final class Hub {
   /// Agent'ın kullanıcıdan somut bir şey beklediği görevler (sözleşme 1.4).
   static const waitingDir = '$basePath/tasks/waiting';
   static const doneDir = '$basePath/tasks/done';
+
+  /// Kullanıcının kendi notları (sözleşme 1.9). Görev **değildir**: bekleyen
+  /// işler listesinde görünmez, agent iş saymaz.
+  static const notesDir = '$basePath/notes';
   static const sessionsDir = '$basePath/sessions';
   static const artifactsDir = '$basePath/artifacts';
   static const knowledgeDir = '$basePath/knowledge';
@@ -33,7 +37,7 @@ abstract final class Hub {
 
   /// Sözleşmenin bu uygulamanın bildiği sürümü. Bağlantıların `hub/SYSTEM.md`
   /// sürümü bununla karşılaştırılır (§10).
-  static const contractVersion = '1.8';
+  static const contractVersion = '1.9';
   static const systemFile = '$basePath/SYSTEM.md';
 
   static const priorities = ['low', 'normal', 'high', 'urgent'];

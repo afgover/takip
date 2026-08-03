@@ -64,7 +64,10 @@ Future<List<Annotation>> annotationsFrom(
   final found = <Annotation>[];
   for (final entry in tree) {
     if (!entry.isFile) continue;
-    if (!isTaskPath(entry.path)) continue;
+    // Görevler **ve** notlar işaret taşır (sözleşme 1.9). Notlar bilinçli
+    // olarak `isTaskPath` dışında: iş kuyruğuna girmemeleri gerekiyor, ama
+    // belgede görünmeleri gerekiyor.
+    if (!isTaskPath(entry.path) && !isNotePath(entry.path)) continue;
 
     final doc = await store.readDoc(entry.path);
     if (doc == null) continue;
@@ -81,7 +84,7 @@ Future<List<Annotation>> annotationsFrom(
       quote: quote,
       mark: mark,
       title: fm.str('title') ?? '',
-      category: fm.str('category') ?? 'gorev',
+      category: fm.str('category') ?? (isNotePath(entry.path) ? 'not' : 'gorev'),
       path: entry.path,
       sourcePath: sourcePath,
       repoSlug: connection.slug,
@@ -118,12 +121,14 @@ final contractVersionsProvider =
 });
 
 /// Sürüm ana kopyadan geride mi? Karşılaştırma sayısal (1.10 > 1.9).
-bool isContractStale(String version) {
+/// [current] yalnız test için: karşılaştırma mantığı, uygulamanın o anki
+/// sürümünden bağımsız olarak sınanabilsin diye. Üretimde hep varsayılan
+/// kullanılır.
+bool isContractStale(String version, {String current = Hub.contractVersion}) {
   int major(String v) => int.tryParse(v.split('.').first) ?? 0;
   int minor(String v) =>
       int.tryParse(v.split('.').skip(1).firstOrNull ?? '0') ?? 0;
 
-  const current = Hub.contractVersion;
   if (major(version) != major(current)) return major(version) < major(current);
   return minor(version) < minor(current);
 }

@@ -81,5 +81,43 @@ gövdesinin doğrulanması. Hata ilk koşuda düştü.
 doğrulandı: test hatayı birebir yakalıyor (`/repos/afgover/takip/...` bekleniyordu,
 `financer_takip` gitmesi gerekiyordu).
 
+### Kullanıcı
+> 2si tamam yorum ekle diyince yorum ekleniyor, yorumu bekleyen gorevlerde
+> goruntuluyorum, yorumdaki amacim gorev gibi olusturmak degildi, userin
+> kendisi icin not tarzi yorum eklemesi idi, texte tiklayip olusturdugumuz
+> yorumdan bu daha farkli yani, yorumdan ziyade not ekleme diyebiliriz
+
+### Agent
+İki sorun doğrulandı. Üçüncüsü hata değil **tasarım eksiğiymiş**: kullanıcının
+kendine aldığı not, app'in tek yazma alanı `tasks/inbox/` olduğu için görev
+olmak zorunda kalıyor ve Bekleyenler'de görünüyordu.
+
+Saklama yeri kullanıcıya soruldu (hub'da ayrı klasör / yalnız cihazda / inbox'a
+yazıp agent dosyalasın); "hub'da ayrı klasör" seçildi. Sözleşme 1.9 ile
+`notes/` açıldı (§11) ve R-001 **özü korunarak** genişletildi: yazma alanı
+ikiye çıktı ama hâlâ kapalı bir küme — app yol değil dosya adı veriyor ve
+klasörü `HubFolder` enum'undan seçiyor, üçüncü bir klasöre yazması tip
+düzeyinde imkânsız.
+
+Not, görev yolundan tamamen ayrıldı: ayrı taslak (`TaskDraft.note`), ayrı
+oluşturma fonksiyonu (`createNote`), ayrı kutu (`openNoteBox`). Aynı fonksiyona
+bayrak eklemek ikisinin ayrı şeyler olduğunu gizlerdi. Menüdeki ad "Not ekle",
+kutunun ipucu "Kendine not — agent'a iş düşmez". İşaret yeşil kalıyor,
+dokununca "Notu sil" çıkıyor. Çevrimdışı kuyruk da hedefi taşıyor: ağ yokken
+alınan bir not, bağlantı gelince yine `notes/`a gidiyor — göreve dönüşmüyor.
+
+Sarı işaret ve kırmızı çizgi bilerek göreve gitmeye devam ediyor; onlar
+agent'a sinyal ("buraya bak", "burası yanlış"). Ayrımı işaretin rengi değil
+kullanıcının niyeti belirliyor. Bunu koruyan bir test de eklendi.
+
+Yan iş: `isContractStale` testleri sürüme çivilenmişti ve her sürüm
+yükseltmesinde kırılıyordu. Referans dışarıdan verilebilir hâle geldi; ayrıca
+**sabit ile `SYSTEM.md`'nin ayrışmasını** yakalayan bir test eklendi — §10'un
+tamamı o sayıya dayandığı için birini yükseltip diğerini unutmak bütün
+bağlantılara yanlış "sözleşmen eski" uyarısı gönderirdi.
+
+`flutter analyze` temiz, **318 test**.
+
 ## Sonraki adım
-Cihaza kurulup kullanıcının üç sorunu da doğrulaması bekleniyor.
+Cihaza kuruldu; kullanıcının notun Bekleyenler'de **görünmediğini** doğrulaması
+bekleniyor. `financer_takip` sözleşmesi 1.9'a yükseltildi.

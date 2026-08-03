@@ -5,7 +5,7 @@ ve hangi şemaya uyacağını** tanımlar. Agent ve kullanıcı uygulaması bu s
 dışına çıkmaz. Sözleşme değişiklikleri `EVOLUTION.md`'ye kaydedilir ve bu dosyanın
 başındaki sürüm numarası artırılır.
 
-**Sözleşme sürümü:** 1.8
+**Sözleşme sürümü:** 1.9
 **Ana kopya (master):** `afgover/takip` → `hub/SYSTEM.md`
 (bkz. §10 — her hub kendi kopyasını buradan günceller)
 **Zaman biçimi:** her yerde ISO 8601, UTC (`2026-07-30T14:05:00Z`)
@@ -253,6 +253,12 @@ Kurallar:
   `result` yazar. `duzeltme` kayıtlarında düzeltme yapıldıysa `source`
   belgesinin kendisi de güncellenir.
 
+**Not, görev değildir (v1.9).** Kullanıcı aynı menüden "Not ekle" derse kayıt
+`tasks/` altına **girmez**, `notes/`a yazılır (§11). Ayrım kullanıcının
+niyetidir: görev "sen şunu yap", not "ben bunu hatırlayayım". İkisini aynı
+klasöre koymak, kullanıcının kendine yazdığı her satırı agent'ın iş kuyruğuna
+sokuyordu.
+
 ## 5. `knowledge/` — bilgi tabanı
 
 Üç canlı dosya; her kayıt tek tek, ID'li ve tarihli eklenir, silinmez
@@ -368,3 +374,48 @@ diğer hub'lar bir sonraki oturumlarında kendiliğinden yakalar.
 > **Uygulama tarafı:** app her bağlantının sözleşme sürümünü okur ve ana
 > kopyadan geride kalanı **Ayarlar → Repolar**'da işaretler. Böylece geriden
 > gelen bir hub, agent fark etmese bile kullanıcıya görünür.
+
+## 11. `notes/` — kullanıcının kendi notları (v1.9)
+
+Kullanıcının **kendisi için** aldığı notlar. Görev değildirler: iş kuyruğunda
+görünmezler, ID almazlar, `active`/`done` diye bir durumları yoktur.
+
+```
+notes/
+  2026-08-03-vulkan-arka-uc.md
+```
+
+Dosya adı görevlerle aynı biçimde: `<YYYY-MM-DD>-<slug>.md`.
+
+```markdown
+---
+title: Impeller Vulkan arka ucu
+created_by: user
+created: 2026-08-03T09:10:00Z
+updated: 2026-08-03T09:10:00Z
+source: hub/sessions/2026-08-03-sifirdan-cozum/session.md
+quote: Using the Impeller rendering backend
+mark: comment
+---
+
+Buna sonra bakayım.
+```
+
+`source`/`quote`/`mark` alanları §4'teki seçim kayıtlarıyla aynı anlamdadır ve
+aynı işi görür: uygulama belgeyi çizerken notu da bulur ve alıntıyı yeşil
+işaretler. Yani not da işaretini kendisi taşır, işaret ayrıca saklanmaz.
+Belgeden seçilmeden alınan bir notta bu üç alan olmayabilir.
+
+**Agent kuralları:**
+- Notlar kullanıcınındır. Agent onları **iş saymaz**: ID atamaz, taşımaz,
+  `result` yazmaz, "yapıldı" demez.
+- Agent notları **okuyabilir** ve bağlam olarak kullanabilir ("kullanıcı burada
+  şunu not almış"). Bir notu işe çevirmek gerekiyorsa bunu kullanıcı söyler;
+  agent kendiliğinden görev açmaz.
+- Agent bir notu silmez ve düzenlemez. Kullanıcı uygulamadan siler.
+- Bir not gerçekten iş içeriyorsa agent bunu **sorar** (gerekirse
+  `tasks/waiting/`e bir soru açar), kendisi karar vermez.
+
+**App kuralları:** R-001'in yazma alanı v1.9'da ikiye çıktı — `tasks/inbox/`
+ve `notes/`. İkisi de yapısal olarak kapalı: app yol değil dosya adı verir,
+klasörü seçemez.

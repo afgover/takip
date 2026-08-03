@@ -46,7 +46,7 @@ void main() {
     // Sıra da anlamlı: iki hızlı işaret önce, ayrıntı isteyenler sonra.
     expect(AnnotatedDocument.highlightLabel, 'Sarı işaretle');
     expect(AnnotatedDocument.underlineLabel, 'Kırmızı çizgi');
-    expect(AnnotatedDocument.commentLabel, 'Yorum ekle');
+    expect(AnnotatedDocument.noteLabel, 'Not ekle');
     expect(AnnotatedDocument.taskLabel, 'Görev oluştur');
     expect(AnnotatedDocument.copyLabel, 'Kopyala');
   });

@@ -17,27 +17,44 @@ class TaskRepo {
 
   /// Uygulamanın **tek yazma kapısı** (R-001).
   ///
-  /// Yol değil *dosya adı* alır ve önüne her zaman `tasks/inbox/` ekler;
-  /// böylece kural runtime kontrolüne bırakılmaz, app'in başka bir klasöre
-  /// yazması yapısal olarak mümkün olmaz. Dosya adı sözleşmedeki biçimdedir
+  /// Yol değil *dosya adı* + kapalı bir klasör kümesi alır; böylece kural
+  /// runtime kontrolüne bırakılmaz, app'in sözleşme dışı bir klasöre yazması
+  /// yapısal olarak mümkün olmaz. Dosya adı sözleşmedeki biçimdedir
   /// (`<YYYY-MM-DD>-<slug>.md`, bkz. `core/utils.dart`).
-  Future<String> writeToInbox(
+  ///
+  /// v1.9'da alan ikiye çıktı: `tasks/inbox/` (agent'ın iş kuyruğu) ve
+  /// `notes/` (kullanıcının kendi notları). İkisi de [HubFolder] ile
+  /// seçiliyor — serbest yol hiçbir zaman kabul edilmiyor.
+  Future<String> writeTo(
+    HubFolder folder,
     String fileName, {
     required String content,
     required String commitMessage,
   }) {
+    _requireFileName(fileName);
+    return _api.putFile(
+      '${folder.dir}/$fileName',
+      content,
+      commitMessage: commitMessage,
+    );
+  }
+
+  Future<String> writeToInbox(
+    String fileName, {
+    required String content,
+    required String commitMessage,
+  }) =>
+      writeTo(HubFolder.inbox, fileName,
+          content: content, commitMessage: commitMessage);
+
+  static void _requireFileName(String fileName) {
     if (fileName.contains('/')) {
       throw ArgumentError.value(
         fileName,
         'fileName',
-        'Yol değil, dosya adı bekleniyor (R-001: app yalnızca inbox\'a yazar).',
+        'Yol değil, dosya adı bekleniyor (R-001).',
       );
     }
-    return _api.putFile(
-      '${Hub.inboxDir}/$fileName',
-      content,
-      commitMessage: commitMessage,
-    );
   }
 
   /// Yeni görevi sözleşmeye uygun biçimde `tasks/inbox/`'a yazar (B-030).
@@ -78,24 +95,47 @@ class TaskRepo {
   /// Ayrımı yapmanın tek yolu dosyayı okumak — sözleşmedeki "yeniden oku,
   /// yeniden dene" tam olarak bu.
   Future<TaskSummary> send(TaskDraft draft) async {
+    final written = await _write(draft);
+    return TaskSummary.fromEntry(
+      path: '${draft.target.dir}/${written.fileName}',
+      name: written.fileName,
+      sha: written.sha,
+      // Notun görev durumu yok; `send` yalnız görevler için özet döndürüyor,
+      // notlar `sendNote` ile gidiyor.
+      status: TaskStatus.inbox,
+    )!;
+  }
+
+  /// Notu `notes/`a yazar (sözleşme 1.9). Görev özeti dönmez çünkü notun
+  /// durumu, önceliği, sonucu yoktur.
+  Future<void> sendNote(TaskDraft draft) => _write(draft);
+
+  /// Taslağı kendi hedefine gönderir — çağıranın görev mi not mu olduğunu
+  /// bilmesi gerekmesin diye. Kuyruk (B-032) bunu kullanıyor: çevrimdışı
+  /// alınmış bir not, bağlantı gelince yine `notes/`a gitmeli.
+  Future<void> sendDraft(TaskDraft draft) => _write(draft);
+
+  /// Ortak yazma döngüsü — ad çakışmasını yukarıdaki iki duruma göre çözer.
+  Future<({String fileName, String sha})> _write(TaskDraft draft) async {
     var attempt = draft;
 
     for (var tries = 1; tries <= _maxWriteAttempts; tries++) {
       try {
-        final sha = await writeToInbox(
+        final sha = await writeTo(
+          draft.target,
           attempt.fileName,
           content: attempt.content,
           commitMessage: attempt.commitMessage,
         );
-        return _inboxSummary(attempt.fileName, sha);
+        return (fileName: attempt.fileName, sha: sha);
       } on HubConflictError {
-        final existing = await _readInboxIfExists(attempt.fileName);
+        final existing = await _readIfExists(draft.target, attempt.fileName);
 
         if (existing == null) {
           continue; // dosya bu arada silinmiş: aynı adla yeniden dene
         }
         if (existing.content == attempt.content) {
-          return _inboxSummary(attempt.fileName, existing.sha);
+          return (fileName: attempt.fileName, sha: existing.sha);
         }
         attempt = draft.withFileName(_numbered(draft.fileName, tries + 1));
       }
@@ -108,17 +148,9 @@ class TaskRepo {
 
   static const _maxWriteAttempts = 5;
 
-  TaskSummary _inboxSummary(String fileName, String sha) =>
-      TaskSummary.fromEntry(
-        path: '${Hub.inboxDir}/$fileName',
-        name: fileName,
-        sha: sha,
-        status: TaskStatus.inbox,
-      )!;
-
-  Future<RepoFile?> _readInboxIfExists(String fileName) async {
+  Future<RepoFile?> _readIfExists(HubFolder folder, String fileName) async {
     try {
-      return await _api.getFile('${Hub.inboxDir}/$fileName');
+      return await _api.getFile('${folder.dir}/$fileName');
     } on HubNotFoundError {
       return null;
     }
@@ -154,20 +186,24 @@ class TaskRepo {
   ///
   /// Yol değil dosya adı alır: R-001'in yapısal kapısı burada da geçerli,
   /// app'in başka bir klasöre dokunması mümkün olmasın diye.
-  Future<bool> deleteFromInbox(String fileName) async {
-    if (fileName.contains('/')) {
-      throw ArgumentError.value(
-        fileName,
-        'fileName',
-        'Yol değil, dosya adı bekleniyor (R-001).',
-      );
-    }
+  Future<bool> deleteFromInbox(String fileName) =>
+      deleteFrom(HubFolder.inbox, fileName);
+
+  /// Kullanıcının kendi kaydını siler. `inbox/` için sözleşme 1.7'nin
+  /// kısıtları geçerli (agent almışsa dokunulmaz); `notes/` kullanıcının kendi
+  /// alanı olduğu için orada böyle bir yarış yok.
+  Future<bool> deleteFrom(HubFolder folder, String fileName) async {
+    _requireFileName(fileName);
+    final path = '${folder.dir}/$fileName';
     try {
-      final file = await _api.getFile('${Hub.inboxDir}/$fileName');
+      final file = await _api.getFile(path);
       await _api.deleteFile(
-        '${Hub.inboxDir}/$fileName',
+        path,
         sha: file.sha,
-        commitMessage: "task(pending): inbox'tan silindi (app)",
+        commitMessage: switch (folder) {
+          HubFolder.inbox => "task(pending): inbox'tan silindi (app)",
+          HubFolder.notes => 'note: silindi (app)',
+        },
       );
       return true;
     } on HubNotFoundError {
@@ -288,7 +324,7 @@ typedef DraftSender = Future<void> Function(HubConfig target, TaskDraft draft);
 /// doğrulayabilsin — [withTaskRepoFor] kendi Dio'sunu açtığı için doğrudan
 /// çağrılsa sahte adaptörle değiştirilemezdi.
 final draftSenderProvider = Provider<DraftSender>(
-  (ref) => (target, draft) => withTaskRepoFor(target, (repo) => repo.send(draft)),
+  (ref) => (target, draft) => withTaskRepoFor(target, (repo) => repo.sendDraft(draft)),
 );
 
 /// Bekleyen görevler. Yoklama hub'da değişiklik görürse (B-024) `headSha`

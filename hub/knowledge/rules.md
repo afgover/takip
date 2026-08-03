@@ -5,12 +5,20 @@ Projede uyulacak kalıcı kurallar. Kayıtlar silinmez; geçersizleşen kural ü
 
 ---
 
-## R-001 — App'in yazma alanı tek: tasks/inbox/
+## R-001 — App'in yazma alanı kapalı: tasks/inbox/ ve notes/
 - **Tarih:** 2026-07-30
 - **Kaynak:** Aşama 0 tasarım oturumu
-- **Açıklama:** Kullanıcı uygulaması hub'da yalnızca `tasks/inbox/`'a dosya yazar.
-  Taşıma, düzenleme ve diğer tüm klasörlere yazma agent'ın işidir. Bu, izin
-  modelini basit ve öngörülebilir tutar.
+- **Açıklama:** ~~Kullanıcı uygulaması hub'da yalnızca `tasks/inbox/`'a dosya
+  yazar.~~ Taşıma, düzenleme ve diğer tüm klasörlere yazma agent'ın işidir. Bu,
+  izin modelini basit ve öngörülebilir tutar.
+  **Genişletme (2026-08-03, sözleşme 1.9, K-029):** yazma alanı ikiye çıktı —
+  `tasks/inbox/` (agent'ın iş kuyruğu) ve `notes/` (kullanıcının kendi
+  notları). Gerekçe: kullanıcının kendine aldığı not tek yazma alanı yüzünden
+  görev olmak zorunda kalıyordu ve agent'ın iş kuyruğunda görünüyordu.
+  Kuralın **özü değişmedi**: alan hâlâ kapalı bir küme ve yapısal olarak
+  kilitli — app yol değil dosya adı verir, klasörü `HubFolder` enum'undan
+  seçer, üçüncü bir klasöre yazması tip düzeyinde imkânsızdır. Silme de aynı
+  kapıdan geçer.
 
 ## ~~R-002 — Uygulama token'ı yalnızca hub'a scope'lanır~~
 - **Tarih:** 2026-07-30 (geçersiz: 2026-07-30, K-012 — bkz. R-005)

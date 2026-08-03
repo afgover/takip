@@ -309,6 +309,68 @@ void createSelectionRecord({
   }());
 }
 
+/// Seçimden **not** üretir (sözleşme 1.9 §11).
+///
+/// [createSelectionRecord]'dan ayrı bir fonksiyon, çünkü not bir görev değil:
+/// `notes/`a gidiyor, önceliği/kategorisi/durumu yok ve bekleyen işlerde
+/// görünmüyor. Aynı fonksiyona bayrak eklemek, ikisinin ayrı şeyler olduğunu
+/// gizlerdi — kullanıcının şikâyeti tam olarak buydu: kendine aldığı not
+/// agent'ın iş kuyruğunda çıkıyordu.
+///
+/// İşaretin hemen görünmesi ve gönderimin arkada sürmesi görevlerdekiyle aynı
+/// (L-026); gerekçesi de aynı: okurken not almanın akışı bölünmemeli.
+void createNote({
+  required ProviderContainer container,
+  required ScaffoldMessengerState messenger,
+  required String quote,
+  required String sourcePath,
+  String note = '',
+  String? section,
+  String? repoSlug,
+}) {
+  final normalized = collapseWhitespace(quote);
+
+  final draft = TaskDraft.note(
+    quote: normalized,
+    sourcePath: sourcePath,
+    note: note,
+    section: section,
+    repoSlug: repoSlug,
+  );
+  final annotation = Annotation(
+    quote: normalized,
+    mark: TaskMark.comment,
+    title: draft.title,
+    category: 'not',
+    path: '${Hub.notesDir}/${draft.fileName}',
+    sourcePath: sourcePath,
+    repoSlug: repoSlug,
+  );
+  container.read(freshAnnotationsProvider.notifier).add(sourcePath, annotation);
+
+  unawaited(() async {
+    try {
+      await container.read(taskRepoForSlugProvider(repoSlug)).sendNote(draft);
+    } on HubNetworkError {
+      await container.read(outboxProvider.notifier).add(draft);
+      messenger.showSnackBar(
+        const SnackBar(content: Text('Ağ yok — not kuyruğa alındı.')),
+      );
+    } on HubError catch (e) {
+      container
+          .read(freshAnnotationsProvider.notifier)
+          .remove(sourcePath, annotation);
+      messenger.showSnackBar(SnackBar(content: Text(e.message)));
+    } catch (e) {
+      container
+          .read(freshAnnotationsProvider.notifier)
+          .remove(sourcePath, annotation);
+      messenger.showSnackBar(SnackBar(content: Text('Beklenmeyen hata: $e')));
+    }
+    // Bekleyenler'i tazelemeye gerek yok: not oraya hiç girmiyor.
+  }());
+}
+
 /// Seçilen metinden kayıt oluşturma sayfasını açar; kullanıcının seçimini
 /// döndürür (vazgeçilirse null). Kaydı çağıran ekran oluşturur.
 Future<SelectionRequest?> openSelectionRecord(
@@ -327,21 +389,22 @@ Future<SelectionRequest?> openSelectionRecord(
   );
 }
 
-/// Seçime hızlıca yorum yazma kutusu; yazılan notu döndürür.
+/// Seçime hızlıca **kendine not** yazma kutusu; yazılan notu döndürür.
 ///
 /// Tam sayfadan (tür, işaret, öncelik) daha hafif: okurken bir not düşmek
-/// isteyen kullanıcıyı beş alanla karşılamamak için ayrı tutuldu.
-Future<SelectionRequest?> openCommentBox(
+/// isteyen kullanıcıyı beş alanla karşılamamak için ayrı tutuldu. Ürettiği şey
+/// görev değil, not (§11) — agent'ın iş kuyruğuna girmez.
+Future<String?> openNoteBox(
   BuildContext context, {
   required String quote,
 }) {
   final controller = TextEditingController();
   final normalized = collapseWhitespace(quote);
 
-  return showDialog<SelectionRequest>(
+  return showDialog<String>(
     context: context,
     builder: (dialogContext) => AlertDialog(
-      title: const Text('Yorum ekle'),
+      title: const Text('Not ekle'),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -362,13 +425,13 @@ Future<SelectionRequest?> openCommentBox(
           ),
           const SizedBox(height: 12),
           TextField(
-            key: commentFieldKey,
+            key: noteFieldKey,
             controller: controller,
             autofocus: true,
             maxLines: 3,
             textCapitalization: TextCapitalization.sentences,
             decoration: const InputDecoration(
-              hintText: 'Not olarak ne kalsın?',
+              hintText: 'Kendine not — agent\'a iş düşmez',
               border: OutlineInputBorder(),
             ),
           ),
@@ -380,16 +443,9 @@ Future<SelectionRequest?> openCommentBox(
           child: const Text('Vazgeç'),
         ),
         FilledButton(
-          key: commentSubmitKey,
-          onPressed: () => Navigator.of(dialogContext).pop(
-            SelectionRequest(
-              kind: RecordKind.yorum,
-              // Yorumun kendi rengi — sarı işaretle aynı olursa "işaretledim"
-              // ile "not düştüm" ekranda ayırt edilemiyor (sözleşme 1.8).
-              mark: RecordKind.yorum.defaultMark,
-              note: controller.text,
-            ),
-          ),
+          key: noteSubmitKey,
+          onPressed: () =>
+              Navigator.of(dialogContext).pop(controller.text.trim()),
           child: const Text('Ekle'),
         ),
       ],
@@ -397,8 +453,8 @@ Future<SelectionRequest?> openCommentBox(
   );
 }
 
-const commentFieldKey = Key('selection-comment-field');
-const commentSubmitKey = Key('selection-comment-submit');
+const noteFieldKey = Key('selection-note-box-field');
+const noteSubmitKey = Key('selection-note-box-submit');
 
 /// İşarete dokununca açılan kayıt kartı: ne olduğunu gösterir, silmeyi sunar.
 ///
@@ -459,7 +515,9 @@ Future<bool> openAnnotationCard(
                   key: annotationDeleteKey,
                   onPressed: () => Navigator.of(sheetContext).pop(true),
                   icon: const Icon(Icons.delete_outline),
-                  label: const Text('İşareti sil'),
+                  label: Text(isNotePath(annotation.path)
+                      ? 'Notu sil'
+                      : 'İşareti sil'),
                 ),
               ),
             ],
@@ -479,11 +537,13 @@ Future<bool> openAnnotationCard(
       );
 
   final fileName = annotation.path.split('/').last;
-  var message = 'İşaret silindi.';
+  final folder =
+      isNotePath(annotation.path) ? HubFolder.notes : HubFolder.inbox;
+  var message = folder == HubFolder.notes ? 'Not silindi.' : 'İşaret silindi.';
   try {
     final removed = await container
         .read(taskRepoForSlugProvider(annotation.repoSlug))
-        .deleteFromInbox(fileName);
+        .deleteFrom(folder, fileName);
     if (!removed) {
       message = 'Agent bu kaydı ele almış; işaret hub\'da duruyor.';
     }

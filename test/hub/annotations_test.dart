@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:flutter_test/flutter_test.dart';
+import 'package:takip/core/constants.dart';
 import 'package:takip/features/common/hub_markdown.dart';
 import 'package:takip/hub/annotations.dart';
 import 'package:takip/hub/models/task.dart';
@@ -76,21 +79,35 @@ void main() {
   });
 
   group('isContractStale', () {
+    // Referans açıkça veriliyor: testler sözleşme sürümü her yükseldiğinde
+    // kırılmasın, yalnız **karşılaştırma mantığını** sınasınlar.
+    const ref = '1.9';
+
     test('eski sürüm geride sayılır', () {
-      expect(isContractStale('1.3'), isTrue);
-      expect(isContractStale('1.7'), isTrue);
-      expect(isContractStale('0.9'), isTrue);
+      expect(isContractStale('1.3', current: ref), isTrue);
+      expect(isContractStale('1.8', current: ref), isTrue);
+      expect(isContractStale('0.9', current: ref), isTrue);
     });
 
     test('güncel ve ileri sürümler geride sayılmaz', () {
-      expect(isContractStale('1.8'), isFalse);
-      expect(isContractStale('1.9'), isFalse);
-      expect(isContractStale('2.0'), isFalse);
+      expect(isContractStale(ref, current: ref), isFalse);
+      expect(isContractStale('2.0', current: ref), isFalse);
     });
 
     test('karşılaştırma sayısal — 1.10, 1.9\'dan yenidir', () {
       // Metin karşılaştırması olsaydı "1.10" < "1.9" çıkardı.
-      expect(isContractStale('1.10'), isFalse);
+      expect(isContractStale('1.10', current: ref), isFalse);
+    });
+
+    test('sabit ile SYSTEM.md aynı sürümü söyler', () {
+      // §10'un tamamı bu sayıya dayanıyor: sabiti yükseltip dosyayı unutmak
+      // (ya da tersi) bütün bağlantılara yanlış "sözleşmen eski" uyarısı
+      // gönderirdi. Ayrışma burada yakalanır.
+      final text = File('hub/SYSTEM.md').readAsStringSync();
+      final inFile = RegExp(r'\*\*Sözleşme sürümü:\*\*\s*([0-9]+\.[0-9]+)')
+          .firstMatch(text)
+          ?.group(1);
+      expect(inFile, Hub.contractVersion);
     });
   });
 
