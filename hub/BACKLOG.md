@@ -203,6 +203,18 @@ başlığına ✅ ve tarih yazılır.
 - [ ] B-052 · (user) Bir hafta gerçek kullanım; sürtünme noktalarını görev olarak
       inbox'a at — B-015, B-020 ve B-034'ün cihaz ayağı tamamlandıktan sonra
 - [ ] B-053 · (agent) Kullanım geri bildirimlerine göre revizyon turu
+- [x] B-072 · (agent) financer_takip sözleşmesini ana kopyayla güncelle —
+      ✅ 2026-08-03 · 1.4 → 1.6. Sürüm çakışması bulundu: o hub 1.4'ü
+      `reconstructed` alanı için kullanmıştı. Alan ana kopyaya taşındı (1.6),
+      sonra güncelleme yapıldı — yerel ekleme kaybolmadı. → K-025, L-022
+- [x] B-073 · (agent) Seçim işaretleri çizilmiyordu — ✅ 2026-08-03;
+      alıntı çizilmiş metinden geliyor, kaynakta ham markdown var. Vurgu
+      işaretleri ve satır sarmalarına dayanıklı eşleştirme eklendi. → L-023
+- [x] B-074 · (agent) İşaret ancak sayfadan çıkıp girince görünüyordu —
+      ✅ 2026-08-03; az önce oluşturulan kayıtlar için köprü katman. → L-024
+- [x] B-075 · (agent) Seçim menüsüne "Yorum ekle" — ✅ 2026-08-03; hafif
+      giriş kutusu. Menü sırası: sarı, kırmızı (görünür) · yorum, görev,
+      kopyala (taşma)
 - [x] B-071 · (agent) Seçim menüsü sadeleştirilsin — ✅ 2026-08-02 ·
       S-2026-08-02-secim-menusu; menü yalnız dört eylem: sarı işaretle,
       kırmızı çiz, görev oluştur, kopyala. Sistem öğeleri (arama, çeviri,
