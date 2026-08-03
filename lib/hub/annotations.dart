@@ -19,6 +19,7 @@ class Annotation {
     required this.path,
     this.sourcePath = '',
     this.repoSlug,
+    this.note,
   });
 
   final String quote;
@@ -34,6 +35,38 @@ class Annotation {
 
   /// Kaydın hangi repoda olduğu — silerken doğru hub'a gitmek için.
   final String? repoSlug;
+
+  /// Kullanıcının kendi yazdığı metin. İşarete dokununca açılan kartta bunu
+  /// görmek gerekiyor: alıntı zaten belgede duruyor, kartın asıl taşıdığı şey
+  /// kullanıcının o alıntı hakkında yazdığıdır.
+  final String? note;
+}
+
+/// Kayıt gövdesinden kullanıcının yazdığı metni çıkarır.
+///
+/// İki gövde biçimi var: notlarda metin başlığın hemen altındadır (§11),
+/// görevlerde `## İstek` başlığı altındadır (§4). Elle düzenlenmiş ya da
+/// tanınmayan bir gövdede null döner — kart yine açılır, yalnız not satırı
+/// görünmez.
+String? noteTextFrom(String body) {
+  final istek = RegExp(r'^##\s+İstek\s*$', multiLine: true).firstMatch(body);
+  final String region;
+  if (istek != null) {
+    region = body.substring(istek.end);
+  } else {
+    // Başlıktan sonrası; ilk `#` satırını atla.
+    final title = RegExp(r'^#\s+.*$', multiLine: true).firstMatch(body);
+    region = title == null ? body : body.substring(title.end);
+  }
+
+  // Bir sonraki bölüm başlığına kadar olan kısım kullanıcının metnidir.
+  final next = RegExp(r'^##\s+', multiLine: true).firstMatch(region);
+  final text = (next == null ? region : region.substring(0, next.start)).trim();
+
+  if (text.isEmpty || text == '(not girilmedi)' || text == '(açıklama girilmedi)') {
+    return null;
+  }
+  return text;
 }
 
 /// Verilen belgeyi `source` alan kayıtlar (aktif repodan).
@@ -88,6 +121,7 @@ Future<List<Annotation>> annotationsFrom(
       path: entry.path,
       sourcePath: sourcePath,
       repoSlug: connection.slug,
+      note: noteTextFrom(fm.body),
     ));
   }
   return found;

@@ -210,6 +210,11 @@ başlığına ✅ ve tarih yazılır.
       aldığı not agent'ın iş kuyruğuna düşüyordu. R-001 özü korunarak
       genişletildi (`HubFolder`), `AGENT_PROTOCOL.md` madde 10 eklendi.
       Sarı işaret/kırmızı çizgi bilerek göreve gitmeye devam ediyor. → K-029
+- [x] B-089 · (agent) İşaret kartı notun içeriğini göstermiyordu —
+      ✅ 2026-08-03; kart kullanıcının zaten belgede gördüğü alıntıyı tekrar
+      edip asıl taşıması gereken metni atlıyordu. `Annotation.note` eklendi,
+      kayıt gövdesinden çıkarılıyor (`noteTextFrom`, hem not hem görev
+      biçimini tanıyor). Yorum ikonu da artık kendi ikonu
 - [x] B-085 · (agent) Bekleyenler'deki başka repo görevine dokununca
       "bulunamadı" — ✅ 2026-08-03; liste çoklu repoya geçmişti ama detay
       okuma yolu geçmemişti. Görev artık kendi reposundan okunuyor

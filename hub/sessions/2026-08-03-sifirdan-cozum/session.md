@@ -118,6 +118,28 @@ bağlantılara yanlış "sözleşmen eski" uyarısı gönderirdi.
 
 `flutter analyze` temiz, **318 test**.
 
+### Kullanıcı
+> not ekledim, bekleyenlerde gorunmuyor, silme calisiyor, tek eksik yesile
+> tiklayinca altta cikan pencerede notun icerigi yer almiyor
+
+### Agent
+Kart, kullanıcının **zaten belgede gördüğü** alıntıyı tekrar edip asıl
+taşıması gereken metni hiç göstermiyordu — `Annotation` böyle bir alan
+taşımıyordu. `note` alanı eklendi ve kayıt gövdesinden çıkarılıyor
+(`noteTextFrom`); fonksiyon iki gövde biçimini de tanıyor: notlarda metin
+başlığın altında (§11), görevlerde `## İstek` altında (§4). Tanınmayan
+gövdede null dönüyor, kart yine açılıyor.
+
+İyimser katman da dolduruluyor: az önce yazılan bir nota dokununca senkron
+beklenmeden metin görünüyor.
+
+Testler gövdeyi **gerçek taslaktan** üretiyor; dosya biçimi değişirse test
+düşer, elle yazılmış bir örnek sessizce eskimez.
+
+Yan düzeltme: yorum işaretinin kart ikonu "altı çizili" ikonuydu (renk
+eklenirken atlanmış), artık kendi ikonu.
+
+`flutter analyze` temiz, **324 test**.
+
 ## Sonraki adım
-Cihaza kuruldu; kullanıcının notun Bekleyenler'de **görünmediğini** doğrulaması
-bekleniyor. `financer_takip` sözleşmesi 1.9'a yükseltildi.
+Cihaza kuruldu. `financer_takip` sözleşmesi 1.9'a yükseltildi.

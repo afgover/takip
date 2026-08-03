@@ -282,6 +282,7 @@ void createSelectionRecord({
     path: '${Hub.inboxDir}/${draftForPath.fileName}',
     sourcePath: sourcePath,
     repoSlug: repoSlug,
+    note: note.trim().isEmpty ? null : note.trim(),
   );
   container.read(freshAnnotationsProvider.notifier).add(sourcePath, annotation);
 
@@ -345,6 +346,7 @@ void createNote({
     path: '${Hub.notesDir}/${draft.fileName}',
     sourcePath: sourcePath,
     repoSlug: repoSlug,
+    note: note.trim().isEmpty ? null : note.trim(),
   );
   container.read(freshAnnotationsProvider.notifier).add(sourcePath, annotation);
 
@@ -483,9 +485,11 @@ Future<bool> openAnnotationCard(
               Row(
                 children: [
                   Icon(
-                    annotation.mark == TaskMark.highlight
-                        ? Icons.brush_outlined
-                        : Icons.format_underlined,
+                    switch (annotation.mark) {
+                      TaskMark.highlight => Icons.brush_outlined,
+                      TaskMark.comment => Icons.sticky_note_2_outlined,
+                      TaskMark.underline => Icons.format_underlined,
+                    },
                     size: 18,
                     color: theme.colorScheme.primary,
                   ),
@@ -494,6 +498,8 @@ Future<bool> openAnnotationCard(
                 ],
               ),
               const SizedBox(height: 12),
+              // Alıntı **bağlam**: kullanıcı zaten belgede görüyor, o yüzden
+              // küçük ve solgun.
               Container(
                 width: double.infinity,
                 padding: const EdgeInsets.all(10),
@@ -508,6 +514,17 @@ Future<bool> openAnnotationCard(
                     style: theme.textTheme.bodySmall, maxLines: 6,
                     overflow: TextOverflow.ellipsis),
               ),
+              // Kartın asıl taşıdığı şey: kullanıcının o alıntı hakkında
+              // yazdığı metin. Bu olmadan kart, kullanıcının zaten gördüğü
+              // alıntıyı tekrar ediyordu.
+              if (annotation.note != null) ...[
+                const SizedBox(height: 12),
+                SelectableText(
+                  key: annotationNoteKey,
+                  annotation.note!,
+                  style: theme.textTheme.bodyMedium,
+                ),
+              ],
               const SizedBox(height: 16),
               SizedBox(
                 width: double.infinity,
@@ -557,3 +574,4 @@ Future<bool> openAnnotationCard(
 }
 
 const annotationDeleteKey = Key('annotation-delete');
+const annotationNoteKey = Key('annotation-note');
