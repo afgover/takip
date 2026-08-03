@@ -203,6 +203,11 @@ başlığına ✅ ve tarih yazılır.
 - [ ] B-052 · (user) Bir hafta gerçek kullanım; sürtünme noktalarını görev olarak
       inbox'a at — B-015, B-020 ve B-034'ün cihaz ayağı tamamlandıktan sonra
 - [ ] B-053 · (agent) Kullanım geri bildirimlerine göre revizyon turu
+- [x] B-083 · (agent) Yorum kendi rengini alsın — ✅ 2026-08-03; sözleşme 1.8,
+      `mark: comment` (yeşil). Sarı ile yorum ayırt edilemiyordu
+- [x] B-084 · (agent) İşaretten sonraki metin alt satıra kayıyordu —
+      ✅ 2026-08-03; paragraf `Wrap`'e dönüştüğü için komşu metin atomik
+      öğeydi. İşaretli satırdaki tüm kelimeler kutulanıyor. → L-030
 - [x] B-080 · (agent) İşaretlenen kelimeden sonrası alt satıra düşüyordu —
       ✅ 2026-08-03; işaret kelime kelime yayılıyor. → L-028
 - [x] B-081 · (agent) Yorum kaydı oluşmuyordu — ✅ 2026-08-03; kullanıcı
