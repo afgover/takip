@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:markdown/markdown.dart' as md;
@@ -17,7 +18,7 @@ import '../../hub/models/task.dart';
 ///
 /// Bunlar temel markdown'da yok; bu yüzden GitHub eklenti seti kullanılır ve
 /// GitHub'da nasıl görünüyorsa app'te de öyle görünür.
-class HubMarkdown extends StatelessWidget {
+class HubMarkdown extends StatefulWidget {
   const HubMarkdown(
     this.data, {
     super.key,
@@ -43,34 +44,62 @@ class HubMarkdown extends StatelessWidget {
   final bool selectable;
   final EdgeInsets padding;
 
+  @override
+  State<HubMarkdown> createState() => _HubMarkdownState();
+}
+
+class _HubMarkdownState extends State<HubMarkdown> {
+  late final Map<String, MarkdownElementBuilder> _builders = {
+    for (final tag in const [markHighlightTag, markUnderlineTag, markCommentTag])
+      tag: _MarkBuilder(tag, _tap),
+  };
+
   /// İşaretin taşıdığı sıra numarasını kayda çevirir.
   void _tap(int index) {
+    final annotations = widget.annotations;
     if (index < 0 || index >= annotations.length) return;
-    onTapAnnotation?.call(annotations[index]);
+    widget.onTapAnnotation?.call(annotations[index]);
+  }
+
+  /// Belge ya da kayıtlar değişince markdown baştan ayrıştırılıyor; eski
+  /// dokunma tanıyıcılarının sahibi kalmıyor, bırakılmaları gerekiyor.
+  @override
+  void didUpdateWidget(HubMarkdown oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.data != widget.data ||
+        oldWidget.annotations.length != widget.annotations.length) {
+      _releaseRecognizers();
+    }
+  }
+
+  @override
+  void dispose() {
+    _releaseRecognizers();
+    super.dispose();
+  }
+
+  void _releaseRecognizers() {
+    for (final builder in _builders.values) {
+      (builder as _MarkBuilder).release();
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: padding,
+      padding: widget.padding,
       child: MarkdownBody(
-        data: markAnnotations(data, annotations),
-        selectable: selectable,
+        data: markAnnotations(widget.data, widget.annotations),
+        selectable: widget.selectable,
         extensionSet: md.ExtensionSet.gitHubWeb,
         styleSheet: hubMarkdownStyleSheet(Theme.of(context)),
-        onTapLink: onTapLink,
+        onTapLink: widget.onTapLink,
         inlineSyntaxes: [
           _MarkSyntax(_highlightOpen, _highlightClose, markHighlightTag),
           _MarkSyntax(_underlineOpen, _underlineClose, markUnderlineTag),
           _MarkSyntax(_commentOpen, _commentClose, markCommentTag),
-          _PlainSyntax(),
         ],
-        builders: {
-          markHighlightTag: _MarkBuilder(TaskMark.highlight, _tap),
-          markUnderlineTag: _MarkBuilder(TaskMark.underline, _tap),
-          markCommentTag: _MarkBuilder(TaskMark.comment, _tap),
-          markPlainTag: _PlainBuilder(),
-        },
+        builders: _builders,
       ),
     );
   }
@@ -133,15 +162,10 @@ const _underlineOpen = '\uE002';
 const _underlineClose = '\uE003';
 const _commentOpen = '\uE004';
 const _commentClose = '\uE005';
-// İşaretli satırdaki **işaretsiz** kelimeler de kutuya alınıyor; gerekçesi
-// `_splitLineIntoWords`da.
-const _plainOpen = '\uE006';
-const _plainClose = '\uE007';
 
 const markHighlightTag = 'hubMarkHighlight';
 const markUnderlineTag = 'hubMarkUnderline';
 const markCommentTag = 'hubMarkComment';
-const markPlainTag = 'hubMarkPlain';
 
 ({String open, String close, String tag}) _delimitersFor(TaskMark mark) =>
     switch (mark) {
@@ -208,83 +232,7 @@ String markAnnotations(String source, List<Annotation> annotations) {
       '${source.substring(range.start, range.end)}${d.close}',
     );
   }
-  return _splitMarkedLines(out);
-}
-
-/// İşaret içeren satırlarda **işaretsiz kelimeleri de** ayrı kutulara böler.
-///
-/// Sebebi flutter_markdown'ın yapısı: bir paragrafta satır içi widget varsa
-/// paragraf `Wrap` olarak kuruluyor ve metin parçaları **atomik öğe** oluyor.
-/// İşaretten sonraki metin tek büyük parça kaldığı için kalan boşluğa
-/// sığmıyor ve **tamamı** alt satıra iniyordu (L-030). Her kelime ayrı öğe
-/// olunca `Wrap` normal metin gibi akıyor.
-///
-/// Yalnız **düz nesir** satırlarına uygulanıyor: satırda başka markdown
-/// sözdizimi (vurgu, kod, bağlantı, tablo) varsa dokunulmuyor, çünkü kelime
-/// kelime bölmek onları ortadan ikiye ayırıp belgeyi bozardı. O satırlarda
-/// eski davranış sürüyor — işaret çalışıyor, akış biraz kayabiliyor.
-String _splitMarkedLines(String source) {
-  const markers = [_highlightOpen, _underlineOpen, _commentOpen];
-  final lines = source.split('\n');
-
-  for (var i = 0; i < lines.length; i++) {
-    final line = lines[i];
-    if (!markers.any(line.contains)) continue;
-
-    // Liste imi, alıntı imi ve girinti korunuyor.
-    final prefixMatch = RegExp(r'^(\s*(?:[-*+]\s+|\d+\.\s+|>\s*)?)')
-        .firstMatch(line)!;
-    final prefix = prefixMatch.group(1)!;
-    final rest = line.substring(prefix.length);
-
-    if (RegExp(r'[*_`\[\]<>|]').hasMatch(rest)) continue;
-
-    lines[i] = prefix + _splitLineIntoWords(rest);
-  }
-  return lines.join('\n');
-}
-
-String _splitLineIntoWords(String line) {
-  final buffer = StringBuffer();
-  var index = 0;
-
-  while (index < line.length) {
-    final ch = line[index];
-    final marker = [
-      (_highlightOpen, _highlightClose),
-      (_underlineOpen, _underlineClose),
-      (_commentOpen, _commentClose),
-    ].where((d) => d.$1 == ch).firstOrNull;
-
-    if (marker != null) {
-      // İşaretli bölge olduğu gibi geçer; kelimelere kendi sözdizimi bölecek.
-      final end = line.indexOf(marker.$2, index);
-      if (end < 0) {
-        buffer.write(line.substring(index));
-        break;
-      }
-      buffer.write(line.substring(index, end + 1));
-      index = end + 1;
-      continue;
-    }
-
-    // İşaretsiz parça: kelimelere bölünüp her biri kutuya alınır.
-    var next = line.length;
-    for (final open in [_highlightOpen, _underlineOpen, _commentOpen]) {
-      final at = line.indexOf(open, index);
-      if (at >= 0 && at < next) next = at;
-    }
-    final segment = line.substring(index, next);
-    for (final part in segment.split(' ')) {
-      if (part.isEmpty) {
-        buffer.write(' ');
-      } else {
-        buffer.write('$_plainOpen$part$_plainClose');
-      }
-    }
-    index = next;
-  }
-  return buffer.toString();
+  return out;
 }
 
 /// Alıntının kaynak metindeki yeri.
@@ -378,6 +326,10 @@ const _emphasis = {'*', '_', '`', '~'};
 /// İşaretin içindeki sıra numarasını metinden ayıran görünmez karakter.
 const _markIdSeparator = '\u001F';
 
+/// Sıra numarasının düğümde taşındığı öznitelik.
+const _markIndexAttr = 'ann';
+
+/// Gömülü işareti markdown düğümüne çevirir; çizimi `_MarkBuilder` yapar.
 class _MarkSyntax extends md.InlineSyntax {
   _MarkSyntax(this.open, this.close, this.tag)
       : super('${RegExp.escape(open)}(\\d+)$_markIdSeparator'
@@ -387,87 +339,12 @@ class _MarkSyntax extends md.InlineSyntax {
   final String close;
   final String tag;
 
-  /// İşaret **kelime kelime** yayılıyor; aradaki boşluklar düz metin kalıyor.
-  ///
-  /// Sebebi flutter_markdown'ın builder çıktısını `WidgetSpan` olarak
-  /// gömmesi: WidgetSpan satır içinde bölünemeyen tek bir kutudur, dolayısıyla
-  /// çok kelimeli bir işaret satır sonuna sığmayınca **tamamı** alt satıra
-  /// iniyor ve arkasındaki kelimeyi de itiyordu (L-028). Kelime başına ayrı
-  /// kutu + aradaki düz boşluklar, satırın normal yerlerinden kırılmasını
-  /// sağlıyor.
   @override
   bool onMatch(md.InlineParser parser, Match match) {
-    final id = match[1]!;
-    final parts = match[2]!.split(' ');
-    for (var i = 0; i < parts.length; i++) {
-      if (parts[i].isNotEmpty) {
-        parser.addNode(
-          md.Element.text(tag, parts[i])..attributes['ann'] = id,
-        );
-      }
-      if (i < parts.length - 1) parser.addNode(md.Text(' '));
-    }
-    return true;
-  }
-}
-
-/// İşaretli satırdaki işaretsiz kelimeler.
-class _PlainSyntax extends md.InlineSyntax {
-  _PlainSyntax()
-      : super('${RegExp.escape(_plainOpen)}([^${RegExp.escape(_plainClose)}]*)'
-            '${RegExp.escape(_plainClose)}');
-
-  @override
-  bool onMatch(md.InlineParser parser, Match match) {
-    parser.addNode(md.Element.text(markPlainTag, match[1]!));
-    return true;
-  }
-}
-
-class _PlainBuilder extends MarkdownElementBuilder {
-  @override
-  Widget visitElementAfter(md.Element element, TextStyle? preferredStyle) =>
-      Text(element.textContent, style: preferredStyle);
-}
-
-class _MarkBuilder extends MarkdownElementBuilder {
-  _MarkBuilder(this.mark, this.onTap);
-
-  final TaskMark mark;
-  final void Function(int index) onTap;
-
-  @override
-  Widget visitElementAfter(md.Element element, TextStyle? preferredStyle) {
-    final index = int.tryParse(element.attributes['ann'] ?? '') ?? -1;
-    return Builder(
-      builder: (context) {
-        final colors = Theme.of(context).colorScheme;
-        final base = preferredStyle ?? Theme.of(context).textTheme.bodyMedium;
-        return GestureDetector(
-          onTap: () => onTap(index),
-          child: Text(
-            element.textContent,
-            style: switch (mark) {
-              TaskMark.highlight => base?.copyWith(
-                  backgroundColor: const Color(0xFFFFE082),
-                  color: Colors.black87,
-                ),
-              // Yorumun kendi rengi (sözleşme 1.8): "işaretledim" ile
-              // "not düştüm" ekranda ayırt edilebilmeli.
-              TaskMark.comment => base?.copyWith(
-                  backgroundColor: const Color(0xFFA5D6A7),
-                  color: Colors.black87,
-                ),
-              TaskMark.underline => base?.copyWith(
-                  decoration: TextDecoration.underline,
-                  decorationColor: colors.error,
-                  decorationThickness: 2,
-                ),
-            },
-          ),
-        );
-      },
+    parser.addNode(
+      md.Element.text(tag, match[2]!)..attributes[_markIndexAttr] = match[1]!,
     );
+    return true;
   }
 }
 
@@ -488,3 +365,75 @@ String? sectionOf(String source, String quote) {
   }
   return heading;
 }
+
+/// İşareti **`Text.rich` olarak** çizer — bu tercih işin püf noktası.
+///
+/// flutter_markdown, paragrafın satır içi çocuklarını `_mergeInlineChildren`
+/// ile birleştiriyor: çocuk `Text`/`RichText` ise komşularıyla **tek bir
+/// `RichText`e** kaynıyor, değilse `Wrap` içinde **atomik bir kutu** olarak
+/// duruyor. Önceki denemeler işareti sıradan bir widget olarak döndürdüğü için
+/// işaretten sonraki metin kalan boşluğa sığmıyor ve tamamı alt satıra
+/// iniyordu (L-032). `Text.rich` döndürünce satır kırılması işaretsiz metinle
+/// birebir aynı oluyor.
+///
+/// Dokunma tanıyıcısı da burada takılıyor; kullanıcı işarete dokununca kayıt
+/// kartı açılıyor (silme buradan yapılıyor).
+class _MarkBuilder extends MarkdownElementBuilder {
+  _MarkBuilder(this.tag, this.onTap);
+
+  final String tag;
+  final void Function(int index) onTap;
+  final List<TapGestureRecognizer> _recognizers = [];
+
+  @override
+  Widget? visitElementAfterWithContext(
+    BuildContext context,
+    md.Element element,
+    TextStyle? preferredStyle,
+    TextStyle? parentStyle,
+  ) {
+    final theme = Theme.of(context);
+    // Ana stil paragraftan geliyor; işaret yalnız rengi/çizgiyi ekliyor, yazı
+    // tipini ve satır yüksekliğini değiştirmiyor — yoksa işaretli satır
+    // diğerlerinden farklı yükseklikte olurdu.
+    final base = parentStyle ?? preferredStyle ?? theme.textTheme.bodyMedium!;
+    final index = int.tryParse(element.attributes[_markIndexAttr] ?? '') ?? -1;
+
+    final recognizer = TapGestureRecognizer()..onTap = () => onTap(index);
+    _recognizers.add(recognizer);
+
+    return Text.rich(
+      TextSpan(
+        text: element.textContent,
+        style: _styleFor(tag, base, theme.colorScheme),
+        recognizer: recognizer,
+      ),
+    );
+  }
+
+  void release() {
+    for (final recognizer in _recognizers) {
+      recognizer.dispose();
+    }
+    _recognizers.clear();
+  }
+}
+
+/// İşaret renkleri. Yorum sarıdan **ayrı** olmak zorunda: "işaretledim" ile
+/// "not düştüm" ekranda aynı görünmemeli (sözleşme 1.8).
+TextStyle _styleFor(String tag, TextStyle base, ColorScheme colors) =>
+    switch (tag) {
+      markHighlightTag => base.copyWith(
+          backgroundColor: const Color(0xFFFFE082),
+          color: Colors.black87,
+        ),
+      markCommentTag => base.copyWith(
+          backgroundColor: const Color(0xFFA5D6A7),
+          color: Colors.black87,
+        ),
+      _ => base.copyWith(
+          decoration: TextDecoration.underline,
+          decorationColor: colors.error,
+          decorationThickness: 2,
+        ),
+    };

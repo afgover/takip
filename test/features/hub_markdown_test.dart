@@ -1,6 +1,9 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:takip/features/common/hub_markdown.dart';
+import 'package:takip/hub/annotations.dart';
+import 'package:takip/hub/models/task.dart';
 
 Widget wrap(Widget child, {ThemeData? theme}) => MaterialApp(
       theme: theme,
@@ -122,4 +125,130 @@ flutter analyze
     expect(find.textContaining('Başlık'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
+
+  // --- İşaretler ---------------------------------------------------------
+  //
+  // Buradaki asıl test **yükseklik** testi. Kullanıcının şikâyeti "işaretli
+  // kelimeden sonrası alt satıra kayıyor"du; rengin doğru olması yetmiyor,
+  // metnin akışı işaretsiz hâliyle birebir aynı kalmalı.
+
+  /// İşaretli ve işaretsiz aynı metnin kapladığı yükseklik.
+  Future<(double plain, double marked)> heights(
+    WidgetTester tester,
+    String text,
+    List<Annotation> annotations,
+  ) async {
+    Future<double> measure(List<Annotation> anns) async {
+      await tester.pumpWidget(wrap(SizedBox(
+        width: 300,
+        child: HubMarkdown(text, annotations: anns, selectable: false),
+      )));
+      await tester.pumpAndSettle();
+      return tester.getSize(find.byType(HubMarkdown)).height;
+    }
+
+    return (await measure(const []), await measure(annotations));
+  }
+
+  testWidgets('işaret satır akışını bozmuyor', (tester) async {
+    const text = 'Bir iki uc dort bes alti yedi sekiz dokuz on onbir oniki '
+        'onuc ondort onbes onalti onyedi onsekiz ondokuz yirmi yirmibir.';
+
+    final (plain, marked) = await heights(tester, text, [
+      annotationOf('bes alti', TaskMark.highlight),
+    ]);
+
+    expect(marked, plain,
+        reason: 'işaretli metin işaretsizle aynı satır sayısında olmalı');
+  });
+
+  testWidgets('işaret kalın/kod içeren satırda da akışı bozmuyor',
+      (tester) async {
+    // Gerçek hub metinleri düz nesir değil; `**kalın**` ve `` `kod` `` dolu.
+    // Önceki çözüm yalnız düz nesirde çalıştığı için cihazda hiç işe
+    // yaramamıştı (L-032).
+    const text = 'Sozlesme **v1.8** ile `mark: comment` alani geldi ve bu '
+        'sayede yorumlar sari isaretten ayrilabiliyor artik tamamen.';
+
+    final (plain, marked) = await heights(tester, text, [
+      annotationOf('geldi ve', TaskMark.underline),
+    ]);
+
+    expect(marked, plain);
+  });
+
+  testWidgets('üç işaret de kendi rengiyle tek metin akışında çizilir',
+      (tester) async {
+    await tester.pumpWidget(wrap(SizedBox(
+      width: 300,
+      child: HubMarkdown(
+        'Bir iki uc dort bes alti yedi sekiz dokuz on onbir oniki onuc.',
+        selectable: false,
+        annotations: [
+          annotationOf('iki', TaskMark.highlight),
+          annotationOf('bes', TaskMark.underline),
+          annotationOf('dokuz', TaskMark.comment),
+        ],
+      ),
+    )));
+    await tester.pumpAndSettle();
+
+    final styles = <TextStyle>[];
+    void walk(InlineSpan span) {
+      if (span is TextSpan) {
+        if (span.style != null) styles.add(span.style!);
+        span.children?.forEach(walk);
+      }
+    }
+    final texts = tester.widgetList<RichText>(find.byType(RichText)).toList();
+    for (final rt in texts) {
+      walk(rt.text);
+    }
+
+    // Paragrafın tamamı **tek** bir RichText: işaret ayrı bir kutu değil,
+    // aynı metin akışının parçası. Bozulmanın kaynağı buydu.
+    expect(texts, hasLength(1));
+
+    expect(styles.where((s) => s.backgroundColor == const Color(0xFFFFE082)),
+        hasLength(1), reason: 'sarı işaret');
+    expect(styles.where((s) => s.backgroundColor == const Color(0xFFA5D6A7)),
+        hasLength(1), reason: 'yeşil yorum — sarıdan ayrı olmalı');
+    expect(styles.where((s) => s.decoration == TextDecoration.underline),
+        hasLength(1), reason: 'kırmızı altı çizili');
+  });
+
+  testWidgets('işarete dokununca kayıt geri veriliyor', (tester) async {
+    Annotation? tapped;
+    final annotation = annotationOf('iki uc', TaskMark.highlight);
+
+    await tester.pumpWidget(wrap(HubMarkdown(
+      'Bir iki uc dort.',
+      selectable: false,
+      annotations: [annotation],
+      onTapAnnotation: (a) => tapped = a,
+    )));
+    await tester.pumpAndSettle();
+
+    final rich = tester.widget<RichText>(find.byType(RichText).first);
+    TapGestureRecognizer? recognizer;
+    void walk(InlineSpan span) {
+      if (span is TextSpan) {
+        recognizer ??= span.recognizer as TapGestureRecognizer?;
+        span.children?.forEach(walk);
+      }
+    }
+    walk(rich.text);
+
+    expect(recognizer, isNotNull, reason: 'işaret dokunulabilir olmalı');
+    recognizer!.onTap!();
+    expect(tapped?.quote, 'iki uc');
+  });
 }
+
+Annotation annotationOf(String quote, TaskMark mark) => Annotation(
+      quote: quote,
+      mark: mark,
+      title: quote,
+      category: 'yorum',
+      path: 'hub/tasks/inbox/2026-08-03-x.md',
+    );

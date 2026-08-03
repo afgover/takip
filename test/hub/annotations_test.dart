@@ -211,7 +211,6 @@ void main() {
     test('birebir eşleşme varken izdüşüme düşülmez', () {
       const source = 'düz bir cümle';
       final out = markAnnotations(source, [ann('düz bir', TaskMark.highlight)]);
-      // Artık işaretsiz kelimeler de kutulanıyor; işaretin kendisi yerinde.
       expect(out, contains('düz bir$hlClose'));
       expect(out, startsWith(hlOpen));
       expect(out, contains('cümle'));
@@ -226,29 +225,29 @@ void main() {
     });
   });
 
-  group('akış ve üçüncü renk (L-030)', () {
-    test('işaretli satırda işaretsiz kelimeler de kutulanır', () {
+  group('akış ve üçüncü renk', () {
+    // Kaynak metne **yalnız işaretin kendisi** gömülüyor; gerisi olduğu gibi
+    // kalıyor. Önceki sürüm satırı kelime kelime kutuluyordu (L-030) — o
+    // yaklaşım `**kalın**` içeren satırlarda uygulanamadığı için gerçek hub
+    // metinlerinde hemen hiç devreye girmiyordu ve terk edildi. Satır akışını
+    // artık çizim katmanı koruyor (bkz. hub_markdown_test.dart).
+    test('işaret dışındaki metne dokunulmaz', () {
       final out = markAnnotations(
         'bir iki uc dort bes',
         [ann('iki uc', TaskMark.highlight)],
       );
-      // İşaretsiz kelimeler ayrı kutulara alınıyor ki `Wrap` metin gibi
-      // aksın; yoksa işaretten sonraki metin tek parça kalıp alt satıra
-      // düşüyordu.
-      expect(out, contains('\uE006bir\uE007'));
-      expect(out, contains('\uE006dort\uE007'));
-      expect(out, contains('\uE006bes\uE007'));
+      expect(out, 'bir ${hlOpen}0\u001Fiki uc$hlClose dort bes');
     });
 
-    test('başka markdown içeren satıra dokunulmaz', () {
-      // Kelime kelime bölmek `**kalın**` gibi yapıları ortadan ikiye ayırıp
-      // belgeyi bozardı; o satırlarda eski davranış sürüyor.
+    test('kalın yazı içeren satırda da işaretlenir', () {
+      // Asıl hub metinleri böyle; eski çözüm tam da burada devre dışı
+      // kalıyordu.
       final out = markAnnotations(
         'bir **kalın** iki uc dort',
         [ann('iki uc', TaskMark.highlight)],
       );
-      expect(out, isNot(contains('\uE006')));
       expect(out, contains('\uE000'));
+      expect(out, contains('**kalın**'), reason: 'vurgu bozulmamalı');
     });
 
     test('liste imi korunur', () {
