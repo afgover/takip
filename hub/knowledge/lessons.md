@@ -354,3 +354,35 @@ Biçim: `SYSTEM.md` §5.
   konumlandırılmış bir kart). Eylem sayısı arttıkça liste uzuyor, hiçbiri
   gizlenmiyor. **Kural:** eylem sayısı sabitse ve hepsi eşit önemdeyse,
   düzeni ekran genişliğine bağlı bırakma.
+
+## L-028 — `WidgetSpan` satır içinde bölünmez
+- **Tarih:** 2026-08-03
+- **Kaynak:** S-2026-08-03-isaret-duzeltmeleri
+- **Açıklama:** İşaretlenen kelimeden sonraki kelime alt satıra düşüyordu.
+  Sebep: `flutter_markdown` özel builder'ın döndürdüğü **widget**'ı
+  `WidgetSpan` olarak gömüyor ve WidgetSpan satır içinde bölünemeyen tek bir
+  kutudur — çok kelimeli bir işaret satır sonuna sığmayınca tamamı alt satıra
+  iniyor ve arkasındaki metni de itiyor.
+  Stil sözlüğü yolu denendi (`styleSheet.styles[tag]`, gerçek `TextSpan`
+  üretiyor) ama `MarkdownWidget` kendi `fallback.merge(seninki)` adımında
+  `copyWith` ile sözlüğü **sıfırdan kuruyor** ve tanımadığı etiketleri
+  düşürüyor — bu yol paket tarafından kapalı.
+  Çözüm: işaret **kelime kelime** yayılıyor, aradaki boşluklar düz metin
+  kalıyor; satır normal yerlerinden kırılıyor. **Genel kural:** metin akışına
+  widget gömüyorsan, o widget bir kelimeden büyük olmasın.
+
+## L-029 — Kullanıcı yazarken ekran yeniden kurulabilir
+- **Tarih:** 2026-08-03
+- **Kaynak:** S-2026-08-03-isaret-duzeltmeleri
+- **Açıklama:** Yorum kutusu tek başına doğru çalışıyordu (test etti) ama
+  gerçek kullanımda kayıt oluşmuyordu. Fark **süre**ydi: sarı/kırmızı anlık,
+  yorumda kullanıcı saniyelerce yazıyor. O sırada arka plandaki yoklama
+  belgeyi tazeleyince ekran widget'ı disposed oluyor, `mounted` false kalıyor
+  ve onun `ref`'iyle yapılacak iş sessizce düşüyordu.
+  L-025'in daha derin hâli: orada kapanan **diyalogun** ref'iydi, burada
+  kapanan **sayfanın**. İkisinin ortak dersi: kullanıcı etkileşimi süren bir
+  akışta hiçbir adım widget yaşam döngüsüne bağlı olmamalı.
+  **Çözüm:** iş `ProviderContainer` ve `ScaffoldMessengerState` ile yapılıyor;
+  ikisi de widget ağacından bağımsız yaşıyor ve diyalog açmadan **önce**
+  yakalanıyor. **Tarama sorusu:** "kullanıcı burada 10 saniye durursa ve ekran
+  bu arada yenilenirse ne olur?"
