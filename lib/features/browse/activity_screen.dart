@@ -104,6 +104,8 @@ class _ActivityTile extends StatelessWidget {
     ActivityKind.backlog: Icons.checklist,
     ActivityKind.evolution: Icons.timeline,
     ActivityKind.knowledge: Icons.school_outlined,
+    ActivityKind.note: Icons.sticky_note_2_outlined,
+    ActivityKind.security: Icons.shield_outlined,
     ActivityKind.system: Icons.gavel,
     ActivityKind.code: Icons.code,
   };

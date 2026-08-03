@@ -5,7 +5,7 @@ ve hangi şemaya uyacağını** tanımlar. Agent ve kullanıcı uygulaması bu s
 dışına çıkmaz. Sözleşme değişiklikleri `EVOLUTION.md`'ye kaydedilir ve bu dosyanın
 başındaki sürüm numarası artırılır.
 
-**Sözleşme sürümü:** 1.10
+**Sözleşme sürümü:** 1.11
 **Ana kopya (master):** `afgover/takip` → `hub/SYSTEM.md`
 (bkz. §10 — her hub kendi kopyasını buradan günceller)
 **Zaman biçimi:** her yerde ISO 8601, UTC (`2026-07-30T14:05:00Z`)
@@ -311,10 +311,16 @@ artifact(A-...): <başlık> eklendi
 backlog: B-014 tamamlandı
 evolution: Aşama 1 kapandı
 knowledge: L-003 eklendi
+note: eklendi / silindi (app)          # (v1.11) notes/ — kullanıcının notu
+security: SEC-005 eklendi / SEC-002 kapatıldı   # (v1.11) SECURITY.md
 system: sözleşme 1.1'e güncellendi
 ```
 
 Uygulama, commit geçmişini bu önekler üzerinden **aktivite akışı** olarak gösterir.
+Listede olmayan bir önek "kod commit'i" sayılır ve akışta öyle görünür; bu
+yüzden yeni bir kayıt türü eklenirken öneki **buraya da** yazılır. `notes/`
+(1.9) ve `SECURITY.md` (1.10) eklenirken bu atlanmıştı: kullanıcının kendi
+notu akışta "kod" olarak görünüyordu (v1.11 düzeltmesi).
 
 ## 9. Kategoriler (uygulama görünümü)
 

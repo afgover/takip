@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:takip/hub/models/activity.dart';
 
@@ -69,5 +71,37 @@ void main() {
 
   test('tanınmayan görev kalıbı uydurulmaz, ham hâli kalır', () {
     expect(parse('task(T-009): arşive taşındı').text, 'T-009: arşive taşındı');
+  });
+
+  group('sözleşmedeki her önek tanınır (§8)', () {
+    // Bu boşluk gerçekten yaşandı: `note:` öneki 1.9'da eklenirken buraya
+    // yazılmamıştı ve kullanıcının kendi notu akışta "Kod" olarak
+    // görünüyordu. Test artık öneki sözleşmeden okuyor, elle listeden değil.
+    final prefixes = RegExp(r'^([a-z]+)(?:\([^)]*\))?:', multiLine: true)
+        .allMatches(
+          RegExp(r'## 8\. Commit mesajı kuralları(.*?)^## 9\.',
+                  multiLine: true, dotAll: true)
+              .firstMatch(File('hub/SYSTEM.md').readAsStringSync())!
+              .group(1)!,
+        )
+        .map((m) => m.group(1)!)
+        .toSet();
+
+    test('sözleşmeden en az yedi önek okundu', () {
+      expect(prefixes.length, greaterThanOrEqualTo(7), reason: '$prefixes');
+    });
+
+    for (final prefix in ['task', 'session', 'artifact', 'backlog',
+                          'evolution', 'knowledge', 'note', 'security',
+                          'system']) {
+      test('$prefix — sözleşmede var ve uygulama tanıyor', () {
+        expect(prefixes, contains(prefix),
+            reason: 'önek sözleşme §8\'de listelenmeli');
+        final entry = parse('$prefix: bir sey oldu');
+        expect(entry.kind, isNot(ActivityKind.code),
+            reason: 'uygulama bu öneki kod commit\'i sanmamalı');
+        expect(entry.kind.isHubRecord, isTrue);
+      });
+    }
   });
 }

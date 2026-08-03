@@ -179,5 +179,36 @@ var ve aynı ekrana iki kapı, ikisinden birinin bayat kalmasına yol açıyor.
 
 `flutter analyze` temiz, **334 test**.
 
+### Kullanıcı
+> security ekranı geldi, çalışıyor
+> masaustundeki takip-agent-kurulum-talimati dosyasini yeni bir projede
+> agentin 0dan tum isleyisi, mumkunse gecmise donuk de olarak yapacagi sekilde
+> ve son guncellemelerimiz ile yenilermisin
+
+### Agent
+Talimat baştan yazıldı. En büyük ekleme §3 — **geçmişi olan projeler**.
+Belge artık açılışta agent'ı ikiye ayırıyor: sıfırdan proje (A) ve geçmişi
+olan proje (B). B'de geçmişi toplamak zorunlu bir adım: hangi kaynaklardan ne
+çıkarılacağı tabloyla veriliyor (git log, etiketler, README/CHANGELOG,
+issue'lar, TODO'lar, kullanıcının eski sohbetleri), geriye dönük oturumlar
+`reconstructed: true` ile yazılıyor, zaman damgası uydurulmuyor, her iddianın
+kaynağı gösteriliyor ve **cevabı yalnız kullanıcıda olan her soru ayrı bir
+`waiting/` görevi** oluyor. Boşluğun boşluk olarak yazılması ayrıca kural.
+
+Belge ayrıca oturum döngüsünü (açılış/boyunca/kapanış) ve bitirme kontrol
+listesini kazandı; 1.9 (`notes/`), 1.10 (`SECURITY.md`) ve sürüm-ayrışma
+durumu (§1 madde 6) işlendi.
+
+Yazarken gerçek bir boşluk çıktı: `note:` commit öneki 1.9'da eklenirken
+sözleşme §8'e ve uygulamanın aktivite ayrıştırıcısına yazılmamıştı — kullanıcının
+kendi notu akışta **"kod commit'i"** olarak görünüyordu. Sessiz bir hata:
+hiçbir şey patlamıyor, yalnız yanlış etiketleniyor. 1.11 ile `note:` ve
+`security:` hem sözleşmeye hem ayrıştırıcıya eklendi. Test artık önek listesini
+**sözleşme dosyasından okuyup** uygulamanın hepsini tanıdığını doğruluyor;
+listeyi iki yerde elle senkron tutmak gerekmiyor. Düzeltme geri alınarak
+testin hatayı yakaladığı doğrulandı.
+
+`flutter analyze` temiz, **344 test**.
+
 ## Sonraki adım
-Cihaza kuruldu. `financer_takip` sözleşmesi 1.10'a yükseltildi.
+Cihaza kuruldu. `financer_takip` sözleşmesi 1.11'e yükseltildi.

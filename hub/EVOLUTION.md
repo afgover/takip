@@ -400,4 +400,12 @@ toplanır ve gerekiyorsa Faz 6 maddelerini (B-060…B-064) yeniden sıralar.
   Tarayıcıdaki "Bekleyen görevler" kutusu kaldırıldı: alt menüde kendi sekmesi
   var ve aynı ekrana iki kapı, ikisinden birinin bayat kalmasına yol açıyor.
   → B-090
+- **K-031:** Yeni bir kayıt türü eklenirken commit öneki de sözleşme §8'e
+  yazılır. `notes/` (1.9) ve `SECURITY.md` (1.10) eklenirken bu atlanmıştı;
+  sonuç, kullanıcının kendi notunun aktivite akışında "kod commit'i" olarak
+  görünmesiydi — sessiz, çünkü hiçbir şey hata vermiyor, yalnız yanlış
+  etiketleniyor. 1.11'de `note:` ve `security:` önekleri sözleşmeye ve
+  uygulamanın ayrıştırıcısına eklendi. Test artık öneki **sözleşme dosyasından
+  okuyup** uygulamanın tanıdığını doğruluyor, yani listeyi elle senkron tutmak
+  gerekmiyor. → B-093
 

@@ -8,6 +8,13 @@ enum ActivityKind {
   knowledge('Bilgi'),
   system('Sözleşme'),
 
+  /// Kullanıcının kendi notu (`notes/`, sözleşme 1.9). Ayrı tür: akışta
+  /// "agent şunu yaptı" ile "kullanıcı kendine not aldı" karışmamalı.
+  note('Not'),
+
+  /// Güvenlik logu kaydı (`SECURITY.md`, sözleşme 1.10).
+  security('Güvenlik'),
+
   /// §8 önekine uymayan commit. K-012'den beri kod ve hub aynı repoda
   /// olduğu için akışta uygulama commit'leri de görünür; ayırt edilebilsin
   /// diye ayrı tür.
@@ -96,6 +103,8 @@ class ActivityEntry {
     'evolution': ActivityKind.evolution,
     'knowledge': ActivityKind.knowledge,
     'system': ActivityKind.system,
+    'note': ActivityKind.note,
+    'security': ActivityKind.security,
   };
 
   /// Sözleşmedeki kalıpları gündelik Türkçeye çevirir. Tanımadığı bir kalıpta
@@ -127,6 +136,8 @@ class ActivityEntry {
       case ActivityKind.evolution:
       case ActivityKind.knowledge:
       case ActivityKind.system:
+      case ActivityKind.note:
+      case ActivityKind.security:
       case ActivityKind.code:
         return rest;
     }

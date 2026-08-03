@@ -210,6 +210,14 @@ başlığına ✅ ve tarih yazılır.
       aldığı not agent'ın iş kuyruğuna düşüyordu. R-001 özü korunarak
       genişletildi (`HubFolder`), `AGENT_PROTOCOL.md` madde 10 eklendi.
       Sarı işaret/kırmızı çizgi bilerek göreve gitmeye devam ediyor. → K-029
+- [x] B-093 · (agent) `note:` ve `security:` commit önekleri tanımsızdı —
+      ✅ 2026-08-03; sözleşme 1.11. Kullanıcının kendi notu aktivite akışında
+      "kod commit'i" olarak görünüyordu. Test öneki sözleşmeden okuyup
+      uygulamanın tanıdığını doğruluyor. → K-031
+- [x] B-094 · (agent) Agent kurulum talimatı yenilendi — ✅ 2026-08-03;
+      sıfırdan proje **ve geçmişi olan proje** için ayrı yol (§3: geçmişi
+      kanıta dayalı toplama, `reconstructed: true`, bilinmeyenleri `waiting/`e
+      koyma), 1.11'in tamamı işlendi. Masaüstü kopyası da yenilendi
 - [x] B-090 · (agent) Güvenlik logu — ✅ 2026-08-03; sözleşme 1.10 §12 +
       `hub/SECURITY.md`. Tarayıcıdaki "Bekleyen görevler" kutusu Security ile
       değiştirildi (alt menüde zaten var). Açık kayıtlar üstte, türe göre
