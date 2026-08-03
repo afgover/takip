@@ -5,7 +5,7 @@ ve hangi şemaya uyacağını** tanımlar. Agent ve kullanıcı uygulaması bu s
 dışına çıkmaz. Sözleşme değişiklikleri `EVOLUTION.md`'ye kaydedilir ve bu dosyanın
 başındaki sürüm numarası artırılır.
 
-**Sözleşme sürümü:** 1.7
+**Sözleşme sürümü:** 1.8
 **Ana kopya (master):** `afgover/takip` → `hub/SYSTEM.md`
 (bkz. §10 — her hub kendi kopyasını buradan günceller)
 **Zaman biçimi:** her yerde ISO 8601, UTC (`2026-07-30T14:05:00Z`)
@@ -163,7 +163,8 @@ result: none                 # tamamlanınca: sonucun 1 satır özeti veya artif
 # kayıtlarda bulunur; normal görevlerde hiç yazılmaz. Üçü birlikte anlamlıdır.
 source: hub/sessions/2026-08-01-x/session.md   # kaydın bağlı olduğu belge
 quote: "işaretlenen metnin tamamı"             # o belgeden birebir alıntı
-mark: highlight              # highlight | underline — belgede nasıl çizilecek
+mark: highlight              # highlight (sarı) | underline (kırmızı) |
+                             # comment (yeşil, v1.8) — belgede nasıl çizilecek
 ---
 
 # <başlık>
@@ -233,7 +234,7 @@ bir görevdir — R-001 gereği `tasks/inbox/`'a yazılır — ama üç ek alan 
 |---|---|
 | `source` | Kaydın bağlı olduğu belgenin hub içindeki yolu |
 | `quote` | O belgeden **birebir** alıntı; işaretin yeri bununla bulunur |
-| `mark` | `highlight` (sarı) veya `underline` (kırmızı) |
+| `mark` | `highlight` (sarı), `underline` (kırmızı) veya `comment` (yeşil) |
 
 `category` kaydın **ne olduğunu** söyler: `gorev` (yapılacak iş), `yorum`,
 `duzeltme` (yanlış olduğu düşünülen yer), `tartisma` (açık soru) ya da serbest
