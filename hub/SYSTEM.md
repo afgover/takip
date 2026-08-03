@@ -5,7 +5,7 @@ ve hangi şemaya uyacağını** tanımlar. Agent ve kullanıcı uygulaması bu s
 dışına çıkmaz. Sözleşme değişiklikleri `EVOLUTION.md`'ye kaydedilir ve bu dosyanın
 başındaki sürüm numarası artırılır.
 
-**Sözleşme sürümü:** 1.6
+**Sözleşme sürümü:** 1.7
 **Ana kopya (master):** `afgover/takip` → `hub/SYSTEM.md`
 (bkz. §10 — her hub kendi kopyasını buradan günceller)
 **Zaman biçimi:** her yerde ISO 8601, UTC (`2026-07-30T14:05:00Z`)
@@ -179,6 +179,13 @@ Kurallar:
 - **App yalnızca `tasks/inbox/`'a yazar**; başka klasöre dokunmaz. Bu, v1.4'te
   de değişmedi: kullanıcı bekleyen bir işi bitirdiğinde app o dosyayı
   taşımaz, **inbox'a bir bildirim görevi** yazar (aşağıya bakın).
+- **(v1.7) App, `inbox/`'ta duran ve kendi yazdığı bir kaydı silebilir.**
+  Yalnız oradaki: agent kaydı `active/`e almışsa app ona dokunamaz — o iş
+  artık ele alınmıştır ve sessizce yok etmek agent'ın çalışmasını çöpe atardı.
+  Bu, R-001'in yumuşatılması değil sınırının aynı kalmasıdır: app'in
+  dokunduğu tek klasör hâlâ `inbox/`. Gerekçe: kullanıcı yanlışlıkla koyduğu
+  bir işareti geri alabilmeli; bunun için agent'a görev açmak, tek dokunuşluk
+  bir hatayı iki tarafın işine çevirirdi (K-026).
 - Klasörler arası taşımayı yalnızca agent yapar
   (`inbox → active → waiting → active → done`; sıra bunlarla sınırlı değil,
   ama her geçişi agent yapar).
