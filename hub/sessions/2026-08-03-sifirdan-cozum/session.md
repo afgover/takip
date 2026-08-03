@@ -210,5 +210,33 @@ testin hatayı yakaladığı doğrulandı.
 
 `flutter analyze` temiz, **344 test**.
 
+### Kullanıcı
+> financer tarafinda guncelleme yapilip push edildi(financer_takip) fakat
+> uygulamada guncellemeleri goremiyorum
+
+### Agent
+Senkron kodu doğruydu — `syncNow()` bağlı bütün repoları indiriyor. Eksik olan
+**tetikleyici**ydi: yoklama yalnız aktif reponun son commit'ine bakıyordu, yani
+aktif olmayan bir repoya yapılan push hiçbir sinyal üretmiyordu. Senkron ancak
+aktif repo değişince, repo değiştirilince ya da elle tetiklenince koşuyordu.
+
+L-031'in aynısı bir katman aşağıda: orada liste çok kaynaklıydı ama listeden
+açılan yol tek kaynaklıydı; burada indirme çok kaynaklı ama uyandıran sinyal
+tek kaynaklıydı.
+
+Yoklama artık bütün bağlantıların başını okuyor (`HubStatus.heads`), değişen
+slug'ları bildiriyor (`changedSlugs`) ve senkron bunu dinliyor. Maliyeti düşük:
+değişiklik yokken yanıt ETag sayesinde 304 ve istek limitinden düşmüyor
+(SK-002). Her repo kendi tokeniyle yoklanıyor — token isteğin yolundan
+seçildiği için bu kendiliğinden oluyor (L-019).
+
+Uçtan uca test önce **yanlış sebeple** geçti: tetiklenen senkron arka planda
+koştuğu için ölçüm o bitmeden yapılıyordu. İstek listesine bakınca financer'a
+hiç ağaç isteği gitmediği görüldü; test tetiklenen işi bekleyecek şekilde
+düzeltildi. Sonra eski tetikleyici geri konularak testin hatayı gerçekten
+yakaladığı doğrulandı (`eski içerik` ≠ `güvenlik duruşu belgesi`).
+
+`flutter analyze` temiz, **349 test**.
+
 ## Sonraki adım
 Cihaza kuruldu. `financer_takip` sözleşmesi 1.11'e yükseltildi.

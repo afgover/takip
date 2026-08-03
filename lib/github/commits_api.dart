@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../core/errors.dart';
 import '../hub/hub_config.dart';
+import '../hub/hub_connections.dart';
 import 'client.dart';
 
 /// Commit geçmişi — yoklamanın değişiklik sinyali (B-024) ve ileride aktivite
@@ -98,5 +99,22 @@ final commitsApiProvider = Provider<CommitsApi>((ref) {
     ref.watch(githubDioProvider),
     owner: config.owner,
     repo: config.repo,
+  );
+});
+
+/// Belirli bir bağlantının commit API'si — yoklama bütün repoları izliyor
+/// (L-034). Bağlantı bulunamazsa aktif repoya düşer.
+///
+/// Token ayrıca seçilmiyor: istemci onu isteğin **yolundan** belirliyor
+/// (L-019), yani doğru repoya doğru token kendiliğinden gidiyor.
+final commitsApiForSlugProvider =
+    Provider.family<CommitsApi, String>((ref, slug) {
+  final connection =
+      ref.watch(hubConnectionsProvider).valueOrNull?.bySlug(slug);
+  if (connection == null) return ref.watch(commitsApiProvider);
+  return CommitsApi(
+    ref.watch(githubDioProvider),
+    owner: connection.owner,
+    repo: connection.repo,
   );
 });

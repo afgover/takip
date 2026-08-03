@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../core/errors.dart';
 import '../github/commits_api.dart';
 import 'hub_config.dart';
+import 'hub_connections.dart';
 import 'settings.dart';
 
 /// Yoklamanın o anki durumu. Ekranlar [headSha]'yı izler: değeri değiştiğinde
@@ -13,6 +14,8 @@ import 'settings.dart';
 class HubStatus {
   const HubStatus({
     this.headSha,
+    this.heads = const {},
+    this.changedSlugs = const {},
     this.lastCheckedAt,
     this.lastChangedAt,
     this.error,
@@ -20,8 +23,19 @@ class HubStatus {
     this.watching = false,
   });
 
-  /// Son görülen commit sha'sı (hub'ın "sürümü").
+  /// **Aktif** reponun son görülen commit sha'sı ("3 dakika önce güncellendi"
+  /// göstergesi bunu anlatır).
   final String? headSha;
+
+  /// slug → son görülen commit sha'sı, **bütün bağlantılar için**.
+  ///
+  /// Senkron baştan beri tüm repoları indiriyordu ama tetikleyicisi yalnız
+  /// aktif repoydu; aktif olmayan bir repoya yapılan push hiçbir sinyal
+  /// üretmiyor ve uygulamada hiç görünmüyordu (L-034).
+  final Map<String, String> heads;
+
+  /// Son yoklamada başı değişen repolar. Senkron bunu izler.
+  final Set<String> changedSlugs;
   final DateTime? lastCheckedAt;
 
   /// [headSha]'nın en son değiştiği an — "3 dakika önce güncellendi" için.
@@ -37,6 +51,8 @@ class HubStatus {
 
   HubStatus copyWith({
     String? headSha,
+    Map<String, String>? heads,
+    Set<String>? changedSlugs,
     DateTime? lastCheckedAt,
     DateTime? lastChangedAt,
     HubError? error,
@@ -46,6 +62,8 @@ class HubStatus {
   }) =>
       HubStatus(
         headSha: headSha ?? this.headSha,
+        heads: heads ?? this.heads,
+        changedSlugs: changedSlugs ?? this.changedSlugs,
         lastCheckedAt: lastCheckedAt ?? this.lastCheckedAt,
         lastChangedAt: lastChangedAt ?? this.lastChangedAt,
         error: clearError ? null : (error ?? this.error),
@@ -109,6 +127,11 @@ class HubWatcher extends Notifier<HubStatus> {
   }
 
   /// Tek yoklama. Kullanıcı "aşağı çekip yenile" yaptığında da çağrılır.
+  ///
+  /// **Bütün bağlantılar** yoklanır, yalnız aktif olan değil. Maliyeti düşük:
+  /// değişiklik yokken yanıt ETag sayesinde 304 ve istek limitinden düşmüyor
+  /// (SK-002). Aktif repoyla sınırlı olduğu sürece başka bir repoya yapılan
+  /// push uygulamada hiç görünmüyordu (L-034).
   Future<void> checkNow() async {
     if (_inFlight) return; // yavaş ağda istekler üst üste binmesin
 
@@ -119,22 +142,50 @@ class HubWatcher extends Notifier<HubStatus> {
     if (_pausedUntil != null && now.isBefore(_pausedUntil!)) return;
     _pausedUntil = null;
 
-    // Repo değiştiyse önceki hub'ın sürümü ile karşılaştırmak anlamsız.
+    // Repo değiştiyse **aktif** repoyu anlatan alanlar sıfırlanır; diğer
+    // repoların bilinen başları korunur, onlar repo değişiminden etkilenmez.
     if (_configSlug != config.slug) {
       _configSlug = config.slug;
-      state = const HubStatus().copyWith(watching: state.watching);
+      state = HubStatus(
+        heads: state.heads,
+        watching: state.watching,
+      );
     }
+
+    final connections =
+        ref.read(hubConnectionsProvider).valueOrNull?.connections ??
+            <HubConfig>[config];
 
     _inFlight = true;
     state = state.copyWith(checking: true);
     try {
-      final sha = await ref.read(commitsApiProvider).headSha();
-      final changed = sha != null && sha != state.headSha;
+      final heads = {...state.heads};
+      final changed = <String>{};
+      HubError? firstError;
+
+      for (final connection in connections) {
+        try {
+          final sha = await ref
+              .read(commitsApiForSlugProvider(connection.slug))
+              .headSha();
+          if (sha == null) continue;
+          if (heads[connection.slug] != sha) changed.add(connection.slug);
+          heads[connection.slug] = sha;
+        } on HubError catch (e) {
+          // Bir repo okunamazsa (token kapsamıyor) diğerleri yoklanmaya devam
+          // etsin; hata yalnız aktif repodan geliyorsa kullanıcıya gösterilir.
+          if (connection.slug == config.slug) firstError = e;
+        }
+      }
+
+      if (firstError != null) throw firstError;
 
       state = state.copyWith(
-        headSha: sha,
+        headSha: heads[config.slug],
+        heads: heads,
+        changedSlugs: changed,
         lastCheckedAt: clock.now(),
-        lastChangedAt: changed ? clock.now() : null,
+        lastChangedAt: changed.contains(config.slug) ? clock.now() : null,
         checking: false,
         clearError: true,
       );

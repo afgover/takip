@@ -210,6 +210,11 @@ başlığına ✅ ve tarih yazılır.
       aldığı not agent'ın iş kuyruğuna düşüyordu. R-001 özü korunarak
       genişletildi (`HubFolder`), `AGENT_PROTOCOL.md` madde 10 eklendi.
       Sarı işaret/kırmızı çizgi bilerek göreve gitmeye devam ediyor. → K-029
+- [x] B-095 · (agent) Aktif olmayan repodaki değişiklik uygulamada
+      görünmüyordu — ✅ 2026-08-03; senkron tüm repoları indiriyordu ama
+      yoklama yalnız aktif reponun başına bakıyordu, yani sinyal hiç
+      üretilmiyordu. Yoklama artık bütün bağlantıları izliyor
+      (`HubStatus.heads` / `changedSlugs`). → L-034
 - [x] B-093 · (agent) `note:` ve `security:` commit önekleri tanımsızdı —
       ✅ 2026-08-03; sözleşme 1.11. Kullanıcının kendi notu aktivite akışında
       "kod commit'i" olarak görünüyordu. Test öneki sözleşmeden okuyup

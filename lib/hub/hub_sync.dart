@@ -77,10 +77,14 @@ class HubSync extends Notifier<SyncStatus> {
   @override
   SyncStatus build() {
     // Yoklama hub'da değişiklik görürse (B-024) kendiliğinden senkron ol.
-    ref.listen<String?>(
-      hubWatcherProvider.select((s) => s.headSha),
+    // Yoklama **herhangi bir** repoda değişiklik görürse senkron ol (B-024).
+    // Önceden yalnız aktif reponun başı izleniyordu; senkron tüm repoları
+    // indirdiği hâlde tetikleyici tek repoya bakıyordu, yani aktif olmayan
+    // bir repoya yapılan push uygulamada hiç görünmüyordu (L-034).
+    ref.listen<Set<String>>(
+      hubWatcherProvider.select((s) => s.changedSlugs),
       (previous, next) {
-        if (next != null && previous != next) unawaited(syncNow());
+        if (next.isNotEmpty) unawaited(syncNow());
       },
     );
     unawaited(_restoreMeta());

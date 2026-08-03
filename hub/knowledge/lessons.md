@@ -467,3 +467,29 @@ Biçim: `SYSTEM.md` §5.
   **Genel kural:** kullanıcı "çalışmıyor" diyorsa ve parça testleri yeşilse,
   hata neredeyse kesinlikle parçaların **arasındadır**. Yeni parça testi
   yazmak yerine zinciri baştan sona süren bir test yaz.
+
+## L-034 — Çok kaynaklı senkron, tek kaynaklı tetikleyiciyle çalışmaz
+- **Tarih:** 2026-08-03
+- **Kaynak:** S-2026-08-03-sifirdan-cozum
+- **Açıklama:** Kullanıcı `financer_takip`'e push yaptı ve uygulamada hiçbir
+  şey değişmedi. Senkron kodu **doğruydu**: `syncNow()` bağlı bütün repoları
+  indiriyor. Eksik olan tetikleyiciydi — yoklama yalnız **aktif** reponun son
+  commit'ine bakıyor, dolayısıyla aktif olmayan bir repoya yapılan push hiçbir
+  sinyal üretmiyordu. Senkron ancak aktif repo değişince, repo değiştirilince
+  ya da elle tetiklenince koşuyordu.
+  L-031'in aynısı bir katman aşağıda: orada liste çok kaynaklı olmuştu ama
+  listeden **açılan yol** tek kaynaklıydı; burada indirme çok kaynaklı ama
+  **uyandıran sinyal** tek kaynaklı.
+  **Çözüm:** yoklama bütün bağlantıların başını okuyor (`HubStatus.heads`),
+  değişen slug'ları bildiriyor (`changedSlugs`) ve senkron bunu dinliyor.
+  Maliyeti düşük: değişiklik yokken yanıt ETag sayesinde 304 ve istek
+  limitinden düşmüyor (SK-002).
+  **Genel kural:** bir yeteneği çok kaynaklı yaparken **zincirin tamamını**
+  say — veriyi getiren, uyandıran, gösteren ve yazan. Biri tek kaynaklı
+  kalırsa özellik "bazen çalışan" bir şeye dönüşür ki bu, hiç çalışmamaktan
+  daha kötüdür: kullanıcı ne zaman güveneceğini bilemez.
+  **Test notu:** ilk yazdığım uçtan uca test yanlış sebeple geçiyordu —
+  senkron arka planda tetiklendiği için ölçüm o bitmeden yapılıyordu.
+  Tetiklenen işi bekleyip ölçmek gerekti; "geçti" ile "doğru sebeple geçti"
+  arasındaki farkı istek listesine bakarak gördüm.
+
