@@ -5,6 +5,8 @@ import '../../core/constants.dart';
 import '../../core/errors.dart';
 import '../../hub/hub_access.dart';
 import '../../hub/hub_config.dart';
+import '../../hub/token_scope.dart';
+import '../common/token_scope_warning_dialog.dart';
 
 /// Hub bağlantı kurulumu: repo (owner/ad) + fine-grained token.
 ///
@@ -56,7 +58,12 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
     });
 
     try {
-      await ref.read(hubAccessVerifierProvider)(candidate);
+      final wideScope = await ref.read(hubAccessVerifierProvider)(candidate);
+      // Kapsam uyarısı hata değil: token çalışıyor ama fazlasını da yapıyor
+      // (B-092). Kararı kullanıcı verir; "Vazgeç" derse hiçbir şey kaydedilmez
+      // ve dar bir token yapıştırabileceği formda kalır.
+      if (!mounted) return;
+      if (wideScope != null && !await _confirmWideScope(wideScope)) return;
       // Yalnızca doğrulama geçtiyse diske yazılır.
       await ref.read(hubConfigProvider.notifier).save(candidate);
       // Kayıt sonrası app.dart otomatik olarak kabuğa geçer; burada
@@ -68,6 +75,15 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
     } finally {
       if (mounted) setState(() => _busy = false);
     }
+  }
+
+  /// Uyarı gösterilirken ilerleme göstergesi durur: ağ işi bitmiştir, bundan
+  /// sonra beklenen şey kullanıcının cevabı.
+  Future<bool> _confirmWideScope(TokenScopeWarning warning) async {
+    setState(() => _busy = false);
+    final proceed = await confirmWideTokenScope(context, warning);
+    if (mounted && proceed) setState(() => _busy = true);
+    return proceed;
   }
 
   @override

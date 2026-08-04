@@ -68,6 +68,7 @@ void main() {
         overrides: [
           hubAccessVerifierProvider.overrideWithValue((candidate) async {
             verified.add(candidate);
+            return null;
           }),
         ],
       );
@@ -111,6 +112,7 @@ void main() {
         overrides: [
           hubAccessVerifierProvider.overrideWithValue((candidate) async {
             verified.add(candidate);
+            return null;
           }),
         ],
       );

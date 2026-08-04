@@ -47,14 +47,28 @@ class ContentsApi {
 
   /// Yol repoda var mı? Yetki hataları yukarı geçer — "yok" ile "göremiyorum"
   /// karıştırılmaz (onboarding doğrulaması buna dayanır, B-022).
-  Future<bool> pathExists(String path) async {
+  Future<bool> pathExists(String path) async => (await probePath(path)).exists;
+
+  /// [pathExists] + yanıtta GitHub'ın bildirdiği OAuth scope'ları (B-092).
+  ///
+  /// Kapsam bilgisi **fazladan istek olmadan** gelir: `X-OAuth-Scopes` her
+  /// kimlikli yanıtta bulunur (klasik token'larda), yani zaten yaptığımız
+  /// erişim kontrolünün yanıtından okunur. Yorumu bu katmanın işi değil —
+  /// burada yalnız başlığın ham değeri taşınır (`hub/token_scope.dart`).
+  ///
+  /// Yol yoksa (404) yanıt yine de kimlikliydi; başlık okunabiliyorsa
+  /// taşınır.
+  Future<PathProbe> probePath(String path) async {
     try {
-      await _send(() => _dio.get<dynamic>(_url(path)));
-      return true;
+      final res = await _send(() => _dio.get<dynamic>(_url(path)));
+      return PathProbe(exists: true, oauthScopes: _scopesOf(res));
     } on HubNotFoundError {
-      return false;
+      return const PathProbe(exists: false);
     }
   }
+
+  static String? _scopesOf(Response<dynamic> res) =>
+      res.headers.value('x-oauth-scopes');
 
   /// Token'ın yazma izni **kesin olarak yok mu**? Varsa/bilinmiyorsa null,
   /// yoksa eksik iznin adı döner (B-026).
@@ -158,6 +172,18 @@ class ContentsApi {
     Future<Response<dynamic>> Function() request,
   ) =>
       sendGithub(request);
+}
+
+/// Bir yol yoklamasının sonucu: yol var mı, ve yanıt token'ın OAuth
+/// scope'larını bildirdi mi (B-092).
+class PathProbe {
+  const PathProbe({required this.exists, this.oauthScopes});
+
+  final bool exists;
+
+  /// `X-OAuth-Scopes` başlığının ham değeri. Fine-grained token'larda GitHub
+  /// bu başlığı hiç göndermez, o yüzden null olması olağandır.
+  final String? oauthScopes;
 }
 
 /// Dizin listesindeki tek kayıt (dosya ya da alt dizin).

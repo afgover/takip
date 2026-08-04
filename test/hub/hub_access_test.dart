@@ -53,6 +53,56 @@ void main() {
       expect(built.adapter.requests.last.method, 'PUT');
     });
 
+    test('geniş kapsamlı token erişimi geçer ama uyarı döner (B-092)', () async {
+      // Klasik token: GitHub scope'ları X-OAuth-Scopes başlığında bildirir.
+      // Kapsam kontrolü **fazladan istek yapmaz**, aynı yanıttan okur.
+      final built = buildApi((options, __) {
+        if (options.method == 'GET') {
+          return jsonResponse(
+            [
+              {'name': 'SYSTEM.md', 'path': 'hub/SYSTEM.md', 'sha': 'a',
+                'type': 'file'},
+            ],
+            headers: {
+              'x-oauth-scopes': ['repo, gist'],
+            },
+          );
+        }
+        return jsonResponse({'message': 'no content'}, status: 422);
+      });
+
+      final warning = await checkHubAccess(built.api, candidate);
+
+      expect(warning, isNotNull);
+      expect(warning!.scopes, ['repo', 'gist']);
+      expect(built.adapter.requests, hasLength(2),
+          reason: 'kapsam kontrolü için üçüncü bir istek atılmamalı');
+    });
+
+    test('başlık gelmeyen (fine-grained) token uyarı üretmez', () async {
+      final built = buildApi((options, __) {
+        if (options.method == 'GET') {
+          return jsonResponse([
+            {'name': 'SYSTEM.md', 'path': 'hub/SYSTEM.md', 'sha': 'a',
+              'type': 'file'},
+          ]);
+        }
+        return jsonResponse({'message': 'no content'}, status: 422);
+      });
+
+      expect(
+        await checkHubAccess(
+          built.api,
+          const HubConfig(
+            owner: 'afgover',
+            repo: 'takip',
+            token: 'github_pat_x',
+          ),
+        ),
+        isNull,
+      );
+    });
+
     test('404 → repo/token/klasör olasılıklarını birlikte söyler', () async {
       final built = buildApi(
         (_, __) => jsonResponse({'message': 'Not Found'}, status: 404),

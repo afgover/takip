@@ -4,9 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:takip/core/errors.dart';
+import 'package:takip/features/common/token_scope_warning_dialog.dart';
 import 'package:takip/features/onboarding/onboarding_screen.dart';
 import 'package:takip/hub/hub_access.dart';
 import 'package:takip/hub/hub_config.dart';
+import 'package:takip/hub/token_scope.dart';
 
 /// Secure storage yerine bellek: widget testinde platform kanalı yok.
 class FakeHubConfigNotifier extends HubConfigNotifier {
@@ -24,7 +26,7 @@ class FakeHubConfigNotifier extends HubConfigNotifier {
 
 ({Widget widget, FakeHubConfigNotifier config, List<HubConfig> verified})
     buildScreen({
-  Future<void> Function(HubConfig)? verifier,
+  Future<TokenScopeWarning?> Function(HubConfig)? verifier,
 }) {
   final notifier = FakeHubConfigNotifier();
   final verified = <HubConfig>[];
@@ -35,7 +37,7 @@ class FakeHubConfigNotifier extends HubConfigNotifier {
         hubConfigProvider.overrideWith(() => notifier),
         hubAccessVerifierProvider.overrideWithValue((candidate) async {
           verified.add(candidate);
-          if (verifier != null) await verifier(candidate);
+          return verifier == null ? null : await verifier(candidate);
         }),
       ],
       child: const MaterialApp(home: OnboardingScreen()),
@@ -124,7 +126,7 @@ void main() {
 
   testWidgets('doğrulama sürerken buton kilitlenir, ikinci istek gitmez',
       (tester) async {
-    final gate = Completer<void>();
+    final gate = Completer<TokenScopeWarning?>();
     final built = buildScreen(verifier: (_) => gate.future);
     await tester.pumpWidget(built.widget);
 
@@ -137,7 +139,7 @@ void main() {
     await tester.pump();
     expect(built.verified, hasLength(1));
 
-    gate.complete();
+    gate.complete(null);
     await tester.pumpAndSettle();
     expect(built.config.saved, hasLength(1));
   });
@@ -149,6 +151,7 @@ void main() {
       verifier: (_) async {
         attempt++;
         if (attempt == 1) throw const HubNetworkError('Ağ bağlantısı yok.');
+        return null;
       },
     );
     await tester.pumpWidget(built.widget);
@@ -163,6 +166,59 @@ void main() {
 
     expect(find.byKey(OnboardingScreen.errorKey), findsNothing);
     expect(built.config.saved, hasLength(1));
+  });
+
+  group('geniş kapsamlı token uyarısı (B-092)', () {
+    const wide = TokenScopeWarning(
+      title: 'Bu token gereğinden geniş',
+      body: 'repo scope\'u bütün repolara erişim verir.',
+      scopes: ['repo'],
+    );
+
+    testWidgets('uyarı hata kutusu değil, onay kutusu', (tester) async {
+      final built = buildScreen(verifier: (_) async => wide);
+      await tester.pumpWidget(built.widget);
+
+      await enterToken(tester, 'ghp_genis');
+      await tester.tap(find.byKey(OnboardingScreen.submitButtonKey));
+      await tester.pumpAndSettle();
+
+      expect(find.byKey(tokenScopeDialogKey), findsOneWidget);
+      expect(find.byKey(OnboardingScreen.errorKey), findsNothing);
+      expect(built.config.saved, isEmpty, reason: 'karar verilmeden yazılmaz');
+    });
+
+    testWidgets('vazgeçilirse token kaydedilmez ve formda kalınır',
+        (tester) async {
+      final built = buildScreen(verifier: (_) async => wide);
+      await tester.pumpWidget(built.widget);
+
+      await enterToken(tester, 'ghp_genis');
+      await tester.tap(find.byKey(OnboardingScreen.submitButtonKey));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(tokenScopeCancelKey));
+      await tester.pumpAndSettle();
+
+      expect(built.config.saved, isEmpty);
+      // Buton yeniden basılabilir olmalı: kullanıcı dar token yapıştıracak.
+      expect(find.byType(CircularProgressIndicator), findsNothing);
+      expect(find.byKey(OnboardingScreen.tokenFieldKey), findsOneWidget);
+    });
+
+    testWidgets('kullanıcı ısrar ederse bağlanır — uyarı engel değil',
+        (tester) async {
+      final built = buildScreen(verifier: (_) async => wide);
+      await tester.pumpWidget(built.widget);
+
+      await enterToken(tester, 'ghp_genis');
+      await tester.tap(find.byKey(OnboardingScreen.submitButtonKey));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(tokenScopeContinueKey));
+      await tester.pumpAndSettle();
+
+      expect(built.config.saved, hasLength(1));
+      expect(built.config.saved.single.token, 'ghp_genis');
+    });
   });
 
   testWidgets('token varsayılan olarak gizli, düğmeyle görünür olur',

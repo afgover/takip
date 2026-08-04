@@ -8,6 +8,8 @@ import '../../hub/hub_access.dart';
 import '../../hub/hub_config.dart';
 import '../../hub/hub_connections.dart';
 import '../../hub/hub_watcher.dart';
+import '../../hub/token_scope.dart';
+import '../common/token_scope_warning_dialog.dart';
 
 /// Ekran ne yapıyor: yeni repo mu ekliyor, var olanı mı düzenliyor (T-003).
 enum ConnectionMode { add, edit }
@@ -107,7 +109,11 @@ class _ConnectionScreenState extends ConsumerState<ConnectionScreen> {
     });
 
     try {
-      await ref.read(hubAccessVerifierProvider)(candidate);
+      final wideScope = await ref.read(hubAccessVerifierProvider)(candidate);
+      // Onboarding'le aynı kural (B-092): kapsam uyarısı engel değil, karar
+      // kullanıcının. Vazgeçerse eski bağlantı olduğu gibi kalır.
+      if (!mounted) return;
+      if (wideScope != null && !await _confirmWideScope(wideScope)) return;
       await ref.read(hubConfigProvider.notifier).save(candidate);
       // Token düzeldiyse yoklama durmuş olabilir; yeniden başlat.
       ref.read(hubWatcherProvider.notifier).start();
@@ -127,6 +133,14 @@ class _ConnectionScreenState extends ConsumerState<ConnectionScreen> {
     } finally {
       if (mounted) setState(() => _busy = false);
     }
+  }
+
+  /// Uyarı gösterilirken ilerleme göstergesi durur (bkz. onboarding).
+  Future<bool> _confirmWideScope(TokenScopeWarning warning) async {
+    setState(() => _busy = false);
+    final proceed = await confirmWideTokenScope(context, warning);
+    if (mounted && proceed) setState(() => _busy = true);
+    return proceed;
   }
 
   @override
