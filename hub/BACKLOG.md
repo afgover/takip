@@ -222,7 +222,19 @@ başlığına ✅ ve tarih yazılır.
       `raw.githubusercontent.com/afgover/takip/main/hub/SYSTEM.md`'yi işaret
       ediyor; public olunca başkalarının agent'ları bu repoyu poll eder ve
       sözleşmede kırıcı değişiklik yapma özgürlüğü biter (bugün 1.8→1.11 tek
-      günde yapıldı). Git geçmişi token deseni açısından tarandı: temiz
+      günde yapıldı). Git geçmişi token deseni açısından tarandı: temiz.
+      · ℹ **Maliyet ayrımı (K-032):** repoyu açmak tek seferlik ve kimse
+      ilgilenmezse sürekli yükü yok; store **tekrar eden taahhüt** (yıllık hedef
+      SDK, App Review, gizlilik politikası, destek). Bakımsız store uygulaması
+      çürür ve kaldırılır. Beklenen kazanç: yöntemin yayılması + yargı kanıtı
+      olarak repo. Beklenmeyen: gelir (ücretsiz + MIT) ve anlamlı kullanıcı
+      sayısı (Türkçe tek dil + PAT onboarding). Sıra: repo → yazı → Releases'ta
+      APK → store **yalnız gerçek talep gelirse**
+- [ ] B-098 · (user+agent) Store dağıtımı — **ön koşulu B-097 ve gerçek talep.**
+      Talep gelirse sırasıyla: B-061 (GitHub App/OAuth), SEC-006'nın kapanması,
+      i18n, iOS derlemesi, gizlilik politikası (gover.us'ta barındırılır), Play
+      Data Safety ve App Store privacy formları. Dev hesapları mevcut; asıl
+      maliyet hesap ücreti değil, bakım taahhüdü
 - [x] B-095 · (agent) Aktif olmayan repodaki değişiklik uygulamada
       görünmüyordu — ✅ 2026-08-03; senkron tüm repoları indiriyordu ama
       yoklama yalnız aktif reponun başına bakıyordu, yani sinyal hiç

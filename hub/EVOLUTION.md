@@ -260,6 +260,19 @@ toplanır ve gerekiyorsa Faz 6 maddelerini (B-060…B-064) yeniden sıralar.
   (B-056). Ölçüm önemliydi: `flutter install`'ın kaldırması yapısal
   sanılmıştı, kaynağa bakılıp cihazda üç senaryo denenince bunun aracın hata
   yolu olduğu görüldü ve L-014 düzeltildi (L-016). 236 test.
+- 2026-08-03: Günün tamamı gerçek kullanımdan çıkan sürtünmelerle geçti ve
+  sözleşme dört sürüm ilerledi (1.8 → 1.11). Üç şey kalıcı olarak değişti:
+  **not, görev değil** (`notes/`, 1.9 — kullanıcının kendine aldığı not agent'ın
+  iş kuyruğuna düşüyordu), **güvenlik geçmişi tek yerde** (`SECURITY.md`, 1.10)
+  ve **commit önekleri eksiksiz** (1.11 — `note:`/`security:` tanımsız olduğu
+  için kullanıcının kendi notu aktivite akışında "kod" görünüyordu).
+  Aynı gün üç hata da kaynağında çözüldü: işaretin satır akışını bozması
+  (L-032, algoritma değişti), çapraz repo görev detayı (L-031) ve aktif olmayan
+  repodaki değişikliğin hiç görünmemesi (L-034). Son ikisi aynı kalıbın iki
+  yüzü: bir yeteneği çok kaynaklı yaparken zincirin **tamamını** saymamak.
+  Ayrıca agent kurulum talimatı geçmişi olan projeleri de kapsayacak şekilde
+  yenilendi, MIT lisansı ve yeni README eklendi, açık kaynak/store kararı
+  ayrıştırıldı (K-032). 349 test.
   → S-2026-08-01-token-kaliciligi, K-019, R-006, L-015, L-016
 - 2026-08-01: **Sisteme ikinci proje ekleme yolu açıldı.** Yeni proje ekleme
   prosedürü kalıcı belge oldu (`artifacts/reference/proje-ekleme.md`) ve bunu
@@ -408,4 +421,28 @@ toplanır ve gerekiyorsa Faz 6 maddelerini (B-060…B-064) yeniden sıralar.
   uygulamanın ayrıştırıcısına eklendi. Test artık öneki **sözleşme dosyasından
   okuyup** uygulamanın tanıdığını doğruluyor, yani listeyi elle senkron tutmak
   gerekmiyor. → B-093
+- **K-032:** Açık kaynak ve store dağıtımı **ayrı kararlar** olarak ele alındı;
+  aynı kefeye konmaları yanlış olurdu çünkü maliyet profilleri temelden farklı.
+  Repoyu açmak tek seferliktir ve kimse ilgilenmezse sürekli bir yükü yoktur.
+  Store ise **tekrar eden bir taahhüt**: Google'ın yıllık hedef SDK yükseltmesi
+  yapılmazsa uygulama listeden gizlenir, Apple periyodik yeniden derleme ve her
+  güncellemede inceleme ister, gizlilik politikası güncel tutulmalıdır. Bakımsız
+  bir store uygulaması durmaz, **çürür ve kaldırılır** — "koyup unutmak"
+  seçeneği yok.
+  Beklenen kazanç da ayrıştırıldı. Asıl varlık uygulama değil, **yöntem**:
+  sözleşme + protokol + kurulum talimatı, hiçbir şey kurmadan benimsenebiliyor.
+  Açık kaynağın somut getirisi bu yöntemin yayılması ve reponun yargı kanıtı
+  olması (31 oturum kaydı, 34 numaralı ders, kendi açıklarını dürüstçe listeleyen
+  güvenlik logu). Store'un bu getiriye katkısı yok denecek kadar az; karşılığında
+  getireceği kullanıcı da bugünkü hâliyle (Türkçe tek dil, PAT ile onboarding)
+  onlarca mertebesinde.
+  Gelir beklenmiyor: ücretsiz + backend yok + MIT. MIT ayrıca üçüncü birinin
+  aynı uygulamayı kendi adıyla yayımlamasına izin verir; bilinerek kabul edildi.
+  **Bu projeye özel bedel:** §10 zinciri bu reponun raw adresini işaret ettiği
+  için benimsenme, sözleşmede hızlı iterasyon özgürlüğünü bitirir — bugün bir
+  günde 1.8→1.11 yapıldı, bu esneklik bugünkü en büyük avantaj.
+  **Karar:** sıra bozulmayacak — önce repo + yöntemi anlatan yazı + GitHub
+  Releases'ta APK; store yalnız **gerçek talep** gelirse ve ancak B-061 (GitHub
+  App/OAuth) ile SEC-006 kapandıktan sonra. Talep gelmezse hiçbir şey kaybedilmiş
+  olmaz. → B-097
 
