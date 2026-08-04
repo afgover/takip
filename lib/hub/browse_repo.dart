@@ -183,10 +183,11 @@ final docContentProvider =
 
 /// Belgeyi **belirtilen** bağlantıdan okur (v1.12, işaretler listesi).
 ///
-/// L-031/L-034'ün aynı dersi: çok kaynaklı bir listeden açılan yol da çok
-/// kaynaklı olmalı. İşaretler listesi bütün repoları birleştiriyor; aktif
-/// repoya bakan [docContentProvider] ile açılsaydı başka repodaki bir işaret
-/// "bulunamadı" derdi.
+/// L-031/L-034'ün aynı dersi: bir listeden açılan yol, hedefi **kayıttan**
+/// almalı; "listedeki her şey aktif repodandır" varsayımına dayanan bir okuma,
+/// liste bir gün genişlediğinde sessizce "bulunamadı" demeye başlar. İşaretler
+/// listesi bugün aktif repoya bağlı (1.13) ama hedef yine kaydın kendi
+/// `repoSlug`'ından geliyor.
 ///
 /// Yerel kopyadan okunur: senkron bütün bağlı repoların `hub/**.md`'sini
 /// indiriyor (B-057, B-095), yani ağ gerekmiyor. Kopya henüz yoksa aktif repo

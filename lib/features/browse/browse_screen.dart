@@ -32,12 +32,13 @@ class BrowseScreen extends StatelessWidget {
         'tasks/done',
         (_) => const DoneScreen(),
       ),
-      // v1.12: işaretler kayıtlardan türüyor ve bütün repolara dağılmış
+      // v1.12: işaret kayıttan türüyor, yani görev ve not dosyalarına dağılmış
       // durumda; tek liste olmadan bir yer imi konduğu belgede kaybolur.
+      // Kapsam aktif repo (1.13) — hangi repo olduğu ekranın kendisinde yazar.
       _Category(
         'İşaretler',
         Icons.bookmarks_outlined,
-        'tüm repolar',
+        'tasks/ · notes/',
         (_) => const AnnotationsScreen(),
       ),
       _Category(

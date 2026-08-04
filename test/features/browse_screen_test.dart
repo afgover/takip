@@ -46,6 +46,14 @@ void main() {
     ]) {
       expect(find.text(title), findsOneWidget, reason: title);
     }
+
+    // Kartın alt satırı kaynağı söyler. Ekranın kapsamı değişip bu etiket
+    // olduğu gibi kalınca kullanıcı kartta bir şey, ekranda başka bir şey
+    // okuyor — sözleşme 1.13'te tam olarak bu oldu ("tüm repolar" yazmaya
+    // devam etti). Etiket artık testin gördüğü bir şey.
+    expect(find.text('tasks/ · notes/'), findsOneWidget);
+    expect(find.textContaining('repolar'), findsNothing,
+        reason: 'kapsam iddiası kartta değil ekranda yazar');
   });
 
   testWidgets('oturum listesinden belgeye geçilir (B-041)', (tester) async {
