@@ -94,10 +94,11 @@ Sürüm 0.1.0. Günlük kullanımda ama **tek kullanıcılık varsayımlarla** y
 
 - **Android**, tek dil (Türkçe). iOS hiç denenmedi.
 - Kimlik doğrulama **kişisel erişim token'ı** ile. Token yalnız cihazın güvenli
-  deposunda durur, hiçbir dosyaya/commit'e/log'a yazılmaz. Ama uygulama
-  token'ın **kapsamını doğrulamıyor** — gereğinden geniş bir token verilirse
-  fark etmez (`SEC-006`, açık kayıt). Genel dağıtım için doğru cevap GitHub App
-  / OAuth'tur ve backlog'da `B-061` olarak durur.
+  deposunda durur, hiçbir dosyaya/commit'e/log'a yazılmaz. Uygulama klasik
+  (`ghp_`) bir token verildiğinde uyarır ama **fine-grained bir token'ın "All
+  repositories" ile üretilip üretilmediğini göremez** (`SEC-012`, açık kayıt).
+  Genel dağıtım için doğru cevap GitHub App / OAuth'tur ve backlog'da `B-061`
+  olarak durur.
 - Cihazdaki çevrimdışı kopya şifresiz (`SEC-007`, bilinçli kabul edilmiş risk).
 
 Güvenlik geçmişinin tamamı: [`hub/SECURITY.md`](hub/SECURITY.md) — alınan
@@ -105,7 +106,7 @@ Güvenlik geçmişinin tamamı: [`hub/SECURITY.md`](hub/SECURITY.md) — alınan
 
 ## Sözleşme sürümü
 
-Şu an **1.11**. Her hub kendi kopyasını taşır ve agent her oturum açılışında ana
+Şu an **1.12**. Her hub kendi kopyasını taşır ve agent her oturum açılışında ana
 kopyayla karşılaştırıp geriden geliyorsa günceller (`SYSTEM.md` §10). Sürüm eşit
 ama içerik farklıysa (ayrışma) üzerine yazılmaz — bu, yalnız numaraya bakan bir
 kontrolün göremediği ve gerçekten yaşanmış bir durumdur.

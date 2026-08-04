@@ -3,12 +3,14 @@ id: T-006
 title: "Fine-grained token'ın repo genişliği ölçülebiliyor mu?"
 created_by: agent
 created: 2026-08-04T15:45:00Z
-updated: 2026-08-04T15:45:00Z
+updated: 2026-08-04T17:45:00Z
 priority: normal
 category: arastirma
 tags: [guvenlik, token]
 session: S-2026-08-04-guvenlik-taramasi
 result: none
+options: ["Sayı hesaptaki toplam repo sayısına eşit", "Sayı token'a verdiğim repo sayısı kadar", "Komutu çalıştıramadım"]
+multi: false
 ---
 
 # Fine-grained token'ın repo genişliği ölçülebiliyor mu?
