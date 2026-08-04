@@ -273,8 +273,21 @@ başlığına ✅ ve tarih yazılır.
       otomatik yedekleme (SEC-009 → B-100) ve debug imzası (SEC-010 → B-101).
       Tam çıktı:
       `artifacts/S-2026-08-04-guvenlik-taramasi/bagimlilik-ve-yapilandirma-taramasi.md`
-- [ ] B-092 · (agent) SEC-006: onboarding'de token kapsamı sınanıp gereğinden
-      geniş kapsamda kullanıcı uyarılacak
+- [x] B-092 · (agent) SEC-006: onboarding'de token kapsamı sınanıp gereğinden
+      geniş kapsamda kullanıcı uyarılacak — ✅ 2026-08-04 · SEC-006 kapandı.
+      Kapsam, erişim doğrulamasının **aynı yanıtından** okunuyor (fazladan
+      istek yok): `X-OAuth-Scopes` başlığı + token öneki — ikisi de GitHub'ın
+      belgelediği sinyaller, çünkü token izinlerini soran bir uç nokta yok
+      (L-009). Klasik token görülürse hangi scope'lara sahip olduğu ve neyi
+      riske attığı söyleniyor. Uyarı **engellemiyor**: çalışan bir token'ı
+      reddetmek uygulamayı kullanılamaz hâle getirirdi, karar kullanıcının.
+      Yorum tek yönlü — kontrol yanlış alarm veremez. 365 test, analyze temiz.
+      → SK-011, SEC-012 (kapanmayan kısım)
+- [ ] B-103 · (user+agent) SEC-012: fine-grained token'ın "All repositories"
+      ile üretilip üretilmediği tespit edilebiliyor mu? `GET /user/repos`'un
+      fine-grained token'la davranışı belgelenmemiş; gerçek bir token'la
+      ölçülmeli. Ölçümü kullanıcı yapar (token agent'a verilmez, SEC-001) —
+      `tasks/waiting/2026-08-04-token-kapsam-olcumu.md`
 - [ ] B-100 · (agent) SEC-009: Android otomatik yedeklemesi kapatılacak
       (`allowBackup="false"` ya da hub kopyasını dışarıda bırakan
       `dataExtractionRules`) — cihazdaki şifresiz hub kopyası bugün kullanıcının
