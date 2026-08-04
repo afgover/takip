@@ -530,3 +530,23 @@ Biçim: `SYSTEM.md` §5.
   durumunda gelinir" bilgisi koşulda durur, gövdede durmaz; koşul değişince
   gövde uyarı vermeden yanlışa döner. Pratik karşılığı: yeni dalın taşıdığı
   her alan için "bu alan gerçekten aktarılıyor mu?" diye tek bir test yaz.
+
+## L-037 — Bir ekranın kapsamı değişince, o ekrana **giden** metinler de değişir
+- **Tarih:** 2026-08-04
+- **Kaynak:** S-2026-08-04-isaretler-aktif-repo (B-106)
+- **Açıklama:** İşaretler listesi aktif repoya bağlandı: sağlayıcı, ekran,
+  testler, sözleşme, kurulum talimatı ve README güncellendi. Tarayıcıdaki
+  **kartın alt satırı** ("tüm repolar") olduğu gibi kaldı. Kullanıcının ilk
+  gördüğü yer orasıydı; kartta bir şey, ekranda başka bir şey yazıyordu.
+  Kaçmasının sebebi mekanik: etiket başka bir dosyada, tek bir string
+  literalinde duruyordu ve hiçbir test ona bakmıyordu. Derleyici bir metnin
+  bayatladığını söyleyemez.
+  **Genel kural:** bir ekranın **kapsamını** değiştirirken o ekrana giden
+  yolları da say — kart/menü etiketleri, boş durum metinleri, bildirimler,
+  yardım satırları. Bunlar ekranın parçası gibi düşünülmez ama kullanıcı için
+  ekranın **ilk** cümlesidir.
+  **Önlem:** kapsam iddiası taşıyan metinleri tek yerde tut ve teste sok.
+  Tarayıcı testi artık kartın alt satırını doğruluyor, ayrıca kartlarda
+  "repolar" geçmemesini şart koşuyor — kapsam iddiası kartta değil, ekranın
+  kendisinde yazar. Aynı kalıbın kardeşi L-036: orada dalın koşulu genişleyince
+  gövdenin varsayımı, burada ekranın kapsamı değişince etiketin iddiası bayatladı.
