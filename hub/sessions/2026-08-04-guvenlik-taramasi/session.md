@@ -97,3 +97,20 @@ belgelenmemiş) ve buraya belgelenmemiş bir davranışa dayanan tahmin konmadı
 B-026'da tam olarak bu hata yapılmıştı. Ölçüm gerçek bir token gerektiriyor,
 token agent'a verilmez (SEC-001): **T-006** `waiting/`e kondu, kullanıcıdan
 yalnız bir sayı isteniyor. → SEC-012, B-103
+
+### Agent — inbox'a iki yeni görev düştü (oturum sürerken)
+Push sırasında uzakta iki commit çıktı: kullanıcı bu oturum sürerken
+uygulamadan iki görev eklemiş (`05e0221`, `618c821`). Rebase'lendi, hepsi
+push'landı.
+
+- `2026-08-04-gorev-aksiyon.md` — `waiting/` görevlerinde tek seçenek
+  ("Yapıldı") var; agent seçenekleri çoğaltabilsin, kullanıcı aralarından
+  seçsin (gerekirse çoklu), cevaplanınca soru kapansın.
+- `2026-08-04-bookmark-ekleme.md` — işaret türlerine **bookmark** eklensin;
+  bütün annotasyonlar tek listede toplansın ve oradan ilgili belgeye
+  gidilebilsin.
+
+İkisi de ele alınmadı (ID atanmadı, `active/`e taşınmadı): sözleşme gereği
+inbox raporlanır, kullanıcı yönlendirmeden işlenmez. İkisi de sözleşmeye
+dokunuyor — biri `waiting/` şemasına seçenek alanı, diğeri `mark` kümesine
+yeni bir tür ekler.
