@@ -1,19 +1,48 @@
 ---
 id: S-2026-08-03-sifirdan-cozum
 date: 2026-08-03
-status: open
+status: closed
 reconstructed: false
-topics: [isaretleme, yorum, coklu-repo, render, test]
-artifacts: []
+topics: [isaretleme, notlar, guvenlik, coklu-repo, render, sozlesme, acik-kaynak]
+artifacts:
+  - artifacts/reference/agent-kurulum-talimati.md
 tasks_touched: []
 ---
 
-# Oturum: Üç sorunun sıfırdan çözümü
+# Oturum: Üç sorunun sıfırdan çözümü, notlar, güvenlik logu ve açık kaynak kararı
 
 ## Özet
-Kullanıcı aynı üç sorunu üçüncü kez bildirdi ve "sorunları 0'dan ele al, başka
-bir yaklaşımla, gerekirse algoritmayı değiştir" dedi. Üçü de çözüldü; ikisinde
-algoritma değişti.
+Uzun bir oturum; üç hata düzeltmesiyle başladı, sözleşmeyi dört sürüm ilerletti
+(1.8 → 1.11) ve açık kaynak kararının ayrıştırılmasıyla kapandı.
+
+**Üç hata, üçü de kaynağında.** Kullanıcı aynı sorunları üçüncü kez bildirip
+"0'dan ele al, gerekirse algoritmayı değiştir" dedi. İşaretin satır akışını
+bozması algoritma değiştirilerek çözüldü (L-032): paketin karar noktası okundu
+ve işaretin `Text.rich` döndürmesi gerektiği görüldü — o zaman komşu metinle tek
+`RichText`'e kaynıyor. Çapraz repo görev detayı (L-031) ve aktif olmayan
+repodaki değişikliğin hiç görünmemesi (L-034) aynı kalıbın iki yüzü çıktı: bir
+yeteneği çok kaynaklı yaparken zincirin **tamamını** saymamak. Yorum sorunu ise
+parça testleri yeşilken zincirin kopuk olmasıydı (L-033).
+
+**Sözleşme dört sürüm ilerledi.** 1.9: **not, görev değil** — kullanıcının
+kendine aldığı not agent'ın iş kuyruğuna düşüyordu, `notes/` açıldı ve R-001
+özü korunarak genişletildi. 1.10: **güvenlik logu** (`SECURITY.md`) — güvenlik
+geçmişi oturumlara dağılmasın diye; uygulamada Tarayıcı → Security altında,
+açık kayıtlar üstte. 1.11: `note:` ve `security:` commit önekleri — 1.9/1.10'da
+atlanmıştı ve kullanıcının kendi notu aktivite akışında "kod" görünüyordu.
+
+**Belgeler.** Agent kurulum talimatı baştan yazıldı; en büyük ekleme geçmişi
+olan projeler (§3): geçmişi kanıta dayalı toplama, `reconstructed: true`, zaman
+damgası uydurmama, bilinmeyenleri `waiting/`e koyma. MIT lisansı ve yeni README
+eklendi (eskisi başlangıçtan kalmaydı ve yanlıştı).
+
+**Açık kaynak kararı ayrıştırıldı (K-032).** Repoyu açmak ile store'a çıkmak
+ayrı kararlar; maliyet profilleri temelden farklı. Sıra bozulmayacak: repo →
+yöntemi anlatan yazı → Releases'ta APK → store yalnız gerçek talep gelirse
+(B-097, B-098). Public yapma kararı kullanıcıda, verilmedi.
+
+`flutter analyze` temiz, **349 test** (oturum başında 303'tü).
+`financer_takip` sözleşmesi 1.6'dan 1.11'e yükseltildi.
 
 **Çapraz repo görev detayı (B-085).** Bekleyenler tüm repoları birleştiriyordu
 ama detay okuma yolu hâlâ aktif repoya bakıyordu — financer görevi listede
@@ -274,5 +303,34 @@ anlatıyor (Android/tek dil, token kapsamı doğrulanmıyor, çevrimdışı kopy
 
 Git geçmişi token deseni açısından tarandı: temiz.
 
+### Kullanıcı
+> projeyi acik kaynak yapmak ve uygulamalari ucretsiz sunmak(apple ve android
+> dev hesaplarim halihazirda mevcut) bana ne kazandirir?
+
+### Agent
+Beklenen ve beklenmeyen kazançlar ayrı ayrı söylendi. Asıl varlığın uygulama
+değil **yöntem** olduğu (sözleşme + protokol + kurulum talimatı, hiçbir şey
+kurmadan benimsenebiliyor); somut getirinin bu yöntemin yayılması ve reponun
+yargı kanıtı olması; gelirin gelmeyeceği (ücretsiz + backend yok + MIT, ki MIT
+üçüncü birinin aynı uygulamayı kendi adıyla yayımlamasına da izin verir); ve
+bugünkü hâliyle anlamlı kullanıcı sayısının onlarca mertebesinde kalacağı
+(Türkçe tek dil, PAT ile onboarding).
+
+Dev hesaplarının hazır olmasının maliyeti bitirmediği vurgulandı: asıl maliyet
+tekrar eden bakım — yıllık hedef SDK, App Review, gizlilik politikası, destek
+yüzeyi. Bakımsız store uygulaması durmaz, çürür ve kaldırılır.
+
+Bu projeye özel bedel ayrıca söylendi: §10 zinciri bu reponun raw adresini
+işaret ettiği için benimsenme, sözleşmede hızlı iterasyon özgürlüğünü bitirir.
+Bugün bir günde 1.8'den 1.11'e çıkıldı; bu esneklik şu anki en büyük avantaj.
+
+Karar `EVOLUTION.md`'ye K-032, backlog'a B-097 gerekçesi ve B-098 olarak
+düşüldü.
+
 ## Sonraki adım
-Public yapma kararı kullanıcıda (B-097). `financer_takip` sözleşmesi 1.11'de.
+- **B-097:** repoyu public yapma kararı kullanıcıda. Ön hazırlık tamam (LICENSE,
+  README, geçmiş taraması temiz); karar verilmedi.
+- **B-098:** store dağıtımı, ön koşulu B-097 ve gerçek talep.
+- **B-091 / B-092:** açık güvenlik işleri — bağımlılık taraması ve token
+  kapsamının doğrulanması (SEC-005, SEC-006).
+- `financer_takip` sözleşmesi 1.11'de, senkron.
