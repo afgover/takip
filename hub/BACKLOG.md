@@ -210,6 +210,18 @@ başlığına ✅ ve tarih yazılır.
       aldığı not agent'ın iş kuyruğuna düşüyordu. R-001 özü korunarak
       genişletildi (`HubFolder`), `AGENT_PROTOCOL.md` madde 10 eklendi.
       Sarı işaret/kırmızı çizgi bilerek göreve gitmeye devam ediyor. → K-029
+      · ⚠️ **Bu son karar B-099 ile değişti:** notsuz işaret artık `notes/`a
+      gidiyor — kullanımda "sinyal" değil gürültü çıktı.
+- [x] B-099 · (agent) Notsuz seçim göreve değil nota gider — ✅ 2026-08-03;
+      B-088'in "sarı/kırmızı bilerek göreve gider" kararını tersine çevirdi.
+      Tek-dokunuşluk hızlı işaretler not sormadan `tasks/inbox`'a görev yazıp
+      "Yoğun/temalı" gibi tek kelimelerle Bekleyen görevler'i dolduruyordu
+      (financer_takip hub'ında 8 boş seçim elle ayıklanmıştı — kök neden buymuş).
+      Artık boş notlu seçim `notes/`a düşüyor (işaret durur, kuyruğa girmez);
+      not yazılırsa görev olur. Tek karar noktası `_create`; `TaskDraft.note` +
+      `createNote`'a `mark` parametresi (sarı/kırmızı rengi notta korunur);
+      sayfa butonu not boşken "İşaret olarak ekle". 350 test, analyze temiz.
+      Commit `144b1af`. → S-2026-08-03-bos-secim-nota
 - [x] B-096 · (agent) LICENSE ve README — ✅ 2026-08-03; MIT lisansı eklendi,
       README baştan yazıldı (eskisi başlangıçtan kalmaydı: `project-taskr`,
       `flutter create` ile android üretme talimatı). Public'e açma kararı
