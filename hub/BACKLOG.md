@@ -296,6 +296,22 @@ başlığına ✅ ve tarih yazılır.
 - [ ] B-101 · (agent) SEC-010: release derlemesi kendi anahtarıyla imzalanacak —
       şu an Flutter şablonundan gelen **debug** anahtarı kullanılıyor.
       **B-097'nin "Releases'ta APK" adımının ön koşulu**
+- [x] B-104 · (agent) Seçenekli bekleme: agent `waiting/` görevinde soru
+      sorabilsin — ✅ 2026-08-04 · sözleşme 1.12, T-007. Kullanıcının tek
+      cevabı "Yaptım"dı; bir soruya karşılığı yoktu ve karar sohbette kalıyordu.
+      Agent artık `options: [...]` (+ `multi`) yazıyor, app seçenekleri
+      gösteriyor, cevap `waiting-answer` etiketiyle inbox'a düşüyor. Seçimin
+      yanında **her zaman** isteğe bağlı açıklama var: liste cevabı makinece
+      okunur kılar, serbest metin listede olmayanı söyler. Seçenek yoksa
+      davranış 1.11'deki gibi. Bir görev = bir soru; cevaplanan kapanır
+- [x] B-105 · (agent) Yer imi + bütün işaretlerin tek listesi — ✅ 2026-08-04 ·
+      sözleşme 1.12, T-008. `mark: bookmark` (mavi) eklendi ve **hiçbir koşulda
+      göreve dönüşmüyor** (notlu olsa bile `notes/`) — B-099'un mantığı bir adım
+      ileri. Tarayıcı → İşaretler bütün repolardaki işaretleri birleştiriyor,
+      renge göre süzülüyor, dokununca kaydın **kendi** reposundaki belge
+      açılıyor (`docContentForProvider` — L-031'in aynı dersi). Yakalanan hata:
+      notsuz yol `note`'u hiç geçirmiyordu; yer imine yazılan not sessizce
+      kaybolurdu. 397 test, analyze temiz
 - [ ] B-102 · (agent+user) SEC-011: taramanın tekrar aralığına karar ver —
       tek seferlik tarama yalnız koştuğu gün için geçerli. Ölçeğe uygun en ucuz
       yol her sürüm öncesi elle koşum; alternatifi zamanlanmış GitHub Actions işi
