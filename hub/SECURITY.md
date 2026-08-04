@@ -58,13 +58,16 @@ değil. Token, parola veya anahtar bu dosyada hiçbir koşulda yer almaz.
 ## SEC-005 — Bağımlılık taraması yapılmadı
 - **Tarih:** 2026-08-03
 - **Tür:** yapilacak
-- **Durum:** acik
+- **Durum:** kapali
 - **Kaynak:** S-2026-08-03-sifirdan-cozum
 - **Açıklama:** Projede `dart pub outdated` / bilinen zafiyet taraması hiç
   koşulmadı. Doğrudan bağımlılıklar az ve tanınmış paketler (dio, riverpod,
   flutter_secure_storage, cryptography, flutter_markdown) ama bu bir denetim
   yerine geçmez. Yapılacak: sürüm ve zafiyet taraması koşulup bulguları
   `tarama` kaydı olarak buraya yazmak.
+- **Nasıl giderildi:** 2026-08-04'te tarama koşuldu ve bulguları SEC-008
+  olarak kaydedildi (S-2026-08-04-guvenlik-taramasi, B-091). Taramanın
+  kendisi tek seferlik bir iş değil — tekrarı SEC-011'de duruyor.
 
 ## SEC-006 — Token izin kapsamı daraltılmadı doğrulanmadı
 - **Tarih:** 2026-08-03
@@ -87,3 +90,79 @@ değil. Token, parola veya anahtar bu dosyada hiçbir koşulda yer almaz.
   içeriği cihaz ele geçerse okunabilir. Risk kabul edilmiş durumda: içerik
   zaten GitHub'da duruyor ve depolama uygulama korumalı alanında. Kararın
   değişmesi gereken durum: hub'a gizli sayılacak içerik girmesi.
+- **2026-08-04 eki:** "Uygulama korumalı alanında" varsayımı eksikmiş —
+  Android otomatik yedeklemesi o alanı kullanıcının Google hesabına
+  kopyalıyor (SEC-009). Kabul edilen risk, kabul edildiğinde bilinenden
+  geniş; kapsamı SEC-009 kapanınca cihazla sınırlı hâle gelir.
+
+## SEC-008 — Bağımlılık, sır ve Android yapılandırma taraması
+- **Tarih:** 2026-08-04
+- **Tür:** tarama
+- **Durum:** kapali
+- **Kaynak:** SEC-005, B-091, S-2026-08-04-guvenlik-taramasi
+- **Açıklama:** Tam çıktı:
+  [`artifacts/S-2026-08-04-guvenlik-taramasi/bagimlilik-ve-yapilandirma-taramasi.md`](artifacts/S-2026-08-04-guvenlik-taramasi/bagimlilik-ve-yapilandirma-taramasi.md).
+  Özet:
+  (1) `pubspec.lock`'taki 68 paketin tamamı OSV'ye (Pub ekosistemi) soruldu →
+  **bilinen zafiyet yok**. Boş sonucun sorgu hatasından gelmediği, bilinen
+  açıkları olan sürümlerden kurulu bir kontrol grubuyla doğrulandı.
+  (2) Sürüm güncelliği: `flutter_secure_storage` (9.2.4 → 10.3.1) ve
+  `flutter_riverpod` (2.6.1 → 3.4.2) bir ana sürüm geride; ikisi de bilinen
+  bir açık taşımıyor ama ana sürüm farkı, bir danışmanlık çıktığında yamayı
+  "sürüm yükselt"ten "kırıcı değişikliği karşıla"ya çeviriyor. Flutter SDK
+  (3.35.4, 2025-09-16) ~11 aylık; TLS yığını motorun içinde olduğu için paket
+  taraması o yüzeyi görmüyor.
+  (3) Sır taraması: çalışma ağacı **ve git geçmişinin tamamı** token/anahtar
+  desenlerine karşı tarandı → eşleşme yok (SEC-001'in bağımsız doğrulaması).
+  (4) Android izinleri yalnız `INTERNET`; düz metin HTTP kapalı.
+  İki bulgu çıktı: SEC-009 (otomatik yedekleme) ve SEC-010 (release imzası).
+  **Sınır:** tarama koştuğu **anın** veritabanına göredir; tek seferlik bir
+  onay değildir (→ SEC-011).
+
+## SEC-009 — Android otomatik yedeklemesi cihazdaki şifresiz kopyayı buluta taşıyor
+- **Tarih:** 2026-08-04
+- **Tür:** acik
+- **Durum:** acik
+- **Kaynak:** SEC-008 Bulgu A, SEC-007
+- **Açıklama:** `AndroidManifest.xml`'de `android:allowBackup` tanımlı değil,
+  yani Android varsayılanı (`true`) geçerli: uygulamanın özel veri alanı Auto
+  Backup ile kullanıcının Google hesabına kopyalanabiliyor. O alanda SEC-007'de
+  kayıtlı **şifresiz hub kopyası** duruyor (hub'ın bütün markdown içeriği).
+  Token için durum farklı ve önemli: token EncryptedSharedPreferences'ta,
+  anahtarı Keystore'da ve dışa aktarılamaz — yedeğe düşen şifreli metin başka
+  cihazda çözülemez. Yani yedekleme token'ı sızdırmıyor, ama cihaz değişiminde
+  onu geri de getirmiyor.
+  **Sonuç:** yedeklemeyi kapatmanın kullanıcıya bir maliyeti yok (bağlantıların
+  taşınması için zaten parolayla şifreli dışa aktarma var — SEC-002), buna
+  karşılık düz metin proje içeriğinin buluta çıkması durur.
+  Yapılacak: `android:allowBackup="false"` ya da hub kopyasını dışarıda bırakan
+  `dataExtractionRules`. → B-100
+
+## SEC-010 — Release derlemesi debug anahtarıyla imzalanıyor
+- **Tarih:** 2026-08-04
+- **Tür:** acik
+- **Durum:** acik
+- **Kaynak:** SEC-008 Bulgu B
+- **Açıklama:** `android/app/build.gradle.kts`'in release bloğu Flutter
+  şablonundan geldiği gibi duruyor ve **debug imza yapılandırmasını**
+  kullanıyor. Debug anahtarı Android SDK ile gelen, herkeste aynı olan bilinen
+  bir anahtardır. Bugünkü etkisi sınırlı — APK yalnız `tool/install.sh` ile
+  geliştiricinin kendi cihazına kuruluyor. Ama B-097'nin planı "GitHub
+  Releases'ta APK" diyor; o adımda üçüncü biri aynı paket adıyla, aynı bilinen
+  anahtarla imzalanmış bir APK üretip **güncelleme olarak kurulabilir** hâle
+  getirebilir. Yapılacak: yayımlanacak yapı kendi anahtarıyla imzalanır, anahtar
+  repoya girmez (`.gitignore` `*.keystore` ve `key.properties`'i zaten dışarıda
+  tutuyor). **B-097'nin (APK yayımlama) ön koşuludur.** → B-101
+
+## SEC-011 — Tarama tekrarlanmıyor
+- **Tarih:** 2026-08-04
+- **Tür:** yapilacak
+- **Durum:** acik
+- **Kaynak:** SEC-008
+- **Açıklama:** SEC-008 koştuğu **anın** danışmanlık veritabanına göre
+  temizdi; yarın yayımlanacak bir danışmanlık o sonucu geçersiz kılar. Tek
+  seferlik tarama, geçtiği gün dışında hiçbir şey garanti etmez ve "taradık"
+  cümlesi zamanla sessizce yanlışa döner. Yapılacak: taramanın hangi aralıkla
+  ve nasıl tekrarlanacağına karar vermek (ölçeğe uygun en ucuz yol: her sürüm
+  öncesi elle koşum; alternatifi GitHub Actions'ta zamanlanmış iş). Karar
+  verilene kadar bu kayıt açık kalır. → B-102
