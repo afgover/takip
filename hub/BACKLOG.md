@@ -324,6 +324,13 @@ başlığına ✅ ve tarih yazılır.
       artık), `allAnnotationsFrom` → `annotationsIn`. Bekleyenler bilinçli
       istisna: orada soru "hangi projede olursa olsun bende bekleyen ne var"
       (B-067). 399 test, analyze temiz. → S-2026-08-04-isaretler-aktif-repo
+- [x] B-107 · (agent) İşaretler kartında hâlâ "tüm repolar" yazıyordu —
+      ✅ 2026-08-04; B-106'nın eksik kalan parçası. Sağlayıcı, ekran, testler,
+      sözleşme, kurulum talimatı ve README güncellenmişti ama Tarayıcı'daki
+      kartın alt satırı olduğu gibi kalmıştı — kullanıcının **ilk** gördüğü yer
+      orası. Etiket kardeşleriyle aynı biçime çekildi (`tasks/ · notes/`);
+      kapsam iddiası artık yalnız ekranın kendisinde. Tarayıcı testi alt satırı
+      doğruluyor ve kartlarda "repolar" geçmemesini şart koşuyor. → L-037
 - [ ] B-102 · (agent+user) SEC-011: taramanın tekrar aralığına karar ver —
       tek seferlik tarama yalnız koştuğu gün için geçerli. Ölçeğe uygun en ucuz
       yol her sürüm öncesi elle koşum; alternatifi zamanlanmış GitHub Actions işi
