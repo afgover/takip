@@ -8,7 +8,7 @@ priority: normal
 category: gorev
 tags: []
 session: S-2026-08-04-guvenlik-taramasi
-result: Sözleşme 1.12: `options`/`multi` alanları + app tarafında seçenek listesi, isteğe bağlı açıklama ve `waiting-answer` bildirimi (B-104)
+result: "Sözleşme 1.12: `options`/`multi` alanları + app tarafında seçenek listesi, isteğe bağlı açıklama ve `waiting-answer` bildirimi (B-104)"
 ---
 
 # görev aksiyon

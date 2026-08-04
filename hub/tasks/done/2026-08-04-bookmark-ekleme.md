@@ -8,7 +8,7 @@ priority: normal
 category: gorev
 tags: []
 session: S-2026-08-04-guvenlik-taramasi
-result: `mark: bookmark` (hiçbir koşulda göreve dönüşmez) + Tarayıcı → İşaretler: bütün repolardaki işaretler tek listede, dokununca kendi reposundaki belgeye gider (B-105)
+result: "`mark: bookmark` (hiçbir koşulda göreve dönüşmez) + Tarayıcı → İşaretler: bütün repolardaki işaretler tek listede, dokununca kendi reposundaki belgeye gider (B-105)"
 ---
 
 # bookmark ekleme
