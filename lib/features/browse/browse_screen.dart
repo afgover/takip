@@ -4,6 +4,7 @@ import '../../core/constants.dart';
 import '../../hub/browse_repo.dart';
 import '../pending/done_screen.dart';
 import 'activity_screen.dart';
+import 'annotations_screen.dart';
 import 'doc_list_screen.dart';
 import 'document_screen.dart';
 import 'knowledge_screen.dart';
@@ -30,6 +31,14 @@ class BrowseScreen extends StatelessWidget {
         Icons.task_alt,
         'tasks/done',
         (_) => const DoneScreen(),
+      ),
+      // v1.12: işaretler kayıtlardan türüyor ve bütün repolara dağılmış
+      // durumda; tek liste olmadan bir yer imi konduğu belgede kaybolur.
+      _Category(
+        'İşaretler',
+        Icons.bookmarks_outlined,
+        'tüm repolar',
+        (_) => const AnnotationsScreen(),
       ),
       _Category(
         'Oturumlar',

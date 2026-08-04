@@ -50,7 +50,12 @@ class HubMarkdown extends StatefulWidget {
 
 class _HubMarkdownState extends State<HubMarkdown> {
   late final Map<String, MarkdownElementBuilder> _builders = {
-    for (final tag in const [markHighlightTag, markUnderlineTag, markCommentTag])
+    for (final tag in const [
+      markHighlightTag,
+      markUnderlineTag,
+      markCommentTag,
+      markBookmarkTag,
+    ])
       tag: _MarkBuilder(tag, _tap),
   };
 
@@ -98,6 +103,7 @@ class _HubMarkdownState extends State<HubMarkdown> {
           _MarkSyntax(_highlightOpen, _highlightClose, markHighlightTag),
           _MarkSyntax(_underlineOpen, _underlineClose, markUnderlineTag),
           _MarkSyntax(_commentOpen, _commentClose, markCommentTag),
+          _MarkSyntax(_bookmarkOpen, _bookmarkClose, markBookmarkTag),
         ],
         builders: _builders,
       ),
@@ -162,10 +168,13 @@ const _underlineOpen = '\uE002';
 const _underlineClose = '\uE003';
 const _commentOpen = '\uE004';
 const _commentClose = '\uE005';
+const _bookmarkOpen = '\uE006';
+const _bookmarkClose = '\uE007';
 
 const markHighlightTag = 'hubMarkHighlight';
 const markUnderlineTag = 'hubMarkUnderline';
 const markCommentTag = 'hubMarkComment';
+const markBookmarkTag = 'hubMarkBookmark';
 
 ({String open, String close, String tag}) _delimitersFor(TaskMark mark) =>
     switch (mark) {
@@ -175,6 +184,8 @@ const markCommentTag = 'hubMarkComment';
         (open: _underlineOpen, close: _underlineClose, tag: markUnderlineTag),
       TaskMark.comment =>
         (open: _commentOpen, close: _commentClose, tag: markCommentTag),
+      TaskMark.bookmark =>
+        (open: _bookmarkOpen, close: _bookmarkClose, tag: markBookmarkTag),
     };
 
 /// Kayıtlardaki alıntıları markdown kaynağında işaretler.
@@ -429,6 +440,12 @@ TextStyle _styleFor(String tag, TextStyle base, ColorScheme colors) =>
         ),
       markCommentTag => base.copyWith(
           backgroundColor: const Color(0xFFA5D6A7),
+          color: Colors.black87,
+        ),
+      // Yer imi mavi (v1.12): dördüncü işaret, diğer üçünden ilk bakışta
+      // ayrılmalı — aynı belgede hepsi bir arada bulunabiliyor.
+      markBookmarkTag => base.copyWith(
+          backgroundColor: const Color(0xFF90CAF9),
           color: Colors.black87,
         ),
       _ => base.copyWith(

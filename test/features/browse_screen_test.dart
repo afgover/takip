@@ -28,7 +28,7 @@ Widget app(Widget home, {List<Override> overrides = const []}) => ProviderScope(
 void main() {
   testWidgets('kategori ekranı sözleşmedeki başlıkları gösterir (B-040)',
       (tester) async {
-    // Varsayılan test ekranına yedi kart sığmıyor; grid görünmeyeni çizmez.
+    // Varsayılan test ekranına kartlar sığmıyor; grid görünmeyeni çizmez.
     await tester.binding.setSurfaceSize(const Size(800, 1400));
     addTearDown(() => tester.binding.setSurfaceSize(null));
 
@@ -37,6 +37,7 @@ void main() {
     for (final title in [
       'Security',
       'Tamamlananlar',
+      'İşaretler',
       'Oturumlar',
       'Raporlar & Planlar',
       'Bilgi tabanı',

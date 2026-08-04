@@ -180,3 +180,25 @@ final docContentProvider =
   _watchHubVersion(ref);
   return ref.watch(browseRepoProvider).readDoc(path);
 });
+
+/// Belgeyi **belirtilen** bağlantıdan okur (v1.12, işaretler listesi).
+///
+/// L-031/L-034'ün aynı dersi: çok kaynaklı bir listeden açılan yol da çok
+/// kaynaklı olmalı. İşaretler listesi bütün repoları birleştiriyor; aktif
+/// repoya bakan [docContentProvider] ile açılsaydı başka repodaki bir işaret
+/// "bulunamadı" derdi.
+///
+/// Yerel kopyadan okunur: senkron bütün bağlı repoların `hub/**.md`'sini
+/// indiriyor (B-057, B-095), yani ağ gerekmiyor. Kopya henüz yoksa aktif repo
+/// için ağa düşülür; başka bir repo için beklenir (senkron tamamlanınca gelir).
+final docContentForProvider = FutureProvider.autoDispose
+    .family<String, ({String? repoSlug, String path})>((ref, key) async {
+  final slug = key.repoSlug;
+  if (slug != null) {
+    final stored = await OfflineStore(slug).readDoc(key.path);
+    if (stored != null) return stored.content;
+  }
+  // Repo verilmemişse ya da yerel kopyada yoksa aktif bağlantının yolundan
+  // okunur — tarayıcının bütün listeleri zaten oradan geliyor.
+  return ref.watch(docContentProvider(key.path).future);
+});

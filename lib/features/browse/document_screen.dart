@@ -17,14 +17,21 @@ class DocumentScreen extends ConsumerWidget {
     super.key,
     required this.path,
     required this.title,
+    this.repoSlug,
   });
 
   final String path;
   final String title;
 
+  /// Belgenin hangi bağlantıda olduğu. Verilmezse aktif bağlantı — tarayıcının
+  /// kendi listeleri zaten aktif repoyu gezer. İşaretler listesi (v1.12) bütün
+  /// repoları birleştirdiği için oradan açılırken doldurulur (L-031).
+  final String? repoSlug;
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final content = ref.watch(docContentProvider(path));
+    final key = (repoSlug: repoSlug, path: path);
+    final content = ref.watch(docContentForProvider(key));
 
     return Scaffold(
       appBar: AppBar(title: Text(title)),
@@ -32,7 +39,7 @@ class DocumentScreen extends ConsumerWidget {
         AsyncData(:final value) => _Document(raw: value, path: path),
         AsyncError(:final error) => HubErrorView(
             error: error,
-            onRetry: () => ref.invalidate(docContentProvider(path)),
+            onRetry: () => ref.invalidate(docContentForProvider(key)),
           ),
         _ => const Center(child: CircularProgressIndicator()),
       },

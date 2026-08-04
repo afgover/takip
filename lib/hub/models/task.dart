@@ -9,10 +9,18 @@ enum TaskMark {
 
   /// Yorumun kendi rengi (v1.8): sarıdan ayrı olmalı, yoksa "işaretledim" ile
   /// "not düştüm" ekranda aynı görünüyor.
-  comment('Yeşil yorum');
+  comment('Yeşil yorum'),
+
+  /// Yer imi (v1.12): "burayı sonra bulayım". Diğer üçünden farkı yalnız renk
+  /// değil — yer imi **hiçbir koşulda göreve dönüşmez** (§4), not yazılsa bile
+  /// `notes/`a gider. Niyet zaten adında.
+  bookmark('Mavi yer imi');
 
   const TaskMark(this.label);
   final String label;
+
+  /// Kayıt agent'ın iş kuyruğuna girebilir mi? Yer imi giremez.
+  bool get canBecomeTask => this != TaskMark.bookmark;
 
   static TaskMark? parse(String? value) {
     for (final m in TaskMark.values) {
@@ -175,6 +183,8 @@ class HubTask {
     this.source,
     this.quote,
     this.mark,
+    this.options = const [],
+    this.multi = false,
   });
 
   /// Hub'dan gelen dosyayı sözleşme şemasına göre okur. Eksik alanlar
@@ -205,6 +215,8 @@ class HubTask {
       source: fm.str('source'),
       quote: fm.str('quote'),
       mark: TaskMark.parse(fm.str('mark')),
+      options: fm.list('options'),
+      multi: fm.str('multi') == 'true',
     );
   }
 
@@ -231,6 +243,18 @@ class HubTask {
   final String? quote;
   final TaskMark? mark;
 
+  /// Agent'ın sunduğu cevap seçenekleri (sözleşme 1.12, yalnız `waiting/`).
+  /// Boşsa görev "yap ve haber ver" tipindedir ve app "Yaptım" gösterir.
+  final List<String> options;
+
+  /// Birden çok seçenek işaretlenebilir mi (sözleşme 1.12).
+  final bool multi;
+
+  /// Agent bir soru mu sordu? Seçenekli bekleme yalnız `waiting/`te anlamlı:
+  /// başka klasörde duran bir dosyada `options` bulunsa bile o iş kullanıcıyı
+  /// beklemiyordur ve cevap düğmesi çıkmamalıdır.
+  bool get isQuestion => status == TaskStatus.waiting && options.isNotEmpty;
+
   bool get isPending => id == 'pending';
   bool get hasResult => result.isNotEmpty && result != 'none';
 
@@ -253,6 +277,9 @@ class HubTask {
         if (source != null) 'source': source,
         if (quote != null) 'quote': quote,
         if (mark != null) 'mark': mark!.name,
+        // Sözleşme 1.12: yalnız agent'ın soru sorduğu görevlerde bulunur.
+        if (options.isNotEmpty) 'options': options,
+        if (options.isNotEmpty && multi) 'multi': 'true',
       };
 
   /// Sözleşmeye uygun dosya içeriği (frontmatter + gövde).

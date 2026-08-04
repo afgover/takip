@@ -44,6 +44,9 @@ class AnnotatedDocument extends ConsumerStatefulWidget {
 
   static const highlightLabel = 'Sarı işaretle';
   static const underlineLabel = 'Kırmızı çizgi';
+
+  /// Yer imi (v1.12) — tek dokunuş, hiçbir koşulda göreve dönüşmez.
+  static const bookmarkLabel = 'Yer imi';
   static const noteLabel = 'Not ekle';
   static const taskLabel = 'Görev oluştur';
   static const copyLabel = 'Kopyala';
@@ -107,12 +110,17 @@ class _AnnotatedDocumentState extends ConsumerState<AnnotatedDocument> {
     // (sarı/kırmızı) belgede kalır ama Bekleyen görevler'i doldurmaz. Not
     // yazılmışsa "sen şunu yap" niyetidir → görev (`tasks/inbox/`). Bu ayrım
     // hem hızlı işaretleri hem sayfayı kapsar; ikisi de buradan geçiyor.
-    if (request.note.trim().isEmpty) {
+    // Yer imi bu kuralın **üstünde** (sözleşme 1.12): notlu olsa bile göreve
+    // dönüşmez. "Burayı sonra bulayım" demek agent'a iş vermek değildir; yer
+    // imine düşülen not da kullanıcının kendine bıraktığı işarettir.
+    if (!request.mark.canBecomeTask || request.note.trim().isEmpty) {
       createNote(
         container: captured.container,
         messenger: captured.messenger,
         quote: selection,
         sourcePath: widget.sourcePath,
+        // Notsuz yolda zaten boş; yer iminde dolu olabilir ve kaybolmamalı.
+        note: request.note,
         mark: request.mark,
         section: captured.section,
         repoSlug: captured.repoSlug,
@@ -198,6 +206,12 @@ class _AnnotatedDocumentState extends ConsumerState<AnnotatedDocument> {
               Icons.format_underlined,
               () => _quickMark(state, selection,
                   kind: RecordKind.duzeltme, mark: TaskMark.underline),
+            ),
+            (
+              AnnotatedDocument.bookmarkLabel,
+              Icons.bookmark_outline,
+              () => _quickMark(state, selection,
+                  kind: RecordKind.yorum, mark: TaskMark.bookmark),
             ),
             (
               AnnotatedDocument.noteLabel,

@@ -127,13 +127,65 @@ class _WaitingBanner extends ConsumerStatefulWidget {
 
 class _WaitingBannerState extends ConsumerState<_WaitingBanner> {
   static const doneButtonKey = Key('waiting-done-button');
+  static const answerButtonKey = Key('waiting-answer-button');
+  static const answerNoteKey = Key('waiting-answer-note');
+  static Key optionKey(int index) => Key('waiting-option-$index');
 
   bool _busy = false;
   String? _error;
   bool _reported = false;
 
+  /// Seçenekli soruda işaretlenenler (sözleşme 1.12). `multi: false` ise
+  /// içinde en fazla bir öğe bulunur.
+  final _selected = <String>{};
+  final _noteCtrl = TextEditingController();
+
+  @override
+  void dispose() {
+    _noteCtrl.dispose();
+    super.dispose();
+  }
+
+  void _toggle(String option) {
+    setState(() {
+      if (widget.task.multi) {
+        _selected.contains(option)
+            ? _selected.remove(option)
+            : _selected.add(option);
+      } else {
+        // Tek seçimde ikinci dokunuş seçimi kaldırır: yanlış işaretlemeyi geri
+        // almanın başka yolu yok, cevap da gönderilmemiş durumda.
+        final wasSelected = _selected.contains(option);
+        _selected
+          ..clear()
+          ..addAll(wasSelected ? const <String>[] : [option]);
+      }
+    });
+  }
+
+  /// Seçenekli soruya cevap (sözleşme 1.12).
+  Future<void> _answer() async {
+    if (_busy || _selected.isEmpty) return;
+    // Seçim sırası listedeki sırayı izlesin; küme sırası dokunma sırasıdır ve
+    // agent'ın okuduğu kayıtta rastgele görünürdü.
+    final ordered =
+        widget.task.options.where(_selected.contains).toList(growable: false);
+    await _send(
+      TaskDraft.waitingAnswer(
+        widget.task,
+        selected: ordered,
+        note: _noteCtrl.text,
+      ),
+      'Cevap gönderildi.',
+    );
+  }
+
   Future<void> _report() async {
     if (_busy) return;
+    await _send(TaskDraft.waitingDone(widget.task), 'Agent\'a bildirildi.');
+  }
+
+  Future<void> _send(TaskDraft base, String successMessage) async {
     setState(() {
       _busy = true;
       _error = null;
@@ -142,16 +194,14 @@ class _WaitingBannerState extends ConsumerState<_WaitingBanner> {
     // Bildirim, görevin **kendi** reposuna gider; aktif repo başkası olabilir
     // çünkü bekleyenler listesi çoklu repo (L-031).
     final slug = widget.summary.repoSlug;
-    final draft = slug == null
-        ? TaskDraft.waitingDone(widget.task)
-        : TaskDraft.waitingDone(widget.task).forRepo(slug);
+    final draft = slug == null ? base : base.forRepo(slug);
     try {
       await ref.read(taskRepoForSlugProvider(slug)).send(draft);
-      _finish('Agent\'a bildirildi.');
+      _finish(successMessage);
     } on HubNetworkError {
       // Ağ yokken bildirim kaybolmasın: normal görevlerle aynı kuyruk (B-032).
       await ref.read(outboxProvider.notifier).add(draft);
-      _finish('Ağ yok — bildirim kuyruğa alındı.');
+      _finish('Ağ yok — kuyruğa alındı.');
     } on HubError catch (e) {
       if (mounted) setState(() => _error = e.message);
     } catch (e) {
@@ -167,6 +217,63 @@ class _WaitingBannerState extends ConsumerState<_WaitingBanner> {
     setState(() => _reported = true);
     ScaffoldMessenger.of(context)
         .showSnackBar(SnackBar(content: Text(message)));
+  }
+
+  /// Seçenek listesi + isteğe bağlı açıklama + gönder (sözleşme 1.12).
+  ///
+  /// Cevaplandıktan sonra tümü kapanır: bir görev = bir soru. Konuşmanın
+  /// devamı gerekiyorsa agent yeni bir `waiting/` görevi açar — aynı dosyaya
+  /// ikinci cevap göndermek, agent'ın kuyruğunda hangisinin geçerli olduğu
+  /// belirsiz iki kayıt bırakırdı.
+  List<Widget> _answerSection(ThemeData theme, ColorScheme colors) {
+    final options = widget.task.options;
+    final locked = _busy || _reported;
+
+    return [
+      for (var i = 0; i < options.length; i++)
+        _OptionTile(
+          key: optionKey(i),
+          label: options[i],
+          selected: _selected.contains(options[i]),
+          multi: widget.task.multi,
+          enabled: !locked,
+          onTap: () => _toggle(options[i]),
+          colors: colors,
+        ),
+      if (widget.task.multi)
+        Padding(
+          padding: const EdgeInsets.only(top: 4),
+          child: Text(
+            'Birden çok seçebilirsin.',
+            style: theme.textTheme.bodySmall
+                ?.copyWith(color: colors.onTertiaryContainer),
+          ),
+        ),
+      const SizedBox(height: 12),
+      TextField(
+        key: answerNoteKey,
+        controller: _noteCtrl,
+        enabled: !locked,
+        maxLines: 2,
+        textCapitalization: TextCapitalization.sentences,
+        decoration: const InputDecoration(
+          labelText: 'Açıklama (isteğe bağlı)',
+          hintText: 'Listede olmayan bir durum varsa buraya yaz',
+          border: OutlineInputBorder(),
+          isDense: true,
+        ),
+      ),
+      const SizedBox(height: 12),
+      Align(
+        alignment: Alignment.centerRight,
+        child: FilledButton.icon(
+          key: answerButtonKey,
+          onPressed: (locked || _selected.isEmpty) ? null : _answer,
+          icon: Icon(_reported ? Icons.check : Icons.send),
+          label: Text(_reported ? 'Cevaplandı' : 'Cevabı gönder'),
+        ),
+      ),
+    ];
   }
 
   @override
@@ -186,13 +293,21 @@ class _WaitingBannerState extends ConsumerState<_WaitingBanner> {
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Icon(Icons.pan_tool_outlined,
-                  size: 20, color: colors.onTertiaryContainer),
+              Icon(
+                widget.task.isQuestion
+                    ? Icons.help_outline
+                    : Icons.pan_tool_outlined,
+                size: 20,
+                color: colors.onTertiaryContainer,
+              ),
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
-                  'Bu iş seni bekliyor. Ne beklendiği aşağıdaki notlarda '
-                  'yazılı; yaptıktan sonra agent\'a haber ver.',
+                  widget.task.isQuestion
+                      ? 'Agent bir cevap bekliyor. Seçimini işaretle; '
+                          'istersen açıklama da yazabilirsin.'
+                      : 'Bu iş seni bekliyor. Ne beklendiği aşağıdaki notlarda '
+                          'yazılı; yaptıktan sonra agent\'a haber ver.',
                   style: TextStyle(color: colors.onTertiaryContainer),
                 ),
               ),
@@ -203,18 +318,83 @@ class _WaitingBannerState extends ConsumerState<_WaitingBanner> {
             Text(_error!, style: TextStyle(color: colors.error)),
           ],
           const SizedBox(height: 12),
-          Align(
-            alignment: Alignment.centerRight,
-            child: FilledButton.icon(
-              key: doneButtonKey,
-              // Bir kez bildirildikten sonra düğme kapanır: aynı iş için
-              // ikinci bildirim, agent'ın kuyruğunda kopya demek olurdu.
-              onPressed: (_busy || _reported) ? null : _report,
-              icon: Icon(_reported ? Icons.check : Icons.done),
-              label: Text(_reported ? 'Bildirildi' : 'Yaptım'),
+          // Sözleşme 1.12: seçenek varsa "Yaptım" **gösterilmez** — agent bir
+          // soru sormuştur, cevabı "yaptım" değil seçimdir. Seçenek yoksa
+          // davranış 1.11'deki gibi kalır (geriye uyumlu).
+          if (widget.task.isQuestion)
+            ..._answerSection(theme, colors)
+          else
+            Align(
+              alignment: Alignment.centerRight,
+              child: FilledButton.icon(
+                key: doneButtonKey,
+                // Bir kez bildirildikten sonra düğme kapanır: aynı iş için
+                // ikinci bildirim, agent'ın kuyruğunda kopya demek olurdu.
+                onPressed: (_busy || _reported) ? null : _report,
+                icon: Icon(_reported ? Icons.check : Icons.done),
+                label: Text(_reported ? 'Bildirildi' : 'Yaptım'),
+              ),
             ),
-          ),
         ],
+      ),
+    );
+  }
+}
+
+/// Tek cevap seçeneği. Çoklu seçimde kutu, tekli seçimde daire — kullanıcı
+/// dokunmadan önce kaç tane seçebileceğini görsün.
+class _OptionTile extends StatelessWidget {
+  const _OptionTile({
+    super.key,
+    required this.label,
+    required this.selected,
+    required this.multi,
+    required this.enabled,
+    required this.onTap,
+    required this.colors,
+  });
+
+  final String label;
+  final bool selected;
+  final bool multi;
+  final bool enabled;
+  final VoidCallback onTap;
+  final ColorScheme colors;
+
+  @override
+  Widget build(BuildContext context) {
+    final foreground = colors.onTertiaryContainer
+        .withValues(alpha: enabled ? 1 : 0.5);
+
+    return InkWell(
+      onTap: enabled ? onTap : null,
+      borderRadius: BorderRadius.circular(6),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 6),
+        child: Row(
+          children: [
+            Icon(
+              switch ((multi, selected)) {
+                (true, true) => Icons.check_box,
+                (true, false) => Icons.check_box_outline_blank,
+                (false, true) => Icons.radio_button_checked,
+                (false, false) => Icons.radio_button_unchecked,
+              },
+              size: 20,
+              color: foreground,
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Text(
+                label,
+                style: TextStyle(
+                  color: foreground,
+                  fontWeight: selected ? FontWeight.w600 : null,
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

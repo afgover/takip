@@ -241,6 +241,55 @@ class TaskDraft {
     );
   }
 
+  /// Seçenekli bir `waiting/` sorusuna verilen cevap (sözleşme 1.12).
+  ///
+  /// [TaskDraft.waitingDone] ile aynı yoldan gider — app asıl dosyayı
+  /// taşıyamaz (R-001), cevap da `inbox/`a bildirim olarak düşer. Farkı
+  /// gövdesi: seçim ve varsa açıklama. İkisi birden yazılır çünkü seçenek
+  /// listesi cevabı makinece okunur kılar, serbest metin ise listede olmayan
+  /// durumu söyleyebilmek içindir; biri diğerinin yerine geçmez.
+  factory TaskDraft.waitingAnswer(
+    HubTask task, {
+    required List<String> selected,
+    String note = '',
+    DateTime? now,
+  }) {
+    final at = now ?? DateTime.parse(isoNow());
+    final label = task.title.trim().isEmpty ? task.id : task.title.trim();
+    final title = '$label — cevaplandı';
+    final trimmedNote = note.trim();
+
+    final draft = HubTask(
+      id: 'pending',
+      title: title,
+      createdBy: 'user',
+      created: isoNow(),
+      updated: isoNow(),
+      priority: task.priority,
+      category: task.category,
+      tags: const ['waiting-answer'],
+      session: 'none',
+      result: 'none',
+      status: TaskStatus.inbox,
+      path: '',
+      body: '# $title\n\n'
+          '## İstek\n'
+          '`${task.path}`${task.isPending ? '' : ' (${task.id})'} '
+          'görevindeki soru cevaplandı.\n\n'
+          '- **Seçim:** ${selected.isEmpty ? '(seçim yapılmadı)' : selected.join(' · ')}\n'
+          '${trimmedNote.isEmpty ? '' : '- **Açıklama:** $trimmedNote\n'}'
+          '\n## Notlar\n',
+    );
+
+    return TaskDraft(
+      fileName: taskFileName(at, title),
+      content: draft.toFileContent(),
+      commitMessage: "task(pending): inbox'a eklendi (app)",
+      title: title,
+      createdAt: at,
+    );
+  }
+
   factory TaskDraft.fromJson(Map<String, dynamic> json) => TaskDraft(
         fileName: json['fileName'] as String,
         content: json['content'] as String,

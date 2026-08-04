@@ -127,6 +127,89 @@ Future<List<Annotation>> annotationsFrom(
   return found;
 }
 
+/// **Bütün** bağlı repolardaki işaretler, tek listede (sözleşme 1.12).
+///
+/// Yer iminin işe yaraması bu listeye bağlı: "burayı sonra bulayım" ancak
+/// sonradan bulunabiliyorsa anlamlıdır. Yalnız yer imlerini değil her işareti
+/// topluyor — kullanıcı hangi renkle işaretlediğini hatırlamak zorunda kalmasın.
+///
+/// Yerel kopyadan okunuyor (ağ yok): senkron zaten bütün repoların
+/// `hub/**.md`'sini indiriyor.
+final allAnnotationsProvider =
+    FutureProvider<List<AnnotationEntry>>((ref) async {
+  ref.watch(hubSyncProvider.select((s) => s.version));
+
+  final state = ref.watch(hubConnectionsProvider).valueOrNull;
+  final active = ref.watch(hubConfigProvider).value;
+  // Bağlantı listesi henüz yüklenmediyse en azından aktif bağlantı taransın.
+  final connections =
+      state?.connections ?? [if (active != null) active];
+  if (connections.isEmpty) return const [];
+
+  final found = <AnnotationEntry>[];
+  for (final connection in connections) {
+    found.addAll(await allAnnotationsFrom(connection));
+  }
+  // En yeni üstte: dosya adı `<YYYY-MM-DD>-<slug>.md`, yani ada göre tersten
+  // sıralamak tarihe göre sıralamak demek (sözleşme §4).
+  found.sort((a, b) => b.annotation.path.compareTo(a.annotation.path));
+  return found;
+});
+
+/// Bir işaret + hangi belgede olduğu. `Annotation` tek bir belgeyi çizerken
+/// kullanıldığı için `sourcePath`'i dışarıdan alıyor; listede ise her kayıt
+/// kendi belgesini taşımak zorunda.
+class AnnotationEntry {
+  const AnnotationEntry({required this.annotation, required this.repoLabel});
+
+  final Annotation annotation;
+
+  /// Listede gösterilecek repo adı (etiket varsa o, yoksa `owner/ad`).
+  final String repoLabel;
+
+  String get sourcePath => annotation.sourcePath;
+}
+
+/// [allAnnotationsProvider]'ın tek bağlantılık çekirdeği.
+Future<List<AnnotationEntry>> allAnnotationsFrom(HubConfig connection) async {
+  final store = OfflineStore(connection.slug);
+  final tree = await store.readTree();
+  if (tree == null) return const [];
+
+  final found = <AnnotationEntry>[];
+  for (final entry in tree) {
+    if (!entry.isFile) continue;
+    if (!isTaskPath(entry.path) && !isNotePath(entry.path)) continue;
+
+    final doc = await store.readDoc(entry.path);
+    if (doc == null) continue;
+
+    final fm = Frontmatter.parse(doc.content);
+    final source = fm.str('source');
+    final quote = fm.str('quote');
+    final mark = TaskMark.parse(fm.str('mark'));
+    // Üçü birlikte anlamlı (§4): biri eksikse bu bir işaret kaydı değildir.
+    if (source == null || quote == null || quote.isEmpty || mark == null) {
+      continue;
+    }
+
+    found.add(AnnotationEntry(
+      annotation: Annotation(
+        quote: quote,
+        mark: mark,
+        title: fm.str('title') ?? '',
+        category: fm.str('category') ?? (isNotePath(entry.path) ? 'not' : 'gorev'),
+        path: entry.path,
+        sourcePath: source,
+        repoSlug: connection.slug,
+        note: noteTextFrom(fm.body),
+      ),
+      repoLabel: connection.label ?? connection.slug,
+    ));
+  }
+  return found;
+}
+
 /// Bir bağlantının hub'ındaki sözleşme sürümü (§10).
 ///
 /// Yerel kopyadan okunuyor; ayrı istek gerekmiyor çünkü `SYSTEM.md` zaten

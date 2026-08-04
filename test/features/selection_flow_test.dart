@@ -11,6 +11,7 @@ import 'package:takip/features/common/annotated_document.dart';
 import 'package:takip/features/common/selection_record.dart';
 import 'package:takip/github/client.dart';
 import 'package:takip/hub/hub_connections.dart';
+import 'package:takip/hub/models/task.dart';
 
 import '../github/contents_api_test.dart' show FakeAdapter, jsonResponse;
 
@@ -187,5 +188,57 @@ void main() {
         .data)) as Map;
     final content = utf8.decode(base64.decode(body['content'] as String));
     expect(content, contains('şunu düzelt'));
+  });
+
+  group('yer imi (sözleşme 1.12, T-008)', () {
+    testWidgets('tek dokunuşta `notes/`a mavi işaret yazılır', (tester) async {
+      final t = buildDoc();
+      await tester.pumpWidget(t.widget);
+      await tester.pumpAndSettle();
+
+      await selectText(tester);
+      await tester.tap(find.text(AnnotatedDocument.bookmarkLabel));
+      await tester.pumpAndSettle();
+
+      final puts = t.adapter.requests.where((r) => r.method == 'PUT');
+      expect(puts, hasLength(1));
+      expect(Uri.decodeFull(puts.single.uri.path),
+          contains('/${Hub.notesDir}/'));
+
+      final body = jsonDecode(jsonEncode(puts.single.data)) as Map;
+      final content = utf8.decode(base64.decode(body['content'] as String));
+      expect(content, contains('mark: bookmark'));
+    });
+
+    testWidgets('not yazılsa bile göreve dönüşmez', (tester) async {
+      // Diğer işaretlerde notlu seçim göreve gider (yukarıdaki test). Yer
+      // iminde gitmez: niyet adında — "burayı sonra bulayım" agent'a iş değil.
+      final t = buildDoc();
+      await tester.pumpWidget(t.widget);
+      await tester.pumpAndSettle();
+
+      await selectText(tester);
+      await tester.tap(find.text(AnnotatedDocument.taskLabel));
+      await tester.pumpAndSettle();
+
+      await tester.tap(
+          find.byKey(SelectionRecordSheet.markKey(TaskMark.bookmark)));
+      await tester.enterText(
+          find.byKey(SelectionRecordSheet.noteFieldKey), 'sonra oku');
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(SelectionRecordSheet.submitKey));
+      await tester.pumpAndSettle();
+
+      final puts = t.adapter.requests.where((r) => r.method == 'PUT');
+      final path = Uri.decodeFull(puts.single.uri.path);
+      expect(path, contains('/${Hub.notesDir}/'));
+      expect(path, isNot(contains('/tasks/')),
+          reason: 'yer imi hiçbir koşulda iş kuyruğuna girmemeli');
+
+      final body = jsonDecode(jsonEncode(puts.single.data)) as Map;
+      final content = utf8.decode(base64.decode(body['content'] as String));
+      expect(content, contains('mark: bookmark'));
+      expect(content, contains('sonra oku'), reason: 'not kaybolmamalı');
+    });
   });
 }
