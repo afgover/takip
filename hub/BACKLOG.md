@@ -312,6 +312,18 @@ başlığına ✅ ve tarih yazılır.
       açılıyor (`docContentForProvider` — L-031'in aynı dersi). Yakalanan hata:
       notsuz yol `note`'u hiç geçirmiyordu; yer imine yazılan not sessizce
       kaybolurdu. 397 test, analyze temiz
+      · ⚠ **"Bütün repolar" kararı B-106 ile değişti:** liste aktif repoya
+      bağlandı (sözleşme 1.13)
+- [x] B-106 · (agent) İşaretler listesi aktif repoya bağlansın — ✅ 2026-08-04;
+      sözleşme 1.13, B-105'in aynı gün gelen kullanım geri bildirimi. İşaret bir
+      belgedeki **yeri** hatırlatır, belge de bir projeye aittir; bütün repolar
+      tek listede olunca ekran bağlam yığınına dönüyordu. Uygulamanın geri kalanı
+      zaten aktif repoyla çalışıyordu (repo şeridi), işaretler istisna kalmıştı.
+      Hangi reponun listesi olduğu başlıkta yazıyor — görünmezse eksik liste tam
+      sanılır. `AnnotationEntry` kalktı (repo etiketi satır başına değişmiyor
+      artık), `allAnnotationsFrom` → `annotationsIn`. Bekleyenler bilinçli
+      istisna: orada soru "hangi projede olursa olsun bende bekleyen ne var"
+      (B-067). 399 test, analyze temiz. → S-2026-08-04-isaretler-aktif-repo
 - [ ] B-102 · (agent+user) SEC-011: taramanın tekrar aralığına karar ver —
       tek seferlik tarama yalnız koştuğu gün için geçerli. Ölçeğe uygun en ucuz
       yol her sürüm öncesi elle koşum; alternatifi zamanlanmış GitHub Actions işi
