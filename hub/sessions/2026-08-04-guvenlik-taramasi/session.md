@@ -1,18 +1,48 @@
 ---
 id: S-2026-08-04-guvenlik-taramasi
 date: 2026-08-04
-status: open
+status: closed
 reconstructed: false
-topics: [guvenlik, bagimlilik-taramasi, token-kapsami]
+topics: [guvenlik, bagimlilik-taramasi, token-kapsami, sozlesme-1.12, isaretler]
 artifacts:
   - artifacts/S-2026-08-04-guvenlik-taramasi/bagimlilik-ve-yapilandirma-taramasi.md
-tasks_touched: [T-006]
+tasks_touched: [T-006, T-007, T-008]
 ---
 
 # Oturum: Açık güvenlik işleri — SEC-005 ve SEC-006
 
 ## Özet
-(oturum kapanışında yazılacak)
+Gün ikiye bölündü: **açık güvenlik işleri** ve **kullanımdan gelen iki istek**.
+
+**Güvenlik (B-091, B-092 — backlog'daki son iki agent maddesi).** Bağımlılık ve
+zafiyet taraması ilk kez koşuldu: 68 paket OSV'ye soruldu, bilinen zafiyet yok.
+"0 bulgu"yu sonuç olarak yazmadan önce sorgunun gerçekten çalıştığı, bilinen
+açıkları olan sürümlerden kurulu bir kontrol grubuyla doğrulandı — doğrulanmamış
+bir boş sonuç, olmayan bir güvence verir (L-035). Sır taraması çalışma ağacı ve
+git geçmişinin tamamında temiz. Tarama iki bulgu üretti: Android otomatik
+yedeklemesi cihazdaki şifresiz hub kopyasını buluta taşıyor (SEC-009) ve release
+derlemesi debug anahtarıyla imzalanıyor (SEC-010 — B-097'nin APK adımının ön
+koşulu). Token kapsamı denetimi eklendi: kapsam, erişim doğrulamasının aynı
+yanıtından okunuyor, fazladan istek yok (SK-011); yorum tek yönlü ve uyarı
+engellemiyor — çalışan bir token'ı reddetmek uygulamayı kullanılamaz hâle
+getirirdi. Kapanamayan kısım ayrı kayıt oldu (SEC-012) ve ölçümü kullanıcıya
+soruldu (T-006).
+
+**Sözleşme 1.12 (T-007, T-008 — kullanıcının uygulamadan attığı iki görev).**
+İkisi de aynı boşluğun yüzleriydi: sistem kullanıcıya **soru soramıyordu** ve
+kullanıcı bir yeri **sonra bulmak üzere** işaretleyemiyordu. Seçenekli bekleme
+(`options`/`multi` + serbest açıklama, cevap `waiting-answer` olarak inbox'a) ve
+yer imi (`mark: bookmark`, hiçbir koşulda göreve dönüşmez) eklendi; bütün
+repolardaki işaretler tek listede toplandı ve oradan kaydın kendi reposundaki
+belgeye gidiliyor. Yer imi ancak sonradan bulunabiliyorsa işe yarar.
+
+Uygulama sırasında sessiz bir veri kaybı yakalandı: bir dalın koşulu genişleyince
+gövdesinin yazılmamış varsayımı yanlışa döndü ve yer imine yazılan not
+kaydedilmiyordu (L-036). 350 → **397 test**, analyze temiz.
+
+Geriye kalan açık işler kullanıcıya bağlı (B-097 public karar, B-052 kullanım)
+ya da bu oturumun ürettiği yeni maddeler (B-100 yedekleme, B-101 imza, B-102
+tarama tekrarı, B-103 token genişliği).
 
 ## Kayıt
 
@@ -114,3 +144,54 @@ push'landı.
 inbox raporlanır, kullanıcı yönlendirmeden işlenmez. İkisi de sözleşmeye
 dokunuyor — biri `waiting/` şemasına seçenek alanı, diğeri `mark` kümesine
 yeni bir tür ekler.
+
+### Kullanıcı
+> Inbox'taki iki görev (sıradaki iş seçimi)
+
+### Agent
+İkisi de `active/`e alındı (T-007, T-008). Sözleşme değişikliği gerektirdikleri
+için önce iki tasarım kararı soruldu; kullanıcı ikisinde de öneriyi seçti:
+**(1)** seçenekli cevaba **her zaman** isteğe bağlı serbest metin eşlik etsin,
+**(2)** yer imi **her zaman** `notes/`a gitsin (notlu olsa bile).
+
+### Agent — T-007 · Seçenekli bekleme (sözleşme 1.12, B-104)
+Boşluk şuydu: `waiting/` 1.4'ten beri var ama kullanıcının tek cevabı
+"Yaptım"dı. Agent bir *karar* sorduğunda karşılığı yoktu; cevap sohbette
+kalıyordu — yani `waiting/`in var oluş sebebine (sohbet kapanır, kayıt kalır)
+aykırı bir yerde birikiyordu.
+
+Agent artık göreve `options: [...]` (+ `multi`) yazıyor. App seçenekleri
+gösteriyor, seçimin yanına açıklama alıyor, cevabı `waiting-answer` etiketiyle
+`inbox/`a yazıyor (R-001 değişmedi — app asıl dosyayı taşımıyor).
+
+Üç kural kodda karşılığını buldu: seçenek varsa "Yaptım" **gösterilmiyor**
+(agent soru sordu, cevabı "yaptım" değil); seçenek yoksa davranış 1.11'deki
+gibi kalıyor (eski görevler bozulmadı); cevaplanan soru kapanıyor — bir görev
+= bir soru, aksi hâlde agent'ın kuyruğunda hangisinin geçerli olduğu belirsiz
+iki kayıt kalırdı. `isQuestion` ayrıca `waiting/` şartı arıyor: başka klasörde
+`options` bulunsa bile o iş kullanıcıyı beklemiyordur.
+
+### Agent — T-008 · Yer imi + işaretler listesi (sözleşme 1.12, B-105)
+`mark: bookmark` (mavi) eklendi ve **ilk defa göreve dönüşmeyen** bir işaret
+oldu (R-007). B-099'da ayrımı notun varlığı yapıyordu; yer iminde niyet zaten
+adında.
+
+Asıl iş işaretin kendisi değil **listesi**: Tarayıcı → İşaretler bütün bağlı
+repolardaki işaretleri (görev **ve** not) tek listede topluyor, renge göre
+süzüyor, dokununca kaydın **kendi** reposundaki belgeyi açıyor. Liste çok
+kaynaklı olduğu için açılan yol da baştan çok kaynaklı kuruldu
+(`docContentForProvider`) — L-031/L-034'ün üçüncü tekrarı, bu sefer hata
+yapılmadan.
+
+**Yakalanan sessiz hata:** notsuz dal `note` parametresini hiç geçirmiyordu —
+gerek yoktu, çünkü oraya yalnız not boşken giriliyordu. Yer imi o dalın
+koşulunu genişletince kullanıcının yazdığı not sessizce kayboluyordu. Hiçbir
+şey hata vermedi; test yakaladı. → L-036
+
+Ayrıca sözleşme uyum testi eklendi: her `TaskMark` değeri `SYSTEM.md`'de
+geçiyor mu (K-031'in dersinin otomatiği).
+
+**397 test** (26 yeni), analyze temiz. Kurulum talimatı ve README de 1.12'ye
+çekildi; README'deki "uygulama token kapsamını doğrulamıyor" cümlesi artık
+yanlış olduğu için SEC-012'ye göre düzeltildi. T-006 da 1.12'nin kendi
+özelliğiyle yeniden yazıldı: kullanıcının cevabı artık üç seçenekten biri.
