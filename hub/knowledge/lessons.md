@@ -512,3 +512,21 @@ Biçim: `SYSTEM.md` §5.
   diyen her grep, "hiç kayıt yok" diyen her sorgu için geçerli. Aracın
   sustuğunu, aramanın boş döndüğünden ayırt edecek tek şey budur.
   Aynı fikrin başka görünümü L-033: parçalar yeşilken zincir kopuk olabilir.
+
+## L-036 — Bir dalın "hep boş" varsayımı, dal genişleyince sessizce veri yer
+- **Tarih:** 2026-08-04
+- **Kaynak:** S-2026-08-04-guvenlik-taramasi (T-008, B-105)
+- **Açıklama:** `AnnotatedDocument._create` iki dala ayrılıyordu: not boşsa
+  `createNote`, doluysa görev. Boş dalda `note` parametresi hiç geçirilmiyordu
+  — **gerek yoktu**, çünkü o dala yalnız not boşken giriliyordu. Doğru bir
+  varsayım, tanımı gereği yazılmamış bir kural.
+  Yer imi (1.12) o dalın koşulunu genişletti: artık notlu kayıtlar da oradan
+  geçiyor. Kod derlendi, analyze temiz kaldı, ekranda hiçbir hata çıkmadı;
+  yalnız kullanıcının yazdığı not **kaydedilmedi**. Sessiz veri kaybı.
+  Testten yakalandı ("not kaybolmamalı") — dalın koşulunu değiştirirken
+  yazılmış bir test olduğu için.
+  **Genel kural:** bir dalın koşulunu genişletirken, o dalın gövdesinin eski
+  koşula dayanan **yazılmamış** varsayımlarını da say. "Buraya yalnız X
+  durumunda gelinir" bilgisi koşulda durur, gövdede durmaz; koşul değişince
+  gövde uyarı vermeden yanlışa döner. Pratik karşılığı: yeni dalın taşıdığı
+  her alan için "bu alan gerçekten aktarılıyor mu?" diye tek bir test yaz.

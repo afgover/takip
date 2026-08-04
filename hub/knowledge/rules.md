@@ -62,3 +62,15 @@ Projede uyulacak kalıcı kurallar. Kayıtlar silinmez; geçersizleşen kural ü
   Gerekçe: çok repolu kurulumda veri kaybı sonrası token'ları tek tek yeniden
   girmek sistemi kullanılamaz kılıyordu; ama kolaylık, token'ı korumasız bir
   dizeye çevirmeyi haklı çıkarmaz.
+
+## R-007 — Yer imi hiçbir koşulda görev olmaz
+- **Tarih:** 2026-08-04
+- **Kaynak:** Sözleşme 1.12 §4, T-008
+- **Açıklama:** `mark: bookmark` taşıyan kayıt her zaman `notes/`a yazılır,
+  not yazılmış olsa bile. Diğer işaretlerde ayrımı notun varlığı yapar
+  (notsuz → `notes/`, notlu → `tasks/inbox/`, B-099); yer iminde niyet zaten
+  adındadır: "burayı sonra bulayım". Bir yer imine düşülen not da kullanıcının
+  kendine bıraktığı işarettir, agent'a verilmiş bir iş değil.
+  Kural kodda tek yerde duruyor (`TaskMark.canBecomeTask`) ve karar noktası
+  `AnnotatedDocument._create`'tir — R-001'in yazma alanı kısıtı değişmedi,
+  yalnız hangi alana gidileceği bu kuralla belirleniyor.
