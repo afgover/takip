@@ -5,7 +5,7 @@ ve hangi şemaya uyacağını** tanımlar. Agent ve kullanıcı uygulaması bu s
 dışına çıkmaz. Sözleşme değişiklikleri `EVOLUTION.md`'ye kaydedilir ve bu dosyanın
 başındaki sürüm numarası artırılır.
 
-**Sözleşme sürümü:** 1.11
+**Sözleşme sürümü:** 1.12
 **Ana kopya (master):** `afgover/takip` → `hub/SYSTEM.md`
 (bkz. §10 — her hub kendi kopyasını buradan günceller)
 **Zaman biçimi:** her yerde ISO 8601, UTC (`2026-07-30T14:05:00Z`)
@@ -165,7 +165,8 @@ result: none                 # tamamlanınca: sonucun 1 satır özeti veya artif
 source: hub/sessions/2026-08-01-x/session.md   # kaydın bağlı olduğu belge
 quote: "işaretlenen metnin tamamı"             # o belgeden birebir alıntı
 mark: highlight              # highlight (sarı) | underline (kırmızı) |
-                             # comment (yeşil, v1.8) — belgede nasıl çizilecek
+                             # comment (yeşil, v1.8) | bookmark (mavi, v1.12)
+                             # — belgede nasıl çizilecek
 ---
 
 # <başlık>
@@ -203,8 +204,37 @@ taşır** ve `## Notlar`a ne beklediğini tek satırda yazar. Beklenen şey
 belirsizse görev `active/`te kalır — "belki kullanıcı bir şey yapar" durumu
 `waiting/` değildir.
 
-Kullanıcı işi bitirdiğinde uygulamadaki **"Yaptım"** düğmesine basar; app
-`tasks/inbox/`'a şu şemada bir bildirim görevi yazar:
+#### Seçenekli bekleme (v1.12)
+
+Bekleyen her iş "yap ve haber ver" değildir; çoğu zaman agent'ın beklediği şey
+bir **karar**dır ("hangisini yapalım?"). Sözleşme 1.11'e kadar kullanıcının
+tek cevabı "Yaptım" düğmesiydi ve bir soruya verilecek karşılığı yoktu —
+kullanıcı ya sohbete dönmek zorunda kalıyordu ya da cevap hiç kaydedilmiyordu.
+
+Agent, `waiting/` görevine iki alan ekleyerek seçenek sunar:
+
+```yaml
+options: ["Fine-grained token üreteceğim", "Klasikle devam", "Sonra bakalım"]
+multi: false                 # true → birden çok seçenek işaretlenebilir
+```
+
+Kurallar:
+
+- `options` **agent tarafından** yazılır; app bu alanı değiştirmez.
+- `options` yoksa davranış 1.11'deki gibidir: tek bir "Yaptım" düğmesi.
+  Eski görevler olduğu gibi çalışmaya devam eder.
+- `options` varsa "Yaptım" **gösterilmez**: agent bir soru sormuştur, cevabı
+  "yaptım" değil seçimdir.
+- Kullanıcı seçimin yanına **her zaman** isteğe bağlı bir açıklama
+  yazabilir ("Hayır, çünkü…"). Seçenek listesi cevabı makinece okunur
+  kılar, serbest metin ise listede olmayan durumu söyleyebilmek içindir;
+  ikisi birbirinin yerine geçmez.
+- Cevap verildiğinde soru **kapanır**: app aynı görev için ikinci bir cevap
+  göndermez. Konuşmanın devamı gerekiyorsa agent yeni bir `waiting/` görevi
+  açar — bir görev = bir soru.
+
+Kullanıcı işi bitirdiğinde (ya da soruyu cevapladığında) app `tasks/inbox/`'a
+şu şemada bir bildirim görevi yazar:
 
 ```markdown
 ---
@@ -218,6 +248,17 @@ tags: [waiting-done]
 
 ## İstek
 `tasks/waiting/<dosya>.md` (T-00X) görevinde beklenen iş yapıldı.
+```
+
+Seçenekli bir soruya cevap verildiğinde aynı şema, `tags: [waiting-answer]`
+ve başlıkta "— cevaplandı" ile gider; gövde seçimi ve varsa açıklamayı taşır:
+
+```markdown
+## İstek
+`tasks/waiting/<dosya>.md` (T-00X) görevindeki soru cevaplandı.
+
+- **Seçim:** Fine-grained token üreteceğim
+- **Açıklama:** Bu hafta içinde üretirim.
 ```
 
 Agent bu bildirimi gördüğünde asıl görevi `waiting/` → `done/` taşır (ya da iş
@@ -235,7 +276,7 @@ bir görevdir — R-001 gereği `tasks/inbox/`'a yazılır — ama üç ek alan 
 |---|---|
 | `source` | Kaydın bağlı olduğu belgenin hub içindeki yolu |
 | `quote` | O belgeden **birebir** alıntı; işaretin yeri bununla bulunur |
-| `mark` | `highlight` (sarı), `underline` (kırmızı) veya `comment` (yeşil) |
+| `mark` | `highlight` (sarı), `underline` (kırmızı), `comment` (yeşil) veya `bookmark` (mavi, v1.12) |
 
 `category` kaydın **ne olduğunu** söyler: `gorev` (yapılacak iş), `yorum`,
 `duzeltme` (yanlış olduğu düşünülen yer), `tartisma` (açık soru) ya da serbest
@@ -259,6 +300,12 @@ Kurallar:
 niyetidir: görev "sen şunu yap", not "ben bunu hatırlayayım". İkisini aynı
 klasöre koymak, kullanıcının kendine yazdığı her satırı agent'ın iş kuyruğuna
 sokuyordu.
+
+**Yer imi hiçbir koşulda görev değildir (v1.12).** `mark: bookmark` taşıyan
+kayıt, not yazılmış olsa bile `notes/`a gider. Diğer işaretlerde ayrımı notun
+varlığı yapar (notsuz → `notes/`, notlu → `tasks/inbox/`, bkz. §11 ve B-099);
+yer iminde niyet zaten adında: "burayı sonra bulayım". Bir yer imine düşülen
+not, agent'a verilmiş bir iş değil, kullanıcının kendine bıraktığı işarettir.
 
 ## 5. `knowledge/` — bilgi tabanı
 
@@ -409,9 +456,14 @@ Buna sonra bakayım.
 ```
 
 `source`/`quote`/`mark` alanları §4'teki seçim kayıtlarıyla aynı anlamdadır ve
-aynı işi görür: uygulama belgeyi çizerken notu da bulur ve alıntıyı yeşil
-işaretler. Yani not da işaretini kendisi taşır, işaret ayrıca saklanmaz.
-Belgeden seçilmeden alınan bir notta bu üç alan olmayabilir.
+aynı işi görür: uygulama belgeyi çizerken notu da bulur ve alıntıyı `mark`'ın
+rengiyle işaretler. Yani not da işaretini kendisi taşır, işaret ayrıca
+saklanmaz. Belgeden seçilmeden alınan bir notta bu üç alan olmayabilir.
+
+**Yer imleri (v1.12) burada durur.** `mark: bookmark` taşıyan kayıt her zaman
+`notes/`a yazılır — notlu da olsa (§4). Uygulama bütün işaretleri (görev ve
+not, bütün repolar) tek bir listede toplar ve oradan kaydın bağlı olduğu
+belgeye gidilir; yer iminin işi tam olarak budur.
 
 **Agent kuralları:**
 - Notlar kullanıcınındır. Agent onları **iş saymaz**: ID atamaz, taşımaz,

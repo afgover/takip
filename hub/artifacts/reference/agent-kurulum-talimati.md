@@ -4,8 +4,8 @@ session: none
 type: info
 title: "Agent kurulum talimatı — hub'ı kur, geçmişi topla, protokole göre çalış"
 created: 2026-08-01T00:00:00Z
-updated: 2026-08-03T00:00:00Z
-contract: "1.11"
+updated: 2026-08-04T00:00:00Z
+contract: "1.12"
 ---
 
 # Agent Kurulum Talimatı
@@ -16,7 +16,7 @@ bunu olduğu gibi yapıştırır; agent gerisini buradan yapar.
 Kanonik sürüm bu dosyadır (`afgover/takip` reposunda). Masaüstündeki kopya
 kolaylık içindir ve zamanla bayatlar; şüphede kalınırsa bu dosya esas alınır.
 
-**Bu belge sözleşme sürümü 1.11'e göre yazıldı.** Sözleşmenin kendisi daha
+**Bu belge sözleşme sürümü 1.12'ye göre yazıldı.** Sözleşmenin kendisi daha
 yeniyse o kazanır — bkz. §1.
 
 ---
@@ -72,7 +72,7 @@ Her oturum açılışında:
 3. **Aynıysa** devam et.
 4. **Geridesen:** ana kopyayı `SYSTEM.md` ve `AGENT_PROTOCOL.md` üzerine yaz,
    yeni sürümün getirdiği klasör/dosyaları oluştur, commit et
-   (`system: sözleşme 1.6 → 1.11 güncellendi`), `EVOLUTION.md`'ye tek satır not
+   (`system: sözleşme 1.6 → 1.12 güncellendi`), `EVOLUTION.md`'ye tek satır not
    düş ve kullanıcıya **ne değiştiğini** bir cümleyle söyle.
 5. **İleridesen:** üzerine yazma. Ana kopya güncellenmeden yapılmış yerel bir
    değişiklik var demektir; kullanıcıya bildir ve ana kopyaya taşınmasını öner.
@@ -119,7 +119,7 @@ boş klasör tutmadığı için ayrıca gereklidir.
 **gerçek** bir kural/skill/ders çıktığında eklenir — dolu görünsün diye
 uydurulmaz.
 
-Commit: `system: hub iskeleti kuruldu (sözleşme 1.11)`
+Commit: `system: hub iskeleti kuruldu (sözleşme 1.12)`
 
 ---
 
@@ -293,6 +293,23 @@ Kullanıcı uygulamadan **"Yaptım"** dediğinde `inbox/`a `waiting-done` etiket
 bir bildirim görevi düşer. Onu görünce asıl görevi `waiting/`ten çıkar (`done/`
 ya da iş sürüyorsa `active/`) ve bildirimi kapat.
 
+**Soru soruyorsan seçenek ver (v1.12).** Beklediğin şey bir iş değil bir
+*karar*sa, görevin frontmatter'ına seçenekleri yaz:
+
+```yaml
+options: ["Fine-grained token üreteceğim", "Klasikle devam", "Sonra bakalım"]
+multi: false                 # true → kullanıcı birden çok işaretleyebilir
+```
+
+Uygulama o zaman "Yaptım" yerine seçenekleri gösterir; kullanıcı seçer,
+isterse yanına açıklama yazar. Cevap `inbox/`a `waiting-answer` etiketiyle
+düşer ve gövdesinde **Seçim** (varsa **Açıklama**) satırını taşır.
+
+İki kural: seçenek yazmazsan davranış eskisi gibi kalır ("Yaptım"), ve
+**bir görev = bir soru** — cevaplanan soru kapanır, konuşmanın devamı
+gerekiyorsa yeni bir `waiting/` görevi aç. Sorunu sohbette sorup geçme;
+sohbet kapanır, `waiting/` kapanmaz.
+
 ---
 
 ## 6. Uygulamadan gelenler
@@ -306,7 +323,8 @@ silebilir (1.7) — sen `active/`e almışsan silinemez.
 
 Kullanıcı uygulamada herhangi bir belgede metin seçip kayıt oluşturabiliyor.
 Bu kayıtlar `inbox/`a normal görev olarak düşer ama üç ek alan taşır:
-`source` (hangi belge), `quote` (birebir alıntı), `mark` (sarı/kırmızı/yeşil).
+`source` (hangi belge), `quote` (birebir alıntı), `mark`
+(sarı/kırmızı/yeşil/mavi).
 Gövdesinde ayrıca **nerede** olduğu yazar: repo, dosya yolu, bölüm başlığı —
 alıntıyı bütün hub'da aramak zorunda kalma.
 
@@ -327,6 +345,11 @@ gerçekten yapmış ol.
 
 Kullanıcı aynı menüden **"Not ekle"** derse kayıt `tasks/` altına **girmez**,
 `notes/`a yazılır ve alıntı yeşil işaretlenir.
+
+**Yer imi (v1.12, `mark: bookmark`) her zaman burada durur** — not yazılmış
+olsa bile göreve dönüşmez. "Burayı sonra bulayım" demek sana iş vermek
+değildir. Kullanıcı bütün işaretlerini uygulamada tek listede görüyor ve
+oradan belgeye gidiyor.
 
 **Bu klasör senin işin değil.** ID atama, taşıma, `result` yazma, "yapıldı"
 deme, silme, düzenleme — hiçbiri. Bağlam olarak okuyabilir ve oturum kaydında
@@ -382,7 +405,7 @@ evolution: Aşama 1 kapandı
 knowledge: L-003 eklendi
 note: eklendi / silindi (app)
 security: SEC-005 eklendi / SEC-002 kapatıldı
-system: sözleşme 1.6 → 1.11 güncellendi
+system: sözleşme 1.6 → 1.12 güncellendi
 ```
 
 İlgisiz değişiklikler aynı commit'e konmaz. Uygulama commit geçmişini bu
