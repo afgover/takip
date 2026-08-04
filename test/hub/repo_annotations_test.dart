@@ -17,7 +17,7 @@ const _financer = HubConfig(
   label: 'Financer',
 );
 
-/// Yerel kopyaya bir kayıt yazar; `allAnnotationsFrom` ağ kullanmaz.
+/// Yerel kopyaya bir kayıt yazar; `annotationsIn` ağ kullanmaz.
 Future<void> put(
   HubConfig connection,
   String path,
@@ -51,18 +51,18 @@ String record({
 void main() {
   setUp(() => SharedPreferences.setMockInitialValues({}));
 
-  group('allAnnotationsFrom', () {
+  group('annotationsIn', () {
     test('görevlerdeki ve notlardaki işaretleri birlikte toplar', () async {
       await put(_takip, '${Hub.notesDir}/2026-08-04-a.md',
           record(mark: 'bookmark', quote: 'yer imi konan cümle'));
       await put(_takip, '${Hub.inboxDir}/2026-08-04-b.md',
           record(mark: 'underline', quote: 'yanlış olan yer'));
 
-      final found = await allAnnotationsFrom(_takip);
+      final found = await annotationsIn(_takip);
 
       expect(found, hasLength(2));
       expect(
-        found.map((e) => e.annotation.mark),
+        found.map((e) => e.mark),
         containsAll([TaskMark.bookmark, TaskMark.underline]),
       );
     });
@@ -78,12 +78,12 @@ void main() {
         ),
       );
 
-      final entry = (await allAnnotationsFrom(_takip)).single;
+      final entry = (await annotationsIn(_takip)).single;
       // Liste çok belgeli: kayıt hangi belgeye ait olduğunu kendisi bilmeli,
       // yoksa dokununca nereye gidileceği bilinemez.
       expect(entry.sourcePath, 'hub/BACKLOG.md');
-      expect(entry.annotation.repoSlug, 'afgover/takip');
-      expect(entry.annotation.note, 'notun metni');
+      expect(entry.repoSlug, 'afgover/takip');
+      expect(entry.note, 'notun metni');
     });
 
     test('işaret alanları eksik olan kayıt listeye girmez', () async {
@@ -95,7 +95,7 @@ void main() {
         '---\nid: pending\ntitle: "Düz görev"\n---\n\n# Düz görev\n',
       );
 
-      expect(await allAnnotationsFrom(_takip), isEmpty);
+      expect(await annotationsIn(_takip), isEmpty);
     });
 
     test('oturum/artifact dosyaları taranmaz', () async {
@@ -104,18 +104,26 @@ void main() {
       await put(_takip, '${Hub.sessionsDir}/2026-08-04-x/session.md',
           record(mark: 'highlight', quote: 'oturumdaki metin'));
 
-      expect(await allAnnotationsFrom(_takip), isEmpty);
+      expect(await annotationsIn(_takip), isEmpty);
     });
 
-    test('repo etiketi listede görünecek adı verir', () async {
-      await put(_financer, '${Hub.notesDir}/2026-08-04-a.md',
-          record(mark: 'comment', quote: 'not'));
+    test('yalnız verilen bağlantı taranır — başka repo sızmaz', () async {
+      // Sözleşme 1.13: liste aktif repoya ait. Bu fonksiyon tek bağlantı
+      // aldığı için sızıntı yapısal olarak mümkün değil; test bunu sabitliyor.
+      await put(_takip, '${Hub.notesDir}/2026-08-04-a.md',
+          record(mark: 'bookmark', quote: 'takip işareti'));
+      await put(_financer, '${Hub.notesDir}/2026-08-04-b.md',
+          record(mark: 'comment', quote: 'financer işareti'));
 
-      expect((await allAnnotationsFrom(_financer)).single.repoLabel, 'Financer');
+      final inTakip = await annotationsIn(_takip);
+      expect(inTakip.map((a) => a.quote), ['takip işareti']);
+
+      final inFinancer = await annotationsIn(_financer);
+      expect(inFinancer.map((a) => a.quote), ['financer işareti']);
     });
 
     test('yerel kopyası olmayan bağlantı boş döner (çökmez)', () async {
-      expect(await allAnnotationsFrom(_financer), isEmpty);
+      expect(await annotationsIn(_financer), isEmpty);
     });
   });
 

@@ -127,56 +127,52 @@ Future<List<Annotation>> annotationsFrom(
   return found;
 }
 
-/// **Bütün** bağlı repolardaki işaretler, tek listede (sözleşme 1.12).
+/// **Aktif** repodaki bütün işaretler, tek listede (sözleşme 1.13).
 ///
 /// Yer iminin işe yaraması bu listeye bağlı: "burayı sonra bulayım" ancak
 /// sonradan bulunabiliyorsa anlamlıdır. Yalnız yer imlerini değil her işareti
 /// topluyor — kullanıcı hangi renkle işaretlediğini hatırlamak zorunda kalmasın.
 ///
+/// **Neden aktif repo, bütün repolar değil (1.12 → 1.13):** ilk hâlinde liste
+/// bütün bağlantıları birleştiriyordu ve kullanımın ilk saatinde ters teptiği
+/// görüldü — işaret bir belgedeki *yeri* hatırlatır, belge de bir projeye
+/// aittir; hepsi tek listede olunca ekran bağlam yığınına dönüşüyor. Uygulamanın
+/// geri kalanı zaten aktif repoyla çalışıyor (üstteki repo şeridi); işaretler
+/// bunun dışında kalmıştı. Başka projenin işaretlerine bakmak için repo
+/// değiştirilir — liste kendiliğinden tazelenir.
+///
+/// Bekleyenler bilinçli olarak istisna: orada iş "hangi projede olursa olsun
+/// bende bekleyen ne var" sorusuna cevap verir (B-067).
+///
 /// Yerel kopyadan okunuyor (ağ yok): senkron zaten bütün repoların
 /// `hub/**.md`'sini indiriyor.
-final allAnnotationsProvider =
-    FutureProvider<List<AnnotationEntry>>((ref) async {
+final repoAnnotationsProvider = FutureProvider<List<Annotation>>((ref) async {
   ref.watch(hubSyncProvider.select((s) => s.version));
 
   final state = ref.watch(hubConnectionsProvider).valueOrNull;
-  final active = ref.watch(hubConfigProvider).value;
-  // Bağlantı listesi henüz yüklenmediyse en azından aktif bağlantı taransın.
-  final connections =
-      state?.connections ?? [if (active != null) active];
-  if (connections.isEmpty) return const [];
+  // Bağlantı listesi henüz yüklenmediyse aktif yapılandırmaya düşülür.
+  final active = state?.active ?? ref.watch(hubConfigProvider).value;
+  if (active == null) return const [];
 
-  final found = <AnnotationEntry>[];
-  for (final connection in connections) {
-    found.addAll(await allAnnotationsFrom(connection));
-  }
+  final found = await annotationsIn(active);
   // En yeni üstte: dosya adı `<YYYY-MM-DD>-<slug>.md`, yani ada göre tersten
   // sıralamak tarihe göre sıralamak demek (sözleşme §4).
-  found.sort((a, b) => b.annotation.path.compareTo(a.annotation.path));
+  found.sort((a, b) => b.path.compareTo(a.path));
   return found;
 });
 
-/// Bir işaret + hangi belgede olduğu. `Annotation` tek bir belgeyi çizerken
-/// kullanıldığı için `sourcePath`'i dışarıdan alıyor; listede ise her kayıt
-/// kendi belgesini taşımak zorunda.
-class AnnotationEntry {
-  const AnnotationEntry({required this.annotation, required this.repoLabel});
-
-  final Annotation annotation;
-
-  /// Listede gösterilecek repo adı (etiket varsa o, yoksa `owner/ad`).
-  final String repoLabel;
-
-  String get sourcePath => annotation.sourcePath;
-}
-
-/// [allAnnotationsProvider]'ın tek bağlantılık çekirdeği.
-Future<List<AnnotationEntry>> allAnnotationsFrom(HubConfig connection) async {
+/// Bir bağlantıdaki bütün işaret kayıtları — [repoAnnotationsProvider]'ın
+/// çekirdeği.
+///
+/// `annotationsFrom` tek bir **belgeye** bağlı kayıtları verir; bu ise repodaki
+/// hepsini, her biri kendi `source`'uyla. Listede kaydın hangi belgeye ait
+/// olduğu satır başına değişir, o yüzden `sourcePath` dışarıdan verilemez.
+Future<List<Annotation>> annotationsIn(HubConfig connection) async {
   final store = OfflineStore(connection.slug);
   final tree = await store.readTree();
-  if (tree == null) return const [];
+  if (tree == null) return [];
 
-  final found = <AnnotationEntry>[];
+  final found = <Annotation>[];
   for (final entry in tree) {
     if (!entry.isFile) continue;
     if (!isTaskPath(entry.path) && !isNotePath(entry.path)) continue;
@@ -193,18 +189,15 @@ Future<List<AnnotationEntry>> allAnnotationsFrom(HubConfig connection) async {
       continue;
     }
 
-    found.add(AnnotationEntry(
-      annotation: Annotation(
-        quote: quote,
-        mark: mark,
-        title: fm.str('title') ?? '',
-        category: fm.str('category') ?? (isNotePath(entry.path) ? 'not' : 'gorev'),
-        path: entry.path,
-        sourcePath: source,
-        repoSlug: connection.slug,
-        note: noteTextFrom(fm.body),
-      ),
-      repoLabel: connection.label ?? connection.slug,
+    found.add(Annotation(
+      quote: quote,
+      mark: mark,
+      title: fm.str('title') ?? '',
+      category: fm.str('category') ?? (isNotePath(entry.path) ? 'not' : 'gorev'),
+      path: entry.path,
+      sourcePath: source,
+      repoSlug: connection.slug,
+      note: noteTextFrom(fm.body),
     ));
   }
   return found;

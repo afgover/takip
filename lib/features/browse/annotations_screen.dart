@@ -2,20 +2,27 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../hub/annotations.dart';
+import '../../hub/hub_config.dart';
 import '../../hub/models/task.dart';
 import '../common/hub_error_view.dart';
 import 'document_screen.dart';
 
-/// Bütün repolardaki işaretler tek listede (sözleşme 1.12).
+/// **Aktif repodaki** işaretler tek listede (sözleşme 1.13).
 ///
 /// Yer iminin varlık sebebi bu ekran: "burayı sonra bulayım" ancak sonradan
 /// bulunabiliyorsa bir işe yarar. Yalnız yer imleri değil **her** işaret
 /// burada — kullanıcı bir yeri neyle işaretlediğini hatırlamak zorunda
 /// kalmasın; renge göre süzebilir.
+///
+/// Liste aktif repoya bağlı: işaret bir belgedeki *yeri* hatırlatır, belge de
+/// bir projeye aittir. Başka projenin işaretleri için repo değiştirilir
+/// (üstteki repo şeridi) — liste kendiliğinden tazelenir. Hangi repoda
+/// olunduğu başlıkta yazıyor, yoksa liste sessizce yanlış okunurdu.
 class AnnotationsScreen extends ConsumerStatefulWidget {
   const AnnotationsScreen({super.key});
 
   static const listKey = Key('annotations-list');
+  static const repoLabelKey = Key('annotations-repo-label');
   static Key filterKey(TaskMark? mark) =>
       Key('annotations-filter-${mark?.name ?? 'all'}');
 
@@ -28,10 +35,31 @@ class _AnnotationsScreenState extends ConsumerState<AnnotationsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final entries = ref.watch(allAnnotationsProvider);
+    final entries = ref.watch(repoAnnotationsProvider);
+    final active = ref.watch(hubConfigProvider).value;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('İşaretler')),
+      appBar: AppBar(
+        title: const Text('İşaretler'),
+        // Liste tek repoya ait; hangisi olduğu görünmezse kullanıcı eksik bir
+        // listeyi tam sanır.
+        bottom: active == null
+            ? null
+            : PreferredSize(
+                preferredSize: const Size.fromHeight(24),
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 16, bottom: 8),
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      active.displayName,
+                      key: AnnotationsScreen.repoLabelKey,
+                      style: Theme.of(context).textTheme.labelMedium,
+                    ),
+                  ),
+                ),
+              ),
+      ),
       body: switch (entries) {
         AsyncData(:final value) => _List(
             entries: value,
@@ -40,7 +68,7 @@ class _AnnotationsScreenState extends ConsumerState<AnnotationsScreen> {
           ),
         AsyncError(:final error) => HubErrorView(
             error: error,
-            onRetry: () => ref.invalidate(allAnnotationsProvider),
+            onRetry: () => ref.invalidate(repoAnnotationsProvider),
           ),
         _ => const Center(child: CircularProgressIndicator()),
       },
@@ -55,7 +83,7 @@ class _List extends StatelessWidget {
     required this.onFilter,
   });
 
-  final List<AnnotationEntry> entries;
+  final List<Annotation> entries;
   final TaskMark? filter;
   final ValueChanged<TaskMark?> onFilter;
 
@@ -64,10 +92,10 @@ class _List extends StatelessWidget {
     // Süzgeç seçenekleri listede **gerçekten geçen** renklerden türüyor:
     // hiç yer imi yokken "Yer imi" süzgecini göstermek, boş sonuç veren bir
     // düğme sunmak olurdu (B-068'deki kural).
-    final present = {for (final e in entries) e.annotation.mark};
+    final present = {for (final e in entries) e.mark};
     final shown = filter == null
         ? entries
-        : entries.where((e) => e.annotation.mark == filter).toList();
+        : entries.where((e) => e.mark == filter).toList();
 
     if (entries.isEmpty) {
       return const _Empty();
@@ -103,7 +131,8 @@ class _List extends StatelessWidget {
             padding: const EdgeInsets.all(12),
             itemCount: shown.length,
             separatorBuilder: (_, __) => const SizedBox(height: 8),
-            itemBuilder: (context, index) => _AnnotationCard(entry: shown[index]),
+            itemBuilder: (context, index) =>
+                _AnnotationCard(annotation: shown[index]),
           ),
         ),
       ],
@@ -112,21 +141,22 @@ class _List extends StatelessWidget {
 }
 
 class _AnnotationCard extends StatelessWidget {
-  const _AnnotationCard({required this.entry});
+  const _AnnotationCard({required this.annotation});
 
-  final AnnotationEntry entry;
+  final Annotation annotation;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final annotation = entry.annotation;
 
     return Card(
       margin: EdgeInsets.zero,
       child: InkWell(
         borderRadius: BorderRadius.circular(12),
-        // Kayıt kendi reposunun belgesini açar; liste çok kaynaklı olduğu için
-        // aktif repoya bakmak "bulunamadı" demek olurdu (L-031).
+        // Belge, kaydın **kendi** reposundan açılır. Liste bugün zaten aktif
+        // repoya bağlı, yani ikisi aynı; yine de hedef kayıttan okunuyor —
+        // "listedeki her şey aktif repodandır" varsayımını koda gömmek,
+        // L-031'in tekrar edilmesine açık kapı bırakırdı.
         onTap: () => Navigator.of(context).push(
           MaterialPageRoute<void>(
             builder: (_) => DocumentScreen(
@@ -154,7 +184,7 @@ class _AnnotationCard extends StatelessWidget {
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
-                      entry.repoLabel,
+                      annotation.mark.label,
                       style: theme.textTheme.labelSmall,
                       overflow: TextOverflow.ellipsis,
                     ),
