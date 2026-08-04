@@ -184,8 +184,13 @@ class _SelectionRecordSheetState extends ConsumerState<SelectionRecordSheet> {
               controller: _noteCtrl,
               maxLines: 3,
               textCapitalization: TextCapitalization.sentences,
+              // Boş/dolu geçişinde buton etiketi değişsin diye yeniden çiz.
+              onChanged: (_) => setState(() {}),
               decoration: InputDecoration(
-                labelText: 'Not (isteğe bağlı)',
+                labelText: 'Not',
+                helperText:
+                    'Boş bırakırsan iş kuyruğuna girmez — işaret/not olarak kalır',
+                helperMaxLines: 2,
                 hintText: switch (_kind) {
                   RecordKind.duzeltme => 'Nesi yanlış, ne olmalı?',
                   RecordKind.tartisma => 'Sorun ne, neyi tartışmak istiyorsun?',
@@ -221,11 +226,17 @@ class _SelectionRecordSheetState extends ConsumerState<SelectionRecordSheet> {
             const SizedBox(height: 16),
             SizedBox(
               width: double.infinity,
+              // Not boşsa görev değil işaret üretilir (notes/'a). Buton bunu
+              // açıkça söylesin ki "Görev oluştur"a basıp not almak şaşırtmasın.
               child: FilledButton.icon(
                 key: SelectionRecordSheet.submitKey,
                 onPressed: _submit,
-                icon: Icon(_kind.icon),
-                label: Text('${_kind.label} oluştur'),
+                icon: Icon(_noteCtrl.text.trim().isEmpty
+                    ? Icons.brush_outlined
+                    : _kind.icon),
+                label: Text(_noteCtrl.text.trim().isEmpty
+                    ? 'İşaret olarak ekle'
+                    : '${_kind.label} oluştur'),
               ),
             ),
           ],
@@ -326,6 +337,7 @@ void createNote({
   required String quote,
   required String sourcePath,
   String note = '',
+  TaskMark mark = TaskMark.comment,
   String? section,
   String? repoSlug,
 }) {
@@ -335,12 +347,13 @@ void createNote({
     quote: normalized,
     sourcePath: sourcePath,
     note: note,
+    mark: mark,
     section: section,
     repoSlug: repoSlug,
   );
   final annotation = Annotation(
     quote: normalized,
-    mark: TaskMark.comment,
+    mark: mark,
     title: draft.title,
     category: 'not',
     path: '${Hub.notesDir}/${draft.fileName}',

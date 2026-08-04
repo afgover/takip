@@ -17,8 +17,10 @@ import 'selection_record.dart';
 ///   çeviri, asistanlar) eklenmez — cihazda o liste bir düzine öğeye çıkıp asıl
 ///   eylemleri taşma menüsünün dibine düşürüyordu.
 ///
-/// Beş eylemin dördü agent'a gider (işaret, çizgi, görev), biri gitmez:
-/// **not** kullanıcının kendisi içindir ve `notes/`a yazılır (sözleşme 1.9).
+/// Yalnız **notlu görev** agent'ın iş kuyruğuna (`tasks/inbox/`) girer. Notsuz
+/// işaret/çizgi ve "Not ekle" — hepsi kullanıcının kendisi içindir ve `notes/`a
+/// yazılır (sözleşme 1.9): işaret belgede kalır, Bekleyen görevler'i doldurmaz.
+/// Boş seçimlerin iş kuyruğunu doldurması buradan kesildi.
 ///
 /// Oturumlar, raporlar, bilgi tabanı, yol haritası ve görev detayı — hepsi
 /// bunu kullanır, böylece davranış her yerde aynıdır.
@@ -63,9 +65,10 @@ class _AnnotatedDocumentState extends ConsumerState<AnnotatedDocument> {
 
   /// Menüden tek dokunuşla işaretleme: sayfa açılmadan kayıt oluşur.
   ///
-  /// Sarı = `yorum` ("buraya bak"), kırmızı = `duzeltme` ("burası yanlış").
-  /// Not girmek isteyen "Görev oluştur"u kullanır; buradaki iki eylemin
-  /// amacı okurken akışı bölmemek.
+  /// Sarı ("buraya bak") ve kırmızı ("burası yanlış") işaretler **notsuz**tur;
+  /// bu yüzden `notes/`a düşerler (agent'ın iş kuyruğuna değil) — okurken hızlı
+  /// bir görsel iz, akışı bölmeden. Agent'a iş çıkarmak isteyen "Görev
+  /// oluştur"la bir not yazar; not, seçimi göreve dönüştürür.
   void _quickMark(
     SelectableRegionState state,
     String selection, {
@@ -100,6 +103,22 @@ class _AnnotatedDocumentState extends ConsumerState<AnnotatedDocument> {
     String selection,
     _Captured captured,
   ) {
+    // Notsuz seçim iş kuyruğuna GİRMEZ: `notes/`a not olarak yazılır — işaret
+    // (sarı/kırmızı) belgede kalır ama Bekleyen görevler'i doldurmaz. Not
+    // yazılmışsa "sen şunu yap" niyetidir → görev (`tasks/inbox/`). Bu ayrım
+    // hem hızlı işaretleri hem sayfayı kapsar; ikisi de buradan geçiyor.
+    if (request.note.trim().isEmpty) {
+      createNote(
+        container: captured.container,
+        messenger: captured.messenger,
+        quote: selection,
+        sourcePath: widget.sourcePath,
+        mark: request.mark,
+        section: captured.section,
+        repoSlug: captured.repoSlug,
+      );
+      return;
+    }
     createSelectionRecord(
       container: captured.container,
       messenger: captured.messenger,

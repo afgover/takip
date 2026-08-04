@@ -126,9 +126,10 @@ void main() {
         reason: 'notun önceliği/durumu yok — görev şeması taşımamalı');
   });
 
-  testWidgets('sarı işaret hâlâ göreve gidiyor', (tester) async {
-    // Not ayrıldı diye işaret/çizgi de ayrılmadı: onlar bilinçli olarak
-    // agent'a sinyaldir ("buraya bak", "burası yanlış").
+  testWidgets('notsuz sarı işaret göreve DEĞİL nota gidiyor', (tester) async {
+    // Karar değişti: boş seçim iş kuyruğunu doldurmasın. Notsuz hızlı işaret
+    // artık `notes/`a düşüyor — belgede işaret olarak kalıyor ama Bekleyen
+    // görevler'e girmiyor. Agent'a iş çıkarmak isteyen not yazar (aşağıdaki test).
     final t = buildDoc();
     await tester.pumpWidget(t.widget);
     await tester.pumpAndSettle();
@@ -137,11 +138,14 @@ void main() {
     await tester.tap(find.text(AnnotatedDocument.highlightLabel));
     await tester.pumpAndSettle();
 
-    final puts = t.adapter.requests.where((r) => r.method == 'PUT');
-    expect(Uri.decodeFull(puts.single.uri.path), contains(Hub.inboxDir));
+    final path = Uri.decodeFull(
+        t.adapter.requests.singleWhere((r) => r.method == 'PUT').uri.path);
+    expect(path, contains('/${Hub.notesDir}/'));
+    expect(path, isNot(contains('/tasks/')),
+        reason: 'notsuz işaret iş kuyruğuna girmemeli');
   });
 
-  testWidgets('sarı işaretle tek dokunuşta kayıt gönderiyor', (tester) async {
+  testWidgets('notsuz işaret tek dokunuşta gider, rengini korur', (tester) async {
     final t = buildDoc();
     await tester.pumpWidget(t.widget);
     await tester.pumpAndSettle();
@@ -151,9 +155,37 @@ void main() {
     await tester.pumpAndSettle();
 
     final puts = t.adapter.requests.where((r) => r.method == 'PUT');
-    expect(puts, hasLength(1));
+    expect(puts, hasLength(1), reason: 'tek dokunuş, tek gönderim');
     final body = jsonDecode(jsonEncode(puts.single.data)) as Map;
     final content = utf8.decode(base64.decode(body['content'] as String));
+    // Nota düştü ama sarı rengini korudu — yeşile (comment) zorlanmadı.
     expect(content, contains('mark: highlight'));
+  });
+
+  testWidgets('not yazılınca seçim göreve dönüşür (tasks/inbox)',
+      (tester) async {
+    final t = buildDoc();
+    await tester.pumpWidget(t.widget);
+    await tester.pumpAndSettle();
+
+    await selectText(tester);
+    await tester.tap(find.text(AnnotatedDocument.taskLabel));
+    await tester.pumpAndSettle();
+
+    await tester.enterText(
+        find.byKey(SelectionRecordSheet.noteFieldKey), 'şunu düzelt');
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(SelectionRecordSheet.submitKey));
+    await tester.pumpAndSettle();
+
+    final path = Uri.decodeFull(
+        t.adapter.requests.singleWhere((r) => r.method == 'PUT').uri.path);
+    expect(path, contains('/${Hub.inboxDir}/'),
+        reason: 'notlu seçim agent iş kuyruğuna gider');
+    final body = jsonDecode(jsonEncode(t.adapter.requests
+        .singleWhere((r) => r.method == 'PUT')
+        .data)) as Map;
+    final content = utf8.decode(base64.decode(body['content'] as String));
+    expect(content, contains('şunu düzelt'));
   });
 }

@@ -155,6 +155,7 @@ class TaskDraft {
     required String quote,
     required String sourcePath,
     String note = '',
+    TaskMark mark = TaskMark.comment,
     String? section,
     String? repoSlug,
     DateTime? now,
@@ -164,7 +165,9 @@ class TaskDraft {
     final title = _titleFromQuote(quote);
 
     // Notun frontmatter'ı görev şemasının **alt kümesi**: durum, öncelik,
-    // sonuç gibi alanlar yok çünkü notun bir işleyişi yok.
+    // sonuç gibi alanlar yok çünkü notun bir işleyişi yok. `mark` parametreli:
+    // notsuz bir hızlı işaret (sarı/kırmızı) göreve DEĞİL nota düştüğünde kendi
+    // rengini korusun diye — varsayılan yeşil (comment), "Not ekle" yolundan gelen.
     final fields = {
       'title': title,
       'created_by': 'user',
@@ -172,7 +175,7 @@ class TaskDraft {
       'updated': isoNow(),
       'source': sourcePath,
       'quote': quote,
-      'mark': TaskMark.comment.name,
+      'mark': mark.name,
     };
 
     final body = StringBuffer()
