@@ -300,6 +300,12 @@ toplanır ve gerekiyorsa Faz 6 maddelerini (B-060…B-064) yeniden sıralar.
   Uygulama sırasında sessiz bir veri kaybı yakalandı: dalın koşulu genişleyince
   gövdesinin yazılmamış varsayımı yanlışa döndü ve yer imine yazılan not
   kaydedilmiyordu (L-036). 397 test.
+- 2026-08-04 (akşam): Uygulama cihaza kuruldu ve **kullanımın ilk saatinde**
+  1.12'nin bir kararı geri alındı: işaretler listesi bütün repoları
+  birleştiriyordu, aktif repoya bağlandı (sözleşme 1.13, B-106, K-034).
+  Döngünün kendisi kayda değer — özellik sabah yazıldı, akşam cihazda denendi,
+  aynı gün düzeltildi ve düzeltme sözleşmeye işlendi. Aşama 4'ün hedefi
+  (B-052: kullanımdan gelen sürtünmeyi toplamak) tam olarak bu. 399 test.
   → S-2026-08-01-token-kaliciligi, K-019, R-006, L-015, L-016
 - 2026-08-01: **Sisteme ikinci proje ekleme yolu açıldı.** Yeni proje ekleme
   prosedürü kalıcı belge oldu (`artifacts/reference/proje-ekleme.md`) ve bunu
@@ -494,3 +500,18 @@ toplanır ve gerekiyorsa Faz 6 maddelerini (B-060…B-064) yeniden sıralar.
   ancak sonradan bulunabiliyorsa bir anlam taşır. Liste çok kaynaklı olduğu
   için açılan yol da çok kaynaklı yapıldı (`docContentForProvider`); L-031 ve
   L-034'ün üçüncü tekrarı, bu sefer baştan doğru kuruldu. → B-104, B-105
+- **K-034:** Bir listenin kapsamı, listedeki **kaydın ne işe yaradığına** göre
+  seçilir; "birleştirebiliyoruz" bir gerekçe değildir. İşaretler listesi 1.12'de
+  bütün repoları birleştiriyordu ve aynı gün, ilk kullanımda ters teptiği
+  görüldü: işaret bir belgedeki **yeri** hatırlatır, belge de bir projeye aittir
+  — hepsi tek listede olunca ekran bağlam yığınına dönüyor. 1.13'te liste aktif
+  repoya bağlandı (K-028'in çoklu-repo yönünü tersine çeviren değil,
+  **tamamlayan** bir karar: teknik olarak birleştirebilmek, birleştirmenin doğru
+  olduğu anlamına gelmiyordu).
+  Ayrım şu soruyla yapılıyor: kayıt **nereye** ait? Bekleyenler birleşik kalıyor
+  çünkü oradaki soru "hangi projede olursa olsun **bende** bekleyen ne var" —
+  kaydın sahibi kullanıcı. İşaretler tek repoya bağlı çünkü oradaki soru "**bu
+  belgede** ne işaretlemiştim" — kaydın sahibi belge.
+  Tek repoya bağlı her listenin **hangi repo olduğunu yazması** da bu kararın
+  parçası: yazmazsa kullanıcı eksik bir listeyi tam sanar ve bu, boş liste
+  görmekten kötüdür. → B-106
