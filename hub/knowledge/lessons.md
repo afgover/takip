@@ -493,3 +493,22 @@ Biçim: `SYSTEM.md` §5.
   Tetiklenen işi bekleyip ölçmek gerekti; "geçti" ile "doğru sebeple geçti"
   arasındaki farkı istek listesine bakarak gördüm.
 
+
+## L-035 — Boş tarama sonucu, doğrulanmadan "temiz" sayılmaz
+- **Tarih:** 2026-08-04
+- **Kaynak:** S-2026-08-04-guvenlik-taramasi (B-091)
+- **Açıklama:** `pubspec.lock`'taki 68 paketi zafiyet veritabanına sorduğumda
+  cevap "0 bulgu" geldi. Bu cevabın iki farklı sebebi olabilir ve **ikisi
+  ekranda birebir aynı görünür:** gerçekten açık yoktur, ya da sorgu yanlış
+  kurulmuştur (ekosistem adı tutmuyor, paket adları eşleşmiyor, uç nokta
+  değişmiş). İkincisinde "taradık, temiz" cümlesi olmayan bir güvence verir —
+  ve güvenlik kaydına girdiği an, sonraki herkes ona dayanır.
+  **Yaptığım:** aynı sorguyu bilinen açıkları olan sürümlerden kurulu bir
+  **kontrol grubuyla** tekrarladım (`archive 3.3.0`, `http 0.13.0`,
+  `dio 4.0.0`). Beklenen danışmanlık kayıtları döndü, yani araç çalışıyordu;
+  ancak ondan sonra 0 bulguyu sonuç olarak yazdım.
+  **Genel kural:** olumsuz sonuç veren her kontrole, olumlu vermesi gereken
+  bir örnek de sor. Bu yalnız zafiyet taraması için değil; "hiç eşleşme yok"
+  diyen her grep, "hiç kayıt yok" diyen her sorgu için geçerli. Aracın
+  sustuğunu, aramanın boş döndüğünden ayırt edecek tek şey budur.
+  Aynı fikrin başka görünümü L-033: parçalar yeşilken zincir kopuk olabilir.

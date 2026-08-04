@@ -127,3 +127,23 @@ Biçim: `SYSTEM.md` §5.
   ucuzlatır — yalnız açılmış şeyi tutar. Çevrimdışı kopya ise **kasıtlı**
   indirmedir. İkisi aynı yerde tutulmaya çalışılırsa hangi kaydın niçin
   orada olduğu belirsizleşir; ayrı tutuldular.
+
+## SK-011 — Token'ın kapsamını fazladan istek yapmadan okumak
+- **Tarih:** 2026-08-04
+- **Kaynak:** S-2026-08-04-guvenlik-taramasi (B-092)
+- **Açıklama:** GitHub'da bir token'ın izinlerini soran uç nokta **yok**
+  (L-009, B-026). Ama klasik (OAuth) token'larda GitHub, yetkilendirilmiş
+  scope'ları **her kimlikli yanıtın** `X-OAuth-Scopes` başlığında kendiliğinden
+  bildirir. Yani kapsam bilgisi için ayrı bir çağrı gerekmez: zaten yaptığın
+  isteğin yanıtından okunur. Fine-grained token'larda başlık hiç gelmez —
+  başlığın **yokluğu** da bir bilgidir (token klasik değil).
+  İkinci ücretsiz sinyal token'ın kendisidir: `ghp_` klasik, `github_pat_`
+  fine-grained (GitHub'ın belgelediği önekler).
+  **Yorum kuralı B-026'daki gibi tek yönlü:** bu sinyaller yalnız "kapsam
+  geniş" diyebilir, "kapsam dar" diyemez. Fine-grained bir token "All
+  repositories" seçilerek de üretilmiş olabilir ve bunu söyleyen belgelenmiş
+  bir sinyal yok (SEC-012). Tek yönlü yorum sayesinde kontrol yanlış alarm
+  veremez; verseydi kullanıcı ilk yanlış alarmdan sonra uyarıyı okumaz olurdu.
+  **Uyarı engellemez.** Çalışan bir token'ı reddetmek, elinde klasik token
+  olan kullanıcıya uygulamayı tümden kapatırdı. Güvenlik kontrolü kullanıcıyı
+  işini yapamaz hâle getirirse sonuç daha güvenli değil, kontrolsüz olur.
