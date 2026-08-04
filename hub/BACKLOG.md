@@ -265,10 +265,27 @@ başlığına ✅ ve tarih yazılır.
       değiştirildi (alt menüde zaten var). Açık kayıtlar üstte, türe göre
       filtre. Log yedi kayıtla açıldı; üçü açık (SEC-005 bağımlılık taraması,
       SEC-006 token kapsamı, SEC-007 cihazdaki kopya şifresiz). → K-030
-- [ ] B-091 · (agent) SEC-005: bağımlılık ve zafiyet taraması koşulup bulgular
-      `SECURITY.md`'ye `tarama` kaydı olarak yazılacak
+- [x] B-091 · (agent) SEC-005: bağımlılık ve zafiyet taraması koşulup bulgular
+      `SECURITY.md`'ye `tarama` kaydı olarak yazılacak — ✅ 2026-08-04 · SEC-008;
+      `pubspec.lock`'taki 68 paket OSV'ye soruldu → **bilinen zafiyet yok**;
+      boş sonucun sorgu hatası olmadığı kontrol grubuyla doğrulandı. Sır
+      taraması (çalışma ağacı + git geçmişinin tamamı) temiz. İki yeni bulgu:
+      otomatik yedekleme (SEC-009 → B-100) ve debug imzası (SEC-010 → B-101).
+      Tam çıktı:
+      `artifacts/S-2026-08-04-guvenlik-taramasi/bagimlilik-ve-yapilandirma-taramasi.md`
 - [ ] B-092 · (agent) SEC-006: onboarding'de token kapsamı sınanıp gereğinden
       geniş kapsamda kullanıcı uyarılacak
+- [ ] B-100 · (agent) SEC-009: Android otomatik yedeklemesi kapatılacak
+      (`allowBackup="false"` ya da hub kopyasını dışarıda bırakan
+      `dataExtractionRules`) — cihazdaki şifresiz hub kopyası bugün kullanıcının
+      Google hesabına çıkabiliyor. Token zaten yedekten geri gelmiyor (Keystore),
+      yani kapatmanın kullanıcıya maliyeti yok
+- [ ] B-101 · (agent) SEC-010: release derlemesi kendi anahtarıyla imzalanacak —
+      şu an Flutter şablonundan gelen **debug** anahtarı kullanılıyor.
+      **B-097'nin "Releases'ta APK" adımının ön koşulu**
+- [ ] B-102 · (agent+user) SEC-011: taramanın tekrar aralığına karar ver —
+      tek seferlik tarama yalnız koştuğu gün için geçerli. Ölçeğe uygun en ucuz
+      yol her sürüm öncesi elle koşum; alternatifi zamanlanmış GitHub Actions işi
 - [x] B-089 · (agent) İşaret kartı notun içeriğini göstermiyordu —
       ✅ 2026-08-03; kart kullanıcının zaten belgede gördüğü alıntıyı tekrar
       edip asıl taşıması gereken metni atlıyordu. `Annotation.note` eklendi,
