@@ -106,7 +106,7 @@ Güvenlik geçmişinin tamamı: [`hub/SECURITY.md`](hub/SECURITY.md) — alınan
 
 ## Sözleşme sürümü
 
-Şu an **1.12**. Her hub kendi kopyasını taşır ve agent her oturum açılışında ana
+Şu an **1.13**. Her hub kendi kopyasını taşır ve agent her oturum açılışında ana
 kopyayla karşılaştırıp geriden geliyorsa günceller (`SYSTEM.md` §10). Sürüm eşit
 ama içerik farklıysa (ayrışma) üzerine yazılmaz — bu, yalnız numaraya bakan bir
 kontrolün göremediği ve gerçekten yaşanmış bir durumdur.

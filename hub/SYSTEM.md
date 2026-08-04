@@ -5,7 +5,7 @@ ve hangi şemaya uyacağını** tanımlar. Agent ve kullanıcı uygulaması bu s
 dışına çıkmaz. Sözleşme değişiklikleri `EVOLUTION.md`'ye kaydedilir ve bu dosyanın
 başındaki sürüm numarası artırılır.
 
-**Sözleşme sürümü:** 1.12
+**Sözleşme sürümü:** 1.13
 **Ana kopya (master):** `afgover/takip` → `hub/SYSTEM.md`
 (bkz. §10 — her hub kendi kopyasını buradan günceller)
 **Zaman biçimi:** her yerde ISO 8601, UTC (`2026-07-30T14:05:00Z`)
@@ -461,9 +461,17 @@ rengiyle işaretler. Yani not da işaretini kendisi taşır, işaret ayrıca
 saklanmaz. Belgeden seçilmeden alınan bir notta bu üç alan olmayabilir.
 
 **Yer imleri (v1.12) burada durur.** `mark: bookmark` taşıyan kayıt her zaman
-`notes/`a yazılır — notlu da olsa (§4). Uygulama bütün işaretleri (görev ve
-not, bütün repolar) tek bir listede toplar ve oradan kaydın bağlı olduğu
+`notes/`a yazılır — notlu da olsa (§4). Uygulama **aktif repodaki** bütün
+işaretleri (görev ve not) tek bir listede toplar ve oradan kaydın bağlı olduğu
 belgeye gidilir; yer iminin işi tam olarak budur.
+
+> **v1.13 düzeltmesi.** 1.12'de bu liste *bütün* bağlantıları birleştiriyordu.
+> Kullanımın ilk saatinde ters teptiği görüldü: işaret bir belgedeki **yeri**
+> hatırlatır, belge de bir projeye aittir — hepsi tek listede olunca ekran bir
+> bağlam yığınına döner. Liste artık aktif repoya ait ve hangi repo olduğu
+> ekranda yazar; başka projeye bakmak için repo değiştirilir.
+> `tasks/` listeleri bilinçli olarak istisnadır: orada soru "hangi projede
+> olursa olsun **bende** bekleyen ne var" olduğu için birleşik kalır.
 
 **Agent kuralları:**
 - Notlar kullanıcınındır. Agent onları **iş saymaz**: ID atamaz, taşımaz,
