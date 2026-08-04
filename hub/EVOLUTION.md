@@ -273,6 +273,33 @@ toplanır ve gerekiyorsa Faz 6 maddelerini (B-060…B-064) yeniden sıralar.
   Ayrıca agent kurulum talimatı geçmişi olan projeleri de kapsayacak şekilde
   yenilendi, MIT lisansı ve yeni README eklendi, açık kaynak/store kararı
   ayrıştırıldı (K-032). 349 test.
+- 2026-08-04: Gün ikiye bölündü. **Sabah — açık güvenlik işleri kapandı.**
+  Bağımlılık/zafiyet taraması ilk kez koşuldu (SEC-008): 68 paket OSV'ye
+  soruldu, bilinen zafiyet yok; "0 bulgu"yu yazmadan önce sorgunun çalıştığı
+  bir kontrol grubuyla doğrulandı (L-035 — doğrulanmamış boş sonuç, olmayan
+  bir güvence verir). Sır taraması çalışma ağacı **ve** git geçmişinin
+  tamamında temiz çıktı. Tarama iki yeni bulgu üretti: Android otomatik
+  yedeklemesi cihazdaki şifresiz hub kopyasını buluta taşıyor (SEC-009) ve
+  release derlemesi debug anahtarıyla imzalanıyor (SEC-010 — B-097'nin APK
+  adımının ön koşulu). Token kapsamı denetimi eklendi (SEC-006 kapandı):
+  kapsam, erişim doğrulamasının **aynı yanıtından** okunuyor, fazladan istek
+  yok (SK-011); yorum B-026'daki gibi tek yönlü ve uyarı engellemiyor —
+  çalışan bir token'ı reddetmek uygulamayı kullanılamaz hâle getirirdi.
+  Kapanmayan kısım dürüstçe ayrıldı (SEC-012) ve ölçümü kullanıcıya soruldu
+  (T-006, `waiting/`).
+  **Öğleden sonra — kullanımdan gelen iki istek, sözleşme 1.12.** İkisi de
+  aynı boşluğun iki yüzüydü: sistem kullanıcıya **soru soramıyordu** ve
+  kullanıcı bir yeri **sonra bulmak üzere** işaretleyemiyordu.
+  (a) Seçenekli bekleme (T-007/B-104): `waiting/` görevi artık `options`
+  taşıyabiliyor; kullanıcı seçiyor, yanına açıklama yazabiliyor, cevap
+  `waiting-answer` olarak inbox'a düşüyor. Kural: bir görev = bir soru.
+  (b) Yer imi (T-008/B-105): dördüncü işaret (mavi) ve ilk defa **göreve
+  dönüşmeyen** bir işaret (R-007); bütün repolardaki işaretler Tarayıcı →
+  İşaretler altında tek listede toplanıyor, dokununca kaydın kendi reposundaki
+  belge açılıyor. Yer imi ancak sonradan bulunabiliyorsa bir işe yarar.
+  Uygulama sırasında sessiz bir veri kaybı yakalandı: dalın koşulu genişleyince
+  gövdesinin yazılmamış varsayımı yanlışa döndü ve yer imine yazılan not
+  kaydedilmiyordu (L-036). 397 test.
   → S-2026-08-01-token-kaliciligi, K-019, R-006, L-015, L-016
 - 2026-08-01: **Sisteme ikinci proje ekleme yolu açıldı.** Yeni proje ekleme
   prosedürü kalıcı belge oldu (`artifacts/reference/proje-ekleme.md`) ve bunu
@@ -446,3 +473,24 @@ toplanır ve gerekiyorsa Faz 6 maddelerini (B-060…B-064) yeniden sıralar.
   App/OAuth) ile SEC-006 kapandıktan sonra. Talep gelmezse hiçbir şey kaybedilmiş
   olmaz. → B-097
 
+- **K-033:** Sözleşme 1.12 iki eksiği kapattı ve ikisi de aynı boşluğun
+  yüzleriydi: sistem kullanıcıya **soru soramıyordu** ve kullanıcı bir yeri
+  **sonra bulmak üzere** işaretleyemiyordu.
+  **(a) Seçenekli bekleme.** 1.4'ten beri `waiting/` vardı ama kullanıcının tek
+  cevabı "Yaptım"dı; bir *karar* sorulduğunda karşılığı yoktu ve cevap
+  sohbette kalıyordu — yani `waiting/`in var oluş sebebine (sohbet kapanır,
+  kayıt kalır) aykırı bir yerde birikiyordu. Agent artık `options` yazıyor,
+  kullanıcı seçiyor. Seçimin yanında **her zaman** isteğe bağlı açıklama var:
+  seçenek listesi cevabı makinece okunur kılar, serbest metin listede olmayan
+  durumu söyler; biri diğerinin yerine geçmez. Seçenek yoksa 1.11 davranışı
+  aynen sürüyor — eski görevler bozulmadı. "Bir görev = bir soru" kuralı
+  bilinçli: aynı dosyaya ikinci cevap, agent'ın kuyruğunda hangisinin geçerli
+  olduğu belirsiz iki kayıt bırakırdı.
+  **(b) Yer imi.** Dördüncü işaret (mavi) ve ilk defa **göreve dönüşmeyen** bir
+  işaret (R-007). B-099'da ayrımı notun varlığı yapıyordu (notsuz → not, notlu
+  → görev); yer iminde niyet zaten adında, o yüzden notlu olsa bile `notes/`a
+  gidiyor. Asıl iş işaretin kendisi değil **listesi**: bütün repolardaki
+  işaretler tek yerde toplanmadan yer imi işe yaramaz — "burayı sonra bulayım"
+  ancak sonradan bulunabiliyorsa bir anlam taşır. Liste çok kaynaklı olduğu
+  için açılan yol da çok kaynaklı yapıldı (`docContentForProvider`); L-031 ve
+  L-034'ün üçüncü tekrarı, bu sefer baştan doğru kuruldu. → B-104, B-105
