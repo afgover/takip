@@ -72,13 +72,45 @@ değil. Token, parola veya anahtar bu dosyada hiçbir koşulda yer almaz.
 ## SEC-006 — Token izin kapsamı daraltılmadı doğrulanmadı
 - **Tarih:** 2026-08-03
 - **Tür:** yapilacak
-- **Durum:** acik
+- **Durum:** kapali
 - **Kaynak:** R-005
 - **Açıklama:** Token'ın fine-grained ve yalnız ilgili repolara scope'lu
   olması **kullanıcının elinde**; uygulama bunu doğrulamıyor. Token geniş
   kapsamlıysa uygulama bunu fark etmez. Yapılacak: onboarding'de token'ın
   kapsamını `/user` ve repo erişimiyle sınayıp gereğinden geniş kapsamda
   kullanıcıyı uyarmak.
+- **Nasıl giderildi:** 2026-08-04, B-092. Onboarding ve bağlantı düzenleme,
+  erişim doğrulamasının **aynı yanıtından** iki belgelenmiş sinyal okuyor
+  (fazladan istek yok): `X-OAuth-Scopes` başlığı ve token öneki. Klasik
+  (`ghp_`) bir token ya da dolu bir scope listesi görülürse kullanıcıya
+  hangi scope'lara sahip olduğu ve neyi riske attığı söyleniyor, dar token
+  üretme adımları veriliyor. Uyarı **engellemiyor** — çalışan bir token'ı
+  reddetmek uygulamayı kullanılamaz hâle getirirdi; karar kullanıcının,
+  "Vazgeç" hiçbir şeyi kaydetmiyor. Yorum B-026'daki gibi tek yönlü: kontrol
+  yanlış alarm veremez. `lib/hub/token_scope.dart`, doğrulaması
+  `test/hub/token_scope_test.dart` + onboarding uçtan uca testleri (SK-011).
+- **Kapanmayan kısım:** "All repositories" seçilerek üretilmiş bir
+  fine-grained token da hesabın tamamını kapsar ve bu kontrol onu göremez —
+  ayrı kayıt: SEC-012.
+
+## SEC-012 — Fine-grained token'ın repo genişliği ölçülemiyor
+- **Tarih:** 2026-08-04
+- **Tür:** acik
+- **Durum:** acik
+- **Kaynak:** SEC-006, B-092
+- **Açıklama:** B-092'nin kontrolü klasik token'ı kesin olarak yakalıyor ama
+  fine-grained bir token "Only select repositories" ile de "All repositories"
+  ile de üretilmiş olabilir; ikisi dışarıdan aynı görünüyor. İkincisi
+  hesaptaki bütün repolara erişim demek, yani SEC-006'nın asıl kaygısı bu
+  yoldan sürüyor.
+  Ölçmenin mümkün olup olmadığı **bilinmiyor**: `GET /user/repos`'un
+  fine-grained bir token'la yalnız seçili repoları mı yoksa hepsini mi
+  döndürdüğü belgelenmemiş. Buraya belgelenmemiş bir davranışa dayanan tahmin
+  konmadı — B-026'da tam olarak bu hata yapılmış ve `permissions.push` alanı
+  token kapsamını yansıtıyor sanılmıştı (L-009).
+  Yapılacak: davranışın gerçek bir token'la sınanması. Token agent'a
+  verilemez (SEC-001), bu yüzden ölçümü kullanıcı yapar → `tasks/waiting/`,
+  B-103.
 
 ## SEC-007 — Hub içeriği cihazda şifresiz duruyor
 - **Tarih:** 2026-08-03
