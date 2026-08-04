@@ -1,13 +1,13 @@
 ---
-id: pending
+id: T-007
 title: görev aksiyon
 created_by: user
 created: "2026-08-04T11:41:33Z"
-updated: "2026-08-04T11:41:33Z"
+updated: "2026-08-04T16:00:00Z"
 priority: normal
 category: gorev
 tags: []
-session: none
+session: S-2026-08-04-guvenlik-taramasi
 result: none
 ---
 
