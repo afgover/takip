@@ -593,3 +593,22 @@ Biçim: `SYSTEM.md` §5.
   sarmalayan her katman (flutter, CI, IDE) sessizce filtreliyor olabilir.
   Uyarıya dayanan her karar, önce uyarının görüldüğünü ölçmeyi gerektirir.
   K-035'in aynı ilkesi: hatırlatıcı, kaybolmayan bir yerde durmalı.
+
+## L-040 — Otomatik okunan bir değer, elle girilebilir olmadan tamam sayılmaz
+- **Tarih:** 2026-08-06
+- **Kaynak:** S-2026-08-06-kimlik-gorunur (B-108)
+- **Açıklama:** Sözleşme 1.15'in kimlik katmanını yazarken `author` alanını
+  `/user`'dan okunan `login`'e bağladım ve **başka hiçbir giriş yolu
+  bırakmadım**. Üstelik o uç noktanın fine-grained token'la çalıştığını
+  ölçmemiştim; kodu "en iyi çaba" yapıp okunamazsa sessizce geçmesini sağladım.
+  İki hatanın birleşimi kötü çıktı: değer okunamadığında kullanıcının elinde
+  **hiçbir çare yoktu** ve bunu göreceği bir ekran da yoktu. Kullanıcı tek
+  cümlede ikisini birden gösterdi: "author yok, nickname'i bir yerde
+  tanımlamadık".
+  Ölçülmemiş bir kaynağa tek ayaklı bağlanmak, "en iyi çaba" diye yazılınca
+  daha da sinsi oluyor: hata vermiyor, yalnız özellik hiç çalışmıyor.
+  **Genel kural:** bir değer otomatik türetiliyorsa, (a) kullanıcı onu bir
+  yerde **görebilmeli**, (b) türetme başarısız olduğunda **elle
+  girebilmeli**. Elle giriş otomatiğe üstün gelmeli — kullanıcı bilerek farklı
+  bir değer isteyebilir. Bu, L-039'un ("görünmeyen uyarı, olmayan uyarıdır")
+  veri tarafındaki karşılığı.
