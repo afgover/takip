@@ -550,3 +550,27 @@ Biçim: `SYSTEM.md` §5.
   "repolar" geçmemesini şart koşuyor — kapsam iddiası kartta değil, ekranın
   kendisinde yazar. Aynı kalıbın kardeşi L-036: orada dalın koşulu genişleyince
   gövdenin varsayımı, burada ekranın kapsamı değişince etiketin iddiası bayatladı.
+
+## L-038 — Bir kütüphanenin "nasıl sakladığını" okumadan güvenlik kaydına yazma
+- **Tarih:** 2026-08-05
+- **Kaynak:** S-2026-08-05-yedekleme-kurallari (B-100, SEC-009)
+- **Açıklama:** SEC-009'a "token EncryptedSharedPreferences'ta tutuluyor" diye
+  yazmıştım. Yanlıştı: `flutter_secure_storage` o modu ancak
+  `AndroidOptions(encryptedSharedPreferences: true)` verilirse kullanıyor,
+  uygulamada ise `const FlutterSecureStorage()` var. Gerçekte AES anahtarı
+  Keystore'daki RSA çiftiyle sarmalanıp **sıradan** iki prefs dosyasında
+  duruyor (`FlutterSecureStorage`, `FlutterSecureKeyStorage`).
+  Vardığım sonuç (yedeğe düşen şifreli metin başka cihazda çözülemez) tesadüfen
+  doğru kaldı, çünkü iki modda da anahtar Keystore'da. Ama **doğru sonuç,
+  doğru gerekçe demek değil** — ve gerekçe yanlışken bir ayrıntı gözden kaçtı:
+  dosyalar sıradan prefs olduğu için yedeğe **giriyorlar**, dolayısıyla geri
+  yükleme token okumasını sessizce bozabiliyor. Bu, kararı değiştirmedi ama
+  gerekçesini güçlendirdi; kaydı yazarken bilmiyordum.
+  Kaçış yolu ucuzdu: paketin kaynağı `~/.pub-cache`'te duruyor ve tek bir grep
+  hem varsayılan modu hem **iki** dosya adını veriyordu — ki o adlar sonradan
+  yazılan dışlama kuralının doğru çalışması için zaten gerekliydi.
+  **Genel kural:** güvenlik kaydına bir kütüphanenin davranışı yazılacaksa,
+  o davranış **kaynağından** doğrulanır; "bu paket şöyle yapar" bilgisi
+  genellikle paketin *bir* yapılandırmasına aittir ve senin kullandığın o
+  olmayabilir. Aynı ailenin dersleri: L-009 (belgelenmemiş API davranışına
+  dayanmak), L-035 (doğrulanmamış boş sonucu "temiz" saymak).
