@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/errors.dart';
+import '../../hub/hub_config.dart';
 import '../../hub/models/task.dart';
 import '../../hub/models/task_draft.dart';
 import '../../hub/outbox.dart';
@@ -175,6 +176,7 @@ class _WaitingBannerState extends ConsumerState<_WaitingBanner> {
         widget.task,
         selected: ordered,
         note: _noteCtrl.text,
+        author: ref.read(loginForRepoProvider(widget.summary.repoSlug)),
       ),
       'Cevap gönderildi.',
     );
@@ -182,7 +184,13 @@ class _WaitingBannerState extends ConsumerState<_WaitingBanner> {
 
   Future<void> _report() async {
     if (_busy) return;
-    await _send(TaskDraft.waitingDone(widget.task), 'Agent\'a bildirildi.');
+    await _send(
+      TaskDraft.waitingDone(
+        widget.task,
+        author: ref.read(loginForRepoProvider(widget.summary.repoSlug)),
+      ),
+      'Agent\'a bildirildi.',
+    );
   }
 
   Future<void> _send(TaskDraft base, String successMessage) async {
@@ -217,6 +225,29 @@ class _WaitingBannerState extends ConsumerState<_WaitingBanner> {
     setState(() => _reported = true);
     ScaffoldMessenger.of(context)
         .showSnackBar(SnackBar(content: Text(message)));
+  }
+
+  /// Şeridin metni. Sözleşme 1.15'te `for` alanı geldi: iş belirli bir kişiyi
+  /// bekliyorsa bunu **söylemek** gerekiyor, yoksa herkes "herhalde diğeri
+  /// bakar" diye geçer — ya da tersi, kimseyi beklemeyen bir işi herkes
+  /// üstlenir. Düğmeler yine de kapatılmıyor: başkası adına cevaplamak meşru
+  /// bir takım hareketi ve engellemek, bilgiyi elinde tutan kişiyi durdururdu.
+  String _bannerText() {
+    final mine = widget.task.waitsFor(
+      ref.read(loginForRepoProvider(widget.summary.repoSlug)),
+    );
+    final who = widget.task.waitingFor;
+
+    if (!mine && who != null) {
+      return widget.task.isQuestion
+          ? 'Bu soru $who kullanıcısını bekliyor. Cevabı sen de gönderebilirsin.'
+          : 'Bu iş $who kullanıcısını bekliyor.';
+    }
+    return widget.task.isQuestion
+        ? 'Agent bir cevap bekliyor. Seçimini işaretle; istersen açıklama da '
+            'yazabilirsin.'
+        : 'Bu iş seni bekliyor. Ne beklendiği aşağıdaki notlarda yazılı; '
+            'yaptıktan sonra agent\'a haber ver.';
   }
 
   /// Seçenek listesi + isteğe bağlı açıklama + gönder (sözleşme 1.12).
@@ -303,11 +334,7 @@ class _WaitingBannerState extends ConsumerState<_WaitingBanner> {
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
-                  widget.task.isQuestion
-                      ? 'Agent bir cevap bekliyor. Seçimini işaretle; '
-                          'istersen açıklama da yazabilirsin.'
-                      : 'Bu iş seni bekliyor. Ne beklendiği aşağıdaki notlarda '
-                          'yazılı; yaptıktan sonra agent\'a haber ver.',
+                  _bannerText(),
                   style: TextStyle(color: colors.onTertiaryContainer),
                 ),
               ),

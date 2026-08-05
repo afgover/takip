@@ -13,6 +13,7 @@ class HubConfig {
     required this.repo,
     required this.token,
     this.label,
+    this.login,
   });
 
   factory HubConfig.fromJson(Map<String, dynamic> json) => HubConfig(
@@ -20,6 +21,7 @@ class HubConfig {
         repo: json['repo'] as String,
         token: json['token'] as String,
         label: json['label'] as String?,
+        login: json['login'] as String?,
       );
 
   final String owner;
@@ -28,6 +30,19 @@ class HubConfig {
 
   /// Kullanıcının verdiği ad. Boşsa listede [slug] gösterilir.
   final String? label;
+
+  /// Token'ın sahibi olan GitHub hesabı (sözleşme 1.15, çoklu kullanıcı).
+  ///
+  /// Kayıtlara `author:` olarak yazılır; "bu görevi kim açtı" sorusunun cevabı
+  /// budur. `created_by` bunun yerine geçmez — o bir **rol** (`user`/`agent`),
+  /// kimlik değil.
+  ///
+  /// **Null olabilir ve bu bir hata değildir:** onboarding'de tek seferlik bir
+  /// istekle okunur, istek başarısız olursa bağlantı yine kurulur ve kayıtlar
+  /// `author` alanı olmadan yazılır — yani tek kullanıcılı dönemdeki hâl.
+  /// Kimliği zorunlu kılmak, çalışan bir bağlantıyı reddetmek olurdu (B-092'de
+  /// verilen kararla aynı çizgi).
+  final String? login;
 
   String get slug => '$owner/$repo';
 
@@ -40,13 +55,16 @@ class HubConfig {
         'repo': repo,
         'token': token,
         if (label != null) 'label': label,
+        if (login != null) 'login': login,
       };
 
-  HubConfig copyWith({String? token, String? label}) => HubConfig(
+  HubConfig copyWith({String? token, String? label, String? login}) =>
+      HubConfig(
         owner: owner,
         repo: repo,
         token: token ?? this.token,
         label: label ?? this.label,
+        login: login ?? this.login,
       );
 
   /// Kullanıcının yazdığı repo alanını ayrıştırır. `owner/ad` beklenir ama
@@ -105,3 +123,14 @@ class HubConfigNotifier extends AsyncNotifier<HubConfig?> {
   Future<void> clear() =>
       ref.read(hubConnectionsProvider.notifier).removeAll();
 }
+
+/// Belirli bir repoya yazarken kullanılacak kimlik (sözleşme 1.15).
+///
+/// Token isteğin gittiği repoya göre seçiliyordu (L-019); `author` da aynı
+/// mantıkla seçilmeli, yoksa A reposuna yazılan kayda B bağlantısının sahibi
+/// yazılır. Bilinmiyorsa null — kayıt `author` alanı olmadan gider.
+final loginForRepoProvider = Provider.family<String?, String?>((ref, slug) {
+  final connections = ref.watch(hubConnectionsProvider).valueOrNull;
+  final match = slug == null ? null : connections?.bySlug(slug);
+  return (match ?? ref.watch(hubConfigProvider).value)?.login;
+});

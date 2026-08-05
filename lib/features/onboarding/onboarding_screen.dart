@@ -58,14 +58,18 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
     });
 
     try {
-      final wideScope = await ref.read(hubAccessVerifierProvider)(candidate);
+      final access = await ref.read(hubAccessVerifierProvider)(candidate);
       // Kapsam uyarısı hata değil: token çalışıyor ama fazlasını da yapıyor
       // (B-092). Kararı kullanıcı verir; "Vazgeç" derse hiçbir şey kaydedilmez
       // ve dar bir token yapıştırabileceği formda kalır.
+      final wideScope = access.scopeWarning;
       if (!mounted) return;
       if (wideScope != null && !await _confirmWideScope(wideScope)) return;
-      // Yalnızca doğrulama geçtiyse diske yazılır.
-      await ref.read(hubConfigProvider.notifier).save(candidate);
+      // Yalnızca doğrulama geçtiyse diske yazılır. Kimlik okunabildiyse
+      // bağlantıyla saklanır (sözleşme 1.15); okunamadıysa null kalır.
+      await ref
+          .read(hubConfigProvider.notifier)
+          .save(candidate.copyWith(login: access.login));
       // Kayıt sonrası app.dart otomatik olarak kabuğa geçer; burada
       // gezinme yapılmaz.
     } on HubError catch (e) {

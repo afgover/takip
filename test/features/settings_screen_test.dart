@@ -10,7 +10,6 @@ import 'package:takip/hub/hub_access.dart';
 import 'package:takip/hub/hub_config.dart';
 import 'package:takip/hub/hub_watcher.dart';
 import 'package:takip/hub/settings.dart';
-import 'package:takip/hub/token_scope.dart';
 
 class FakeHubConfigNotifier extends HubConfigNotifier {
   FakeHubConfigNotifier([this.config = const HubConfig(
@@ -55,7 +54,7 @@ class QuietWatcher extends HubWatcher {
 
 ({Widget widget, FakeHubConfigNotifier config, List<HubConfig> verified})
     build({
-  Future<TokenScopeWarning?> Function(HubConfig)? verifier,
+  Future<HubAccess> Function(HubConfig)? verifier,
   Widget home = const SettingsScreen(),
 }) {
   final notifier = FakeHubConfigNotifier();
@@ -68,7 +67,9 @@ class QuietWatcher extends HubWatcher {
         hubWatcherProvider.overrideWith(QuietWatcher.new),
         hubAccessVerifierProvider.overrideWithValue((candidate) async {
           verified.add(candidate);
-          return verifier == null ? null : await verifier(candidate);
+          return verifier == null
+              ? const HubAccess()
+              : await verifier(candidate);
         }),
       ],
       child: MaterialApp(home: home),

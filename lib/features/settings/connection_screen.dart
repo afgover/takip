@@ -109,12 +109,15 @@ class _ConnectionScreenState extends ConsumerState<ConnectionScreen> {
     });
 
     try {
-      final wideScope = await ref.read(hubAccessVerifierProvider)(candidate);
+      final access = await ref.read(hubAccessVerifierProvider)(candidate);
       // Onboarding'le aynı kural (B-092): kapsam uyarısı engel değil, karar
       // kullanıcının. Vazgeçerse eski bağlantı olduğu gibi kalır.
+      final wideScope = access.scopeWarning;
       if (!mounted) return;
       if (wideScope != null && !await _confirmWideScope(wideScope)) return;
-      await ref.read(hubConfigProvider.notifier).save(candidate);
+      await ref
+          .read(hubConfigProvider.notifier)
+          .save(candidate.copyWith(login: access.login));
       // Token düzeldiyse yoklama durmuş olabilir; yeniden başlat.
       ref.read(hubWatcherProvider.notifier).start();
       unawaited(ref.read(hubWatcherProvider.notifier).checkNow());

@@ -30,10 +30,11 @@ class TaskRepo {
     String fileName, {
     required String content,
     required String commitMessage,
+    String? login,
   }) {
     _requireFileName(fileName);
     return _api.putFile(
-      '${folder.dir}/$fileName',
+      folder.pathFor(fileName, login: login),
       content,
       commitMessage: commitMessage,
     );
@@ -126,6 +127,7 @@ class TaskRepo {
           attempt.fileName,
           content: attempt.content,
           commitMessage: attempt.commitMessage,
+          login: draft.authorLogin,
         );
         return (fileName: attempt.fileName, sha: sha);
       } on HubConflictError {

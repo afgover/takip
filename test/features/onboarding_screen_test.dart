@@ -26,7 +26,7 @@ class FakeHubConfigNotifier extends HubConfigNotifier {
 
 ({Widget widget, FakeHubConfigNotifier config, List<HubConfig> verified})
     buildScreen({
-  Future<TokenScopeWarning?> Function(HubConfig)? verifier,
+  Future<HubAccess> Function(HubConfig)? verifier,
 }) {
   final notifier = FakeHubConfigNotifier();
   final verified = <HubConfig>[];
@@ -37,7 +37,9 @@ class FakeHubConfigNotifier extends HubConfigNotifier {
         hubConfigProvider.overrideWith(() => notifier),
         hubAccessVerifierProvider.overrideWithValue((candidate) async {
           verified.add(candidate);
-          return verifier == null ? null : await verifier(candidate);
+          return verifier == null
+              ? const HubAccess()
+              : await verifier(candidate);
         }),
       ],
       child: const MaterialApp(home: OnboardingScreen()),
@@ -126,7 +128,7 @@ void main() {
 
   testWidgets('doğrulama sürerken buton kilitlenir, ikinci istek gitmez',
       (tester) async {
-    final gate = Completer<TokenScopeWarning?>();
+    final gate = Completer<HubAccess>();
     final built = buildScreen(verifier: (_) => gate.future);
     await tester.pumpWidget(built.widget);
 
@@ -139,7 +141,7 @@ void main() {
     await tester.pump();
     expect(built.verified, hasLength(1));
 
-    gate.complete(null);
+    gate.complete(const HubAccess());
     await tester.pumpAndSettle();
     expect(built.config.saved, hasLength(1));
   });
@@ -151,7 +153,7 @@ void main() {
       verifier: (_) async {
         attempt++;
         if (attempt == 1) throw const HubNetworkError('Ağ bağlantısı yok.');
-        return null;
+        return const HubAccess();
       },
     );
     await tester.pumpWidget(built.widget);
@@ -176,7 +178,8 @@ void main() {
     );
 
     testWidgets('uyarı hata kutusu değil, onay kutusu', (tester) async {
-      final built = buildScreen(verifier: (_) async => wide);
+      final built = buildScreen(
+          verifier: (_) async => const HubAccess(scopeWarning: wide));
       await tester.pumpWidget(built.widget);
 
       await enterToken(tester, 'ghp_genis');
@@ -190,7 +193,8 @@ void main() {
 
     testWidgets('vazgeçilirse token kaydedilmez ve formda kalınır',
         (tester) async {
-      final built = buildScreen(verifier: (_) async => wide);
+      final built = buildScreen(
+          verifier: (_) async => const HubAccess(scopeWarning: wide));
       await tester.pumpWidget(built.widget);
 
       await enterToken(tester, 'ghp_genis');
@@ -207,7 +211,8 @@ void main() {
 
     testWidgets('kullanıcı ısrar ederse bağlanır — uyarı engel değil',
         (tester) async {
-      final built = buildScreen(verifier: (_) async => wide);
+      final built = buildScreen(
+          verifier: (_) async => const HubAccess(scopeWarning: wide));
       await tester.pumpWidget(built.widget);
 
       await enterToken(tester, 'ghp_genis');

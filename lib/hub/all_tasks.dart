@@ -140,6 +140,7 @@ Future<List<TaskSummary>> pendingFromStore(HubConfig connection) async {
       repoLabel: connection.displayName,
       priority: fm.str('priority'),
       category: fm.str('category'),
+      waitingFor: fm.str('for'),
       title: (title != null && title.trim().isNotEmpty) ? title.trim() : null,
     ));
   }

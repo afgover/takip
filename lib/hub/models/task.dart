@@ -72,6 +72,7 @@ class TaskSummary {
     this.repoLabel,
     this.priority,
     this.category,
+    this.waitingFor,
   });
 
   /// Klasör listesindeki kayıttan üretir; görev dosyası değilse null
@@ -122,7 +123,16 @@ class TaskSummary {
   final String? priority;
   final String? category;
 
+  /// `waiting/` görevinde kimden beklendiği (sözleşme 1.15). Listede "seni
+  /// bekliyor" ile "başkasını bekliyor" ayrımı buna dayanıyor.
+  final String? waitingFor;
+
   String get repoName => repoLabel ?? repoSlug ?? '';
+
+  /// Bu bekleyen iş [login] kullanıcısını mı bekliyor? `for` yazılmamışsa
+  /// **herkesi** bekliyor sayılır (bkz. [HubTask.waitsFor]).
+  bool waitsFor(String? login) =>
+      waitingFor == null || login == null || waitingFor == login;
 
   TaskSummary withContext({
     String? repoSlug,
@@ -130,6 +140,7 @@ class TaskSummary {
     String? priority,
     String? category,
     String? title,
+    String? waitingFor,
   }) =>
       TaskSummary(
         path: path,
@@ -142,6 +153,7 @@ class TaskSummary {
         repoLabel: repoLabel ?? this.repoLabel,
         priority: priority ?? this.priority,
         category: category ?? this.category,
+        waitingFor: waitingFor ?? this.waitingFor,
       );
 
   // Detay provider'ı bu nesneyi anahtar olarak kullanıyor: liste her
@@ -185,6 +197,8 @@ class HubTask {
     this.mark,
     this.options = const [],
     this.multi = false,
+    this.author,
+    this.waitingFor,
   });
 
   /// Hub'dan gelen dosyayı sözleşme şemasına göre okur. Eksik alanlar
@@ -217,6 +231,8 @@ class HubTask {
       mark: TaskMark.parse(fm.str('mark')),
       options: fm.list('options'),
       multi: fm.str('multi') == 'true',
+      author: fm.str('author'),
+      waitingFor: fm.str('for'),
     );
   }
 
@@ -250,10 +266,33 @@ class HubTask {
   /// Birden çok seçenek işaretlenebilir mi (sözleşme 1.12).
   final bool multi;
 
+  /// Kaydı oluşturan GitHub hesabı (sözleşme 1.15). `createdBy` bunun yerine
+  /// geçmez: o bir **rol** (`user`/`agent`), bu bir kimlik.
+  ///
+  /// Null olması olağan — tek kullanıcılı dönemde yazılmış her kayıtta yok ve
+  /// olmayacak. Yokluğu "bilinmiyor" demektir, hata değil.
+  final String? author;
+
+  /// `waiting/` görevinde **kimden** bekleniyor (sözleşme 1.15).
+  ///
+  /// Tek kullanıcıda gereksizdi: "agent kullanıcıyı bekliyor" cümlesinin tek
+  /// bir öznesi vardı. Birkaç kişide özne kayboluyor ve herkes "herhalde diğeri
+  /// bakar" diye geçiyor. YAML alanı `for`; Dart'ta `for` ayrılmış sözcük
+  /// olduğu için ad farklı.
+  final String? waitingFor;
+
   /// Agent bir soru mu sordu? Seçenekli bekleme yalnız `waiting/`te anlamlı:
   /// başka klasörde duran bir dosyada `options` bulunsa bile o iş kullanıcıyı
   /// beklemiyordur ve cevap düğmesi çıkmamalıdır.
   bool get isQuestion => status == TaskStatus.waiting && options.isNotEmpty;
+
+  /// Bu bekleyen iş [login] kullanıcısını mı bekliyor?
+  ///
+  /// `for` yazılmamışsa **herkesi** bekliyor sayılır: tek kullanıcılı dönemde
+  /// yazılmış her görev böyle ve onları kimsenin görmediği bir kuyruğa
+  /// düşürmek, sistemin en çok işe yarayan parçasını sessizce boşaltırdı.
+  bool waitsFor(String? login) =>
+      waitingFor == null || login == null || waitingFor == login;
 
   bool get isPending => id == 'pending';
   bool get hasResult => result.isNotEmpty && result != 'none';
@@ -280,6 +319,9 @@ class HubTask {
         // Sözleşme 1.12: yalnız agent'ın soru sorduğu görevlerde bulunur.
         if (options.isNotEmpty) 'options': options,
         if (options.isNotEmpty && multi) 'multi': 'true',
+        // Sözleşme 1.15 — çoklu kullanıcı. Bilinmiyorsa alan hiç yazılmaz.
+        if (author != null) 'author': author,
+        if (waitingFor != null) 'for': waitingFor,
       };
 
   /// Sözleşmeye uygun dosya içeriği (frontmatter + gövde).

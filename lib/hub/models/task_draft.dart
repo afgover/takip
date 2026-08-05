@@ -17,6 +17,27 @@ enum HubFolder {
 
   static HubFolder parse(String? name) =>
       name == notes.name ? notes : inbox;
+
+  /// Yazılacak tam yol. Kullanıcı adı **burada** temizleniyor.
+  ///
+  /// R-001'in garantisi korunuyor: app hâlâ yol vermiyor: klasörü kapalı bir
+  /// kümeden seçiyor ve kullanıcı adını bir **ad** olarak veriyor. Addaki
+  /// `/`, `.` gibi karakterler yol dışına çıkmaya yarayabilirdi, o yüzden
+  /// yalnız GitHub login'lerinde geçerli karakterler bırakılıyor; geriye bir
+  /// şey kalmazsa alt klasör hiç kullanılmıyor.
+  String pathFor(String fileName, {String? login}) {
+    final safe = sanitizeLogin(login);
+    return safe == null ? '$dir/$fileName' : '$dir/$safe/$fileName';
+  }
+}
+
+/// GitHub login'i yol parçası olarak güvenli hâle getirir (sözleşme 1.15).
+/// Geçerli login'ler zaten yalnız harf, rakam ve tire içerir; başka her şey
+/// atılır. Geriye bir şey kalmazsa null — çağıran alt klasörsüz yazar.
+String? sanitizeLogin(String? login) {
+  if (login == null) return null;
+  final cleaned = login.replaceAll(RegExp(r'[^A-Za-z0-9-]'), '');
+  return cleaned.isEmpty ? null : cleaned;
 }
 
 /// Gönderilmeye hazır görev — dosya adı, içerik ve commit mesajı birlikte.
@@ -34,6 +55,7 @@ class TaskDraft {
     required this.createdAt,
     this.repoSlug,
     this.target = HubFolder.inbox,
+    this.authorLogin,
   });
 
   /// Kullanıcı girdisinden sözleşmeye uygun taslak üretir (SYSTEM.md §4, §8).
@@ -43,6 +65,7 @@ class TaskDraft {
     String priority = 'normal',
     String category = 'gorev',
     List<String> tags = const [],
+    String? author,
     DateTime? now,
   }) {
     final at = now ?? DateTime.parse(isoNow());
@@ -61,6 +84,7 @@ class TaskDraft {
       result: 'none',
       status: TaskStatus.inbox,
       path: '',
+      author: author,
       body: _body(trimmed, description.trim()),
     );
 
@@ -87,6 +111,7 @@ class TaskDraft {
     String priority = 'normal',
     String? section,
     String? repoSlug,
+    String? author,
     DateTime? now,
   }) {
     final at = now ?? DateTime.parse(isoNow());
@@ -111,6 +136,7 @@ class TaskDraft {
       source: sourcePath,
       quote: quote,
       mark: mark,
+      author: author,
       // Kaydın **nereden geldiği** gövdede açıkça yazıyor: repo, dosya yolu ve
       // alıntının altında bulunduğu başlık. Agent bunları okuyup doğrudan o
       // yere gidebilsin diye — yoksa alıntıyı bütün hub'da aramak zorunda
@@ -158,6 +184,7 @@ class TaskDraft {
     TaskMark mark = TaskMark.comment,
     String? section,
     String? repoSlug,
+    String? author,
     DateTime? now,
   }) {
     final at = now ?? DateTime.parse(isoNow());
@@ -171,6 +198,7 @@ class TaskDraft {
     final fields = {
       'title': title,
       'created_by': 'user',
+      if (author != null) 'author': author,
       'created': isoNow(),
       'updated': isoNow(),
       'source': sourcePath,
@@ -200,6 +228,7 @@ class TaskDraft {
       createdAt: at,
       repoSlug: repoSlug,
       target: HubFolder.notes,
+      authorLogin: author,
     );
   }
 
@@ -207,7 +236,7 @@ class TaskDraft {
   ///
   /// Ayrı bir görev olarak gider çünkü app asıl dosyayı taşıyamaz (R-001).
   /// Agent bunu görünce asıl görevi `waiting/`ten çıkarır ve bildirimi kapatır.
-  factory TaskDraft.waitingDone(HubTask task, {DateTime? now}) {
+  factory TaskDraft.waitingDone(HubTask task, {String? author, DateTime? now}) {
     final at = now ?? DateTime.parse(isoNow());
     final label = task.title.trim().isEmpty ? task.id : task.title.trim();
     final title = '$label — yapıldı';
@@ -225,6 +254,7 @@ class TaskDraft {
       result: 'none',
       status: TaskStatus.inbox,
       path: '',
+      author: author,
       body: '# $title\n\n'
           '## İstek\n'
           '`${task.path}`${task.isPending ? '' : ' (${task.id})'} görevinde '
@@ -252,6 +282,7 @@ class TaskDraft {
     HubTask task, {
     required List<String> selected,
     String note = '',
+    String? author,
     DateTime? now,
   }) {
     final at = now ?? DateTime.parse(isoNow());
@@ -272,6 +303,7 @@ class TaskDraft {
       result: 'none',
       status: TaskStatus.inbox,
       path: '',
+      author: author,
       body: '# $title\n\n'
           '## İstek\n'
           '`${task.path}`${task.isPending ? '' : ' (${task.id})'} '
@@ -298,6 +330,7 @@ class TaskDraft {
         createdAt: DateTime.parse(json['createdAt'] as String),
         repoSlug: json['repoSlug'] as String?,
         target: HubFolder.parse(json['target'] as String?),
+        authorLogin: json['authorLogin'] as String?,
       );
 
   final String fileName;
@@ -324,6 +357,12 @@ class TaskDraft {
   /// gelince yine `notes/`a gitmeli — göreve dönüşmemeli.
   final HubFolder target;
 
+  /// Notun sahibi (sözleşme 1.15) — `notes/<login>/` alt klasörünü belirler.
+  /// Kuyrukta saklanıyor ki çevrimdışı alınmış bir not, bağlantı gelince yine
+  /// **kendi** sahibinin klasörüne gitsin. Görevlerde kullanılmaz: `inbox/`
+  /// ortak iş kuyruğudur, bölünmesi işi gizlerdi.
+  final String? authorLogin;
+
   Map<String, dynamic> toJson() => {
         'fileName': fileName,
         'content': content,
@@ -332,6 +371,7 @@ class TaskDraft {
         'createdAt': createdAt.toIso8601String(),
         if (repoSlug != null) 'repoSlug': repoSlug,
         if (target != HubFolder.inbox) 'target': target.name,
+        if (authorLogin != null) 'authorLogin': authorLogin,
       };
 
   /// Aynı taslağın farklı dosya adıyla kopyası — ad çakışmasında kullanılır
@@ -344,6 +384,7 @@ class TaskDraft {
         createdAt: createdAt,
         repoSlug: repoSlug,
         target: target,
+        authorLogin: authorLogin,
       );
 
   /// Kuyruğa alınırken hedef repoyu damgalar.
@@ -355,6 +396,7 @@ class TaskDraft {
         createdAt: createdAt,
         repoSlug: slug,
         target: target,
+        authorLogin: authorLogin,
       );
 
   static String _body(String title, String description) => '# $title\n\n'
