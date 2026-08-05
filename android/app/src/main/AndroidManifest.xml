@@ -3,10 +3,15 @@
          Flutter sablonu INTERNET iznini yalnizca debug/profile manifestlerine
          koyar; release derlemesinde ag erisimi sessizce kapali kalirdi. -->
     <uses-permission android:name="android.permission.INTERNET"/>
+    <!-- SEC-009: cihazdaki sifresiz hub kopyasi buluta cikmasin. Iki dosya
+         birden gerekli — dataExtractionRules yalnizca API 31+'te okunur,
+         digeri 24-30 arasinda. Ayrintili gerekce dosyalarin icinde. -->
     <application
         android:label="takip"
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/ic_launcher"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules">
         <activity
             android:name=".MainActivity"
             android:exported="true"

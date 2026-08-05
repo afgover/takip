@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Android 11 ve altı (API 24–30) için aynı kural — SEC-009.
+
+  `dataExtractionRules` yalnız API 31+'te okunuyor; `minSdk` 24 olduğu için
+  eski sürümlerde bu dosya devrede. Orada cihazdan-cihaza aktarım diye bir
+  ayrım yok (o Android 12 ile geldi), yalnız bulut yedeği var — dolayısıyla
+  doğru kural "hiçbir şey çıkmasın".
+
+  İkisi birlikte tanımlı: yalnız `dataExtractionRules` konsaydı API 24–30
+  cihazlarda açık sessizce açık kalırdı, çünkü hiçbir şey hata vermez.
+-->
+<full-backup-content>
+    <exclude domain="root" />
+    <exclude domain="file" />
+    <exclude domain="database" />
+    <exclude domain="sharedpref" />
+    <exclude domain="external" />
+</full-backup-content>

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Android 12+ (API 31+) yedekleme kuralları — SEC-009.
+
+  Sorun: bu ayar tanımlı olmadığında Android varsayılanı geçerli oluyor ve
+  uygulamanın özel veri alanı kullanıcının Google hesabına kopyalanıyor. O
+  alanda hub'ın **şifresiz** kopyası duruyor (SEC-007): oturum kayıtları,
+  kararlar, notlar — düz metin. SEC-007'de kabul edilen risk "cihaz ele
+  geçerse okunabilir" idi; buluta çıkmak o sınırı genişletiyor ve korumayı
+  Google hesabının güvenliğine devrediyor.
+
+  Ayrım bilinçli:
+
+  - cloud-backup: **hiçbir şey** çıkmaz. Kaybı yok — hub içeriği zaten
+    GitHub'da ve bağlanınca yeniden iniyor.
+  - device-transfer: yeni telefona geçiş çalışmaya devam eder, yalnız
+    flutter_secure_storage'ın iki dosyası hariç. Sebebi gizlilik değil,
+    işe yaramazlık: token'ın anahtarı Android Keystore'da ve **dışa
+    aktarılamaz**, yani taşınan şifreli metin yeni cihazda çözülemez.
+    Bırakılsaydı uygulama okuyamadığı bir token'la açılırdı — sessiz bir
+    bozulma. Bağlantıları taşımanın doğru yolu uygulamanın kendi parolayla
+    şifreli yedeği (Ayarlar → Yedekleme, SEC-002).
+-->
+<data-extraction-rules>
+    <cloud-backup>
+        <exclude domain="root" />
+        <exclude domain="file" />
+        <exclude domain="database" />
+        <exclude domain="sharedpref" />
+        <exclude domain="external" />
+    </cloud-backup>
+    <device-transfer>
+        <exclude domain="sharedpref" path="FlutterSecureStorage.xml" />
+        <exclude domain="sharedpref" path="FlutterSecureKeyStorage.xml" />
+    </device-transfer>
+</data-extraction-rules>
