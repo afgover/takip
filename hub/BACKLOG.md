@@ -377,6 +377,23 @@ başlığına ✅ ve tarih yazılır.
       `git pull --rebase`, attıktan sonra push" maddesi eklendi. Çakışma
       imkânsız kılınmadı, **görünür** kılındı: ID biçimini değiştirmek yüzlerce
       mevcut atfı ikinci sınıfa düşürürdü
+- [x] B-111 · (agent) Kimlik görünür değildi ve notlar kişisel değildi —
+      ✅ 2026-08-06; sözleşme 1.16. Üç boşluk ölçülerek bulundu:
+      (a) `author` **hiçbir ekranda** gösterilmiyordu — veri doğru yazılıyor
+      ama kullanıcı göremiyor (L-039/L-040'ın üçüncü tekrarı). Artık görev
+      detayında rozet, işaret kartında satır; notlarda **gösterilmiyor** çünkü
+      orada yazan hep "ben" olurdu.
+      (b) Notlar kişisel değildi: `annotationsIn` bütün `notes/**`'ı tarıyordu,
+      takımda herkes herkesin notunu belgede işaretli görürdü. Artık yalnız
+      kendi notların görünüyor; paylaşım yolu görev (`gorev`/`duzeltme`/
+      `tartisma`). Süzme iki durumda yapılmıyor — kimlik bilinmiyorsa ve
+      1.15 öncesi düz notlarda; ikisinde de gizlemek var olan veriyi yok
+      ederdi.
+      (c) **41 oturum kaydının hiçbirinde `author` yoktu**: 1.15'te kuralı
+      yazıp kendim uygulamamışım. Protokol maddesi 1'e eklendi. `knowledge/`
+      ve `SECURITY.md` bilinçli olarak **ayrı kimlik alanı taşımıyor** —
+      `Kaynak:` oturuma işaret ediyor, kimlik oradan çözülüyor; aynı bilgiyi
+      iki yerde tutmak ayrışmaya davetiye. 430 test → L-041
 - [ ] B-110 · (agent) Çoklu kullanıcı — Katman 3+4: `assignee` yazımı ve
       paylaşılan dosya yazım kuralları. Sözleşme 1.15 alanı tanımladı ama
       uygulama/protokol tarafı **ikinci kişi geldiğinde** yapılacak;

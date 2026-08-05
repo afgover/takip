@@ -612,3 +612,22 @@ Biçim: `SYSTEM.md` §5.
   girebilmeli**. Elle giriş otomatiğe üstün gelmeli — kullanıcı bilerek farklı
   bir değer isteyebilir. Bu, L-039'un ("görünmeyen uyarı, olmayan uyarıdır")
   veri tarafındaki karşılığı.
+
+## L-041 — Kuralı yazan, ilk uygulaması gereken kişidir
+- **Tarih:** 2026-08-06
+- **Kaynak:** S-2026-08-06-kimlik-kapsami (B-111)
+- **Açıklama:** Sözleşme 1.15'e "`author` alanı görev, not ve **oturum**a
+  yazılır" diye yazdım. Aynı gün açtığım her oturumda bu alanı yazmadım —
+  41 oturum kaydının hiçbirinde yok. Kural metinde vardı, davranışta yoktu ve
+  aradaki farkı kullanıcı sordu.
+  Sebebi sıradan: kuralı **uygulamaya** yazdım (app kayıtları için kod ekledim),
+  kendi prosedürüme yazmadım. Kodla zorlanan bir kural kendini uygular; yalnız
+  belgede duran bir kural, onu yazanın hafızasına bağlıdır — ve en çok da onu
+  yazan kişi, işi bittiği için unutur.
+  **Genel kural:** bir kuralın kapsamında agent'ın **kendi** çıktısı varsa,
+  kural yazılır yazılmaz `AGENT_PROTOCOL.md`'nin ilgili adımına da girer ve
+  mümkünse bir kontrole bağlanır. "Sözleşmede yazıyor" bir uygulama mekanizması
+  değildir.
+  Bu, L-039 ve L-040'ın üçüncü kardeşi: orada uyarı görünmüyordu, orada değer
+  girilemiyordu, burada kural uygulanmıyordu — üçünde de bir şey **tanımlanmış
+  ama işlememiş** durumda.
