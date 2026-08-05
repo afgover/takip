@@ -12,6 +12,16 @@ tanımlanır. Prosedür, oturumun konusu ne olursa olsun geçerlidir.
    - Kullanıcının talimatına göre ele al; ele aldığını `active/`e taşı.
    - Kullanıcı farklı bir konu açtıysa inbox'ı sadece raporla, kendiliğinden işleme.
 3. `BACKLOG.md`'ye bak; yarım kalmış işleri hatırla.
+4. **`SECURITY.md`'deki son `tarama` kaydının tarihine bak (§12).** 30 günden
+   eskiyse — ya da hiç yoksa — projeye uygun bağımlılık/zafiyet taramasını koş
+   ve sonucu `tarama` kaydı olarak yaz. Tarama tek seferlik bir onay değildir:
+   koştuğu günün danışmanlık veritabanına göredir ve "taradık" cümlesi
+   tekrarlanmazsa zamanla sessizce yanlışa döner.
+   Tetikleyicinin takvim değil **kaydın kendisi** olması bilinçli: hatırlatma
+   hub'da duruyor, yani unutulduğunda da görünür kalıyor.
+   *(`takip` projesinde koşum: `tool/scan.sh`. Diğer projelerde karşılığı o
+   projenin paket yöneticisidir; sonucun **doğrulanmış** olması şarttır —
+   bilinen açığı olan bir sürüm de sorulmadan "temiz" yazılmaz, L-035.)*
 
 ## Oturum boyunca (her mesaj alışverişinde)
 

@@ -5,7 +5,7 @@ ve hangi şemaya uyacağını** tanımlar. Agent ve kullanıcı uygulaması bu s
 dışına çıkmaz. Sözleşme değişiklikleri `EVOLUTION.md`'ye kaydedilir ve bu dosyanın
 başındaki sürüm numarası artırılır.
 
-**Sözleşme sürümü:** 1.13
+**Sözleşme sürümü:** 1.14
 **Ana kopya (master):** `afgover/takip` → `hub/SYSTEM.md`
 (bkz. §10 — her hub kendi kopyasını buradan günceller)
 **Zaman biçimi:** her yerde ISO 8601, UTC (`2026-07-30T14:05:00Z`)
@@ -425,6 +425,12 @@ Sözleşmeyi **yalnızca ana kopyada** değiştir. Bir projede yeni bir ihtiyaç
 çıkarsa önce kullanıcıya öner, onaylanırsa `afgover/takip`'te sürümü artır;
 diğer hub'lar bir sonraki oturumlarında kendiliğinden yakalar.
 
+> **`AGENT_PROTOCOL.md` değişikliği de sürüm artırır (v1.14).** Yayılma
+> mekanizması yalnız bu dosyanın sürüm numarasına bakıyor (adım 2); protokol
+> tek başına değiştirilirse diğer hub'lar onu **hiç** almaz ve bunu fark eden
+> bir kontrol yoktur. Bu yüzden protokole yazılan her yeni kural için de sürüm
+> artırılır — değişiklik `SYSTEM.md`'de bir satır bile olmasa.
+
 > **Uygulama tarafı:** app her bağlantının sözleşme sürümünü okur ve ana
 > kopyadan geride kalanı **Ayarlar → Repolar**'da işaretler. Böylece geriden
 > gelen bir hub, agent fark etmese bile kullanıcıya görünür.
@@ -522,6 +528,12 @@ okunabilir karşılıkları gösterilir.
   değişikliği, token/kimlik dokunuşu, veri saklama kararı, bulunan bir açık.
   Yalnız oturum kaydına yazmak yetmez — güvenlik geçmişi tek yerden okunabilir
   olmalı.
+- **(v1.14) `tarama` kayıtlarının tarihi bir tetikleyicidir.** Agent her oturum
+  açılışında son `tarama` kaydına bakar; 30 günden eskiyse taramayı yeniler
+  (`AGENT_PROTOCOL.md` madde 4). Tarama koştuğu günün danışmanlık veritabanına
+  göredir, dolayısıyla tek seferlik bir onay değildir. Tetikleyicinin ayrı bir
+  takvimde değil **kaydın kendisinde** olması bilinçli: unutulduğunda da
+  görünür kalır, ve hatırlatmayı ayakta tutacak ikinci bir sistem gerekmez.
 - Bir `acik` kaydı giderildiğinde **silinmez**: `Durum` `kapali` yapılır ve
   altına nasıl giderildiği yazılır. Geçersizleşen kayıt R-004'teki gibi
   `~~üstü çizilir~~` ve nedeni yazılır.
