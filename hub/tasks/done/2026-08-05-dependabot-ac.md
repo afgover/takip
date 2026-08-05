@@ -3,12 +3,12 @@ id: T-009
 title: "Repoda Dependabot uyarılarını aç"
 created_by: agent
 created: "2026-08-05T21:00:00Z"
-updated: "2026-08-05T21:00:00Z"
+updated: "2026-08-06T01:00:00Z"
 priority: normal
 category: gorev
 tags: [guvenlik, dependabot]
 session: S-2026-08-05-tarama-tekrari
-result: none
+result: "Dependency graph, Dependabot alerts ve security updates açıldı (kullanıcı bildirdi 2026-08-06) — B-102'nin sürekli izleme ayağı devrede"
 options: ["Açtım", "Ayarı bulamadım", "Açmak istemiyorum"]
 multi: false
 ---
@@ -48,3 +48,11 @@ ve sürüm güncelliği `tool/scan.sh`'ta kalıyor (30 günde bir).
   dependabot.yml` gerektiriyor): her sürüm farkı için PR açar ve tek kişilik
   bir projede gürültüden başka bir şey üretmez. Sürüm güncelliği zaten aylık
   taramada raporlanıyor.
+
+- 2026-08-06 · **Yapıldı.** Kullanıcı üç ayarı da açtı ("hepsi enabled"), yani
+  security updates de dahil: açık bulunan bir paket için Dependabot artık
+  kendiliğinden PR açacak.
+  **Doğrulama notu:** bu makinede `gh` kurulu değil ve agent'ta token yok, yani
+  ayarın açık olduğu bağımsız olarak ölçülmedi — kayıt kullanıcının
+  bildirimine dayanıyor. İlk gerçek sinyal, bir danışmanlık çıktığında gelecek
+  uyarı olacak.
