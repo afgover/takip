@@ -306,6 +306,12 @@ toplanır ve gerekiyorsa Faz 6 maddelerini (B-060…B-064) yeniden sıralar.
   Döngünün kendisi kayda değer — özellik sabah yazıldı, akşam cihazda denendi,
   aynı gün düzeltildi ve düzeltme sözleşmeye işlendi. Aşama 4'ün hedefi
   (B-052: kullanımdan gelen sürtünmeyi toplamak) tam olarak bu. 399 test.
+- 2026-08-05/06: Güvenlik katmanı tamamlandı ve sistem **çoklu kullanıcıya**
+  hazırlandı. SEC-009 (bulut yedeklemesi) ve SEC-011 (tarama tekrarı) kapandı;
+  tarama artık `tool/scan.sh` + Dependabot ile iki katmanlı ve tetikleyicisi
+  hub'ın kendi kaydının yaşı (K-035). SEC-012'nin bilinmeyeni ölçüldü.
+  Ardından sözleşme 1.15 ile kimlik geldi (`author`/`for`/`assignee`,
+  `notes/<login>/`) ve ID çakışmaları görünür kılındı (K-036). 418 test.
   → S-2026-08-01-token-kaliciligi, K-019, R-006, L-015, L-016
 - 2026-08-01: **Sisteme ikinci proje ekleme yolu açıldı.** Yeni proje ekleme
   prosedürü kalıcı belge oldu (`artifacts/reference/proje-ekleme.md`) ve bunu
@@ -536,3 +542,25 @@ toplanır ve gerekiyorsa Faz 6 maddelerini (B-060…B-064) yeniden sıralar.
   §10'un yayılma mekanizması yalnız `SYSTEM.md`'nin sürüm numarasına bakıyor;
   protokol tek başına değiştirilseydi diğer hub'lar yeni kuralı **hiç** almaz
   ve bunu fark eden bir kontrol de olmazdı. → B-102, SEC-011
+- **K-036:** Çoklu kullanıcıda **kimlik**, eşzamanlılıktan önce gelir. İlk
+  bakışta sorun "iki kişi aynı anda yazarsa ne olur" gibi görünüyor; ölçünce
+  asıl boşluk başka çıktı: sistemde "kim" diye bir kavram **hiç yoktu**.
+  `created_by` bir roldü (`user`/`agent`), kimlik değil; `waiting/`in tanımı
+  ("agent **kullanıcıyı** bekliyor") birkaç kişide öznesiz kalıyordu ve herkes
+  "herhalde diğeri bakar" diye geçerdi. Karmaşanın büyük kısmı çakışmadan değil
+  bu belirsizlikten gelir, ve çözümü en ucuz olan katmandır.
+  Eşzamanlılık ikinci sırada ele alındı ve **imkânsız kılınmadı, görünür
+  kılındı.** ID biçimini değiştirmek (kullanıcı öneki, rastgele ID) çakışmayı
+  yapısal olarak bitirirdi ama bugüne kadarki yüzlerce çapraz atfı ikinci
+  sınıfa düşürür, iki biçimi kalıcı olarak yan yana yaşatırdı. Bunun yerine
+  hub'ı okuyan bir test tekrarlı ID'yi yakalıyor — projenin tekrar eden ilkesi
+  (sessiz bozulma, gürültülü bozulmadan kötüdür; L-035, L-039, K-035) burada da
+  ölçü oldu.
+  **Yapısal olanı yapısal bırakmak:** notlar `notes/<login>/` altına alındı,
+  alan değil klasör. Alanla ayırmak daha az işti ama "agent notlara dokunmaz"
+  garantisini bir kurala indirgerdi; klasörle sahiplik dosya açılmadan
+  okunabiliyor. R-001'in kapalı kümesi korundu — app hâlâ yol değil **ad**
+  veriyor ve ad, yol parçasına dönüşmeden temizleniyor.
+  **Ertelenen:** `assignee` yazımı ve paylaşılan dosya kuralları (Katman 3-4)
+  ikinci kişi gelene kadar bekliyor. Kullanılmayan bir soyutlamayı önceden
+  taşımak, onu test edilmemiş hâlde eskitir. → B-108, B-109, B-110
