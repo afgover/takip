@@ -5,7 +5,7 @@ ve hangi şemaya uyacağını** tanımlar. Agent ve kullanıcı uygulaması bu s
 dışına çıkmaz. Sözleşme değişiklikleri `EVOLUTION.md`'ye kaydedilir ve bu dosyanın
 başındaki sürüm numarası artırılır.
 
-**Sözleşme sürümü:** 1.15
+**Sözleşme sürümü:** 1.16
 **Ana kopya (master):** `afgover/takip` → `hub/SYSTEM.md`
 (bkz. §10 — her hub kendi kopyasını buradan günceller)
 **Zaman biçimi:** her yerde ISO 8601, UTC (`2026-07-30T14:05:00Z`)
@@ -55,6 +55,7 @@ date: 2026-07-30
 status: open            # open | closed
 reconstructed: false    # (v1.6) opsiyonel; true = sıkıştırma sonrası geriye
                         # dönük yazıldı
+author: afgover         # (v1.15) oturumu kimin yürüttüğü
 topics: [mimari, github-api]
 artifacts:              # bu oturumda üretilen dosyaların yolları
   - artifacts/S-2026-07-30-altyapi-tasarimi/rapor.md
@@ -502,6 +503,20 @@ yapılması bilinçli: "agent notlara dokunmaz" kuralı böylece yapısal kalıy
 sahibi anlamak için dosyayı açıp alan okumak gerekmiyor.
 `tasks/inbox/` bilerek bölünmedi: o ortak iş kuyruğudur ve bölünmesi işi
 gizlerdi.
+
+**Not kişiseldir; paylaşım yolu görevdir (v1.16).** Uygulama bir belgeyi
+çizerken **yalnız kendi** notlarını işaretler; başkasının notu ne belgede ne
+işaretler listesinde görünür. Paylaşmak isteyen görev açar — `gorev`,
+`duzeltme` ya da `tartisma`. Ayrım niyettir ve zaten §4'te tanımlı: not "ben
+bunu hatırlayayım", görev "sen şunu yap", tartışma "bunu konuşalım".
+Gerekçe 1.9'un (K-029) devamı: herkesin notunu herkesin görmesi, notu
+"kendine yazılan şey" olmaktan çıkarır — kullanıcı kendine not alırken
+başkalarına bir şey söylemiş olmak istemiyor.
+
+Süzme **iki durumda yapılmaz**, ikisi de bilerek:
+- Kimlik bilinmiyorsa: süzmek her şeyi gizlerdi.
+- Not düz `notes/` altındaysa (v1.15 öncesi): sahibi bilinmiyor, gizlemek var
+  olan notları sessizce yok ederdi.
 
 App tarafında R-001'in garantisi korunuyor: uygulama hâlâ yol vermiyor,
 klasörü kapalı bir kümeden seçiyor ve kullanıcı adını bir **ad** olarak

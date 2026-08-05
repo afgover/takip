@@ -7,6 +7,11 @@ tanımlanır. Prosedür, oturumun konusu ne olursa olsun geçerlidir.
 ## Oturum açılışında (ilk mesajdan hemen sonra)
 
 1. `sessions/<tarih>-<slug>/session.md` dosyasını `status: open` ile oluştur.
+   **`author:` alanını da yaz** (v1.15) — oturumu kimin yürüttüğü. Bilmiyorsan
+   kullanıcıya sor; hub çok kullanıcılıysa "kim yaptı" sorusunun cevabı burada
+   başlar. `knowledge/` ve `SECURITY.md` kayıtları ayrı bir kimlik alanı
+   taşımaz: `Kaynak:` alanı oturuma işaret ettiği için kimlik oradan
+   çözülür — aynı bilgiyi iki yerde tutmak, ikisinin ayrışmasına davetiyedir.
 2. `tasks/inbox/` klasörünü kontrol et:
    - Yeni görev varsa kullanıcıya bildir ("inbox'ta N yeni görev var: ...").
    - Kullanıcının talimatına göre ele al; ele aldığını `active/`e taşı.
