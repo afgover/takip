@@ -5,7 +5,7 @@ type: info
 title: "Agent kurulum talimatı — hub'ı kur, geçmişi topla, protokole göre çalış"
 created: 2026-08-01T00:00:00Z
 updated: 2026-08-04T00:00:00Z
-contract: "1.14"
+contract: "1.15"
 ---
 
 # Agent Kurulum Talimatı
@@ -16,7 +16,7 @@ bunu olduğu gibi yapıştırır; agent gerisini buradan yapar.
 Kanonik sürüm bu dosyadır (`afgover/takip` reposunda). Masaüstündeki kopya
 kolaylık içindir ve zamanla bayatlar; şüphede kalınırsa bu dosya esas alınır.
 
-**Bu belge sözleşme sürümü 1.14'e göre yazıldı.** Sözleşmenin kendisi daha
+**Bu belge sözleşme sürümü 1.15'e göre yazıldı.** Sözleşmenin kendisi daha
 yeniyse o kazanır — bkz. §1.
 
 ---
@@ -72,7 +72,7 @@ Her oturum açılışında:
 3. **Aynıysa** devam et.
 4. **Geridesen:** ana kopyayı `SYSTEM.md` ve `AGENT_PROTOCOL.md` üzerine yaz,
    yeni sürümün getirdiği klasör/dosyaları oluştur, commit et
-   (`system: sözleşme 1.6 → 1.14 güncellendi`), `EVOLUTION.md`'ye tek satır not
+   (`system: sözleşme 1.6 → 1.15 güncellendi`), `EVOLUTION.md`'ye tek satır not
    düş ve kullanıcıya **ne değiştiğini** bir cümleyle söyle.
 5. **İleridesen:** üzerine yazma. Ana kopya güncellenmeden yapılmış yerel bir
    değişiklik var demektir; kullanıcıya bildir ve ana kopyaya taşınmasını öner.
@@ -119,7 +119,7 @@ boş klasör tutmadığı için ayrıca gereklidir.
 **gerçek** bir kural/skill/ders çıktığında eklenir — dolu görünsün diye
 uydurulmaz.
 
-Commit: `system: hub iskeleti kuruldu (sözleşme 1.14)`
+Commit: `system: hub iskeleti kuruldu (sözleşme 1.15)`
 
 ---
 
@@ -405,7 +405,7 @@ evolution: Aşama 1 kapandı
 knowledge: L-003 eklendi
 note: eklendi / silindi (app)
 security: SEC-005 eklendi / SEC-002 kapatıldı
-system: sözleşme 1.6 → 1.14 güncellendi
+system: sözleşme 1.6 → 1.15 güncellendi
 ```
 
 İlgisiz değişiklikler aynı commit'e konmaz. Uygulama commit geçmişini bu

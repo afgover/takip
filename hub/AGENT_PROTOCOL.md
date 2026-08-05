@@ -25,6 +25,14 @@ tanımlanır. Prosedür, oturumun konusu ne olursa olsun geçerlidir.
 
 ## Oturum boyunca (her mesaj alışverişinde)
 
+> **ID atarken (v1.15).** Yeni bir `T-`, `B-`, `L-`, `SK-`, `R-`, `SEC-`, `K-`
+> ya da `A-` numarası vermeden **hemen önce** `git pull --rebase`, verdikten
+> **hemen sonra** push et. Sayaçlar tekildir ve iki agent aynı anda çalışırsa
+> ikisi de aynı numarayı seçer; dosyalar farklı olduğu için git bunu çakışma
+> saymaz ve hata veren hiçbir şey olmaz. Pencereyi daraltmak bu yüzden
+> prosedürün işi. Çakışma yine de olursa hub'ı okuyan test yakalar; düzeltmesi
+> birini yeniden numaralandırmaktır.
+
 4. **Her kullanıcı mesajını ve her cevabını** `session.md`'ye anında ekle —
    oturum sonuna biriktirme. Kullanıcı mesajları kısaltılmadan; agent cevapları
    karar/bulgu/iş odaklı özetlenerek yazılır, uzun çıktılar artifact'e gider.

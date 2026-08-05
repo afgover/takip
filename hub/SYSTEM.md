@@ -5,7 +5,7 @@ ve hangi şemaya uyacağını** tanımlar. Agent ve kullanıcı uygulaması bu s
 dışına çıkmaz. Sözleşme değişiklikleri `EVOLUTION.md`'ye kaydedilir ve bu dosyanın
 başındaki sürüm numarası artırılır.
 
-**Sözleşme sürümü:** 1.14
+**Sözleşme sürümü:** 1.15
 **Ana kopya (master):** `afgover/takip` → `hub/SYSTEM.md`
 (bkz. §10 — her hub kendi kopyasını buradan günceller)
 **Zaman biçimi:** her yerde ISO 8601, UTC (`2026-07-30T14:05:00Z`)
@@ -159,6 +159,9 @@ category: gorev              # varsayılanlar: gorev, arastirma, gelistirme, hat
 tags: []
 session: none                # ele alındığı oturumun ID'si (agent doldurur)
 result: none                 # tamamlanınca: sonucun 1 satır özeti veya artifact linki
+author: afgover              # (v1.15) kaydı oluşturan GitHub hesabı
+for: mehmet                  # (v1.15) yalnız waiting/: kimden bekleniyor
+assignee: afgover            # (v1.15) active/'e alan kişi
 
 # --- Bağlam alanları (v1.5) — yalnızca bir belgeden seçilerek üretilmiş
 # kayıtlarda bulunur; normal görevlerde hiç yazılmaz. Üçü birlikte anlamlıdır.
@@ -196,6 +199,50 @@ Kurallar:
   commit mesajı: `task(T-001): active → done`.
 - `done/` içindeki dosyalar silinmez; yılda bir `done/arsiv-<yil>/` altına
   toplanabilir.
+
+### Kimlik (v1.15)
+
+Tek kullanıcılı hub'da "kim" sorusunun cevabı belliydi ve şemada yeri yoktu.
+Birkaç kişi aynı hub'ı kullandığında bu boşluk karmaşanın asıl kaynağı olur:
+`created_by` bir **rol**dur (`user`/`agent`), kimlik değil.
+
+| Alan | Nerede | Anlamı |
+|---|---|---|
+| `author` | görev, not, oturum | Kaydı oluşturan GitHub hesabı |
+| `for` | yalnız `waiting/` | İşin **kimden** beklendiği |
+| `assignee` | `active/` | İşi üstlenen kişi |
+
+Kurallar:
+
+- **Üçü de isteğe bağlıdır ve yokluğu hata değildir.** Tek kullanıcılı dönemde
+  yazılmış her kayıtta yoklar; geriye dönük doldurulmazlar. Yokluk
+  "bilinmiyor" demektir.
+- `for` yazılmamış bir `waiting/` görevi **herkesi** bekler. Aksi hâlde eski
+  görevler kimsenin görmediği bir kuyruğa düşerdi.
+- `assignee`, `inbox/` → `active/` taşımasıyla **aynı anda** yazılır. Taşıma
+  zaten atomik olduğu için ayrı bir kilit gerekmez: aynı dosyayı iki kişinin
+  taşıması git'te çakışmadır.
+- Uygulama `author`ı token'ın sahibinden okur (`/user` → `login`) ve **hangi
+  repoya yazıyorsa o bağlantının** kimliğini kullanır. Okunamazsa alan hiç
+  yazılmaz — çalışan bir bağlantı kimlik yüzünden reddedilmez.
+- Aynı token'ı iki kişi paylaşırsa kimlikler tek kişiye çöker. Bu, herkesin
+  kendi token'ını üretmesi için ayrı bir gerekçedir (R-005).
+
+### ID'ler ve eşzamanlılık (v1.15)
+
+Bütün ID'ler (`T-`, `B-`, `L-`, `SK-`, `R-`, `SEC-`, `K-`, `A-`) tekil
+sayaçtır. İki agent aynı anda çalışırsa ikisi de aynı numarayı seçer ve
+dosyalar farklı olduğu için **git bunu çakışma saymaz**: hiçbir şey hata
+vermez, iki kayıt aynı ID'yi taşır.
+
+Sözleşme bu çakışmayı imkânsız kılmaz — ID biçimini değiştirmek (kullanıcı
+öneki, rastgele ID) bugüne kadarki yüzlerce atfı ikinci sınıfa düşürürdü.
+Bunun yerine **görünür** kılar:
+
+- Agent ID atamadan hemen önce `git pull --rebase` yapar, attıktan hemen sonra
+  push eder (`AGENT_PROTOCOL.md`).
+- Hub'ı okuyan bir test tekrarlı ID tanımını yakalar; düzeltmesi birini yeniden
+  numaralandırmaktır.
 
 ### `waiting/` kullanımı
 
@@ -442,10 +489,24 @@ görünmezler, ID almazlar, `active`/`done` diye bir durumları yoktur.
 
 ```
 notes/
-  2026-08-03-vulkan-arka-uc.md
+  <login>/                        # (v1.15) sahibinin GitHub hesabı
+    2026-08-03-vulkan-arka-uc.md
+  2026-08-03-eski-not.md          # v1.15 öncesi: düz, geçerliliğini korur
 ```
 
 Dosya adı görevlerle aynı biçimde: `<YYYY-MM-DD>-<slug>.md`.
+
+**Sahiplik klasörden okunur (v1.15).** Notlar birden çok kişide karışmasın
+diye her kullanıcının kendi alt klasörü var. Ayrımın alanla değil **klasörle**
+yapılması bilinçli: "agent notlara dokunmaz" kuralı böylece yapısal kalıyor —
+sahibi anlamak için dosyayı açıp alan okumak gerekmiyor.
+`tasks/inbox/` bilerek bölünmedi: o ortak iş kuyruğudur ve bölünmesi işi
+gizlerdi.
+
+App tarafında R-001'in garantisi korunuyor: uygulama hâlâ yol vermiyor,
+klasörü kapalı bir kümeden seçiyor ve kullanıcı adını bir **ad** olarak
+veriyor; ad, yol parçası hâline gelmeden önce yalnız harf/rakam/tireye
+indirgeniyor.
 
 ```markdown
 ---
