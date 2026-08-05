@@ -195,10 +195,31 @@ if [ "$(printf '%s' "$PERMS" | wc -w)" -gt 1 ]; then
   warn "birden çok izin var — her biri gerekli mi, gözden geçir"
 fi
 
+# SEC-010 gerilemesi. İki ayrı şey: (a) yapılandırmanın debug'a dönmesi —
+# repoda görünür, herkesi ilgilendirir; (b) bu makinede anahtarın olmaması —
+# yereldir, taze bir klonda olağandır ve bulgu sayılmaz.
 if grep -q 'signingConfigs.getByName("debug")' "$GRADLE"; then
   warn "release derlemesi DEBUG anahtarıyla imzalanıyor (SEC-010, B-101)"
+elif ! grep -q 'signingConfigs' "$GRADLE"; then
+  warn "release imza yapılandırması yok — debug anahtarına düşebilir (SEC-010)"
 else
   ok "release kendi imza yapılandırmasını kullanıyor"
+  if [ -f android/key.properties ]; then
+    info "bu makinede key.properties var — release derlenebilir"
+  else
+    info "bu makinede key.properties yok — release derlemesi hata verecek (beklenen)"
+  fi
+fi
+
+# Üretilmiş bir APK varsa imzayı iddiaya değil sertifikaya sor.
+APK=build/app/outputs/flutter-apk/app-release.apk
+APKSIGNER="$(ls "$HOME"/Library/Android/sdk/build-tools/*/apksigner 2>/dev/null | tail -1)"
+if [ -f "$APK" ] && [ -n "$APKSIGNER" ]; then
+  if "$APKSIGNER" verify --print-certs "$APK" 2>/dev/null | grep -q "CN=Android Debug"; then
+    warn "elde duran release APK debug anahtarıyla imzalı — yeniden derle"
+  else
+    ok "elde duran release APK debug anahtarıyla imzalı değil"
+  fi
 fi
 
 # ---------------------------------------------------------------------------

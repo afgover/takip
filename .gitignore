@@ -13,8 +13,10 @@ android/local.properties
 ios/Pods/
 ios/.symlinks/
 
-# Gizli
+# Gizli — imza anahtarlari ve parolalar (SEC-010).
+# Keystore'un kendisi zaten deponun DISINDA durmali; bunlar ikinci savunma.
 *.keystore
+*.jks
 key.properties
 
 # macOS Finder artigi — projeyle ilgisi yok, Finder her bakista degistiriyor
