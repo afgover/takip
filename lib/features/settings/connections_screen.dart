@@ -41,6 +41,7 @@ class ConnectionsScreen extends ConsumerWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(connection.slug),
+                  _IdentityLine(login: connection.login),
                   _ContractLine(version: versions[connection.slug]),
                 ],
               ),
@@ -153,6 +154,43 @@ class ConnectionsScreen extends ConsumerWidget {
 /// Geriden gelen bir hub, agent fark etmese bile burada görünür — sözleşme
 /// 1.3'te kalmış bir repo, 1.4'te gelen `waiting/` klasörünü tanımıyor
 /// demektir ve bu sessizce yanlış davranmaya yol açar (L-020).
+/// Bu bağlantıda kayıtların hangi kimlikle yazıldığı (sözleşme 1.15).
+///
+/// Görünür olması şart: kimlik `author` alanına sessizce yazılıyor ve
+/// görünmezse kullanıcı ne çalıştığını ne de çalışmadığını anlayabilir —
+/// L-039'un aynı kalıbı. Boşsa ne yapılacağını da söylüyor.
+class _IdentityLine extends StatelessWidget {
+  const _IdentityLine({required this.login});
+
+  static const emptyText = 'Kimlik yok — Düzenle\'den yazabilirsin';
+
+  final String? login;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final known = login != null && login!.trim().isNotEmpty;
+
+    return Row(
+      children: [
+        Icon(
+          known ? Icons.person_outline : Icons.person_off_outlined,
+          size: 14,
+          color: theme.colorScheme.onSurfaceVariant,
+        ),
+        const SizedBox(width: 4),
+        Expanded(
+          child: Text(
+            known ? login! : emptyText,
+            style: theme.textTheme.labelSmall,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
 class _ContractLine extends StatelessWidget {
   const _ContractLine({required this.version});
 

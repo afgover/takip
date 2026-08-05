@@ -32,6 +32,7 @@ class ConnectionScreen extends ConsumerStatefulWidget {
 
   static const repoFieldKey = Key('connection-repo-field');
   static const labelFieldKey = Key('connection-label-field');
+  static const loginFieldKey = Key('connection-login-field');
   static const tokenFieldKey = Key('connection-token-field');
   static const reuseTokenKey = Key('connection-reuse-token');
   static const submitKey = Key('connection-submit');
@@ -45,6 +46,7 @@ class _ConnectionScreenState extends ConsumerState<ConnectionScreen> {
   final _formKey = GlobalKey<FormState>();
   late final TextEditingController _repoCtrl;
   late final TextEditingController _labelCtrl;
+  late final TextEditingController _loginCtrl;
   final _tokenCtrl = TextEditingController();
 
   bool _busy = false;
@@ -66,12 +68,14 @@ class _ConnectionScreenState extends ConsumerState<ConnectionScreen> {
     final target = _target;
     _repoCtrl = TextEditingController(text: _isAdd ? '' : (target?.slug ?? ''));
     _labelCtrl = TextEditingController(text: target?.label ?? '');
+    _loginCtrl = TextEditingController(text: target?.login ?? '');
   }
 
   @override
   void dispose() {
     _repoCtrl.dispose();
     _labelCtrl.dispose();
+    _loginCtrl.dispose();
     _tokenCtrl.dispose();
     super.dispose();
   }
@@ -83,6 +87,7 @@ class _ConnectionScreenState extends ConsumerState<ConnectionScreen> {
     final parsed = HubConfig.parseRepo(_repoCtrl.text)!;
     final typedToken = _tokenCtrl.text.trim();
     final typedLabel = _labelCtrl.text.trim();
+    final typedLogin = _loginCtrl.text.trim();
 
     // Token'ın kaynağı üç yerden biri olabilir: elle yazılan değer, ekleme
     // kipinde seçilen mevcut bağlantının token'ı, ya da düzenlemede alan boş
@@ -115,9 +120,18 @@ class _ConnectionScreenState extends ConsumerState<ConnectionScreen> {
       final wideScope = access.scopeWarning;
       if (!mounted) return;
       if (wideScope != null && !await _confirmWideScope(wideScope)) return;
-      await ref
-          .read(hubConfigProvider.notifier)
-          .save(candidate.copyWith(login: access.login));
+      // Elle yazılan kimlik, otomatik okunana **üstün gelir**: `/user`
+      // okunamadığında ya da kullanıcı başka bir ad kullanmak istediğinde tek
+      // çare bu. Alan boşsa token'dan okunan kullanılır.
+      await ref.read(hubConfigProvider.notifier).save(
+            candidate.copyWith(
+              login: typedLogin.isNotEmpty ? typedLogin : access.login,
+            ),
+          );
+      // Alan boşken otomatik bir kimlik geldiyse kullanıcı bunu görsün.
+      if (mounted && typedLogin.isEmpty && access.login != null) {
+        _loginCtrl.text = access.login!;
+      }
       // Token düzeldiyse yoklama durmuş olabilir; yeniden başlat.
       ref.read(hubWatcherProvider.notifier).start();
       unawaited(ref.read(hubWatcherProvider.notifier).checkNow());
@@ -153,8 +167,14 @@ class _ConnectionScreenState extends ConsumerState<ConnectionScreen> {
     ref.listen<AsyncValue<HubConfig?>>(hubConfigProvider, (previous, next) {
       if (_isAdd || widget.initial != null) return;
       final config = next.value;
-      if (config != null && _repoCtrl.text.trim().isEmpty) {
-        _repoCtrl.text = config.slug;
+      if (config == null) return;
+      if (_repoCtrl.text.trim().isEmpty) _repoCtrl.text = config.slug;
+      // Kimlik de aynı yoldan doldurulmalı: `initState` çalıştığında
+      // yapılandırma henüz yüklenmemiş olabiliyor ve alan kayıtlı kimlik
+      // varken boş görünüyordu — kullanıcıya "kimliğim yok" diye yalan söyleyen
+      // bir ekran.
+      if (_loginCtrl.text.trim().isEmpty && config.login != null) {
+        _loginCtrl.text = config.login!;
       }
     });
 
@@ -197,6 +217,21 @@ class _ConnectionScreenState extends ConsumerState<ConnectionScreen> {
                 helperText: 'Repo seçicide görünür; boşsa owner/ad gösterilir.',
                 border: OutlineInputBorder(),
                 prefixIcon: Icon(Icons.label_outline),
+              ),
+            ),
+            const SizedBox(height: 16),
+            TextFormField(
+              key: ConnectionScreen.loginFieldKey,
+              controller: _loginCtrl,
+              enabled: !_busy,
+              autocorrect: false,
+              decoration: const InputDecoration(
+                labelText: 'Kimlik (GitHub kullanıcı adı)',
+                helperText: 'Açtığın görev ve notlara `author` olarak yazılır. '
+                    'Boş bırakırsan token\'dan okunmaya çalışılır.',
+                helperMaxLines: 3,
+                border: OutlineInputBorder(),
+                prefixIcon: Icon(Icons.person_outline),
               ),
             ),
             if (_isAdd) ...[
