@@ -339,9 +339,19 @@ başlığına ✅ ve tarih yazılır.
       orası. Etiket kardeşleriyle aynı biçime çekildi (`tasks/ · notes/`);
       kapsam iddiası artık yalnız ekranın kendisinde. Tarayıcı testi alt satırı
       doğruluyor ve kartlarda "repolar" geçmemesini şart koşuyor. → L-037
-- [ ] B-102 · (agent+user) SEC-011: taramanın tekrar aralığına karar ver —
-      tek seferlik tarama yalnız koştuğu gün için geçerli. Ölçeğe uygun en ucuz
-      yol her sürüm öncesi elle koşum; alternatifi zamanlanmış GitHub Actions işi
+- [x] B-102 · (agent+user) SEC-011: taramanın tekrar aralığına karar ver —
+      ✅ 2026-08-05; katmanlı çözüm, çünkü tek mekanizma dört parçanın hepsini
+      kapsamıyordu. (1) Bilinen zafiyet **Dependabot**'a devredildi — pub
+      destekleniyor, private repoda da çalışıyor, bakımsız (kullanıcı iki ayarı
+      açacak → T-009). (2) Sır taraması + Android yapılandırması + sürüm
+      güncelliği için **`tool/scan.sh`**; bunların otomatik gözcüsü yok ve
+      SEC-009/SEC-010 tam olarak oradan çıkmıştı. (3) Tetikleyici takvim değil
+      **`SECURITY.md`'deki son tarama kaydının tarihi**: 30 günden eskiyse agent
+      oturum açılışında koşuyor (sözleşme 1.14). Hatırlatma hub'ın içinde, yani
+      ayakta tutulacak ikinci bir sistem yok.
+      Script L-035'i koda gömüyor: bilinen açığı olan bir kontrol grubu da
+      soruluyor, boş dönerse tarama kendini geçersiz ilan edip `2` ile çıkıyor.
+      Ağ hatası da "temiz" sayılmıyor. İkisi de sınandı. → SEC-011, K-035
 - [x] B-089 · (agent) İşaret kartı notun içeriğini göstermiyordu —
       ✅ 2026-08-03; kart kullanıcının zaten belgede gördüğü alıntıyı tekrar
       edip asıl taşıması gereken metni atlıyordu. `Annotation.note` eklendi,
