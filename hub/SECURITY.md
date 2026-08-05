@@ -204,8 +204,19 @@ değil. Token, parola veya anahtar bu dosyada hiçbir koşulda yer almaz.
   Releases'ta APK" diyor; o adımda üçüncü biri aynı paket adıyla, aynı bilinen
   anahtarla imzalanmış bir APK üretip **güncelleme olarak kurulabilir** hâle
   getirebilir. Yapılacak: yayımlanacak yapı kendi anahtarıyla imzalanır, anahtar
-  repoya girmez (`.gitignore` `*.keystore` ve `key.properties`'i zaten dışarıda
-  tutuyor). **B-097'nin (APK yayımlama) ön koşuludur.** → B-101
+  repoya girmez (`.gitignore` `*.keystore`, `*.jks` ve `key.properties`'i
+  dışarıda tutuyor). **B-097'nin (APK yayımlama) ön koşuludur.** → B-101
+- **2026-08-06 durumu:** Yapılandırma yazıldı ve hazır bekliyor —
+  `android/key.properties` konulduğu an release kendi anahtarıyla imzalanır.
+  Anahtar üretimi kullanıcıda (parola gerektiriyor, T-010) ve kullanıcı
+  kararıyla **ertelendi**; kayıt bu yüzden `acik` kalıyor.
+  Erteleme bilinçli ve sınırı belli: bugünkü risk düşük (APK yalnız
+  geliştiricinin kendi cihazına kuruluyor), açık hâle geldiği an APK'nın bu
+  makineden çıktığı andır. **B-097 kapanmadan bu kayıt kapanmalı.**
+  Hatırlatıcı derleme çıktısına bırakılmadı: `flutter build` Gradle'ın uyarısını
+  yutuyor (L-039). Bunun yerine `tool/install.sh` her release kurulumunda
+  yazıyor ve `tool/scan.sh` üretilmiş APK'nın **sertifikasına** bakıp bulgu
+  veriyor — iddiaya değil, artefaktın kendisine.
 
 ## SEC-011 — Tarama tekrarlanmıyor
 - **Tarih:** 2026-08-04

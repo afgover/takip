@@ -301,9 +301,20 @@ başlığına ✅ ve tarih yazılır.
       kendisi (L-010: kaynakta olan release'te olmayabiliyor).
       İlk kayıttaki "EncryptedSharedPreferences" iddiası da düzeltildi — o mod
       açık değil. 404 test. → SEC-009, L-038
-- [ ] B-101 · (agent) SEC-010: release derlemesi kendi anahtarıyla imzalanacak —
-      şu an Flutter şablonundan gelen **debug** anahtarı kullanılıyor.
-      **B-097'nin "Releases'ta APK" adımının ön koşulu**
+- [ ] B-101 · (agent+user) SEC-010: release derlemesi kendi anahtarıyla
+      imzalanacak — şu an Flutter şablonundan gelen **debug** anahtarı
+      kullanılıyor. **B-097'nin "Releases'ta APK" adımının ön koşulu.**
+      · 2026-08-06: Gradle yapılandırması yazıldı ve hazır bekliyor —
+      `android/key.properties` konulduğu an release kendi anahtarıyla
+      imzalanır. Anahtar üretimi **kullanıcıda** (parola gerektiriyor, T-010).
+      Kullanıcı kararıyla **ertelendi**: doğru tetikleyici "uygulama bitsin"
+      değil, APK'nın bu makineden çıkacağı gün. Yanlış anlaşılan nokta kayda
+      geçti — imza anahtarı uygulamanın olgunluğundan bağımsızdır, aynı anahtar
+      bütün gelecek sürümleri imzalar; beklemenin azalttığı bir maliyet yok.
+      İlk yazılan "anahtar yoksa derleme hata versin" kuralı, günlük kurulumu
+      engellediği için bilerek gevşetildi; hatırlatıcı `tool/install.sh` ve
+      `tool/scan.sh`'a taşındı (Gradle uyarısını `flutter build` yutuyor —
+      L-039)
 - [x] B-104 · (agent) Seçenekli bekleme: agent `waiting/` görevinde soru
       sorabilsin — ✅ 2026-08-04 · sözleşme 1.12, T-007. Kullanıcının tek
       cevabı "Yaptım"dı; bir soruya karşılığı yoktu ve karar sohbette kalıyordu.

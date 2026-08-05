@@ -198,17 +198,12 @@ fi
 # SEC-010 gerilemesi. İki ayrı şey: (a) yapılandırmanın debug'a dönmesi —
 # repoda görünür, herkesi ilgilendirir; (b) bu makinede anahtarın olmaması —
 # yereldir, taze bir klonda olağandır ve bulgu sayılmaz.
-if grep -q 'signingConfigs.getByName("debug")' "$GRADLE"; then
-  warn "release derlemesi DEBUG anahtarıyla imzalanıyor (SEC-010, B-101)"
-elif ! grep -q 'signingConfigs' "$GRADLE"; then
-  warn "release imza yapılandırması yok — debug anahtarına düşebilir (SEC-010)"
+if ! grep -q 'signingConfigs' "$GRADLE"; then
+  warn "release imza yapılandırması hiç yok (SEC-010)"
+elif [ -f android/key.properties ]; then
+  ok "imza yapılandırması var ve anahtar bu makinede"
 else
-  ok "release kendi imza yapılandırmasını kullanıyor"
-  if [ -f android/key.properties ]; then
-    info "bu makinede key.properties var — release derlenebilir"
-  else
-    info "bu makinede key.properties yok — release derlemesi hata verecek (beklenen)"
-  fi
+  warn "anahtar yok — release DEBUG anahtarıyla imzalanıyor (SEC-010, B-101)"
 fi
 
 # Üretilmiş bir APK varsa imzayı iddiaya değil sertifikaya sor.
@@ -216,7 +211,10 @@ APK=build/app/outputs/flutter-apk/app-release.apk
 APKSIGNER="$(ls "$HOME"/Library/Android/sdk/build-tools/*/apksigner 2>/dev/null | tail -1)"
 if [ -f "$APK" ] && [ -n "$APKSIGNER" ]; then
   if "$APKSIGNER" verify --print-certs "$APK" 2>/dev/null | grep -q "CN=Android Debug"; then
-    warn "elde duran release APK debug anahtarıyla imzalı — yeniden derle"
+    # Yapılandırma kontrolü "olması gerekeni", bu "olanı" söylüyor. İkisi
+    # ayrılabilir: anahtar sonradan konsa bile elde duran APK eski imzayı
+    # taşımaya devam eder ve paylaşılırsa açık paylaşılmış olur.
+    warn "elde duran release APK debug anahtarıyla imzalı — paylaşma"
   else
     ok "elde duran release APK debug anahtarıyla imzalı değil"
   fi

@@ -574,3 +574,22 @@ Biçim: `SYSTEM.md` §5.
   genellikle paketin *bir* yapılandırmasına aittir ve senin kullandığın o
   olmayabilir. Aynı ailenin dersleri: L-009 (belgelenmemiş API davranışına
   dayanmak), L-035 (doğrulanmamış boş sonucu "temiz" saymak).
+
+## L-039 — Görünmeyen uyarı, olmayan uyarıdır
+- **Tarih:** 2026-08-06
+- **Kaynak:** S-2026-08-06-release-imzasi (B-101)
+- **Açıklama:** Release derlemesi anahtar yokken debug'a düşerken kullanıcının
+  bunu bilmesi için `build.gradle.kts`'e `logger.warn` kondu. Çalıştı — Gradle
+  uyarıyı üretti — ama kullanıcı hiçbir şey görmedi: `flutter build apk`
+  Gradle'ın çıktısını sarmalıyor ve uyarı seviyesindeki satırları göstermiyor.
+  Ölçmeseydim "uyardık" diye kayda geçecekti; uyarının **görüldüğünü** varsaymak
+  ile görüldüğünü doğrulamak arasındaki fark, güvenlik gevşetmesinin gerekçesini
+  tümden çürütüyordu (gevşetmeyi savunan cümle "ama uyarı çıkıyor"du).
+  **Çözüm iki yere taşımak oldu:** `tool/install.sh` (kullanıcının doğrudan
+  çalıştırdığı ve çıktısını okuduğu yer) ve `tool/scan.sh` (kalıcı: üretilmiş
+  APK'nın sertifikasına bakıyor, yani iddiaya değil artefaktın kendisine).
+  **Genel kural:** bir uyarıyı, onu **göreceği kanıtlanmış** kanala koy. Aracın
+  ürettiği çıktı ile kullanıcının gördüğü çıktı aynı şey değildir; arada
+  sarmalayan her katman (flutter, CI, IDE) sessizce filtreliyor olabilir.
+  Uyarıya dayanan her karar, önce uyarının görüldüğünü ölçmeyi gerektirir.
+  K-035'in aynı ilkesi: hatırlatıcı, kaybolmayan bir yerde durmalı.

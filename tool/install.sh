@@ -57,6 +57,18 @@ fi
 
 APK="build/app/outputs/flutter-apk/app-$MODE.apk"
 
+# Release'i debug anahtarıyla imzalamak (SEC-010, B-101 açık) kendi cihazına
+# kurmak için sorun değil; APK bu makineden çıkacaksa sorun. Uyarı burada
+# duruyor çünkü Gradle'ın kendi uyarısını `flutter build` yutuyor — görünmeyen
+# bir uyarı, olmayan bir uyarıdır.
+if [ "$MODE" = "release" ] && [ ! -f android/key.properties ]; then
+  cat <<'EOF'
+==> Not: release, DEBUG anahtarıyla imzalanacak (SEC-010, B-101 açık).
+    Kendi telefonuna kurmak için sorun değil. APK'yı paylaşacaksan önce
+    kendi imza anahtarını üret: hub/tasks/waiting/2026-08-06-release-imza-anahtari.md
+EOF
+fi
+
 if [ "$BUILD" -eq 1 ]; then
   echo "==> $MODE derleniyor"
   flutter build apk "--$MODE"

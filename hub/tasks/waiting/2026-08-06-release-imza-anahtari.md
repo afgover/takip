@@ -4,7 +4,7 @@ title: "Release imza anahtarını üret ve geçişi yap"
 created_by: agent
 created: "2026-08-06T00:10:00Z"
 updated: "2026-08-06T00:10:00Z"
-priority: high
+priority: normal
 category: gorev
 tags: [guvenlik, imza]
 session: S-2026-08-06-release-imzasi
@@ -17,10 +17,17 @@ multi: false
 
 ## İstek
 
-Release derlemesi bugüne kadar Android SDK'nın **debug** anahtarıyla
-imzalanıyordu (`CN=Android Debug`) — herkeste aynı olan, bilinen bir anahtar
-(SEC-010). Gradle tarafı bağlandı; artık `android/key.properties` yoksa release
-derlemesi **hata veriyor**, sessizce debug'a düşmüyor.
+> **2026-08-06 · Ertelendi (kullanıcı kararı).** Acil değil; doğru tetikleyici
+> "uygulama bitsin" değil, **APK bu bilgisayardan çıkacağı gün** (B-097,
+> Releases'ta yayımlama). O güne kadar tek gerçek risk bilgisayar değişiminde
+> plansız bir kaldır-kur yaşamak. Gradle yapılandırması hazır bekliyor:
+> `key.properties` konulduğu an release kendi anahtarıyla imzalanır, başka
+> değişiklik gerekmez. Aşağıdaki adımlar geçerliliğini koruyor.
+
+Release derlemesi Android SDK'nın **debug** anahtarıyla imzalanıyor
+(`CN=Android Debug`) — herkeste aynı olan, bilinen bir anahtar (SEC-010).
+Gradle tarafı bağlandı ve `key.properties` konulduğu an devreye girecek; dosya
+yokken şimdilik debug'a düşüyor (erteleme kararı gereği).
 
 Kalan kısım sende, çünkü keystore üretmek **parola belirlemeyi** gerektiriyor ve
 parolan agent'a geçmemeli.
@@ -31,7 +38,13 @@ verisini siler. Bu yüzden **1. adım yedek almak.**
 
 ## Notlar
 
-- 2026-08-06 · Beklenen adımlar:
+- 2026-08-06 · Karar: ertelendi, ama iş iptal değil — B-097'nin ön koşulu
+  olarak duruyor. Hatırlatıcı iki yerde: `tool/install.sh` her release
+  kurulumunda yazıyor, `tool/scan.sh` üretilmiş APK'nın sertifikasına bakıp
+  bulgu veriyor. (Gradle'ın kendi uyarısı işe yaramadı: `flutter build` onu
+  yutuyor — görünmeyen uyarı, olmayan uyarıdır.)
+
+- 2026-08-06 · Beklenen adımlar (hazır olduğunda):
 
   **1) Önce yedek al (telefonda).** Ayarlar → Yedekleme → "Yedek oluştur".
   Parolayla şifreli tek bir metin çıkacak; parolayı parola yöneticine kaydet.

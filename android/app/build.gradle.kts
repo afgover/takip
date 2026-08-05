@@ -20,36 +20,28 @@ val keystoreProperties = Properties().apply {
     }
 }
 
-// Dosya yoksa release derlemesi **hata verir** — sessizce debug anahtarina
-// dusmez. Sessiz dusus B-101'in kendisiydi: herkeste ayni olan bilinen bir
-// anahtarla imzalanmis APK, ucuncu birinin "guncelleme" diye kurulabilecek
-// paket uretmesine izin verir. Bir guvenlik ayarinin unutuldugunda calismaya
-// devam etmesi, o ayarin yoklugu demektir.
+// key.properties yoksa ne olur? Su an: uyarip debug anahtarina duser.
 //
-// Yalnizca release isteniyorsa kontrol edilir; debug derlemeleri etkilenmez.
-val requestedTasks = gradle.startParameter.taskNames.joinToString(" ")
-val buildingRelease = requestedTasks.contains("Release") || requestedTasks.contains("release")
-if (buildingRelease && !keystorePropertiesFile.exists()) {
-    throw GradleException(
-        """
-        Release derlemesi icin imza yapilandirmasi yok: android/key.properties bulunamadi.
-
-        Kendi anahtarinla imzalamadan release APK uretilemez (SEC-010, B-101).
-        Kurulum adimlari: hub/tasks/waiting/2026-08-06-release-imza-anahtari.md
-
-        Ozet:
-          keytool -genkeypair -v -keystore ~/keys/takip-release.jks \
-            -keyalg RSA -keysize 4096 -validity 10000 -alias takip
-          # sonra android/key.properties:
-          #   storeFile=/Users/<sen>/keys/takip-release.jks
-          #   storePassword=...
-          #   keyAlias=takip
-          #   keyPassword=...
-
-        Debug derlemesi etkilenmedi: flutter run / flutter build apk --debug calisir.
-        """.trimIndent()
-    )
-}
+// Ilk hali hata veriyordu ("kapali dusme"), cunku sessizce debug'a dusmek
+// B-101'in kendisiydi. Karar **bilerek** gevsetildi (2026-08-06): anahtar
+// uretimi ertelendi ve kural, gunluk kurulumu engelleyecek hale gelmisti.
+//
+// Gevsetmenin bedeli kabul edilebilir, cunku hatirlatici derleme ciktisinda
+// degil kalici bir yerde duruyor: `tool/scan.sh` uretilmis APK'nin
+// **sertifikasina** bakip debug imzasini bulgu olarak raporluyor. Derleme
+// uyarisi scrollback'te kaybolur, tarama kaydi kaybolmaz (K-035'in ayni
+// ilkesi).
+//
+// **Sinir:** APK bu makineden cikacaksa (GitHub Releases — B-097) once B-101
+// kapanmalidir. Debug anahtari herkeste ayni oldugu icin ucuncu biri ayni
+// paket adiyla "guncelleme" diye kurulabilecek bir APK uretebilir.
+//
+// Burada `logger.warn` denendi ve **ise yaramadi**: `flutter build apk`
+// Gradle'in uyari ciktisini yutuyor, yani kullanici hicbir sey gormuyor.
+// Gorunmeyen bir uyari, olmayan bir uyaridir. Hatirlatici bu yuzden iki
+// gercekten gorulen yere kondu:
+//   - `tool/install.sh` — her kurulumda ekrana yazar
+//   - `tool/scan.sh`    — uretilmis APK'nin SERTIFIKASINA bakar, iddiaya degil
 
 android {
     namespace = "us.gover.takip"
@@ -78,9 +70,8 @@ android {
 
     signingConfigs {
         create("release") {
-            // Blok, key.properties yokken de olusur (debug derlemeleri
-            // yapilandirmayi okumadan gecebilsin diye); yokluk yukarida
-            // release istendiginde zaten hataya cevriliyor.
+            // Yapilandirma hazir bekliyor: key.properties konuldugu an release
+            // kendi anahtariyla imzalanir, baska bir degisiklik gerekmez.
             if (keystorePropertiesFile.exists()) {
                 val required = listOf("storeFile", "storePassword", "keyAlias", "keyPassword")
                 val missing = required.filter { keystoreProperties.getProperty(it).isNullOrBlank() }
@@ -99,7 +90,12 @@ android {
 
     buildTypes {
         release {
-            signingConfig = signingConfigs.getByName("release")
+            // Anahtar varsa kendi imzasi, yoksa debug (yukaridaki uyari).
+            signingConfig = if (keystorePropertiesFile.exists()) {
+                signingConfigs.getByName("release")
+            } else {
+                signingConfigs.getByName("debug")
+            }
         }
     }
 }
