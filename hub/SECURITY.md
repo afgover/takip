@@ -154,21 +154,42 @@ değil. Token, parola veya anahtar bu dosyada hiçbir koşulda yer almaz.
 ## SEC-009 — Android otomatik yedeklemesi cihazdaki şifresiz kopyayı buluta taşıyor
 - **Tarih:** 2026-08-04
 - **Tür:** acik
-- **Durum:** acik
+- **Durum:** kapali
 - **Kaynak:** SEC-008 Bulgu A, SEC-007
-- **Açıklama:** `AndroidManifest.xml`'de `android:allowBackup` tanımlı değil,
-  yani Android varsayılanı (`true`) geçerli: uygulamanın özel veri alanı Auto
-  Backup ile kullanıcının Google hesabına kopyalanabiliyor. O alanda SEC-007'de
-  kayıtlı **şifresiz hub kopyası** duruyor (hub'ın bütün markdown içeriği).
-  Token için durum farklı ve önemli: token EncryptedSharedPreferences'ta,
-  anahtarı Keystore'da ve dışa aktarılamaz — yedeğe düşen şifreli metin başka
-  cihazda çözülemez. Yani yedekleme token'ı sızdırmıyor, ama cihaz değişiminde
-  onu geri de getirmiyor.
-  **Sonuç:** yedeklemeyi kapatmanın kullanıcıya bir maliyeti yok (bağlantıların
-  taşınması için zaten parolayla şifreli dışa aktarma var — SEC-002), buna
-  karşılık düz metin proje içeriğinin buluta çıkması durur.
-  Yapılacak: `android:allowBackup="false"` ya da hub kopyasını dışarıda bırakan
-  `dataExtractionRules`. → B-100
+- **Açıklama:** `AndroidManifest.xml`'de yedekleme kuralı tanımlı değildi, yani
+  Android varsayılanı (`allowBackup=true`) geçerliydi: uygulamanın özel veri
+  alanı Auto Backup ile kullanıcının Google hesabına kopyalanabiliyordu. O
+  alanda SEC-007'de kayıtlı **şifresiz hub kopyası** duruyor (hub'ın bütün
+  markdown içeriği). SEC-007'de kabul edilen risk "cihaz ele geçerse okunabilir"
+  idi; yedekleme bu sınırı genişletip korumayı Google hesabının güvenliğine
+  devrediyordu.
+- **Düzeltme (2026-08-05):** İlk kayıtta "token EncryptedSharedPreferences'ta"
+  yazıyordu — **yanlış.** Uygulama `const FlutterSecureStorage()` kullanıyor,
+  `AndroidOptions` vermiyor, yani o mod açık değil. Gerçek durum: AES anahtarı
+  Keystore'daki RSA çiftiyle sarmalanıp **sıradan** iki prefs dosyasında
+  tutuluyor (`FlutterSecureStorage`, `FlutterSecureKeyStorage`).
+  Sonuç değişmiyor — Keystore anahtarı dışa aktarılamadığı için yedeğe düşen
+  şifreli metin başka cihazda çözülemez, yani token sızmıyor. Ama ilk kayıtta
+  atlanan bir yan etki var: dosyalar sıradan prefs olduğu için **yedeğe
+  giriyorlar**, geri yüklendiğinde uygulama çözemediği bir veriyle karşılaşıyor.
+  Yedekleme token'ı yalnız kurtarmıyor değil, okumasını sessizce de bozabiliyor.
+- **Nasıl giderildi:** B-100, sözleşme dışı (yalnız Android yapılandırması).
+  `allowBackup="false"` yerine **ayrımlı** çözüm seçildi:
+  `res/xml/data_extraction_rules.xml` (API 31+) buluta **hiçbir şey**
+  göndermiyor ama cihazdan-cihaza aktarımı açık bırakıyor; aktarımdan yalnız
+  yukarıdaki iki token dosyası çıkarıldı (taşınsalar çözülemezlerdi).
+  `res/xml/backup_rules.xml` (API 24–30, `minSdk` 24) aynı kuralı eski
+  sürümlerde uyguluyor — orada cihaz aktarımı diye bir ayrım yok. Yalnız biri
+  tanımlansaydı cihazların bir bölümünde açık sessizce açık kalırdı.
+  Doğrulama üç adımda yapıldı, iddiaya dayanmadan: (1) `test/android/
+  backup_rules_test.dart` iki dosyayı ve manifest bağlarını okuyor,
+  (2) birleştirilmiş **release** manifestinde iki öznitelik de görüldü,
+  (3) `aapt2 dump xmltree` ile derlenmiş APK'nın manifestinde doğrulandı.
+  Üçüncü adım gerekliydi: L-010'da kaynak manifestte olan bir şeyin release
+  çıktısında olmadığı görülmüştü.
+  **Kalan sınır:** bu ayarlar `adb backup` benzeri yerel yedeklemeyi ve root'lu
+  bir cihazı kapsamaz; SEC-007'nin "cihaz ele geçerse okunabilir" kabulü
+  olduğu gibi duruyor. Kapanan şey **buluta çıkma** yoludur.
 
 ## SEC-010 — Release derlemesi debug anahtarıyla imzalanıyor
 - **Tarih:** 2026-08-04
