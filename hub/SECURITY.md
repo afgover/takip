@@ -210,7 +210,7 @@ değil. Token, parola veya anahtar bu dosyada hiçbir koşulda yer almaz.
 ## SEC-011 — Tarama tekrarlanmıyor
 - **Tarih:** 2026-08-04
 - **Tür:** yapilacak
-- **Durum:** acik
+- **Durum:** kapali
 - **Kaynak:** SEC-008
 - **Açıklama:** SEC-008 koştuğu **anın** danışmanlık veritabanına göre
   temizdi; yarın yayımlanacak bir danışmanlık o sonucu geçersiz kılar. Tek
@@ -219,3 +219,26 @@ değil. Token, parola veya anahtar bu dosyada hiçbir koşulda yer almaz.
   ve nasıl tekrarlanacağına karar vermek (ölçeğe uygun en ucuz yol: her sürüm
   öncesi elle koşum; alternatifi GitHub Actions'ta zamanlanmış iş). Karar
   verilene kadar bu kayıt açık kalır. → B-102
+- **Nasıl giderildi (2026-08-05, B-102):** Tek bir mekanizma yetmiyordu —
+  SEC-008 dört parçaydı ve otomatikleşme dereceleri farklı. **Katmanlı** karar
+  verildi:
+  1. **Bilinen zafiyet → Dependabot.** GitHub'ın Dependabot'u `pub` ekosistemini
+     destekliyor (güvenlik güncellemeleri dahil, private repolarda da) ve aynı
+     danışmanlık veritabanına bakıyor. Sürekli, bedava, bakımsız. Kullanıcı
+     tarafında iki ayar açılması gerekiyor → T-009 (`waiting/`).
+  2. **Kalan üç parça → `tool/scan.sh`.** Sır taraması ve Android
+     yapılandırması için otomatik bir gözcü yok (secret scanning private repoda
+     ücretli); zaten SEC-009 ve SEC-010 tam olarak oradan çıkmıştı. Tek komut.
+  3. **Tetikleyici takvim değil, kaydın kendisi.** Agent her oturum açılışında
+     bu dosyadaki son `tarama` kaydının tarihine bakıyor; **30 günden eskiyse**
+     taramayı yeniliyor (sözleşme 1.14 §12, `AGENT_PROTOCOL.md` madde 4).
+     Hatırlatma hub'ın içinde durduğu için ayakta tutulacak ikinci bir sistem
+     yok — ve unutulduğunda da görünür kalıyor.
+  Zamanlanmış GitHub Actions elendi: 1. maddeyi zaten Dependabot karşılıyor,
+  geriye kalanı otomatikleştirmek için eklenecek workflow'un kendisi bakım
+  isteyen bir parça olurdu.
+  **Script'in içine gömülen kural (L-035):** `scan.sh`, bilinen açığı olan
+  sürümlerden bir **kontrol grubunu** da soruyor. Kontrol boş dönerse tarama
+  kendini geçersiz ilan edip `2` ile çıkıyor ve "temiz" demiyor. Ağa
+  ulaşılamadığında da aynı: koşmamak, temiz olmak değildir. Bu davranış bozuk
+  bir ekosistem adıyla sınandı.
