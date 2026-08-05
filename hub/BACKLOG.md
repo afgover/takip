@@ -354,6 +354,34 @@ başlığına ✅ ve tarih yazılır.
       orası. Etiket kardeşleriyle aynı biçime çekildi (`tasks/ · notes/`);
       kapsam iddiası artık yalnız ekranın kendisinde. Tarayıcı testi alt satırı
       doğruluyor ve kartlarda "repolar" geçmemesini şart koşuyor. → L-037
+- [x] B-108 · (agent+user) Çoklu kullanıcı — Katman 1: kimlik — ✅ 2026-08-06;
+      sözleşme 1.15. `created_by` bir **rol** (`user`/`agent`), kimlik değildi;
+      "bu görevi kim açtı" sorusunun cevabı hiçbir kayıtta yoktu ve `waiting/`
+      ("agent **kullanıcıyı** bekliyor") birkaç kişide öznesiz kalıyordu.
+      Eklenen alanlar: `author` (görev/not/oturum), `for` (yalnız waiting),
+      `assignee` (active). Üçü de isteğe bağlı — yokluk "bilinmiyor" demek,
+      hata değil; `for`suz bir görev **herkesi** bekler, yoksa eski görevler
+      kimsenin görmediği kuyruğa düşerdi. Uygulama `login`'i onboarding'de
+      `/user`'dan **en iyi çabayla** okuyor: okunamazsa bağlantı yine kurulur
+      (B-092'deki çizgi). Kimlik, yazılacak **reponun** bağlantısından seçiliyor
+      (L-019'un aynı gerekçesi). Notlar `notes/<login>/` altına gidiyor;
+      sahiplik klasörden okunuyor, böylece "agent notlara dokunmaz" yapısal
+      kalıyor. R-001 korundu: app hâlâ yol değil **ad** veriyor, ad yol parçası
+      olmadan önce harf/rakam/tireye indirgeniyor. → A-2026-08-06-001, K-036
+- [x] B-109 · (agent) Çoklu kullanıcı — Katman 2: çakışma görünür olsun —
+      ✅ 2026-08-06; bütün ID'ler tekil sayaç ve iki agent aynı numarayı
+      seçtiğinde dosyalar farklı olduğu için **git bunu çakışma saymıyor**:
+      hiçbir şey hata vermiyor. Hub'ı okuyan bir test tekrarlı ID tanımını
+      yakalıyor (`hub_id_uniqueness_test.dart`; tarayıcının kendisinin
+      bozulmasını da kontrol ediyor — L-035). Protokole "ID atamadan önce
+      `git pull --rebase`, attıktan sonra push" maddesi eklendi. Çakışma
+      imkânsız kılınmadı, **görünür** kılındı: ID biçimini değiştirmek yüzlerce
+      mevcut atfı ikinci sınıfa düşürürdü
+- [ ] B-110 · (agent) Çoklu kullanıcı — Katman 3+4: `assignee` yazımı ve
+      paylaşılan dosya yazım kuralları. Sözleşme 1.15 alanı tanımladı ama
+      uygulama/protokol tarafı **ikinci kişi geldiğinde** yapılacak;
+      kullanılmayan bir soyutlamayı şimdiden taşımamak için bilinçli olarak
+      ertelendi (A-2026-08-06-001 §5)
 - [x] B-102 · (agent+user) SEC-011: taramanın tekrar aralığına karar ver —
       ✅ 2026-08-05; katmanlı çözüm, çünkü tek mekanizma dört parçanın hepsini
       kapsamıyordu. (1) Bilinen zafiyet **Dependabot**'a devredildi — pub
