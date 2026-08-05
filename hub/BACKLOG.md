@@ -363,6 +363,8 @@ başlığına ✅ ve tarih yazılır.
       Script L-035'i koda gömüyor: bilinen açığı olan bir kontrol grubu da
       soruluyor, boş dönerse tarama kendini geçersiz ilan edip `2` ile çıkıyor.
       Ağ hatası da "temiz" sayılmıyor. İkisi de sınandı. → SEC-011, K-035
+      · ✅ 2026-08-06: Dependabot ayağı da devrede (T-009) — sürekli izleme
+      açık, aylık koşum `tool/scan.sh`'ta. Katmanların ikisi de yerinde
 - [x] B-089 · (agent) İşaret kartı notun içeriğini göstermiyordu —
       ✅ 2026-08-03; kart kullanıcının zaten belgede gördüğü alıntıyı tekrar
       edip asıl taşıması gereken metni atlıyordu. `Annotation.note` eklendi,
