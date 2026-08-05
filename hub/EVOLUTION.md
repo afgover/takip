@@ -515,3 +515,24 @@ toplanır ve gerekiyorsa Faz 6 maddelerini (B-060…B-064) yeniden sıralar.
   Tek repoya bağlı her listenin **hangi repo olduğunu yazması** da bu kararın
   parçası: yazmazsa kullanıcı eksik bir listeyi tam sanar ve bu, boş liste
   görmekten kötüdür. → B-106
+- **K-035:** Tekrarlanması gereken bir işin **hatırlatıcısı, işin kaydının
+  kendisinde** durur. Tarama tekrarı için üç seçenek vardı: takvim (haftalık
+  cron), olay (her sürüm öncesi) ve kaydın yaşı. Kaydın yaşı seçildi: agent
+  oturum açılışında `SECURITY.md`'deki son `tarama` kaydının tarihine bakıyor,
+  30 günden eskiyse yeniliyor.
+  Gerekçe, "daha az altyapı"dan fazlası. Takvime bağlı bir hatırlatıcının
+  kendisi bakım ister ve sustuğunda **sessizce** susar — kimse "cron çalışmadı"
+  diye bir bildirim almaz. Kaydın yaşı ise hub'ın içinde duruyor: hem agent hem
+  kullanıcı aynı dosyaya bakıyor, tarama gecikmişse bu, uygulamanın Security
+  ekranında da görünür bir veri. Yani hatırlatma, unutulduğunda **görünür**
+  kalıyor — bu sistemin geri kalanıyla aynı ilke ("hub'a yansımayan iş,
+  yapılmamış sayılır").
+  Kapsam da katmanlara ayrıldı: bilinen zafiyet Dependabot'a devredildi (sürekli
+  ve bakımsız), otomatik gözcüsü olmayan parçalar (sır, Android yapılandırması)
+  `tool/scan.sh`'ta kaldı. Zamanlanmış bir GitHub Actions işi elendi çünkü
+  Dependabot'un kapsadığı yeri ikinci kez kapsayıp geriye yalnız kendi bakımını
+  bırakırdı.
+  **Yan karar:** `AGENT_PROTOCOL.md` değişikliği de sözleşme sürümünü artırır.
+  §10'un yayılma mekanizması yalnız `SYSTEM.md`'nin sürüm numarasına bakıyor;
+  protokol tek başına değiştirilseydi diğer hub'lar yeni kuralı **hiç** almaz
+  ve bunu fark eden bir kontrol de olmazdı. → B-102, SEC-011
