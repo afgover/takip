@@ -288,11 +288,19 @@ başlığına ✅ ve tarih yazılır.
       fine-grained token'la davranışı belgelenmemiş; gerçek bir token'la
       ölçülmeli. Ölçümü kullanıcı yapar (token agent'a verilmez, SEC-001) —
       `tasks/waiting/2026-08-04-token-kapsam-olcumu.md`
-- [ ] B-100 · (agent) SEC-009: Android otomatik yedeklemesi kapatılacak
-      (`allowBackup="false"` ya da hub kopyasını dışarıda bırakan
-      `dataExtractionRules`) — cihazdaki şifresiz hub kopyası bugün kullanıcının
-      Google hesabına çıkabiliyor. Token zaten yedekten geri gelmiyor (Keystore),
-      yani kapatmanın kullanıcıya maliyeti yok
+- [x] B-100 · (agent) SEC-009: Android otomatik yedeklemesi kapatılacak —
+      ✅ 2026-08-05; `allowBackup="false"` **değil**, ayrımlı çözüm:
+      `data_extraction_rules.xml` (API 31+) buluta hiçbir şey göndermiyor ama
+      cihazdan-cihaza aktarımı açık bırakıyor; `backup_rules.xml` aynı kuralı
+      API 24–30'da uyguluyor (`minSdk` 24 — yalnız biri konsaydı cihazların bir
+      bölümünde açık sessizce açık kalırdı). Aktarımdan yalnız iki token prefs
+      dosyası çıkarıldı: anahtar Keystore'da ve dışa aktarılamadığı için
+      taşınan şifreli metin yeni cihazda çözülemez, bırakılsaydı uygulama
+      okuyamadığı bir token'la açılırdı. Doğrulama üç adımda: dosya testi +
+      birleştirilmiş release manifesti + `aapt2 dump xmltree` ile APK'nın
+      kendisi (L-010: kaynakta olan release'te olmayabiliyor).
+      İlk kayıttaki "EncryptedSharedPreferences" iddiası da düzeltildi — o mod
+      açık değil. 404 test. → SEC-009, L-038
 - [ ] B-101 · (agent) SEC-010: release derlemesi kendi anahtarıyla imzalanacak —
       şu an Flutter şablonundan gelen **debug** anahtarı kullanılıyor.
       **B-097'nin "Releases'ta APK" adımının ön koşulu**
