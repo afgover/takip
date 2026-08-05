@@ -3,12 +3,12 @@ id: T-006
 title: "Fine-grained token'ın repo genişliği ölçülebiliyor mu?"
 created_by: agent
 created: 2026-08-04T15:45:00Z
-updated: 2026-08-04T17:45:00Z
+updated: "2026-08-06T01:30:00Z"
 priority: normal
 category: arastirma
 tags: [guvenlik, token]
 session: S-2026-08-04-guvenlik-taramasi
-result: none
+result: "Ölçüldü 2026-08-06: token 1 repo görüyor. GET /user/repos fine-grained token'la kapsamı yansıtıyor — yani ölçüm mümkün (SEC-012)"
 options: ["Sayı hesaptaki toplam repo sayısına eşit", "Sayı token'a verdiğim repo sayısı kadar", "Komutu çalıştıramadım"]
 multi: false
 ---
@@ -47,3 +47,12 @@ koymuyoruz — B-026'da tam olarak bu hata yapılmıştı (L-009).
 
   **Token'ı buraya, sohbete ya da herhangi bir dosyaya yazma** — yalnız çıkan
   sayıyı söylemen yeterli. Komutu kendi terminalinde çalıştır.
+
+- 2026-08-06 · **Ölçüldü: 1.** Hesapta en az iki repo var (`takip`,
+  `financer_takip`), token bir tanesini görüyor → uç nokta **kapsamı
+  yansıtıyor**, hepsini değil. Belgelenmemiş olan davranış böylece ölçülmüş
+  oldu: fine-grained bir token'ın kapsadığı repo sayısı okunabilir.
+  Yan bulgu: kullanıcının token'ı gerçekten dar (yalnız `takip`).
+  **Doğrulama notu:** tek veri noktası. Ölçülen şey "dar token az repo görür";
+  "All repositories token'ı hepsini görür" doğrudan ölçülmedi, filtrelemenin
+  varlığından çıkarıldı. Yorum bu yüzden tek yönlü kurulmalı (B-103).
