@@ -111,6 +111,17 @@ değil. Token, parola veya anahtar bu dosyada hiçbir koşulda yer almaz.
   Yapılacak: davranışın gerçek bir token'la sınanması. Token agent'a
   verilemez (SEC-001), bu yüzden ölçümü kullanıcı yapar → `tasks/waiting/`,
   B-103.
+- **Ölçüldü (2026-08-06, T-006):** `GET /user/repos` fine-grained bir token'la
+  **kapsamı yansıtıyor**. Kullanıcının token'ı 1 repo döndürdü; hesapta en az
+  iki repo var (`takip`, `financer_takip`), yani uç nokta hepsini değil yalnız
+  token'ın kapsadığını veriyor. Belgelenmemiş davranış böylece **ölçülmüş**
+  oldu ve tahmine dayanmayan bir zemin çıktı.
+  **Ölçümün sınırı:** tek veri noktası ve tek yön. Kanıtlanan şey "dar token az
+  repo görür"; "All repositories token'ı hepsini görür" doğrudan sınanmadı,
+  filtrelemenin varlığından çıkarıldı. Bir kontrol kurulacaksa yorumu bu yüzden
+  tek yönlü olmalı (B-026'daki kural).
+  **Kayıt neden hâlâ `acik`:** ölçüm mümkün olduğu anlaşıldı ama uygulamada bir
+  kontrol **yok**. Kapanması B-103'e bağlı.
 
 ## SEC-007 — Hub içeriği cihazda şifresiz duruyor
 - **Tarih:** 2026-08-03
