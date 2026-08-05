@@ -235,8 +235,12 @@ değil. Token, parola veya anahtar bu dosyada hiçbir koşulda yer almaz.
   verildi:
   1. **Bilinen zafiyet → Dependabot.** GitHub'ın Dependabot'u `pub` ekosistemini
      destekliyor (güvenlik güncellemeleri dahil, private repolarda da) ve aynı
-     danışmanlık veritabanına bakıyor. Sürekli, bedava, bakımsız. Kullanıcı
-     tarafında iki ayar açılması gerekiyor → T-009 (`waiting/`).
+     danışmanlık veritabanına bakıyor. Sürekli, bedava, bakımsız.
+     **2026-08-06: açıldı** — dependency graph, alerts ve security updates
+     (T-009). Yani yeni bir danışmanlık çıktığında haber gelecek ve açık bulunan
+     paket için otomatik PR açılacak. Ayarın açık olduğu agent tarafından
+     ölçülmedi (bu makinede `gh` yok, token yok); kayıt kullanıcı bildirimine
+     dayanıyor.
   2. **Kalan üç parça → `tool/scan.sh`.** Sır taraması ve Android
      yapılandırması için otomatik bir gözcü yok (secret scanning private repoda
      ücretli); zaten SEC-009 ve SEC-010 tam olarak oradan çıkmıştı. Tek komut.
