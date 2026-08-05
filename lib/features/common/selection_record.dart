@@ -514,6 +514,17 @@ Future<bool> openAnnotationCard(
                   ),
                   const SizedBox(width: 8),
                   Text(annotation.category, style: theme.textTheme.titleSmall),
+                  // Kimlik yalnız **görevlerde** anlamlı: notlar kişisel, orada
+                  // yazan hep "ben" olurdu (sözleşme 1.16).
+                  if (annotation.author != null &&
+                      annotation.category != 'not') ...[
+                    const Spacer(),
+                    Icon(Icons.person_outline,
+                        size: 14, color: theme.colorScheme.onSurfaceVariant),
+                    const SizedBox(width: 4),
+                    Text(annotation.author!,
+                        style: theme.textTheme.labelSmall),
+                  ],
                 ],
               ),
               const SizedBox(height: 12),

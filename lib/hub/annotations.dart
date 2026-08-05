@@ -7,6 +7,7 @@ import 'hub_config.dart';
 import 'hub_connections.dart';
 import 'hub_sync.dart';
 import 'models/task.dart';
+import 'models/task_draft.dart';
 import 'offline_store.dart';
 
 /// Bir belgede işaretlenecek tek kayıt (sözleşme 1.5).
@@ -20,6 +21,7 @@ class Annotation {
     this.sourcePath = '',
     this.repoSlug,
     this.note,
+    this.author,
   });
 
   final String quote;
@@ -40,6 +42,10 @@ class Annotation {
   /// görmek gerekiyor: alıntı zaten belgede duruyor, kartın asıl taşıdığı şey
   /// kullanıcının o alıntı hakkında yazdığıdır.
   final String? note;
+
+  /// Kaydı açan kişi (sözleşme 1.15). Notlarda hep "ben"im — orada
+  /// gösterilmesi gereksiz; **görevlerde** anlamlı, çünkü `tasks/` ortak.
+  final String? author;
 }
 
 /// Kayıt gövdesinden kullanıcının yazdığı metni çıkarır.
@@ -101,6 +107,7 @@ Future<List<Annotation>> annotationsFrom(
     // olarak `isTaskPath` dışında: iş kuyruğuna girmemeleri gerekiyor, ama
     // belgede görünmeleri gerekiyor.
     if (!isTaskPath(entry.path) && !isNotePath(entry.path)) continue;
+    if (!isMyNote(entry.path, connection.login)) continue;
 
     final doc = await store.readDoc(entry.path);
     if (doc == null) continue;
@@ -122,6 +129,7 @@ Future<List<Annotation>> annotationsFrom(
       sourcePath: sourcePath,
       repoSlug: connection.slug,
       note: noteTextFrom(fm.body),
+      author: fm.str('author'),
     ));
   }
   return found;
@@ -176,6 +184,7 @@ Future<List<Annotation>> annotationsIn(HubConfig connection) async {
   for (final entry in tree) {
     if (!entry.isFile) continue;
     if (!isTaskPath(entry.path) && !isNotePath(entry.path)) continue;
+    if (!isMyNote(entry.path, connection.login)) continue;
 
     final doc = await store.readDoc(entry.path);
     if (doc == null) continue;
@@ -198,9 +207,34 @@ Future<List<Annotation>> annotationsIn(HubConfig connection) async {
       sourcePath: source,
       repoSlug: connection.slug,
       note: noteTextFrom(fm.body),
+      author: fm.str('author'),
     ));
   }
   return found;
+}
+
+/// Bu not **bana mı ait**? (sözleşme 1.16)
+///
+/// Notlar kişiseldir: paylaşmak isteyen görev açar. Takımda herkesin notunu
+/// herkesin belgesinde işaretli görmek, notu "kendine yazılan şey" olmaktan
+/// çıkarır — 1.9'da tam da bunun için `notes/` ayrılmıştı (K-029).
+///
+/// Görev yolları her zaman geçer: `tasks/` ortak iş alanıdır.
+///
+/// İki durumda **gizleme yapılmaz**, ikisi de bilerek:
+/// - Kimliğimiz bilinmiyorsa (login null): süzmek her şeyi gizlerdi.
+/// - Not düz `notes/` altındaysa (1.15 öncesi): o dosyalar ayrım yokken
+///   yazıldı, sahibi bilinmiyor. Gizlemek, var olan notları sessizce yok
+///   ederdi — yanlış tarafta hata yapmak bu.
+bool isMyNote(String path, String? login) {
+  if (!isNotePath(path)) return true;
+  final safe = sanitizeLogin(login);
+  if (safe == null) return true;
+
+  final rest = path.substring('${Hub.notesDir}/'.length);
+  final slash = rest.indexOf('/');
+  if (slash < 0) return true; // düz yerleşim — 1.15 öncesi
+  return rest.substring(0, slash) == safe;
 }
 
 /// Bir bağlantının hub'ındaki sözleşme sürümü (§10).

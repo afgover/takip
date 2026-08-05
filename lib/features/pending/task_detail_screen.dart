@@ -72,6 +72,12 @@ class _TaskBody extends StatelessWidget {
                 icon: Icons.schedule,
                 text: 'agent henüz ele almadı',
               ),
+            // Kimlik (sözleşme 1.15): `tasks/` ortak alan, "bunu kim açtı"
+            // görünmeden takımda cevaplanamaz. Yoksa hiç gösterilmiyor —
+            // tek kullanıcılı dönemin kayıtlarında yok ve boş bir rozet
+            // "kimliksiz" diye bir şey uydururdu.
+            if (task.author != null)
+              _MetaChip(icon: Icons.person_outline, text: task.author!),
             for (final tag in task.tags)
               _MetaChip(icon: Icons.sell_outlined, text: tag),
           ],
