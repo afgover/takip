@@ -5,7 +5,7 @@ ve hangi şemaya uyacağını** tanımlar. Agent ve kullanıcı uygulaması bu s
 dışına çıkmaz. Sözleşme değişiklikleri `EVOLUTION.md`'ye kaydedilir ve bu dosyanın
 başındaki sürüm numarası artırılır.
 
-**Sözleşme sürümü:** 1.16
+**Sözleşme sürümü:** 1.17
 **Ana kopya (master):** `afgover/takip` → `hub/SYSTEM.md`
 (bkz. §10 — her hub kendi kopyasını buradan günceller)
 **Zaman biçimi:** her yerde ISO 8601, UTC (`2026-07-30T14:05:00Z`)
@@ -447,8 +447,24 @@ Her agent, **her oturum açılışında** şunu yapar:
 
 1. Kendi hub'ındaki `hub/SYSTEM.md`'nin ilk satırlarındaki
    **Sözleşme sürümü**nü oku.
-2. Ana kopyanınkiyle karşılaştır:
-   `https://raw.githubusercontent.com/afgover/takip/main/hub/SYSTEM.md`
+2. Ana kopyayla karşılaştır. Tek komut, hem sürümü hem içeriği kapsar (v1.17):
+
+   ```bash
+   curl -fsSL https://raw.githubusercontent.com/afgover/takip/main/hub/SYSTEM.md \
+     -o /tmp/SYSTEM.master.md && diff /tmp/SYSTEM.master.md hub/SYSTEM.md
+   ```
+
+   - `diff` boşsa: kopyan ana kopyayla **birebir aynı**, yapılacak bir şey yok.
+   - `diff` doluysa: aşağıdaki 4/5/6 maddelerine göre davran (sürümler farklı
+     mı, yoksa sürüm aynı içerik farklı mı — ikincisi ayrışmadır).
+   - **`curl` başarısız olursa kontrol KOŞMADI.** Bunu "güncelim" diye yorumlama
+     ve kaydına "sözleşme kontrol edildi" yazma. Ana kopya `afgover/takip`
+     public olana kadar bu istek 404 döner; ölçüldü (2026-08-06).
+     Ağ yoksa ya da adres değiştiyse de aynı. Koşmayan bir kontrol, geçmiş bir
+     kontrol değildir (L-035'in aynı kuralı).
+
+   `afgover/takip`'in **kendi** agent'ı bu adımı atlar: o repo ana kopyanın
+   kendisidir.
 3. **Sürümler aynıysa** bir şey yapma.
 4. **Kendi kopyan geridyse:**
    - Ana kopyayı olduğu gibi al, `hub/SYSTEM.md`'nin üzerine yaz.

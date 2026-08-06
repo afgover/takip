@@ -17,6 +17,11 @@ tanımlanır. Prosedür, oturumun konusu ne olursa olsun geçerlidir.
    - Kullanıcının talimatına göre ele al; ele aldığını `active/`e taşı.
    - Kullanıcı farklı bir konu açtıysa inbox'ı sadece raporla, kendiliğinden işleme.
 3. `BACKLOG.md`'ye bak; yarım kalmış işleri hatırla.
+   **Sözleşmeyi ana kopyayla karşılaştır** (`SYSTEM.md` §10) — tek komut:
+   `curl -fsSL https://raw.githubusercontent.com/afgover/takip/main/hub/SYSTEM.md
+   -o /tmp/SYSTEM.master.md && diff /tmp/SYSTEM.master.md hub/SYSTEM.md`.
+   İstek başarısız olursa kontrol **koşmamıştır**; "güncelim" diye yorumlama ve
+   kayda "kontrol edildi" yazma.
 4. **`SECURITY.md`'deki son `tarama` kaydının tarihine bak (§12).** 30 günden
    eskiyse — ya da hiç yoksa — projeye uygun bağımlılık/zafiyet taramasını koş
    ve sonucu `tarama` kaydı olarak yaz. Tarama tek seferlik bir onay değildir:
