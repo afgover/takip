@@ -33,13 +33,45 @@ hiçbir çalışma "yapılmış" sayılmaz.**
 
 İki durumdan birindesin:
 
-- **A — Sıfırdan proje.** Ortada henüz iş yok. §1 → §2 → §5'e geç.
+- **A — Sıfırdan proje.** Ortada henüz iş yok. §0 → §1 → §2 → §5'e geç.
 - **B — Geçmişi olan proje.** Proje aylardır sürüyor; kodu, commit'leri,
-  belgeleri, belki eski sohbetleri var. §1 → §2 → **§3 (geçmişi topla)** → §5.
+  belgeleri, belki eski sohbetleri var. §0 → §1 → §2 → **§3 (geçmişi topla)** → §5.
 
 B durumunda §3'ü **atlamak yok**. Hub'ı boş kurup "bundan sonrasını
 kaydederim" demek, projenin bugüne kadarki bütün kararlarını kayıp saymaktır;
 kullanıcı ilk "bunu neden böyle yapmıştık" sorusunda karşılığını alamaz.
+
+---
+
+## 0. Dili sor — **ilk iş bu** (sözleşme 1.19)
+
+Hub'ın **tek bir dili** vardır ve kurulumda belirlenir. Üç şey birden onu izler:
+sözleşme ve protokol (senin referansın), uygulamanın arayüzü, ve bu andan sonra
+üretilen bütün kayıtlar (gövde başlıkları dâhil).
+
+**Kullanıcıya sor ve cevabını bekle.** Konuştuğunuz dili önerebilirsin ama
+onaylatmadan geçme: dil sonradan değiştirilebilir fakat **geriye dönük bir şey
+yapmaz** — eski kayıtlar yazıldıkları dilde kalır. Yani bu, ucuz görünüp
+sonradan pahalıya dönen bir karar.
+
+> "Bu hub hangi dilde olsun? Sözleşme, uygulama arayüzü ve bundan sonraki bütün
+> kayıtlar o dilde olacak. Desteklenenler: `tr`, `en`."
+
+Cevabı aldıktan sonra:
+
+1. Sözleşmenin **o dildeki varyantını** al (§1).
+2. `hub/SYSTEM.md`'nin başındaki `**Hub dili:**` alanına kodu yaz.
+3. Hub'da ürettiğin **her şeyi** o dilde yaz: oturum kayıtları, backlog
+   maddeleri, knowledge kayıtları, görev gövdeleri.
+
+Alan yazılmazsa `tr` varsayılır. Bu bir varsayılan, tercih değil: alan
+eklenmeden önceki hub'ların hepsi Türkçe'ydi. Yeni bir hub kurarken alanı
+**mutlaka** yaz — yazmamak, İngilizce çalışan bir kullanıcıyı sessizce Türkçe
+bir hub'a bağlar.
+
+**Uygulama bu alanı değiştiremez.** Yazma alanı `tasks/inbox/` ve `notes/` ile
+sınırlı (R-001), yani dil kurulumda senin verdiğin karardır. Kullanıcı sonradan
+değiştirmek isterse yine sana gelir.
 
 ---
 

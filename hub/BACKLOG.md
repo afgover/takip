@@ -426,6 +426,14 @@ başlığına ✅ ve tarih yazılır.
       şart koşuyor, yani "bitti sandım" oluşamaz. Ayrıca iki ARB'nin aynı
       anahtarları taşıması test ediliyor — eksik anahtar sessizdir, gen_l10n
       onu şablondan doldurur ve İngilizce seçen kullanıcı Türkçe görür
+- [ ] B-118 · (agent) Dil seçiminin **girişi** — kısır döngü kırılacak.
+      Kurulum talimatına §0 eklendi (agent önce dili sorar, `**Hub dili:**`
+      yazar, hub'ı o dilde kurar) ve protokole madde 0 (agent hub dilini okuyup
+      o dilde yazar). Kalan asıl sorun: bu talimatın kendisi Türkçe, yani
+      **İngilizce kurulumun nasıl yapılacağını anlatan belge İngilizce değil.**
+      İngilizce konuşan biri başlayamıyor. Giriş noktası (README + kurulum
+      talimatı) iki dilli olmadan dil seçeneği ulaşılamaz kalıyor — B-116'nın
+      ilk parçası bu
 - [ ] B-116 · (agent) Yöntem belgelerinin İngilizce sürümü (README, SYSTEM.md,
       AGENT_PROTOCOL, kurulum talimatı ~1330 satır). Türkçe **ana kopya**
       kalır, İngilizce türetilmiş ve bağlayıcı olmayan sürüm olarak işaretlenir

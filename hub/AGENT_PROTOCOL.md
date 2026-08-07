@@ -6,6 +6,11 @@ tanımlanır. Prosedür, oturumun konusu ne olursa olsun geçerlidir.
 
 ## Oturum açılışında (ilk mesajdan hemen sonra)
 
+0. **Hub'ın dilini oku** (`SYSTEM.md` → `**Hub dili:**`, sözleşme 1.19) ve bu
+   oturumda ürettiğin her şeyi o dilde yaz: oturum kaydı, backlog maddeleri,
+   knowledge kayıtları, görev gövdeleri. Alan yoksa `tr`. Hub'ın dili ile
+   kullanıcının sana yazdığı dil farklıysa **kullanıcıya sor** — birini
+   diğerine kendiliğinden tercih etme.
 1. `sessions/<tarih>-<slug>/session.md` dosyasını `status: open` ile oluştur.
    **`author:` alanını da yaz** (v1.15) — oturumu kimin yürüttüğü. Bilmiyorsan
    kullanıcıya sor; hub çok kullanıcılıysa "kim yaptı" sorusunun cevabı burada
