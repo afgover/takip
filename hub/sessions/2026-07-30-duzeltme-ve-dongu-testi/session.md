@@ -1,7 +1,7 @@
 ---
 id: S-2026-07-30-duzeltme-ve-dongu-testi
 date: 2026-07-30
-status: open
+status: closed
 topics: [duzeltme, sozlesme-testi, hedef-karari]
 artifacts:
   - artifacts/reference/flutter-app-design.md
@@ -11,7 +11,31 @@ tasks_touched: [T-001]
 # Oturum: Repo düzeltmesi, sözleşme döngü testi ve hedef kararları
 
 ## Özet
-(oturum kapanınca yazılacak)
+*(Bu özet 2026-08-08'de, oturumun kendi kaydına dayanarak yazıldı — oturum
+kapanışta kapatılmamış, dokuz gün `open` kalmıştır. Yeni bilgi eklenmedi;
+aşağıdakilerin hepsi bu dosyadaki kayıttan çıkarılmıştır. Sebep ve önlem:
+L-042.)*
+
+Projenin **temel yapısı** bu oturumda oturdu. Dört karar, sonraki her şeyi
+belirlediği için burada duruyor:
+
+- **K-011 + K-012 — repo yapısı.** Hub önce ayrı bir veri reposundaydı
+  (`taskr_takip`); oturum sonunda `takip/hub/` altına alındı. Yani `takip`
+  kendi kendini barındırır: uygulama kodu ve kendi hafızası aynı yerde. Diğer
+  projeler için `<proje>_takip` ayrı repo modeli geçerli kaldı. Sözleşme 1.2
+  bunun için çıktı (hub kökü tanımı) ve R-002 yerini R-005'e bıraktı.
+- **K-008 + K-009 — hedef.** Önce kişisel kullanım, ileride store; kişisel
+  aşamanın platformu Android.
+- **K-010 — kategoriler** 5 varsayılan + kullanıcı tanımlı serbest değer;
+  liste mevcut görevlerden türetilir (sözleşme 1.1, §4).
+- **B-016 — sözleşmenin kendisi sınandı.** Döngü testi taşıma işi üzerinden
+  koşuldu: T-001 `inbox → active → done`, her adım §8 commit önekleriyle.
+  Revizyon ihtiyacı çıkmadı, sözleşme 1.0 kaldı (B-017 ✅). Dersler L-003, L-004.
+
+Faz 2 bu oturumda açıldı ve B-021 (Flutter iskeleti, takip@417da6b) yazıldı.
+Ortamda SDK olmadığı için derleme doğrulaması B-020'ye bağlandı — iddia
+edilmeyip ölçüme bırakılması, sonradan projenin genel kuralı olan yaklaşımın
+ilk örneği.
 
 ## Kayıt
 

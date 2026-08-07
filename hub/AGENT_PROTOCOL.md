@@ -92,9 +92,13 @@ tanımlanır. Prosedür, oturumun konusu ne olursa olsun geçerlidir.
 9. `session.md`: `## Özet` bölümünü doldur, `status: closed` yap.
 10. `EVOLUTION.md`'de aktif aşamanın bölümünü güncelle (bu oturumda aşama adına
     ne ilerledi, hangi kararlar verildi). Aşama tamamlandıysa kapat, yenisini aç.
-11. Son bir tutarlılık kontrolü: bu oturumda üretilen her dosya session.md'den
-    linkli mi, biten her iş BACKLOG'da işaretli mi, taşınması gereken görev
-    kaldı mı?
+11. Son bir tutarlılık kontrolü — **kendi adımlarını değil, hub'ın durumunu**
+    sor: bu oturumda üretilen her dosya session.md'den linkli mi, biten her iş
+    BACKLOG'da işaretli mi, taşınması gereken görev kaldı mı, ve
+    **`sessions/` altında `status: open` kalan başka oturum var mı?** Varsa
+    kapat: özetini kendi kaydından türet ve türetildiğini dosyada belirt.
+    Bu madde bir oturumun dokuz gün açık kalmasından sonra eklendi (L-042):
+    "bu oturumu kapat" diye sorulunca kimse bütüne bakmıyor.
 12. Tüm değişiklikleri anlamlı commit'ler halinde push'la. Hub'a push'lanmamış
     kayıt, yapılmamış kayıttır.
 

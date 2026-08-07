@@ -445,6 +445,15 @@ başlığına ✅ ve tarih yazılır.
       `entry_docs_test.dart` girişin sessizce kaybolmasını engelliyor: dosyalar
       var mı, birbirine link veriyorlar mı, türetilmiş olan kaynağını yazıyor mu.
       448 test
+- [x] B-119 · (agent) Kapanış kontrolü hub'ın durumunu ölçsün — ✅ 2026-08-08.
+      Kapanışta 30 Temmuz'dan beri `open` duran bir oturum bulundu: projenin
+      kurucu kararlarını (K-008…K-012) taşıyan, özetsiz bir kayıt. Sebep
+      kontrolün yönüydü — prosedür "bu oturumu kapat" diyordu, "açık kalan var
+      mı" demiyordu; hiçbir oturum bütüne bakmakla yükümlü değildi.
+      Sözleşme 1.20: aynı anda yalnız bir oturum açık olabilir, o da en yenisi.
+      `session_state_test` bunu ölçüyor, protokol madde 11 genişletildi.
+      Eski oturum kapatıldı; özeti kendi kaydından türetildi ve türetildiği
+      dosyada yazılı — yeni bilgi eklenmedi. → L-042
 - [ ] B-116 · (agent) Yöntem belgelerinin İngilizce sürümü (README, SYSTEM.md,
       AGENT_PROTOCOL, kurulum talimatı ~1330 satır). Türkçe **ana kopya**
       kalır, İngilizce türetilmiş ve bağlayıcı olmayan sürüm olarak işaretlenir

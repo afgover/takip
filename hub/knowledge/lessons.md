@@ -631,3 +631,25 @@ Biçim: `SYSTEM.md` §5.
   Bu, L-039 ve L-040'ın üçüncü kardeşi: orada uyarı görünmüyordu, orada değer
   girilemiyordu, burada kural uygulanmıyordu — üçünde de bir şey **tanımlanmış
   ama işlememiş** durumda.
+
+## L-042 — Kapanış listesi kendi adımını sorar, sistemin durumunu sormaz
+- **Tarih:** 2026-08-08
+- **Kaynak:** S-2026-08-06-i18n-ekranlar kapanışı
+- **Açıklama:** Kapanışta `S-2026-07-30-duzeltme-ve-dongu-testi`nin **dokuz
+  gündür `open`** olduğu ortaya çıktı — projenin temel yapı kararlarını
+  (K-008…K-012) taşıyan oturum, özetsiz.
+  Sebep, kontrolün **yönü**: prosedür "bu oturumu kapat" diyordu, "açık oturum
+  kaldı mı" demiyordu. Her oturum kendi adımını doğru yapıp bitiyor, kimse
+  bütüne bakmıyor. Aradaki 41 oturumun hiçbiri bunu göremezdi, çünkü hiçbiri
+  bakmakla yükümlü değildi.
+  Zararı sessiz: özeti olmayan oturum, arayan için **yok** demektir; sonraki
+  agent açılışta oturumları tarar, özete bakar, "burada bir şey yok" der ve
+  projenin kurucu kararlarını yeniden keşfetmeye kalkar.
+  **Genel kural:** kapanış kontrolü kendi işini değil **sistemin durumunu**
+  ölçmeli — "yaptım mı" değil, "kalan var mı". Kişisel adım unutulur, durum
+  kontrolü unutulmaz çünkü cevabı repoda duruyor.
+  Önlem tek cümlelik değil: sözleşme 1.20 kapanış maddesine "açık oturum
+  kalmamalı"yı ekledi **ve** `session_state_test` bunu ölçüyor — aynı anda en
+  fazla bir oturum açık olabilir, o da en yeni tarihli olan. L-041'in dediği
+  gibi, agent'ın kendi çıktısını bağlayan kural kontrole bağlanmazsa hafızaya
+  bağlıdır.

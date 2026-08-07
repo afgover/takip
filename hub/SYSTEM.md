@@ -5,7 +5,7 @@ ve hangi şemaya uyacağını** tanımlar. Agent ve kullanıcı uygulaması bu s
 dışına çıkmaz. Sözleşme değişiklikleri `EVOLUTION.md`'ye kaydedilir ve bu dosyanın
 başındaki sürüm numarası artırılır.
 
-**Sözleşme sürümü:** 1.19
+**Sözleşme sürümü:** 1.20
 **Ana kopya (master):** `afgover/takip` → `hub/SYSTEM.md`
 (bkz. §10 — her hub kendi kopyasını buradan günceller)
 **Zaman biçimi:** her yerde ISO 8601, UTC (`2026-07-30T14:05:00Z`)
@@ -130,6 +130,14 @@ Kurallar:
   geriye dönük yazılmış bir kayıt, gerçek zamanlı kaydın taşıdığı zaman damgası
   doğruluğunu iddia edemez. Zaman damgaları atlanabilir ya da yaklaşık verilir.
   *(Kural `financer_takip`'te doğdu, ana kopyaya oradan alındı — K-025.)*
+- **(v1.20) Aynı anda yalnız bir oturum açık olabilir**, o da en yeni tarihli
+  olan. Yeni bir oturum açarken daha eski bir oturum `open` duruyorsa önce o
+  kapatılır: özeti kendi kaydından türetilir ve `## Özet` içinde **türetildiği
+  belirtilir** (yeni bilgi eklenmez).
+  Kural, bir oturumun dokuz gün açık kalmasından sonra kondu (L-042). Özeti
+  olmayan oturum arayan için yok demektir — sonraki agent oturumları tarar,
+  özete bakar, "burada bir şey yok" der. O oturum projenin kurucu kararlarını
+  taşıyordu.
 
 ## 3. `artifacts/` — üretilen dosyalar
 

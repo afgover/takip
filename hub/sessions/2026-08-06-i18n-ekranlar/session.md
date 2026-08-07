@@ -1,18 +1,53 @@
 ---
 id: S-2026-08-06-i18n-ekranlar
 date: 2026-08-06
-status: open
+status: closed
 reconstructed: false
 author: afgover
-topics: [i18n, dil]
+topics: [i18n, dil, giris-belgeleri]
 artifacts: []
 tasks_touched: []
+backlog_touched: [B-115, B-117, B-118]
 ---
 
 # Oturum: Ekran metinleri ve yöntem belgeleri İngilizce'ye
 
 ## Özet
-(oturum kapanışında yazılacak)
+Oturum "23 ekranın metnini çevir" diye başladı, **dilin ne olduğu** sorusuna
+dönüştü ve orada bir sözleşme kuralımı geri almamla bitti.
+
+**Kalıcı olan karar (K-037, sözleşme 1.19):** dil bir kullanıcı tercihi değil,
+**hub'ın özelliği**. Kurulumda seçilir, `SYSTEM.md`'de yazılıdır; sözleşme,
+arayüz ve o andan sonra üretilen her kayıt birlikte onu izler. Sonradan
+değiştirmek geriye dönük çalışmaz — mevcut kayıtlar yazıldıkları dilde kalır.
+
+Kendi 1.18 kuralım ("gövde başlıkları Türkçe sabit") bunun tersiydi ve
+**dil seçeneğini eklemenin sebebini çürütüyordu**: İngilizce çalışan birine
+Türkçe başlıklı kayıt yazdırıyordu. Gerekçem (aynı hub'da iki başlık şeması =
+okunamayan kayıt) geçerliydi; tutarlılığı yanlış yerden almıştım — şemayı tek
+dile sabitleyerek değil, **hub başına tek dil** ile sağlanmalıydı.
+
+**Mekanizma vardı ama girişi yoktu (B-118).** Dil alanı okunuyordu, yazan yol
+yoktu; üstelik nasıl seçileceğini anlatan belgenin kendisi Türkçe'ydi.
+İngilizce konuşan biri ne seçebiliyor ne de okuyabiliyordu. Kırıldı: kurulum
+talimatına §0 (agent önce dili sorar), protokole madde 0 (agent hub dilini okur
+ve o dilde yazar; kullanıcının yazdığı dil farklıysa **sorar**), ve iki giriş
+belgesinin İngilizcesi.
+
+İngilizce belgeler sözleşmenin henüz yalnız Türkçe olduğunu **açıkça söylüyor**.
+Eksiği yumuşatmak, İngilizce bir hub'ı tam sanmaya yol açardı — kalan iş B-116.
+
+**Ölçüm, iddia değil.** Kapsam testi kalan ekranları sayıyor; `language_switch_test`
+aynı ekranı iki dilde çizip karşılaştırıyor; `entry_docs_test` giriş çiftinin
+sessizce kaybolmasını engelliyor. "Altyapı kuruldu" demek bu haftanın üç kez
+tekrarlanan hatası olurdu (L-035, L-039, L-040).
+
+**Yan çıktı:** ortak `testApp` yardımcısı (delege listesi uygulamayla aynı
+kaynaktan) ve testlerin dilinin sabitlenmesi — testler artık koşuldukları
+makinenin diline bağımlı değil.
+
+**Kapanışta ölçülen kalan iş:** B-115'te 6 ekran (79 metin), B-116 bütünüyle
+açık; B-097 (public) B-116'ya bağlı. 448 test, analyze temiz.
 
 ## Kayıt
 
@@ -92,3 +127,38 @@ değiştiremez. Cihaz ayarı (`localeCode`/`setLocale`) tamamen silindi: hiçbir
 şeyi sürmeyen ama sürüyormuş gibi duran bir ayar, ayarın kendisinden kötü.
 
 445 test, analyze temiz. → B-117, K-037
+
+### Kullanıcı
+> kisir donguyu duzelt
+
+### Agent — B-118 ✅
+Kısır döngü: dili seçmeyi anlatan belge Türkçe'ydi, yani onu okuyamayan kişi
+tam olarak o yüzden İngilizce'yi seçemiyordu.
+
+`README.en.md` + `setup-instruction.en.md` yazıldı, iki yön birbirine bağlandı.
+Zincir tamam: README → kurulum talimatı → agent §0'da dili sorar →
+`**Hub dili:** en` yazılır → arayüz ve yeni kayıtlar İngilizce.
+
+İki **bağlayıcı** kopya sessizce ayrışır (L-022 bunu bu projede yaşattı), o
+yüzden her İngilizce belge kendi içinde "kanonik olan Türkçe kopyadır"
+diyor — daha iyi olduğu için değil, iki otoritesi olan sistem kayarken kimse
+fark etmediği için. Frontmatter'da `translated_from` ve türediği sözleşme
+sürümü var.
+
+`entry_docs_test` dosyaların varlığını, çapraz linki ve türetilmiş olanın
+kaynağını yazdığını ölçüyor. İçerik **denkliğini** ölçmüyor: o, elle tutulan
+bir listeye dönerdi ve kendisi bayatlardı — ölçtüğünü sandığın şeyi ölçmeyen
+bir test, testsizlikten kötü.
+
+448 test, analyze temiz.
+
+### Kullanıcı
+> repoya kayitlari yap sessioni bitirelim
+
+### Agent — kapanış
+Kapanış tutarlılık kontrolünde **30 Temmuz'dan beri açık kalan bir oturum**
+bulundu ve kapatıldı (özeti kendi kaydından türetildi, dosyada işaretli).
+Dokuz gün boyunca hiçbir kontrol bunu görmedi: kapanış listesi "bu oturumu
+kapat" diyordu, "açık oturum kaldı mı" demiyordu. → L-042, sözleşme 1.20 ve
+`session_state_test` (aynı anda en fazla bir oturum açık olabilir, o da en
+yenisi).

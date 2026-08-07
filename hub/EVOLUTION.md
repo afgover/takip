@@ -342,6 +342,16 @@ toplanır ve gerekiyorsa Faz 6 maddelerini (B-060…B-064) yeniden sıralar.
   Ayrıca sözleşmenin ana kopyası tanımlandı ve geriden gelen hub'lar hem agent
   hem uygulama tarafından yakalanıyor (B-070, K-024, L-020). Sözleşme 1.5.
   284 test. → S-2026-08-02-secim-filtre-sozlesme
+- 2026-08-08: **Dil, hub'ın özelliği oldu ve girişi açıldı.** Sözleşme
+  1.19 kendi 1.18 kuralımı tersine çevirdi (K-037); ardından B-118 mekanizmanın
+  girişini kırdı (K-038): kurulum talimatına §0, protokole madde 0, iki giriş
+  belgesinin İngilizcesi. Sözleşme ve protokolün İngilizcesi hâlâ açık (B-116)
+  ve bu, İngilizce belgelerin içinde **açıkça yazılı** — eksiği yumuşatmak
+  İngilizce bir hub'ı tam sanmaya yol açardı. `B-097` (repoyu public yapmak)
+  buna bağlı bekliyor.
+  Kapanışta bir de yapısal boşluk çıktı: dokuz gündür açık duran bir oturum
+  (L-042, sözleşme 1.20). Aşamanın kendi dersi de bu — sistemi kullanmak,
+  yalnız kullanınca görünen şeyleri gösteriyor.
 
 **Kararlar:**
 - **K-019:** Kolaylık için token'ın korumasız bir dizeye çevrilmesine izin
@@ -585,3 +595,22 @@ toplanır ve gerekiyorsa Faz 6 maddelerini (B-060…B-064) yeniden sıralar.
   olmaktan çıkıp **bilgi**ye dönüştü: uygulama `SYSTEM.md`'ye yazamaz (R-001),
   dolayısıyla dili değiştiremez. Hiçbir şeyi sürmeyen ama sürüyormuş gibi duran
   ayar silindi. → B-117
+- **K-038:** Bir mekanizmanın **girişi**, mekanizmanın kendisi kadar iş.
+  Dil alanı okunuyordu, sözleşme onu tanımlıyordu, arayüz onu izliyordu — ama
+  alanı **yazan yol yoktu** ve yazılmasını anlatan belgenin kendisi Türkçe'ydi.
+  Yani özellik teknik olarak tamdı ve pratikte kullanılamazdı: İngilizce
+  konuşan biri ne dili seçebiliyor ne de nasıl seçeceğini okuyabiliyordu.
+  Kırılma noktası, girişin **kullanıcının bulunduğu yerden** başlaması:
+  README → kurulum talimatı → agent'ın ilk sorusu. Zincirin her halkası, bir
+  öncekini okuyamayan için işe yaramaz.
+  **Genelleştirilebilir kısım:** "özellik bitti mi" sorusunun cevabı,
+  özelliğin ilk kullanıcısının onu nereden bulacağıyla ölçülür. Mekanizmayı
+  yazan kişi girişi zaten bildiği için, eksik olduğunu **fark edemeyecek tek
+  kişi** odur. → B-118
+- **Sözleşme 1.20 (2026-08-08):** Aynı anda yalnız bir oturum açık olabilir, o
+  da en yeni tarihli olan. Kural, kapanışta 30 Temmuz'dan beri `open` duran bir
+  oturum bulunmasıyla kondu — projenin kurucu kararlarını (K-008…K-012)
+  taşıyan, özetsiz bir oturum. Kapanış listesi "bu oturumu kapat" diye
+  soruyordu; "açık kalan var mı" diye sormuyordu, yani hiçbir oturum bütüne
+  bakmakla yükümlü değildi. Kural `session_state_test`'e bağlandı: cevabı
+  repoda duran bir soru insana bırakılmaz (L-041, L-042).
