@@ -8,6 +8,8 @@ import 'package:takip/features/browse/security_screen.dart';
 import 'package:takip/hub/browse_repo.dart';
 import 'package:takip/hub/models/hub_doc.dart';
 
+import '../helpers/test_app.dart';
+
 /// Güvenlik logunun ekranı. Kayıtlar `SYSTEM.md` §12 biçiminde.
 ///
 /// Ayrıştırma testleri **gerçek `hub/SECURITY.md`** üzerinden koşuyor: elle
@@ -73,7 +75,7 @@ void main() {
         overrides: [
           securityProvider.overrideWith((ref) async => entries),
         ],
-        child: const MaterialApp(home: SecurityScreen()),
+        child: testApp(const SecurityScreen()),
       );
 
   testWidgets('açık kayıtlar listenin başına alınır', (tester) async {
@@ -117,8 +119,8 @@ void main() {
 
   testWidgets('tarayıcıda Security var, Bekleyen görevler yok',
       (tester) async {
-    await tester.pumpWidget(const ProviderScope(
-      child: MaterialApp(home: BrowseScreen()),
+    await tester.pumpWidget(ProviderScope(
+      child: testApp(const BrowseScreen()),
     ));
     await tester.pumpAndSettle();
 

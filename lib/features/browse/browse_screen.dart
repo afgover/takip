@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../core/constants.dart';
 import '../../hub/browse_repo.dart';
+import '../../l10n/app_localizations.dart';
 import '../pending/done_screen.dart';
 import 'activity_screen.dart';
 import 'annotations_screen.dart';
@@ -17,17 +18,18 @@ class BrowseScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = L.of(context);
     final categories = <_Category>[
       // Bekleyen görevler burada **yok**: alt menüde kendi sekmesi var ve
       // aynı ekrana iki kapı, ikisinden birinin bayat kalmasına yol açıyor.
       _Category(
-        'Security',
+        l.catSecurity,
         Icons.shield_outlined,
         'SECURITY.md',
         (_) => const SecurityScreen(),
       ),
       _Category(
-        'Tamamlananlar',
+        l.catDone,
         Icons.task_alt,
         'tasks/done',
         (_) => const DoneScreen(),
@@ -36,65 +38,65 @@ class BrowseScreen extends StatelessWidget {
       // durumda; tek liste olmadan bir yer imi konduğu belgede kaybolur.
       // Kapsam aktif repo (1.13) — hangi repo olduğu ekranın kendisinde yazar.
       _Category(
-        'İşaretler',
+        l.catAnnotations,
         Icons.bookmarks_outlined,
-        'tasks/ · notes/',
+        l.catSourceAllRepos,
         (_) => const AnnotationsScreen(),
       ),
       _Category(
-        'Oturumlar',
+        l.catSessions,
         Icons.forum,
         'sessions/',
         (_) => DocListScreen(
-          title: 'Oturumlar',
+          title: l.catSessions,
           provider: sessionsProvider,
-          emptyTitle: 'Oturum kaydı yok',
-          emptySubtitle: 'Agent her çalışma oturumunu buraya yazar.',
+          emptyTitle: l.sessionsEmptyTitle,
+          emptySubtitle: l.sessionsEmptySubtitle,
         ),
       ),
       _Category(
-        'Raporlar & Planlar',
+        l.catArtifacts,
         Icons.description,
         'artifacts/',
         (_) => DocListScreen(
-          title: 'Raporlar & Planlar',
+          title: l.catArtifacts,
           provider: artifactsProvider,
-          emptyTitle: 'Henüz artifact yok',
-          emptySubtitle: 'Agent ürettiği rapor ve planları buraya kaydeder.',
+          emptyTitle: l.artifactsEmptyTitle,
+          emptySubtitle: l.artifactsEmptySubtitle,
           showTypeFilter: true,
         ),
       ),
       _Category(
-        'Bilgi tabanı',
+        l.catKnowledge,
         Icons.school,
         'knowledge/',
         (_) => const KnowledgeScreen(),
       ),
       _Category(
-        'Yol haritası',
+        l.catRoadmap,
         Icons.map,
         'BACKLOG.md · EVOLUTION.md',
         (_) => const RoadmapScreen(),
       ),
       _Category(
-        'Aktivite',
+        l.catActivity,
         Icons.history,
-        'commit geçmişi',
+        l.catSourceCommits,
         (_) => const ActivityScreen(),
       ),
       _Category(
-        'Sözleşme',
+        l.catContract,
         Icons.gavel,
         'SYSTEM.md',
-        (_) => const DocumentScreen(
+        (_) => DocumentScreen(
           path: '${Hub.basePath}/SYSTEM.md',
-          title: 'Format Sözleşmesi',
+          title: l.contractDocTitle,
         ),
       ),
     ];
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Hub Tarayıcı')),
+      appBar: AppBar(title: Text(l.browseTitle)),
       body: GridView.count(
         crossAxisCount: 2,
         padding: const EdgeInsets.all(16),

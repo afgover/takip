@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../l10n/app_localizations.dart';
+
 import 'add_task/add_task_screen.dart';
 import 'browse/browse_screen.dart';
 import 'common/hub_status_banner.dart';
@@ -34,6 +36,8 @@ class _AppShellState extends State<AppShell> {
 
   @override
   Widget build(BuildContext context) {
+    final l = L.of(context);
+
     return Scaffold(
       // Gövde `AppBar`sız başlıyor: en üstteki şerit, korunmazsa durum
       // çubuğunun (saat, pil) altına girip okunmaz hâle geliyor. Alt taraf
@@ -54,13 +58,15 @@ class _AppShellState extends State<AppShell> {
       bottomNavigationBar: NavigationBar(
         selectedIndex: _index,
         onDestinationSelected: (i) => setState(() => _index = i),
-        destinations: const [
+        destinations: [
           NavigationDestination(
-              icon: Icon(Icons.pending_actions), label: 'Bekleyenler'),
-          NavigationDestination(icon: Icon(Icons.add_task), label: 'Ekle'),
+              icon: const Icon(Icons.pending_actions), label: l.navPending),
           NavigationDestination(
-              icon: Icon(Icons.folder_open), label: 'Tarayıcı'),
-          NavigationDestination(icon: Icon(Icons.settings), label: 'Ayarlar'),
+              icon: const Icon(Icons.add_task), label: l.navAddShort),
+          NavigationDestination(
+              icon: const Icon(Icons.folder_open), label: l.navBrowse),
+          NavigationDestination(
+              icon: const Icon(Icons.settings), label: l.navSettings),
         ],
       ),
     );

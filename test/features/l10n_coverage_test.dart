@@ -18,6 +18,8 @@ void main() {
   /// Arayüz metni **artık** buradan gelmeli.
   const migrated = <String>[
     'lib/app.dart',
+    'lib/features/browse/browse_screen.dart',
+    'lib/features/shell.dart',
   ];
 
   /// Henüz taşınmamış ekranlar (B-115). Her taşımada buradan bir satır silinir.
@@ -25,7 +27,6 @@ void main() {
     'lib/features/add_task/add_task_screen.dart',
     'lib/features/browse/activity_screen.dart',
     'lib/features/browse/annotations_screen.dart',
-    'lib/features/browse/browse_screen.dart',
     'lib/features/browse/document_screen.dart',
     'lib/features/browse/knowledge_screen.dart',
     'lib/features/browse/roadmap_screen.dart',
@@ -44,7 +45,6 @@ void main() {
     'lib/features/settings/connection_screen.dart',
     'lib/features/settings/connections_screen.dart',
     'lib/features/settings/settings_screen.dart',
-    'lib/features/shell.dart',
   ];
 
   test('taşınmış dosyalarda Türkçe arayüz metni kalmadı', () {

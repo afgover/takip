@@ -156,6 +156,114 @@ abstract class L {
   /// In tr, this message translates to:
   /// **'Ayarlar'**
   String get navSettings;
+
+  /// No description provided for @navAddShort.
+  ///
+  /// In tr, this message translates to:
+  /// **'Ekle'**
+  String get navAddShort;
+
+  /// No description provided for @browseTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Hub Tarayıcı'**
+  String get browseTitle;
+
+  /// No description provided for @catSecurity.
+  ///
+  /// In tr, this message translates to:
+  /// **'Security'**
+  String get catSecurity;
+
+  /// No description provided for @catDone.
+  ///
+  /// In tr, this message translates to:
+  /// **'Tamamlananlar'**
+  String get catDone;
+
+  /// No description provided for @catAnnotations.
+  ///
+  /// In tr, this message translates to:
+  /// **'İşaretler'**
+  String get catAnnotations;
+
+  /// No description provided for @catSessions.
+  ///
+  /// In tr, this message translates to:
+  /// **'Oturumlar'**
+  String get catSessions;
+
+  /// No description provided for @catArtifacts.
+  ///
+  /// In tr, this message translates to:
+  /// **'Raporlar & Planlar'**
+  String get catArtifacts;
+
+  /// No description provided for @catKnowledge.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bilgi tabanı'**
+  String get catKnowledge;
+
+  /// No description provided for @catRoadmap.
+  ///
+  /// In tr, this message translates to:
+  /// **'Yol haritası'**
+  String get catRoadmap;
+
+  /// No description provided for @catActivity.
+  ///
+  /// In tr, this message translates to:
+  /// **'Aktivite'**
+  String get catActivity;
+
+  /// No description provided for @catContract.
+  ///
+  /// In tr, this message translates to:
+  /// **'Sözleşme'**
+  String get catContract;
+
+  /// No description provided for @catSourceAllRepos.
+  ///
+  /// In tr, this message translates to:
+  /// **'tasks/ · notes/'**
+  String get catSourceAllRepos;
+
+  /// No description provided for @catSourceCommits.
+  ///
+  /// In tr, this message translates to:
+  /// **'commit geçmişi'**
+  String get catSourceCommits;
+
+  /// No description provided for @sessionsEmptyTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Oturum kaydı yok'**
+  String get sessionsEmptyTitle;
+
+  /// No description provided for @sessionsEmptySubtitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Agent her çalışma oturumunu buraya yazar.'**
+  String get sessionsEmptySubtitle;
+
+  /// No description provided for @artifactsEmptyTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Henüz artifact yok'**
+  String get artifactsEmptyTitle;
+
+  /// No description provided for @artifactsEmptySubtitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Agent ürettiği rapor ve planları buraya kaydeder.'**
+  String get artifactsEmptySubtitle;
+
+  /// No description provided for @contractDocTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Format Sözleşmesi'**
+  String get contractDocTitle;
 }
 
 class _LDelegate extends LocalizationsDelegate<L> {

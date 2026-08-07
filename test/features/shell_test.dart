@@ -11,6 +11,8 @@ import 'package:takip/hub/hub_connections.dart';
 import 'package:takip/hub/models/task.dart';
 import 'package:takip/hub/all_tasks.dart';
 
+import '../helpers/test_app.dart';
+
 void main() {
   setUp(() {
     SharedPreferences.setMockInitialValues({});
@@ -38,8 +40,8 @@ void main() {
     await tester.pumpWidget(
       UncontrolledProviderScope(
         container: container,
-        child: MaterialApp(
-          home: MediaQuery(
+        child: testApp(
+          MediaQuery(
             data: const MediaQueryData(
               padding: EdgeInsets.only(top: topInset),
             ),

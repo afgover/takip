@@ -1,16 +1,31 @@
 {
   "@@locale": "tr",
-
   "appTitle": "Takip",
-
   "langSystem": "Sistem dili",
   "langTurkish": "Türkçe",
   "langEnglish": "English",
   "settingsLanguage": "Dil",
   "settingsLanguageHelp": "Arayüz dili. Hub'a yazılan görev ve notların dili değişmez — onların biçimi sözleşmeyle sabittir.",
-
   "navPending": "Bekleyenler",
   "navBrowse": "Tarayıcı",
   "navAdd": "Görev ekle",
-  "navSettings": "Ayarlar"
+  "navSettings": "Ayarlar",
+  "navAddShort": "Ekle",
+  "browseTitle": "Hub Tarayıcı",
+  "catSecurity": "Security",
+  "catDone": "Tamamlananlar",
+  "catAnnotations": "İşaretler",
+  "catSessions": "Oturumlar",
+  "catArtifacts": "Raporlar & Planlar",
+  "catKnowledge": "Bilgi tabanı",
+  "catRoadmap": "Yol haritası",
+  "catActivity": "Aktivite",
+  "catContract": "Sözleşme",
+  "catSourceAllRepos": "tasks/ · notes/",
+  "catSourceCommits": "commit geçmişi",
+  "sessionsEmptyTitle": "Oturum kaydı yok",
+  "sessionsEmptySubtitle": "Agent her çalışma oturumunu buraya yazar.",
+  "artifactsEmptyTitle": "Henüz artifact yok",
+  "artifactsEmptySubtitle": "Agent ürettiği rapor ve planları buraya kaydeder.",
+  "contractDocTitle": "Format Sözleşmesi"
 }

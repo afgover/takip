@@ -11,6 +11,8 @@ import 'package:takip/hub/hub_config.dart';
 import 'package:takip/hub/models/activity.dart';
 import 'package:takip/hub/models/hub_doc.dart';
 
+import '../helpers/test_app.dart';
+
 class FakeHubConfigNotifier extends HubConfigNotifier {
   @override
   Future<HubConfig?> build() async =>
@@ -22,7 +24,7 @@ Widget app(Widget home, {List<Override> overrides = const []}) => ProviderScope(
         hubConfigProvider.overrideWith(FakeHubConfigNotifier.new),
         ...overrides,
       ],
-      child: MaterialApp(home: home),
+      child: testApp(home),
     );
 
 void main() {

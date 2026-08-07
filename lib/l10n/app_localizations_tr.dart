@@ -38,4 +38,60 @@ class LTr extends L {
 
   @override
   String get navSettings => 'Ayarlar';
+
+  @override
+  String get navAddShort => 'Ekle';
+
+  @override
+  String get browseTitle => 'Hub Tarayıcı';
+
+  @override
+  String get catSecurity => 'Security';
+
+  @override
+  String get catDone => 'Tamamlananlar';
+
+  @override
+  String get catAnnotations => 'İşaretler';
+
+  @override
+  String get catSessions => 'Oturumlar';
+
+  @override
+  String get catArtifacts => 'Raporlar & Planlar';
+
+  @override
+  String get catKnowledge => 'Bilgi tabanı';
+
+  @override
+  String get catRoadmap => 'Yol haritası';
+
+  @override
+  String get catActivity => 'Aktivite';
+
+  @override
+  String get catContract => 'Sözleşme';
+
+  @override
+  String get catSourceAllRepos => 'tasks/ · notes/';
+
+  @override
+  String get catSourceCommits => 'commit geçmişi';
+
+  @override
+  String get sessionsEmptyTitle => 'Oturum kaydı yok';
+
+  @override
+  String get sessionsEmptySubtitle =>
+      'Agent her çalışma oturumunu buraya yazar.';
+
+  @override
+  String get artifactsEmptyTitle => 'Henüz artifact yok';
+
+  @override
+  String get artifactsEmptySubtitle =>
+      'Agent ürettiği rapor ve planları buraya kaydeder.';
+
+  @override
+  String get contractDocTitle => 'Format Sözleşmesi';
 }
