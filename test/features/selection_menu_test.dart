@@ -38,24 +38,26 @@ void main() {
     expect(find.textContaining('Seçilebilir bir cümle'), findsOneWidget);
   });
 
-  testWidgets('menü tam olarak beş eylemden oluşur', (tester) async {
+  testWidgets('menünün eylemleri anahtarlarıyla tanımlı', (tester) async {
     await pumpDoc(tester);
 
-    // Etiketler tek yerde tanımlı; menüyü kuran kod bunları kullanıyor.
-    // Sistem öğeleri hiç eklenmediği için menü tam olarak bunlardır.
-    // Sıra da anlamlı: iki hızlı işaret önce, ayrıntı isteyenler sonra.
-    expect(AnnotatedDocument.highlightLabel, 'Sarı işaretle');
-    expect(AnnotatedDocument.underlineLabel, 'Kırmızı çizgi');
-    expect(AnnotatedDocument.noteLabel, 'Not ekle');
-    expect(AnnotatedDocument.taskLabel, 'Görev oluştur');
-    expect(AnnotatedDocument.copyLabel, 'Kopyala');
+    // Eylemler artık **anahtarla** bulunuyor, metinle değil (sözleşme 1.18):
+    // etiket dile göre değişiyor ve metni kimlik saymak menüyü seçili dile
+    // bağımlı kılardı. Anahtarların sabitliği bu testin konusu; etiketlerin
+    // doğruluğu `language_switch_test`'in.
+    expect(AnnotatedDocument.highlightKey, const Key('selection-highlight'));
+    expect(AnnotatedDocument.underlineKey, const Key('selection-underline'));
+    expect(AnnotatedDocument.bookmarkKey, const Key('selection-bookmark'));
+    expect(AnnotatedDocument.noteKey, const Key('selection-note'));
+    expect(AnnotatedDocument.taskKey, const Key('selection-task'));
+    expect(AnnotatedDocument.copyKey, const Key('selection-copy'));
   });
 
   testWidgets('seçim yokken menü boş kalır', (tester) async {
     await pumpDoc(tester);
     // Hiçbir seçim yapılmadan menü açılırsa eylem sunulmamalı: seçim
     // olmadan işaretlenecek ya da alıntılanacak bir şey yok.
-    expect(find.text(AnnotatedDocument.highlightLabel), findsNothing);
-    expect(find.text(AnnotatedDocument.taskLabel), findsNothing);
+    expect(find.byKey(AnnotatedDocument.highlightKey), findsNothing);
+    expect(find.byKey(AnnotatedDocument.taskKey), findsNothing);
   });
 }

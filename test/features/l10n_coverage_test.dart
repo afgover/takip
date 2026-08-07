@@ -25,6 +25,7 @@ void main() {
     'lib/features/browse/document_screen.dart',
     'lib/features/browse/knowledge_screen.dart',
     'lib/features/browse/roadmap_screen.dart',
+    'lib/features/common/annotated_document.dart',
     'lib/features/common/hub_markdown.dart',
     'lib/features/common/hub_status_banner.dart',
     'lib/features/common/hub_watcher_scope.dart',
@@ -41,7 +42,6 @@ void main() {
   const pending = <String>[
     'lib/features/add_task/add_task_screen.dart',
     'lib/features/browse/security_screen.dart',
-    'lib/features/common/annotated_document.dart',
     'lib/features/common/hub_error_view.dart',
     'lib/features/common/selection_record.dart',
     'lib/features/pending/task_detail_screen.dart',

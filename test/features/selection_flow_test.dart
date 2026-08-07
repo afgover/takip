@@ -15,6 +15,8 @@ import 'package:takip/hub/models/task.dart';
 
 import '../github/contents_api_test.dart' show FakeAdapter, jsonResponse;
 
+import '../helpers/test_app.dart';
+
 /// Seçimden kayda giden **zincirin tamamı**.
 ///
 /// Parçaların hepsi ayrı ayrı test ediliyordu (menü kuruluyor mu, kutu not
@@ -53,8 +55,8 @@ const _sourcePath = 'hub/sessions/2026-08-03-x/session.md';
           return dio;
         }),
       ],
-      child: const MaterialApp(
-        home: Scaffold(
+      child: testApp(
+        const Scaffold(
           body: AnnotatedDocument(data: _doc, sourcePath: _sourcePath),
         ),
       ),
@@ -87,7 +89,7 @@ void main() {
     await selectText(tester);
 
     expect(
-      find.text(AnnotatedDocument.noteLabel),
+      find.byKey(AnnotatedDocument.noteKey),
       findsOneWidget,
       reason: 'seçim yapıldığında menü açılmalı',
     );
@@ -99,7 +101,7 @@ void main() {
     await tester.pumpAndSettle();
 
     await selectText(tester);
-    await tester.tap(find.text(AnnotatedDocument.noteLabel));
+    await tester.tap(find.byKey(AnnotatedDocument.noteKey));
     await tester.pumpAndSettle();
 
     expect(find.byKey(noteFieldKey), findsOneWidget,
@@ -136,7 +138,7 @@ void main() {
     await tester.pumpAndSettle();
 
     await selectText(tester);
-    await tester.tap(find.text(AnnotatedDocument.highlightLabel));
+    await tester.tap(find.byKey(AnnotatedDocument.highlightKey));
     await tester.pumpAndSettle();
 
     final path = Uri.decodeFull(
@@ -152,7 +154,7 @@ void main() {
     await tester.pumpAndSettle();
 
     await selectText(tester);
-    await tester.tap(find.text(AnnotatedDocument.highlightLabel));
+    await tester.tap(find.byKey(AnnotatedDocument.highlightKey));
     await tester.pumpAndSettle();
 
     final puts = t.adapter.requests.where((r) => r.method == 'PUT');
@@ -170,7 +172,7 @@ void main() {
     await tester.pumpAndSettle();
 
     await selectText(tester);
-    await tester.tap(find.text(AnnotatedDocument.taskLabel));
+    await tester.tap(find.byKey(AnnotatedDocument.taskKey));
     await tester.pumpAndSettle();
 
     await tester.enterText(
@@ -197,7 +199,7 @@ void main() {
       await tester.pumpAndSettle();
 
       await selectText(tester);
-      await tester.tap(find.text(AnnotatedDocument.bookmarkLabel));
+      await tester.tap(find.byKey(AnnotatedDocument.bookmarkKey));
       await tester.pumpAndSettle();
 
       final puts = t.adapter.requests.where((r) => r.method == 'PUT');
@@ -218,7 +220,7 @@ void main() {
       await tester.pumpAndSettle();
 
       await selectText(tester);
-      await tester.tap(find.text(AnnotatedDocument.taskLabel));
+      await tester.tap(find.byKey(AnnotatedDocument.taskKey));
       await tester.pumpAndSettle();
 
       await tester.tap(

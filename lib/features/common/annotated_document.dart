@@ -7,6 +7,7 @@ import '../../hub/hub_config.dart';
 import '../../hub/models/task.dart';
 import 'hub_markdown.dart';
 import 'selection_record.dart';
+import '../../l10n/app_localizations.dart';
 
 /// Hub belgelerini **seçilebilir ve işaretlenebilir** olarak çizer.
 ///
@@ -42,14 +43,17 @@ class AnnotatedDocument extends ConsumerStatefulWidget {
   final EdgeInsets padding;
   final void Function(String text, String? href, String title)? onTapLink;
 
-  static const highlightLabel = 'Sarı işaretle';
-  static const underlineLabel = 'Kırmızı çizgi';
+  /// Menü öğeleri metinle değil **anahtarla** bulunuyor (sözleşme 1.18).
+  /// Etiket artık dile göre değişiyor; metni kimlik olarak kullanmak testleri
+  /// ve menüyü seçili dile bağımlı kılardı.
+  static const highlightKey = Key('selection-highlight');
+  static const underlineKey = Key('selection-underline');
 
   /// Yer imi (v1.12) — tek dokunuş, hiçbir koşulda göreve dönüşmez.
-  static const bookmarkLabel = 'Yer imi';
-  static const noteLabel = 'Not ekle';
-  static const taskLabel = 'Görev oluştur';
-  static const copyLabel = 'Kopyala';
+  static const bookmarkKey = Key('selection-bookmark');
+  static const noteKey = Key('selection-note');
+  static const taskKey = Key('selection-task');
+  static const copyKey = Key('selection-copy');
 
   @override
   ConsumerState<AnnotatedDocument> createState() => _AnnotatedDocumentState();
@@ -192,29 +196,34 @@ class _AnnotatedDocumentState extends ConsumerState<AnnotatedDocument> {
         // sığmayanları üç noktaya gizliyordu; cihazda asıl eylemler o
         // menünün dibine düşüyordu (L-027). Dikey liste bunu ortadan
         // kaldırıyor — ekran genişliğine bağımlı değil.
+        final l = L.of(context);
         return _SelectionMenu(
           anchors: state.contextMenuAnchors,
           actions: [
             (
-              AnnotatedDocument.highlightLabel,
+              AnnotatedDocument.highlightKey,
+              l.markYellow,
               Icons.brush_outlined,
               () => _quickMark(state, selection,
                   kind: RecordKind.yorum, mark: TaskMark.highlight),
             ),
             (
-              AnnotatedDocument.underlineLabel,
+              AnnotatedDocument.underlineKey,
+              l.markRed,
               Icons.format_underlined,
               () => _quickMark(state, selection,
                   kind: RecordKind.duzeltme, mark: TaskMark.underline),
             ),
             (
-              AnnotatedDocument.bookmarkLabel,
+              AnnotatedDocument.bookmarkKey,
+              l.markBookmark,
               Icons.bookmark_outline,
               () => _quickMark(state, selection,
                   kind: RecordKind.yorum, mark: TaskMark.bookmark),
             ),
             (
-              AnnotatedDocument.noteLabel,
+              AnnotatedDocument.noteKey,
+              l.addNote,
               Icons.sticky_note_2_outlined,
               () {
                 state.hideToolbar();
@@ -222,7 +231,8 @@ class _AnnotatedDocumentState extends ConsumerState<AnnotatedDocument> {
               },
             ),
             (
-              AnnotatedDocument.taskLabel,
+              AnnotatedDocument.taskKey,
+              l.createTask,
               Icons.add_task,
               () {
                 state.hideToolbar();
@@ -230,7 +240,8 @@ class _AnnotatedDocumentState extends ConsumerState<AnnotatedDocument> {
               },
             ),
             (
-              AnnotatedDocument.copyLabel,
+              AnnotatedDocument.copyKey,
+              l.copy,
               Icons.copy_all_outlined,
               () {
                 state.hideToolbar();
@@ -271,7 +282,7 @@ class _SelectionMenu extends StatelessWidget {
   const _SelectionMenu({required this.anchors, required this.actions});
 
   final TextSelectionToolbarAnchors anchors;
-  final List<(String, IconData, VoidCallback)> actions;
+  final List<(Key, String, IconData, VoidCallback)> actions;
 
   @override
   Widget build(BuildContext context) {
@@ -295,9 +306,9 @@ class _SelectionMenu extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              for (final (label, icon, onTap) in actions)
+              for (final (key, label, icon, onTap) in actions)
                 InkWell(
-                  key: Key('selection-menu-$label'),
+                  key: key,
                   onTap: onTap,
                   child: Padding(
                     padding:

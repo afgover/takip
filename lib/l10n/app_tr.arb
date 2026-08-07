@@ -283,5 +283,42 @@
         "type": "int"
       }
     }
-  }
+  },
+  "connectionSettings": "Bağlantı ayarları",
+  "errNoConnectionTitle": "Bağlantı yok",
+  "errNoConnectionBody": "İnternete bağlanılamadı. Eklediğin görevler kuyrukta bekler ve bağlantı gelince kendiliğinden gönderilir.",
+  "errAuthBody": "Ayarlar'dan token'ı yenileyebilirsin; izinler Contents: Read and write ve Metadata: Read olmalı.",
+  "errRateTitle": "İstek limiti doldu",
+  "errRateBody": "GitHub istek limiti doldu; bir süre sonra kendiliğinden açılır.",
+  "errNotFoundTitle": "Bulunamadı",
+  "errGenericTitle": "Bir sorun çıktı",
+  "addTaskTitle": "Görev Ekle",
+  "fieldTitle": "Başlık",
+  "titleRequired": "Başlık gerekli",
+  "titleNeedsLetter": "Başlık harf ya da rakam içermeli",
+  "fieldDescription": "Açıklama",
+  "fieldPriority": "Öncelik",
+  "newCategoryName": "Yeni kategori adı",
+  "categoryRequired": "Kategori adı gerekli",
+  "sendToInbox": "Inbox'a Gönder",
+  "taskQueuedOffline": "Ağ yok — görev kuyruğa alındı, bağlantı gelince gönderilecek.",
+  "securityEmptyTitle": "Güvenlik kaydı yok",
+  "securityEmptySubtitle": "Agent tarama, önlem ve bulguları buraya yazar (sözleşme §12).",
+  "securityOpenCount": "{count} açık kayıt",
+  "@securityOpenCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "securityFilterEmptyTitle": "Bu türde kayıt yok",
+  "securityFilterEmptySubtitle": "Filtreyi kaldırıp tümünü görebilirsin.",
+  "all": "Tümü",
+  "securityOpen": "açık",
+  "secKindMeasure": "Önlem",
+  "secKindOpen": "Açık",
+  "secKindTodo": "Yapılacak",
+  "secKindScan": "Tarama",
+  "kind": "Tür"
 }
