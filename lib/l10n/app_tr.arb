@@ -1,0 +1,16 @@
+{
+  "@@locale": "tr",
+
+  "appTitle": "Takip",
+
+  "langSystem": "Sistem dili",
+  "langTurkish": "Türkçe",
+  "langEnglish": "English",
+  "settingsLanguage": "Dil",
+  "settingsLanguageHelp": "Arayüz dili. Hub'a yazılan görev ve notların dili değişmez — onların biçimi sözleşmeyle sabittir.",
+
+  "navPending": "Bekleyenler",
+  "navBrowse": "Tarayıcı",
+  "navAdd": "Görev ekle",
+  "navSettings": "Ayarlar"
+}

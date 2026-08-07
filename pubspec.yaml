@@ -9,6 +9,11 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  # Dil seçeneği (sözleşme 1.18): arayüz Türkçe ve İngilizce. Hub'a **yazılan**
+  # içeriğin dili bundan bağımsızdır — bkz. lib/hub/models/task_draft.dart.
+  flutter_localizations:
+    sdk: flutter
+  intl: any
   # Zamana bağlı mantık (yoklama, rate limit beklemesi) testte sahte saatle
   # sürülebilsin diye DateTime.now() yerine clock.now() kullanılıyor.
   clock: ^1.1.1
@@ -31,3 +36,4 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  generate: true

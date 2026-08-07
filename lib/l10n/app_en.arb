@@ -1,0 +1,13 @@
+{
+  "@@locale": "en",
+  "appTitle": "Takip",
+  "langSystem": "System language",
+  "langTurkish": "Türkçe",
+  "langEnglish": "English",
+  "settingsLanguage": "Language",
+  "settingsLanguageHelp": "Interface language. The language of tasks and notes written to the hub does not change — their format is fixed by the contract.",
+  "navPending": "Pending",
+  "navBrowse": "Browser",
+  "navAdd": "Add task",
+  "navSettings": "Settings"
+}

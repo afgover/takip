@@ -5,6 +5,8 @@ import 'features/common/hub_watcher_scope.dart';
 import 'features/onboarding/onboarding_screen.dart';
 import 'features/shell.dart';
 import 'hub/hub_config.dart';
+import 'hub/settings.dart';
+import 'l10n/app_localizations.dart';
 
 class TakipApp extends ConsumerWidget {
   const TakipApp({super.key});
@@ -12,9 +14,16 @@ class TakipApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final config = ref.watch(hubConfigProvider);
+    // null = sistem dilini izle (cihaz Türkçe değilse İngilizce'ye düşer).
+    final localeCode = ref.watch(
+      appSettingsProvider.select((s) => s.localeCode),
+    );
 
     return MaterialApp(
       title: 'Takip',
+      locale: localeCode == null ? null : Locale(localeCode),
+      supportedLocales: L.supportedLocales,
+      localizationsDelegates: L.localizationsDelegates,
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.teal),
         useMaterial3: true,

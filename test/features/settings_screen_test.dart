@@ -10,6 +10,7 @@ import 'package:takip/hub/hub_access.dart';
 import 'package:takip/hub/hub_config.dart';
 import 'package:takip/hub/hub_watcher.dart';
 import 'package:takip/hub/settings.dart';
+import 'package:takip/l10n/app_localizations.dart';
 
 class FakeHubConfigNotifier extends HubConfigNotifier {
   FakeHubConfigNotifier([this.config = const HubConfig(
@@ -72,7 +73,13 @@ class QuietWatcher extends HubWatcher {
               : await verifier(candidate);
         }),
       ],
-      child: MaterialApp(home: home),
+      child: MaterialApp(
+        // Ekran L.of(context) kullanıyor; delegeler olmadan test ortamı
+        // uygulamanın kendisinden farklı davranır.
+        localizationsDelegates: L.localizationsDelegates,
+        supportedLocales: L.supportedLocales,
+        home: home,
+      ),
     ),
     config: notifier,
     verified: verified,
@@ -226,7 +233,11 @@ void main() {
         hubWatcherProvider.overrideWith(QuietWatcher.new),
         etagCacheProvider.overrideWithValue(cache),
       ],
-      child: const MaterialApp(home: SettingsScreen()),
+      child: MaterialApp(
+        localizationsDelegates: L.localizationsDelegates,
+        supportedLocales: L.supportedLocales,
+        home: const SettingsScreen(),
+      ),
     ));
     await tester.pumpAndSettle();
 

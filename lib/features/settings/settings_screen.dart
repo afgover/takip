@@ -10,6 +10,7 @@ import '../../hub/hub_sync.dart';
 import '../../hub/hub_watcher.dart';
 import '../../hub/outbox.dart';
 import '../../hub/settings.dart';
+import '../../l10n/app_localizations.dart';
 import '../common/hub_error_view.dart';
 import 'backup_screen.dart';
 import 'connections_screen.dart';
@@ -40,6 +41,9 @@ class SettingsScreen extends ConsumerWidget {
       appBar: AppBar(title: const Text('Ayarlar')),
       body: ListView(
         children: [
+          _SectionTitle(L.of(context).settingsLanguage),
+          const _LanguageTile(),
+          const Divider(),
           const _SectionTitle('Bağlantı'),
           ListTile(
             key: reposKey,
@@ -274,6 +278,51 @@ class SettingsScreen extends ConsumerWidget {
   static String _intervalLabel(Duration interval) => interval.inSeconds < 60
       ? '${interval.inSeconds} saniye'
       : '${interval.inMinutes} dakika';
+}
+
+/// Arayüz dili seçici (sözleşme 1.18).
+///
+/// Varsayılan **sistem dili**: cihazı Türkçe olan kullanıcı hiçbir şey
+/// değiştirmeden Türkçe görür, başkası İngilizce. Seçim yalnız arayüzü
+/// etkiliyor; hub'a yazılan görev ve notların biçimi sözleşmeyle sabit ve
+/// dile göre değişmiyor — değişselerdi mevcut kayıtlar ayrıştırılamaz olurdu.
+class _LanguageTile extends ConsumerWidget {
+  const _LanguageTile();
+
+  static const tileKey = Key('settings-language');
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l = L.of(context);
+    final code = ref.watch(appSettingsProvider.select((s) => s.localeCode));
+
+    String label(String? c) => switch (c) {
+          'tr' => l.langTurkish,
+          'en' => l.langEnglish,
+          _ => l.langSystem,
+        };
+
+    return ListTile(
+      key: tileKey,
+      leading: const Icon(Icons.translate),
+      title: Text(l.settingsLanguage),
+      subtitle: Text(l.settingsLanguageHelp),
+      isThreeLine: true,
+      trailing: DropdownButton<String?>(
+        value: code,
+        items: [
+          for (final c in <String?>[null, 'tr', 'en'])
+            DropdownMenuItem(
+              key: Key('settings-language-${c ?? "system"}'),
+              value: c,
+              child: Text(label(c)),
+            ),
+        ],
+        onChanged: (value) =>
+            ref.read(appSettingsProvider.notifier).setLocale(value),
+      ),
+    );
+  }
 }
 
 class _SectionTitle extends StatelessWidget {

@@ -394,6 +394,29 @@ başlığına ✅ ve tarih yazılır.
       ve `SECURITY.md` bilinçli olarak **ayrı kimlik alanı taşımıyor** —
       `Kaynak:` oturuma işaret ediyor, kimlik oradan çözülüyor; aynı bilgiyi
       iki yerde tutmak ayrışmaya davetiye. 430 test → L-041
+- [x] B-111 · (agent) İngilizce dil seçeneği — altyapı ve dil seçici —
+      ✅ 2026-08-06; sözleşme 1.18. `flutter_localizations` + ARB (`app_tr`,
+      `app_en`), `l10n.yaml`, Ayarlar'da **Sistem / Türkçe / English** seçici
+      (varsayılan sistem dili, seçim diske yazılıyor). Delege listesi tek
+      kaynaktan (`L.localizationsDelegates`) hem uygulamaya hem testlere
+      veriliyor — ayrı tanımlansaydı test ortamı uygulamadan farklı davranırdı
+      ve nitekim ilk koşumda dört test bu yüzden kırıldı.
+      **Kritik ayrım:** arayüz dili ile hub'a **yazılan** içeriğin dili ayrı.
+      Gövde başlıkları (`## İstek`, `## Notlar`) sözleşmeyle sabit ve
+      `noteTextFrom()` onları regex ile arıyor; dile göre değişselerdi mevcut
+      bütün kayıtlar ayrıştırılamaz olurdu
+- [ ] B-112 · (agent) İngilizce dil seçeneği — 23 ekranın metinleri.
+      Kalan iş **ölçülü**: `l10n_coverage_test.dart` hem taşınmış dosyalarda
+      Türkçe metin kalmamasını hem bekleyen listesinin gerçekle uyuşmasını
+      şart koşuyor, yani "bitti sandım" oluşamaz. Ayrıca iki ARB'nin aynı
+      anahtarları taşıması test ediliyor — eksik anahtar sessizdir, gen_l10n
+      onu şablondan doldurur ve İngilizce seçen kullanıcı Türkçe görür
+- [ ] B-113 · (agent) Yöntem belgelerinin İngilizce sürümü (README, SYSTEM.md,
+      AGENT_PROTOCOL, kurulum talimatı ~1330 satır). Türkçe **ana kopya**
+      kalır, İngilizce türetilmiş ve bağlayıcı olmayan sürüm olarak işaretlenir
+      — iki bağlayıcı kopya, L-022'deki ayrışmanın davetiyesidir.
+      **B-097'nin (public) ön koşulu:** K-032 asıl varlığın yöntem olduğunu
+      söylüyor; Türkçe bir sözleşme, dışarıdan birinin benimsemesini engeller
 - [ ] B-110 · (agent) Çoklu kullanıcı — Katman 3+4: `assignee` yazımı ve
       paylaşılan dosya yazım kuralları. Sözleşme 1.15 alanı tanımladı ama
       uygulama/protokol tarafı **ikinci kişi geldiğinde** yapılacak;
