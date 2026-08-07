@@ -14,6 +14,8 @@ import 'package:takip/hub/models/task_draft.dart';
 import 'package:takip/hub/all_tasks.dart';
 import 'package:takip/hub/task_repo.dart';
 
+import '../helpers/test_app.dart';
+
 class FakeHubConfigNotifier extends HubConfigNotifier {
   @override
   Future<HubConfig?> build() async =>
@@ -37,7 +39,7 @@ Widget buildApp({
         tasksOverride,
         ...extra,
       ],
-      child: const MaterialApp(home: PendingScreen()),
+      child: testApp(PendingScreen()),
     );
 
 void main() {

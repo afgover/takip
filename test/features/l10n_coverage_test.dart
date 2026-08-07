@@ -20,6 +20,9 @@ void main() {
     'lib/app.dart',
     'lib/features/browse/browse_screen.dart',
     'lib/features/shell.dart',
+    'lib/features/onboarding/onboarding_screen.dart',
+    'lib/features/pending/done_screen.dart',
+    'lib/features/pending/pending_screen.dart',
   ];
 
   /// Henüz taşınmamış ekranlar (B-115). Her taşımada buradan bir satır silinir.
@@ -37,9 +40,6 @@ void main() {
     'lib/features/common/repo_switcher.dart',
     'lib/features/common/selection_record.dart',
     'lib/features/common/token_scope_warning_dialog.dart',
-    'lib/features/onboarding/onboarding_screen.dart',
-    'lib/features/pending/done_screen.dart',
-    'lib/features/pending/pending_screen.dart',
     'lib/features/pending/task_detail_screen.dart',
     'lib/features/settings/backup_screen.dart',
     'lib/features/settings/connection_screen.dart',

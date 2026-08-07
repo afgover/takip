@@ -9,6 +9,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:takip/features/settings/backup_screen.dart';
 import 'package:takip/hub/hub_connections.dart';
 
+import '../helpers/test_app.dart';
+
 Map<String, dynamic> row(String slug, String token, {String? label}) => {
       'owner': slug.split('/').first,
       'repo': slug.split('/').last,
@@ -35,7 +37,7 @@ Future<ProviderContainer> seed(
 Widget wrap(ProviderContainer container, Widget home) =>
     UncontrolledProviderScope(
       container: container,
-      child: MaterialApp(home: home),
+      child: testApp(home),
     );
 
 /// Yedekleme ekranı uzun bir liste; varsayılan test ekranında alt alanlar hiç

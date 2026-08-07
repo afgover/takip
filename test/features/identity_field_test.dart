@@ -8,6 +8,8 @@ import 'package:takip/hub/hub_watcher.dart';
 
 import 'settings_screen_test.dart' show FakeHubConfigNotifier, QuietWatcher;
 
+import '../helpers/test_app.dart';
+
 /// Kimliğin **görünür ve düzenlenebilir** olması (sözleşme 1.15).
 ///
 /// İlk uygulamada kimlik yalnız `/user`'dan okunuyordu ve hiçbir ekranda
@@ -30,7 +32,7 @@ import 'settings_screen_test.dart' show FakeHubConfigNotifier, QuietWatcher;
         hubWatcherProvider.overrideWith(QuietWatcher.new),
         hubAccessVerifierProvider.overrideWithValue((_) async => access),
       ],
-      child: const MaterialApp(home: ConnectionScreen()),
+      child: testApp(ConnectionScreen()),
     ),
     config: notifier,
   );

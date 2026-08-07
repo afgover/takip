@@ -264,6 +264,114 @@ abstract class L {
   /// In tr, this message translates to:
   /// **'Format Sözleşmesi'**
   String get contractDocTitle;
+
+  /// No description provided for @doneEmptyTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Tamamlanan görev yok'**
+  String get doneEmptyTitle;
+
+  /// No description provided for @doneEmptySubtitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Agent bir görevi bitirince burada arşivlenir.'**
+  String get doneEmptySubtitle;
+
+  /// No description provided for @pendingEmptyTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bekleyen görev yok'**
+  String get pendingEmptyTitle;
+
+  /// No description provided for @pendingEmptySubtitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Eklediğin görevler agent ele alana kadar burada görünür.'**
+  String get pendingEmptySubtitle;
+
+  /// No description provided for @pendingFilterEmptyTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Filtreye uyan görev yok'**
+  String get pendingFilterEmptyTitle;
+
+  /// No description provided for @pendingFilterEmptySubtitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'{count} görev var ama hiçbiri seçtiğin filtreye uymuyor.'**
+  String pendingFilterEmptySubtitle(int count);
+
+  /// No description provided for @outboxQueuedSubtitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bağlantı gelince gönderilecek'**
+  String get outboxQueuedSubtitle;
+
+  /// No description provided for @outboxQueuedBadge.
+  ///
+  /// In tr, this message translates to:
+  /// **'Gönderilecek'**
+  String get outboxQueuedBadge;
+
+  /// No description provided for @onboardingIntro.
+  ///
+  /// In tr, this message translates to:
+  /// **'Hub reposuna bağlan. Yalnızca bu repoya scope\'lanmış bir fine-grained token kullan.'**
+  String get onboardingIntro;
+
+  /// No description provided for @repoFieldInvalid.
+  ///
+  /// In tr, this message translates to:
+  /// **'owner/ad biçiminde girin'**
+  String get repoFieldInvalid;
+
+  /// No description provided for @show.
+  ///
+  /// In tr, this message translates to:
+  /// **'Göster'**
+  String get show;
+
+  /// No description provided for @hide.
+  ///
+  /// In tr, this message translates to:
+  /// **'Gizle'**
+  String get hide;
+
+  /// No description provided for @connect.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bağlan'**
+  String get connect;
+
+  /// No description provided for @tokenHelpTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Token nasıl alınır?'**
+  String get tokenHelpTitle;
+
+  /// No description provided for @tokenHelpStored.
+  ///
+  /// In tr, this message translates to:
+  /// **'Token yalnızca bu cihazın güvenli deposunda saklanır.'**
+  String get tokenHelpStored;
+
+  /// No description provided for @tokenRequired.
+  ///
+  /// In tr, this message translates to:
+  /// **'Token gerekli'**
+  String get tokenRequired;
+
+  /// No description provided for @repoFieldLabel.
+  ///
+  /// In tr, this message translates to:
+  /// **'Repo (owner/ad)'**
+  String get repoFieldLabel;
+
+  /// No description provided for @tokenFieldLabel.
+  ///
+  /// In tr, this message translates to:
+  /// **'Fine-grained token'**
+  String get tokenFieldLabel;
 }
 
 class _LDelegate extends LocalizationsDelegate<L> {

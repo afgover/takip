@@ -10,6 +10,8 @@ import 'package:takip/hub/hub_access.dart';
 import 'package:takip/hub/hub_config.dart';
 import 'package:takip/hub/token_scope.dart';
 
+import '../helpers/test_app.dart';
+
 /// Secure storage yerine bellek: widget testinde platform kanalı yok.
 class FakeHubConfigNotifier extends HubConfigNotifier {
   final List<HubConfig> saved = [];
@@ -42,7 +44,7 @@ class FakeHubConfigNotifier extends HubConfigNotifier {
               : await verifier(candidate);
         }),
       ],
-      child: const MaterialApp(home: OnboardingScreen()),
+      child: testApp(const OnboardingScreen()),
     ),
     config: notifier,
     verified: verified,

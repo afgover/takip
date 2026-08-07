@@ -7,6 +7,7 @@ import '../../hub/hub_access.dart';
 import '../../hub/hub_config.dart';
 import '../../hub/token_scope.dart';
 import '../common/token_scope_warning_dialog.dart';
+import '../../l10n/app_localizations.dart';
 
 /// Hub bağlantı kurulumu: repo (owner/ad) + fine-grained token.
 ///
@@ -93,6 +94,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l = L.of(context);
 
     return Scaffold(
       body: SafeArea(
@@ -114,8 +116,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      'Hub reposuna bağlan. Yalnızca bu repoya scope\'lanmış '
-                      'bir fine-grained token kullan.',
+                      l.onboardingIntro,
                       style: theme.textTheme.bodyMedium,
                       textAlign: TextAlign.center,
                     ),
@@ -125,13 +126,13 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                       controller: _repoCtrl,
                       enabled: !_busy,
                       autocorrect: false,
-                      decoration: const InputDecoration(
-                        labelText: 'Repo (owner/ad)',
-                        border: OutlineInputBorder(),
-                        prefixIcon: Icon(Icons.folder_outlined),
+                      decoration: InputDecoration(
+                        labelText: l.repoFieldLabel,
+                        border: const OutlineInputBorder(),
+                        prefixIcon: const Icon(Icons.folder_outlined),
                       ),
                       validator: (v) => HubConfig.parseRepo(v ?? '') == null
-                          ? 'owner/ad biçiminde girin'
+                          ? l.repoFieldInvalid
                           : null,
                     ),
                     const SizedBox(height: 16),
@@ -143,11 +144,11 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                       autocorrect: false,
                       enableSuggestions: false,
                       decoration: InputDecoration(
-                        labelText: 'Fine-grained token',
+                        labelText: l.tokenFieldLabel,
                         border: const OutlineInputBorder(),
                         prefixIcon: const Icon(Icons.key_outlined),
                         suffixIcon: IconButton(
-                          tooltip: _showToken ? 'Gizle' : 'Göster',
+                          tooltip: _showToken ? l.hide : l.show,
                           icon: Icon(_showToken
                               ? Icons.visibility_off_outlined
                               : Icons.visibility_outlined),
@@ -156,7 +157,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                         ),
                       ),
                       validator: (v) => (v == null || v.trim().isEmpty)
-                          ? 'Token gerekli'
+                          ? l.tokenRequired
                           : null,
                       onFieldSubmitted: (_) => _connect(),
                     ),
@@ -175,7 +176,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                               child:
                                   CircularProgressIndicator(strokeWidth: 2),
                             )
-                          : const Text('Bağlan'),
+                          : Text(l.connect),
                     ),
                     const SizedBox(height: 16),
                     const _TokenHelp(),
@@ -230,7 +231,7 @@ class _TokenHelp extends StatelessWidget {
   Widget build(BuildContext context) {
     return ExpansionTile(
       tilePadding: EdgeInsets.zero,
-      title: const Text('Token nasıl alınır?'),
+      title: Text(L.of(context).tokenHelpTitle),
       children: [
         Padding(
           padding: const EdgeInsets.only(bottom: 12),
@@ -239,7 +240,7 @@ class _TokenHelp extends StatelessWidget {
             'Personal access tokens → Fine-grained tokens → Generate new token\n\n'
             '• Repository access: Only select repositories → ${Hub.defaultRepo}\n'
             '• Permissions: Contents → Read and write, Metadata → Read\n\n'
-            'Token yalnızca bu cihazın güvenli deposunda saklanır.',
+            '${L.of(context).tokenHelpStored}',
             style: Theme.of(context).textTheme.bodySmall,
           ),
         ),

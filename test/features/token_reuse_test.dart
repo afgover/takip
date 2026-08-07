@@ -11,6 +11,8 @@ import 'package:takip/hub/hub_config.dart';
 import 'package:takip/hub/hub_connections.dart';
 import 'package:takip/hub/hub_watcher.dart';
 
+import '../helpers/test_app.dart';
+
 Map<String, dynamic> row(String slug, String token, {String? label}) => {
       'owner': slug.split('/').first,
       'repo': slug.split('/').last,
@@ -37,7 +39,7 @@ Future<ProviderContainer> seed(
 Widget wrap(ProviderContainer container, Widget home) =>
     UncontrolledProviderScope(
       container: container,
-      child: MaterialApp(home: home),
+      child: testApp(home),
     );
 
 /// Uzun formlarda varsayılan test ekranı alt alanları hiç oluşturmuyor ve

@@ -94,4 +94,64 @@ class LEn extends L {
 
   @override
   String get contractDocTitle => 'Format contract';
+
+  @override
+  String get doneEmptyTitle => 'No completed tasks';
+
+  @override
+  String get doneEmptySubtitle =>
+      'When the agent finishes a task it is archived here.';
+
+  @override
+  String get pendingEmptyTitle => 'No pending tasks';
+
+  @override
+  String get pendingEmptySubtitle =>
+      'Tasks you add appear here until the agent picks them up.';
+
+  @override
+  String get pendingFilterEmptyTitle => 'No tasks match the filter';
+
+  @override
+  String pendingFilterEmptySubtitle(int count) {
+    return 'There are $count tasks but none match your filter.';
+  }
+
+  @override
+  String get outboxQueuedSubtitle => 'Will be sent when back online';
+
+  @override
+  String get outboxQueuedBadge => 'Queued';
+
+  @override
+  String get onboardingIntro =>
+      'Connect to your hub repository. Use a fine-grained token scoped to this repository only.';
+
+  @override
+  String get repoFieldInvalid => 'Enter it as owner/name';
+
+  @override
+  String get show => 'Show';
+
+  @override
+  String get hide => 'Hide';
+
+  @override
+  String get connect => 'Connect';
+
+  @override
+  String get tokenHelpTitle => 'How do I get a token?';
+
+  @override
+  String get tokenHelpStored =>
+      'The token is stored only in this device’s secure storage.';
+
+  @override
+  String get tokenRequired => 'Token required';
+
+  @override
+  String get repoFieldLabel => 'Repository (owner/name)';
+
+  @override
+  String get tokenFieldLabel => 'Fine-grained token';
 }

@@ -27,5 +27,30 @@
   "sessionsEmptySubtitle": "Agent her çalışma oturumunu buraya yazar.",
   "artifactsEmptyTitle": "Henüz artifact yok",
   "artifactsEmptySubtitle": "Agent ürettiği rapor ve planları buraya kaydeder.",
-  "contractDocTitle": "Format Sözleşmesi"
+  "contractDocTitle": "Format Sözleşmesi",
+  "doneEmptyTitle": "Tamamlanan görev yok",
+  "doneEmptySubtitle": "Agent bir görevi bitirince burada arşivlenir.",
+  "pendingEmptyTitle": "Bekleyen görev yok",
+  "pendingEmptySubtitle": "Eklediğin görevler agent ele alana kadar burada görünür.",
+  "pendingFilterEmptyTitle": "Filtreye uyan görev yok",
+  "pendingFilterEmptySubtitle": "{count} görev var ama hiçbiri seçtiğin filtreye uymuyor.",
+  "@pendingFilterEmptySubtitle": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "outboxQueuedSubtitle": "Bağlantı gelince gönderilecek",
+  "outboxQueuedBadge": "Gönderilecek",
+  "onboardingIntro": "Hub reposuna bağlan. Yalnızca bu repoya scope'lanmış bir fine-grained token kullan.",
+  "repoFieldInvalid": "owner/ad biçiminde girin",
+  "show": "Göster",
+  "hide": "Gizle",
+  "connect": "Bağlan",
+  "tokenHelpTitle": "Token nasıl alınır?",
+  "tokenHelpStored": "Token yalnızca bu cihazın güvenli deposunda saklanır.",
+  "tokenRequired": "Token gerekli",
+  "repoFieldLabel": "Repo (owner/ad)",
+  "tokenFieldLabel": "Fine-grained token"
 }

@@ -94,4 +94,64 @@ class LTr extends L {
 
   @override
   String get contractDocTitle => 'Format Sözleşmesi';
+
+  @override
+  String get doneEmptyTitle => 'Tamamlanan görev yok';
+
+  @override
+  String get doneEmptySubtitle =>
+      'Agent bir görevi bitirince burada arşivlenir.';
+
+  @override
+  String get pendingEmptyTitle => 'Bekleyen görev yok';
+
+  @override
+  String get pendingEmptySubtitle =>
+      'Eklediğin görevler agent ele alana kadar burada görünür.';
+
+  @override
+  String get pendingFilterEmptyTitle => 'Filtreye uyan görev yok';
+
+  @override
+  String pendingFilterEmptySubtitle(int count) {
+    return '$count görev var ama hiçbiri seçtiğin filtreye uymuyor.';
+  }
+
+  @override
+  String get outboxQueuedSubtitle => 'Bağlantı gelince gönderilecek';
+
+  @override
+  String get outboxQueuedBadge => 'Gönderilecek';
+
+  @override
+  String get onboardingIntro =>
+      'Hub reposuna bağlan. Yalnızca bu repoya scope\'lanmış bir fine-grained token kullan.';
+
+  @override
+  String get repoFieldInvalid => 'owner/ad biçiminde girin';
+
+  @override
+  String get show => 'Göster';
+
+  @override
+  String get hide => 'Gizle';
+
+  @override
+  String get connect => 'Bağlan';
+
+  @override
+  String get tokenHelpTitle => 'Token nasıl alınır?';
+
+  @override
+  String get tokenHelpStored =>
+      'Token yalnızca bu cihazın güvenli deposunda saklanır.';
+
+  @override
+  String get tokenRequired => 'Token gerekli';
+
+  @override
+  String get repoFieldLabel => 'Repo (owner/ad)';
+
+  @override
+  String get tokenFieldLabel => 'Fine-grained token';
 }

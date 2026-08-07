@@ -8,6 +8,8 @@ import 'package:takip/hub/browse_repo.dart';
 import 'package:takip/hub/hub_config.dart';
 import 'package:takip/hub/models/task.dart';
 
+import '../helpers/test_app.dart';
+
 class FakeHubConfigNotifier extends HubConfigNotifier {
   FakeHubConfigNotifier(this.config);
 
@@ -51,7 +53,7 @@ Widget app(
         hubConfigProvider.overrideWith(() => FakeHubConfigNotifier(active)),
         ...extra,
       ],
-      child: const MaterialApp(home: AnnotationsScreen()),
+      child: testApp(AnnotationsScreen()),
     );
 
 void main() {

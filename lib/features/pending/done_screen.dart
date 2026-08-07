@@ -7,6 +7,7 @@ import '../../hub/task_repo.dart';
 import '../common/hub_error_view.dart';
 import 'pending_screen.dart' show TaskStatusChip, formatTaskDate;
 import 'task_detail_screen.dart';
+import '../../l10n/app_localizations.dart';
 
 /// Tamamlanan görevler: `tasks/done` (SYSTEM.md §9).
 ///
@@ -28,11 +29,11 @@ class DoneScreen extends ConsumerWidget {
           await ref.read(hubWatcherProvider.notifier).checkNow();
         },
         child: switch (tasks) {
-          AsyncData(:final value) when value.isEmpty => const _Scrollable(
+          AsyncData(:final value) when value.isEmpty => _Scrollable(
               child: HubEmptyView(
                 icon: Icons.task_alt,
-                title: 'Tamamlanan görev yok',
-                subtitle: 'Agent bir görevi bitirince burada arşivlenir.',
+                title: L.of(context).doneEmptyTitle,
+                subtitle: L.of(context).doneEmptySubtitle,
               ),
             ),
           AsyncData(:final value) => ListView.separated(

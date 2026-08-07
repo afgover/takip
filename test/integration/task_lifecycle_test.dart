@@ -18,6 +18,8 @@ import 'package:takip/hub/task_repo.dart';
 
 import '../github/contents_api_test.dart' show FakeAdapter, jsonResponse;
 
+import '../helpers/test_app.dart';
+
 /// Bellekte duran, GitHub Contents API gibi davranan bir hub.
 ///
 /// Agent tarafı gerçek agent'ın yaptığını yapar: dosyayı klasörden klasöre
@@ -127,7 +129,7 @@ void main() {
 
   Widget wrap(Widget child) => UncontrolledProviderScope(
         container: container,
-        child: MaterialApp(home: child),
+        child: testApp(child),
       );
 
   testWidgets('görev app\'ten eklenir, agent tamamlar, app\'te görünür',

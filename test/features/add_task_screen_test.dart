@@ -12,6 +12,8 @@ import 'package:takip/github/contents_api.dart';
 
 import '../github/contents_api_test.dart' show FakeAdapter, jsonResponse;
 
+import '../helpers/test_app.dart';
+
 ({Widget widget, FakeAdapter adapter}) buildScreen({
   ResponseBody Function(RequestOptions options, String? body)? handler,
 }) {
@@ -28,7 +30,7 @@ import '../github/contents_api_test.dart' show FakeAdapter, jsonResponse;
   return (
     widget: ProviderScope(
       overrides: [taskRepoProvider.overrideWithValue(repo)],
-      child: const MaterialApp(home: AddTaskScreen()),
+      child: testApp(AddTaskScreen()),
     ),
     adapter: adapter,
   );

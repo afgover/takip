@@ -9,6 +9,7 @@ import '../../hub/models/task_draft.dart';
 import '../../hub/outbox.dart';
 import '../common/hub_error_view.dart';
 import 'task_detail_screen.dart';
+import '../../l10n/app_localizations.dart';
 
 /// Bekleyen görevler — **bütün repolardan** (`inbox` + `active` + `waiting`).
 ///
@@ -84,12 +85,11 @@ class PendingScreen extends ConsumerWidget {
   ) {
     return switch (tasks) {
       AsyncData(:final value) when value.isEmpty && queued.isEmpty =>
-        const _Scrollable(
+        _Scrollable(
           child: HubEmptyView(
             icon: Icons.inbox_outlined,
-            title: 'Bekleyen görev yok',
-            subtitle: 'Eklediğin görevler agent ele alana kadar burada '
-                'görünür.',
+            title: L.of(context).pendingEmptyTitle,
+            subtitle: L.of(context).pendingEmptySubtitle,
           ),
         ),
       AsyncData(:final value) => Builder(
@@ -99,9 +99,9 @@ class PendingScreen extends ConsumerWidget {
               return _Scrollable(
                 child: HubEmptyView(
                   icon: Icons.filter_alt_off_outlined,
-                  title: 'Filtreye uyan görev yok',
-                  subtitle: '${value.length} görev var ama hiçbiri seçtiğin '
-                      'filtreye uymuyor.',
+                  title: L.of(context).pendingFilterEmptyTitle,
+                  subtitle:
+                      L.of(context).pendingFilterEmptySubtitle(value.length),
                 ),
               );
             }
@@ -196,7 +196,7 @@ class _QueuedTile extends StatelessWidget {
     return ListTile(
       leading: Icon(Icons.cloud_upload_outlined, color: colors.outline),
       title: Text(draft.title),
-      subtitle: const Text('Bağlantı gelince gönderilecek'),
+      subtitle: Text(L.of(context).outboxQueuedSubtitle),
       trailing: Container(
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
         decoration: BoxDecoration(
@@ -204,7 +204,7 @@ class _QueuedTile extends StatelessWidget {
           borderRadius: BorderRadius.circular(12),
         ),
         child: Text(
-          'Gönderilecek',
+          L.of(context).outboxQueuedBadge,
           style: Theme.of(context)
               .textTheme
               .labelSmall
