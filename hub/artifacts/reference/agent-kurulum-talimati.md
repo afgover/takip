@@ -5,7 +5,7 @@ type: info
 title: "Agent kurulum talimatı — hub'ı kur, geçmişi topla, protokole göre çalış"
 created: 2026-08-01T00:00:00Z
 updated: 2026-08-04T00:00:00Z
-contract: "1.18"
+contract: "1.19"
 ---
 
 # Agent Kurulum Talimatı
@@ -16,7 +16,7 @@ bunu olduğu gibi yapıştırır; agent gerisini buradan yapar.
 Kanonik sürüm bu dosyadır (`afgover/takip` reposunda). Masaüstündeki kopya
 kolaylık içindir ve zamanla bayatlar; şüphede kalınırsa bu dosya esas alınır.
 
-**Bu belge sözleşme sürümü 1.18'e göre yazıldı.** Sözleşmenin kendisi daha
+**Bu belge sözleşme sürümü 1.19'a göre yazıldı.** Sözleşmenin kendisi daha
 yeniyse o kazanır — bkz. §1.
 
 ---

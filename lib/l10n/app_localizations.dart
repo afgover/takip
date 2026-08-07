@@ -1146,6 +1146,18 @@ abstract class L {
   /// In tr, this message translates to:
   /// **'Token gerekli.'**
   String get tokenRequiredShort;
+
+  /// No description provided for @languageFromHub.
+  ///
+  /// In tr, this message translates to:
+  /// **'Hub dili — `SYSTEM.md` içinde yazılı. Arayüz, sözleşme ve yeni kayıtlar bunu izler; değiştirmek agent\'ın işidir.'**
+  String get languageFromHub;
+
+  /// No description provided for @languageUnknown.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bağlantı yok — sistem dili kullanılıyor'**
+  String get languageUnknown;
 }
 
 class _LDelegate extends LocalizationsDelegate<L> {

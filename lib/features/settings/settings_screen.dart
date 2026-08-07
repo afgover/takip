@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../github/client.dart';
 import '../../hub/hub_config.dart';
+import '../../hub/hub_language.dart';
 import '../../hub/hub_connections.dart';
 import '../../hub/hub_sync.dart';
 import '../../hub/hub_watcher.dart';
@@ -274,12 +275,15 @@ class SettingsScreen extends ConsumerWidget {
           : l.intervalMinutes(interval.inMinutes);
 }
 
-/// Arayüz dili seçici (sözleşme 1.18).
+/// Hub dilini **gösterir** (sözleşme 1.19) — bir tercih değil.
 ///
-/// Varsayılan **sistem dili**: cihazı Türkçe olan kullanıcı hiçbir şey
-/// değiştirmeden Türkçe görür, başkası İngilizce. Seçim yalnız arayüzü
-/// etkiliyor; hub'a yazılan görev ve notların biçimi sözleşmeyle sabit ve
-/// dile göre değişmiyor — değişselerdi mevcut kayıtlar ayrıştırılamaz olurdu.
+/// Dil hub'ın özelliği: `SYSTEM.md`'de yazılı ve arayüz, sözleşme, yeni
+/// kayıtlar onu izliyor. Uygulama bunu değiştiremez çünkü `SYSTEM.md`'ye
+/// yazamaz (R-001: yazma alanı `tasks/inbox/` ve `notes/`) — dili kurulumda
+/// agent belirler.
+///
+/// Yine de **görünür** olmalı: görünmeyen bir ayar, kullanıcının neden o dili
+/// gördüğünü açıklayamaz ve yanlışsa düzeltilecek yeri de göstermez (L-040).
 class _LanguageTile extends ConsumerWidget {
   const _LanguageTile();
 
@@ -288,32 +292,21 @@ class _LanguageTile extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l = L.of(context);
-    final code = ref.watch(appSettingsProvider.select((s) => s.localeCode));
-
-    String label(String? c) => switch (c) {
-          'tr' => l.langTurkish,
-          'en' => l.langEnglish,
-          _ => l.langSystem,
-        };
+    final language = ref.watch(activeHubLanguageProvider).valueOrNull;
 
     return ListTile(
       key: tileKey,
       leading: const Icon(Icons.translate),
       title: Text(l.settingsLanguage),
-      subtitle: Text(l.settingsLanguageHelp),
+      subtitle: Text(l.languageFromHub),
       isThreeLine: true,
-      trailing: DropdownButton<String?>(
-        value: code,
-        items: [
-          for (final c in <String?>[null, 'tr', 'en'])
-            DropdownMenuItem(
-              key: Key('settings-language-${c ?? "system"}'),
-              value: c,
-              child: Text(label(c)),
-            ),
-        ],
-        onChanged: (value) =>
-            ref.read(appSettingsProvider.notifier).setLocale(value),
+      trailing: Text(
+        switch (language) {
+          HubLanguage.tr => l.langTurkish,
+          HubLanguage.en => l.langEnglish,
+          null => '—',
+        },
+        style: Theme.of(context).textTheme.labelLarge,
       ),
     );
   }

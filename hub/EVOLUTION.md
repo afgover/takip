@@ -564,3 +564,24 @@ toplanır ve gerekiyorsa Faz 6 maddelerini (B-060…B-064) yeniden sıralar.
   **Ertelenen:** `assignee` yazımı ve paylaşılan dosya kuralları (Katman 3-4)
   ikinci kişi gelene kadar bekliyor. Kullanılmayan bir soyutlamayı önceden
   taşımak, onu test edilmemiş hâlde eskitir. → B-108, B-109, B-110
+- **K-037:** Dil, **hub'ın özelliğidir**; cihazın tercihi değil. Kurulumda
+  seçilir ve üç şey birden onu izler: sözleşme (agent referansı oradan alır),
+  uygulama arayüzü, ve o andan sonra üretilen kayıtlar.
+  Bu karar 1.18'i **tersine çevirdi**. Orada "arayüz dili ≠ kayıt dili; gövde
+  başlıkları Türkçe sabit" demiştim ve gerekçem geçerliydi: aynı hub'da iki
+  başlık şeması oluşursa mevcut kayıtlar ayrıştırılamaz. Ama çözümü yanlış
+  yerden almışım — tutarlılığı **şemayı tek bir dile sabitleyerek** değil,
+  **hub başına tek dil** ile sağlamak gerekiyordu. Benimki İngilizce çalışan
+  birine Türkçe başlıklı kayıtlar yazdırırdı, yani dil seçeneğini eklemenin
+  sebebini (yöntemin başka dilleri konuşanlara açılması) baştan çürütürdü.
+  **Genelleştirilebilir kısım:** bir tutarlılık sorununu çözerken "neyi sabit
+  tutayım" diye sormak, çoğu zaman yanlış soru. Doğrusu "tutarlılığın sınırı
+  nerede" — burada sınır hub'dı, şema değil. Sınırı doğru koyunca sabitlemeye
+  gerek kalmadı.
+  **İki yan karar:** (a) ayrıştırıcı hub'ın ilan ettiği dille sınırlanmıyor,
+  bütün dillerin başlıklarını tanıyor — dil alanı eklenmeden önceki kayıtlar,
+  elle düzenlemeler ve dili değişmiş hub'lar var; geniş kabulün maliyeti yok,
+  dar kabulün maliyeti okunamayan kayıt. (b) Ayarlardaki dil seçici bir tercih
+  olmaktan çıkıp **bilgi**ye dönüştü: uygulama `SYSTEM.md`'ye yazamaz (R-001),
+  dolayısıyla dili değiştiremez. Hiçbir şeyi sürmeyen ama sürüyormuş gibi duran
+  ayar silindi. → B-117

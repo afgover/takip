@@ -174,5 +174,7 @@
   "enterNewToken": "I will enter a new token",
   "useTokenOf": "Use {name}’s token",
   "token": "Token",
-  "tokenRequiredShort": "Token required."
+  "tokenRequiredShort": "Token required.",
+  "languageFromHub": "Hub language — declared in `SYSTEM.md`. The interface, the contract and new records follow it; changing it is the agent’s job.",
+  "languageUnknown": "No connection — using the system language"
 }

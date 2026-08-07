@@ -6,28 +6,19 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../core/constants.dart';
 
 /// Kullanıcının değiştirebildiği ayarlar (B-051).
+/// Kullanıcının değiştirebildiği ayarlar.
+///
+/// **Dil burada yok** (sözleşme 1.19): dil cihazın tercihi değil hub'ın
+/// özelliğidir ve `SYSTEM.md`'de yazılıdır — bkz. `hub_language.dart`.
+/// 1.18'de kısa süre bir cihaz ayarı olarak durdu; kaldırıldı, çünkü hiçbir
+/// şeyi sürmeyen ama sürüyormuş gibi duran bir ayar, ayarın kendisinden kötü.
 class AppSettingsState {
-  const AppSettingsState({required this.pollInterval, this.localeCode});
+  const AppSettingsState({required this.pollInterval});
 
   final Duration pollInterval;
 
-  /// Arayüz dili: `tr`, `en` ya da **null = sistem dili** (sözleşme 1.18).
-  ///
-  /// Yalnız arayüzü etkiler. Hub'a **yazılan** görev ve notların dili buna
-  /// bağlı değildir: gövde başlıkları (`## İstek`, `## Notlar`) sözleşmeyle
-  /// sabit ve ayrıştırıcı onları arıyor — dile göre değişselerdi mevcut bütün
-  /// kayıtlar okunamaz hâle gelirdi.
-  final String? localeCode;
-
-  AppSettingsState copyWith({
-    Duration? pollInterval,
-    String? localeCode,
-    bool clearLocale = false,
-  }) =>
-      AppSettingsState(
-        pollInterval: pollInterval ?? this.pollInterval,
-        localeCode: clearLocale ? null : (localeCode ?? this.localeCode),
-      );
+  AppSettingsState copyWith({Duration? pollInterval}) =>
+      AppSettingsState(pollInterval: pollInterval ?? this.pollInterval);
 }
 
 /// Ayarlar **eşzamanlı** bir varsayılanla başlar, disktekiler gelince
@@ -35,10 +26,6 @@ class AppSettingsState {
 /// beklemez; kullanıcı bir değer değiştirmediyse zaten varsayılan geçerlidir.
 class AppSettings extends Notifier<AppSettingsState> {
   static const pollIntervalKey = 'poll_interval_seconds';
-  static const localeKey = 'locale_code';
-
-  /// Desteklenen arayüz dilleri.
-  static const supportedLocales = ['tr', 'en'];
 
   /// Ayarlarda sunulan aralıklar. Alt sınır 30 sn: ETag sayesinde istekler
   /// bedava olsa da daha sıkı yoklamanın pratik faydası yok, bataryası var.
@@ -59,11 +46,6 @@ class AppSettings extends Notifier<AppSettingsState> {
   Future<void> _restore() async {
     try {
       final prefs = await SharedPreferences.getInstance();
-      final code = prefs.getString(localeKey);
-      if (code != null && supportedLocales.contains(code)) {
-        state = state.copyWith(localeCode: code);
-      }
-
       final seconds = prefs.getInt(pollIntervalKey);
       if (seconds == null) return;
 
@@ -84,18 +66,6 @@ class AppSettings extends Notifier<AppSettingsState> {
     await prefs.setInt(pollIntervalKey, interval.inSeconds);
   }
 
-  /// Arayüz dilini değiştirir. [code] null ise sistem dili kullanılır.
-  Future<void> setLocale(String? code) async {
-    if (code != null && !supportedLocales.contains(code)) return;
-    state = state.copyWith(localeCode: code, clearLocale: code == null);
-
-    final prefs = await SharedPreferences.getInstance();
-    if (code == null) {
-      await prefs.remove(localeKey);
-    } else {
-      await prefs.setString(localeKey, code);
-    }
-  }
 }
 
 final appSettingsProvider =

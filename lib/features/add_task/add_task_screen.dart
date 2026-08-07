@@ -6,6 +6,7 @@ import '../../core/errors.dart';
 import '../../core/utils.dart';
 import '../../hub/categories.dart';
 import '../../hub/hub_config.dart';
+import '../../hub/hub_language.dart';
 import '../../hub/models/task_draft.dart';
 import '../../hub/outbox.dart';
 import '../../hub/task_repo.dart';
@@ -68,6 +69,8 @@ class _AddTaskScreenState extends ConsumerState<AddTaskScreen> {
       priority: _priority,
       category: category,
       author: ref.read(loginForRepoProvider(null)),
+      lang: ref.read(languageForRepoProvider(null)).valueOrNull ??
+          HubLanguage.tr,
     );
 
     try {

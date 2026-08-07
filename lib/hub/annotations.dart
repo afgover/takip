@@ -4,6 +4,7 @@ import '../core/constants.dart';
 import 'all_tasks.dart';
 import 'frontmatter.dart';
 import 'hub_config.dart';
+import 'hub_language.dart';
 import 'hub_connections.dart';
 import 'hub_sync.dart';
 import 'models/task.dart';
@@ -51,11 +52,17 @@ class Annotation {
 /// Kayıt gövdesinden kullanıcının yazdığı metni çıkarır.
 ///
 /// İki gövde biçimi var: notlarda metin başlığın hemen altındadır (§11),
-/// görevlerde `## İstek` başlığı altındadır (§4). Elle düzenlenmiş ya da
-/// tanınmayan bir gövdede null döner — kart yine açılır, yalnız not satırı
-/// görünmez.
+/// görevlerde istek başlığı altındadır (§4). Elle düzenlenmiş ya da tanınmayan
+/// bir gövdede null döner — kart yine açılır, yalnız not satırı görünmez.
+///
+/// **Bütün dillerin başlıkları tanınır** (sözleşme 1.19). Hub'ın ilan ettiği
+/// dille sınırlamak cazip ama yanlış: dil alanı eklenmeden önce yazılmış
+/// kayıtlar, elle düzenlenmiş dosyalar ve dili sonradan değiştirilmiş hub'lar
+/// var. Geniş kabulün maliyeti yok; dar kabulün maliyeti okunamayan kayıt.
 String? noteTextFrom(String body) {
-  final istek = RegExp(r'^##\s+İstek\s*$', multiLine: true).firstMatch(body);
+  final headings = HubLanguage.allRequestHeadings.join('|');
+  final istek =
+      RegExp('^##\\s+($headings)\\s\*\$', multiLine: true).firstMatch(body);
   final String region;
   if (istek != null) {
     region = body.substring(istek.end);

@@ -1,6 +1,7 @@
 import '../../core/constants.dart';
 import '../../core/utils.dart';
 import '../frontmatter.dart';
+import '../hub_language.dart';
 import 'task.dart';
 
 /// Taslağın hub'da hangi klasöre gideceği.
@@ -66,6 +67,7 @@ class TaskDraft {
     String category = 'gorev',
     List<String> tags = const [],
     String? author,
+    HubLanguage lang = HubLanguage.tr,
     DateTime? now,
   }) {
     final at = now ?? DateTime.parse(isoNow());
@@ -85,7 +87,7 @@ class TaskDraft {
       status: TaskStatus.inbox,
       path: '',
       author: author,
-      body: _body(trimmed, description.trim()),
+      body: _body(lang, trimmed, description.trim()),
     );
 
     return TaskDraft(
@@ -112,6 +114,7 @@ class TaskDraft {
     String? section,
     String? repoSlug,
     String? author,
+    HubLanguage lang = HubLanguage.tr,
     DateTime? now,
   }) {
     final at = now ?? DateTime.parse(isoNow());
@@ -142,15 +145,15 @@ class TaskDraft {
       // yere gidebilsin diye — yoksa alıntıyı bütün hub'da aramak zorunda
       // kalır.
       body: '# $title\n\n'
-          '## İstek\n'
+          '## ${lang.requestHeading}\n'
           '${trimmedNote.isEmpty ? '(not girilmedi)' : trimmedNote}\n\n'
-          '## Nerede\n'
+          '## ${lang.whereHeading}\n'
           '${repoSlug == null ? '' : '- **Repo:** `$repoSlug`\n'}'
           '- **Dosya:** `$sourcePath`\n'
           '${section == null || section.isEmpty ? '' : '- **Bölüm:** $section\n'}'
-          '\n## Alıntı\n\n'
+          '\n## ${lang.quoteHeading}\n\n'
           '> ${quote.replaceAll('\n', '\n> ')}\n\n'
-          '## Notlar\n',
+          '## ${lang.notesHeading}\n',
     );
 
     return TaskDraft(
@@ -185,6 +188,7 @@ class TaskDraft {
     String? section,
     String? repoSlug,
     String? author,
+    HubLanguage lang = HubLanguage.tr,
     DateTime? now,
   }) {
     final at = now ?? DateTime.parse(isoNow());
@@ -211,12 +215,12 @@ class TaskDraft {
       ..writeln()
       ..writeln(trimmedNote.isEmpty ? '(not girilmedi)' : trimmedNote)
       ..writeln()
-      ..writeln('## Nerede')
+      ..writeln('## ${lang.whereHeading}')
       ..writeln('${repoSlug == null ? '' : '- **Repo:** `$repoSlug`\n'}'
           '- **Dosya:** `$sourcePath`'
           '${section == null || section.isEmpty ? '' : '\n- **Bölüm:** $section'}')
       ..writeln()
-      ..writeln('## Alıntı')
+      ..writeln('## ${lang.quoteHeading}')
       ..writeln()
       ..writeln('> ${quote.replaceAll('\n', '\n> ')}');
 
@@ -399,8 +403,9 @@ class TaskDraft {
         authorLogin: authorLogin,
       );
 
-  static String _body(String title, String description) => '# $title\n\n'
-      '## İstek\n'
+  static String _body(HubLanguage lang, String title, String description) =>
+      '# $title\n\n'
+      '## ${lang.requestHeading}\n'
       '${description.isEmpty ? '(açıklama girilmedi)' : description}\n\n'
-      '## Notlar\n';
+      '## ${lang.notesHeading}\n';
 }

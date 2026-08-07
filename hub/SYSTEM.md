@@ -5,21 +5,49 @@ ve hangi şemaya uyacağını** tanımlar. Agent ve kullanıcı uygulaması bu s
 dışına çıkmaz. Sözleşme değişiklikleri `EVOLUTION.md`'ye kaydedilir ve bu dosyanın
 başındaki sürüm numarası artırılır.
 
-**Sözleşme sürümü:** 1.18
+**Sözleşme sürümü:** 1.19
 **Ana kopya (master):** `afgover/takip` → `hub/SYSTEM.md`
 (bkz. §10 — her hub kendi kopyasını buradan günceller)
 **Zaman biçimi:** her yerde ISO 8601, UTC (`2026-07-30T14:05:00Z`)
-**Dil:** doküman içerikleri Türkçe; alan adları (frontmatter anahtarları) İngilizce
+**Hub dili:** tr
+**Dil kuralı:** alan adları (frontmatter anahtarları) her zaman İngilizce; her
+şeyin dili **hub dilidir**
 **Dosya adları:** küçük harf, Türkçe karakter yok, boşluk yerine tire (`gorev-adi`)
 
-> **Arayüz dili ≠ kayıt dili (v1.18).** Uygulamanın arayüzü Türkçe ya da
-> İngilizce olabilir (kullanıcı seçer), ama hub'a **yazılan** kaydın biçimi
-> dilden bağımsızdır: gövde başlıkları (`## İstek`, `## Notlar`, `## Nerede`,
-> `## Alıntı`) sözleşmenin parçasıdır ve ayrıştırıcı onları arar. Arayüz diline
-> göre değişselerdi aynı hub'da iki farklı şema oluşur ve mevcut kayıtlar
-> okunamaz hâle gelirdi.
-> Kullanıcının **yazdığı metin** elbette kendi dilindedir; sabit olan yalnız
-> iskelet.
+> **Bir hub'ın tek dili vardır (v1.19).** Dil, hub kurulurken seçilir ve
+> `**Hub dili:**` alanında yazılır. Üç şey birden onu izler:
+>
+> 1. **Sözleşme ve protokol** — agent referansı buradan aldığı için, hub dili
+>    ne ise `SYSTEM.md` ve `AGENT_PROTOCOL.md` o dildedir.
+> 2. **Uygulama arayüzü** — aktif hub'ın diline göre çizilir.
+> 3. **Sonradan üretilen kayıtlar** — gövde başlıkları dâhil (aşağıdaki tablo).
+>
+> Dil sonradan değiştirilebilir ama **geriye dönük bir şey yapmaz**: eski
+> kayıtlar yazıldıkları dilde kalır. Bu kabul edilmiş bir durumdur, hata değil
+> — dil değiştirmek kurulum anına ait bir karardır.
+>
+> ~~v1.18: arayüz dili ile kayıt dili birbirinden bağımsızdır; gövde başlıkları
+> Türkçe sabittir.~~ Geçersiz: tutarlılığı şemayı Türkçe'ye sabitleyerek
+> sağlamak, İngilizce çalışan birine Türkçe başlıklı kayıtlar yazdırırdı ve
+> dil seçeneğinin varlık sebebiyle (yöntemin başka dilleri konuşanlara da
+> açılması) çelişirdi. Tutarlılık artık **hub başına tek dil** ile sağlanıyor.
+>
+> **Gövde başlıkları dile göre:**
+>
+> | Alan | tr | en |
+> |---|---|---|
+> | İstek | `## İstek` | `## Request` |
+> | Notlar | `## Notlar` | `## Notes` |
+> | Nerede | `## Nerede` | `## Where` |
+> | Alıntı | `## Alıntı` | `## Quote` |
+>
+> **Ayrıştırıcı hepsini tanır.** Hub'ın ilan ettiği dille sınırlanmaz: dil
+> alanı eklenmeden önce yazılmış kayıtlar, elle düzenlenmiş dosyalar ve dil
+> değiştirilmiş hub'lar var. Bir kümeyi kabul etmenin maliyeti yok, dar
+> kabulün maliyeti okunamayan kayıt.
+>
+> `**Hub dili:**` yazılmamışsa **`tr`** varsayılır — bu, alan eklenmeden
+> önceki bütün hub'ların gerçek durumu.
 
 
 > **Hub kökü (v1.3, K-020):** Bu sözleşmedeki tüm yollar hub köküne görelidir

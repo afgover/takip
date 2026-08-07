@@ -613,4 +613,11 @@ class LTr extends L {
 
   @override
   String get tokenRequiredShort => 'Token gerekli.';
+
+  @override
+  String get languageFromHub =>
+      'Hub dili — `SYSTEM.md` içinde yazılı. Arayüz, sözleşme ve yeni kayıtlar bunu izler; değiştirmek agent\'ın işidir.';
+
+  @override
+  String get languageUnknown => 'Bağlantı yok — sistem dili kullanılıyor';
 }

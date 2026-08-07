@@ -405,6 +405,21 @@ başlığına ✅ ve tarih yazılır.
       Gövde başlıkları (`## İstek`, `## Notlar`) sözleşmeyle sabit ve
       `noteTextFrom()` onları regex ile arıyor; dile göre değişselerdi mevcut
       bütün kayıtlar ayrıştırılamaz olurdu
+- [x] B-117 · (agent+user) Dil, cihazın tercihi değil **hub'ın özelliği** —
+      ✅ 2026-08-08; sözleşme 1.19, **1.18'i tersine çevirdi**. 1.18 "arayüz
+      dili ≠ kayıt dili, gövde başlıkları Türkçe sabit" diyordu; gerekçesi aynı
+      hub'da iki şema oluşmasını önlemekti. Kullanıcının modeli aynı sorunu
+      daha iyi çözüyor: bir hub'ın **tek dili** var, kurulumda seçiliyor ve
+      sözleşme + arayüz + yeni kayıtlar birlikte onu izliyor. Eski kural
+      İngilizce çalışan birine Türkçe başlıklı kayıt yazdırırdı — dil
+      seçeneğinin varlık sebebiyle çelişiyordu.
+      Uygulanan: `**Hub dili:**` alanı, `HubLanguage` (başlık tablosu),
+      `activeHubLanguageProvider` (arayüz aktif hub'ı izliyor),
+      `languageForRepoProvider` (yazma hedefine göre — L-019'un aynı gerekçesi).
+      Ayrıştırıcı **bütün dillerin** başlıklarını tanıyor: dar kabulün maliyeti
+      okunamayan kayıt. Ayarlardaki dil seçici **bilgi**ye dönüştü (uygulama
+      `SYSTEM.md`'ye yazamaz, R-001) ve ölü kalan cihaz ayarı silindi.
+      445 test. → K-037
 - [ ] B-115 · (agent) İngilizce dil seçeneği — 23 ekranın metinleri.
       Kalan iş **ölçülü**: `l10n_coverage_test.dart` hem taşınmış dosyalarda
       Türkçe metin kalmamasını hem bekleyen listesinin gerçekle uyuşmasını

@@ -394,5 +394,7 @@
     }
   },
   "token": "Token",
-  "tokenRequiredShort": "Token gerekli."
+  "tokenRequiredShort": "Token gerekli.",
+  "languageFromHub": "Hub dili — `SYSTEM.md` içinde yazılı. Arayüz, sözleşme ve yeni kayıtlar bunu izler; değiştirmek agent'ın işidir.",
+  "languageUnknown": "Bağlantı yok — sistem dili kullanılıyor"
 }

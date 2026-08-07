@@ -618,4 +618,11 @@ class LEn extends L {
 
   @override
   String get tokenRequiredShort => 'Token required.';
+
+  @override
+  String get languageFromHub =>
+      'Hub language — declared in `SYSTEM.md`. The interface, the contract and new records follow it; changing it is the agent’s job.';
+
+  @override
+  String get languageUnknown => 'No connection — using the system language';
 }

@@ -9,6 +9,7 @@ import '../../core/utils.dart';
 import '../../hub/all_tasks.dart';
 import '../../hub/annotations.dart';
 import '../../hub/hub_config.dart';
+import '../../hub/hub_language.dart';
 import '../../hub/models/task.dart';
 import '../../hub/models/task_draft.dart';
 import '../../hub/outbox.dart';
@@ -285,6 +286,8 @@ void createSelectionRecord({
     section: section,
     repoSlug: repoSlug,
     author: container.read(loginForRepoProvider(repoSlug)),
+    lang: container.read(languageForRepoProvider(repoSlug)).valueOrNull ??
+        HubLanguage.tr,
   );
   // Yol baştan biliniyor: kullanıcı işareti hemen silmek isterse hangi dosyayı
   // kaldıracağımızı senkronu beklemeden bilmeliyiz.
@@ -355,6 +358,8 @@ void createNote({
     repoSlug: repoSlug,
     // Kimlik, yazılacak reponun bağlantısından gelir (L-019'un aynı gerekçesi).
     author: container.read(loginForRepoProvider(repoSlug)),
+    lang: container.read(languageForRepoProvider(repoSlug)).valueOrNull ??
+        HubLanguage.tr,
   );
   final annotation = Annotation(
     quote: normalized,
