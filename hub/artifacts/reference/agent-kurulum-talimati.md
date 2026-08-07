@@ -16,6 +16,10 @@ bunu olduğu gibi yapıştırır; agent gerisini buradan yapar.
 Kanonik sürüm bu dosyadır (`afgover/takip` reposunda). Masaüstündeki kopya
 kolaylık içindir ve zamanla bayatlar; şüphede kalınırsa bu dosya esas alınır.
 
+**English:** [`setup-instruction.en.md`](setup-instruction.en.md) — aynı
+talimatın İngilizcesi. İkisi çelişirse **bu dosya** geçerlidir: iki bağlayıcı
+kopya sessizce ayrışır (sözleşme §10, L-022).
+
 **Bu belge sözleşme sürümü 1.19'a göre yazıldı.** Sözleşmenin kendisi daha
 yeniyse o kazanır — bkz. §1.
 

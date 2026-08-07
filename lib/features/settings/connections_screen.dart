@@ -113,6 +113,10 @@ class ConnectionsScreen extends ConsumerWidget {
     required bool isLast,
   }) async {
     final messenger = ScaffoldMessenger.of(context);
+    // Metin diyalog **açılmadan önce** hazırlanıyor: `showDialog`'dan sonra
+    // `context` bir asenkron boşluğun ötesinde kalıyor ve ekran o arada
+    // kapanmış olabilir (L-029'un aynı kalıbı).
+    final removedText = L.of(context).repoRemoved(connection.displayName);
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (dialogContext) => AlertDialog(
@@ -139,11 +143,8 @@ class ConnectionsScreen extends ConsumerWidget {
     );
 
     if (confirmed ?? false) {
-      final label = L.of(context).repoRemoved(connection.displayName);
       await ref.read(hubConnectionsProvider.notifier).remove(connection.slug);
-      messenger.showSnackBar(
-        SnackBar(content: Text(label)),
-      );
+      messenger.showSnackBar(SnackBar(content: Text(removedText)));
     }
   }
 }

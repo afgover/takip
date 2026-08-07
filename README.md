@@ -1,5 +1,7 @@
 # takip
 
+***Türkçe** · [English](README.en.md)*
+
 Projelerini bir AI agent ile yürütürken **ne konuşulduğunun, ne kararlaştırıldığının
 ve ne yapıldığının** kaybolmadığı bir çalışma biçimi. İki parçadan oluşur:
 
@@ -51,7 +53,8 @@ aynı yerdedir.
 | `lib/` | Uygulama kodu |
 | `hub/SYSTEM.md` | Format sözleşmesi — **ana kopya**, diğer projeler buradan günceller |
 | `hub/AGENT_PROTOCOL.md` | Agent'ın kayıt prosedürü |
-| `hub/artifacts/reference/agent-kurulum-talimati.md` | Yeni bir projeye kurulum talimatı |
+| `hub/artifacts/reference/agent-kurulum-talimati.md` | Yeni bir projeye kurulum talimatı (TR — **ana kopya**) |
+| `hub/artifacts/reference/setup-instruction.en.md` | Aynı talimatın İngilizcesi |
 | `hub/` (gerisi) | Bu projenin kendi hafızası: oturumlar, görevler, backlog, dersler |
 | `tool/install.sh` | Cihaza yerinde kurulum (veriyi silmez) |
 
@@ -92,7 +95,10 @@ token'ı siliyordu.
 
 Sürüm 0.1.0. Günlük kullanımda ama **tek kullanıcılık varsayımlarla** yazıldı:
 
-- **Android**, tek dil (Türkçe). iOS hiç denenmedi.
+- **Android**; iOS hiç denenmedi.
+- Arayüz Türkçe ve İngilizce. Dil **hub'ın özelliğidir**, kurulumda seçilir
+  (`SYSTEM.md` → `Hub dili`); sözleşme, arayüz ve yeni kayıtlar onu izler.
+  Sözleşmenin kendisi şimdilik yalnız Türkçe — İngilizce varyantı `B-116`.
 - Kimlik doğrulama **kişisel erişim token'ı** ile. Token yalnız cihazın güvenli
   deposunda durur, hiçbir dosyaya/commit'e/log'a yazılmaz. Uygulama klasik
   (`ghp_`) bir token verildiğinde uyarır ama **fine-grained bir token'ın "All

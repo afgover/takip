@@ -426,14 +426,25 @@ başlığına ✅ ve tarih yazılır.
       şart koşuyor, yani "bitti sandım" oluşamaz. Ayrıca iki ARB'nin aynı
       anahtarları taşıması test ediliyor — eksik anahtar sessizdir, gen_l10n
       onu şablondan doldurur ve İngilizce seçen kullanıcı Türkçe görür
-- [ ] B-118 · (agent) Dil seçiminin **girişi** — kısır döngü kırılacak.
-      Kurulum talimatına §0 eklendi (agent önce dili sorar, `**Hub dili:**`
-      yazar, hub'ı o dilde kurar) ve protokole madde 0 (agent hub dilini okuyup
-      o dilde yazar). Kalan asıl sorun: bu talimatın kendisi Türkçe, yani
-      **İngilizce kurulumun nasıl yapılacağını anlatan belge İngilizce değil.**
-      İngilizce konuşan biri başlayamıyor. Giriş noktası (README + kurulum
-      talimatı) iki dilli olmadan dil seçeneği ulaşılamaz kalıyor — B-116'nın
-      ilk parçası bu
+- [x] B-118 · (agent) Dil seçiminin **girişi** — kısır döngü kırıldı —
+      ✅ 2026-08-08. Mekanizma dili okuyordu ama yazan yol yoktu ve talimatın
+      kendisi Türkçe'ydi: İngilizce konuşan biri ne dili seçebiliyor ne de
+      nasıl seçeceğini okuyabiliyordu.
+      Yapılanlar: kurulum talimatına **§0 dili sor** (agent önce sorar, onay
+      bekler, `**Hub dili:**` yazar, hub'ı o dilde kurar), protokole **madde 0**
+      (agent hub dilini okur ve o dilde yazar; hub dili ile kullanıcının yazdığı
+      dil farklıysa **sorar**), ve iki giriş belgesinin İngilizcesi:
+      `README.en.md` + `setup-instruction.en.md`. İkisi de Türkçe ana kopyaya
+      link veriyor ve türedikleri sürümü yazıyor — iki **bağlayıcı** kopya
+      sessizce ayrışır (L-022), o yüzden hangisinin geçerli olduğu belgenin
+      içinde yazılı.
+      İngilizce talimat, sözleşmenin henüz yalnız Türkçe olduğunu **açıkça
+      söylüyor**: "sen Türkçe sözleşmeyi okuyup uygularsın, yazdığın her şey
+      İngilizce olur — bunu kullanıcıya söyle". Eksiği gizlemek, İngilizce bir
+      hub'ı tam sanmaya yol açardı.
+      `entry_docs_test.dart` girişin sessizce kaybolmasını engelliyor: dosyalar
+      var mı, birbirine link veriyorlar mı, türetilmiş olan kaynağını yazıyor mu.
+      448 test
 - [ ] B-116 · (agent) Yöntem belgelerinin İngilizce sürümü (README, SYSTEM.md,
       AGENT_PROTOCOL, kurulum talimatı ~1330 satır). Türkçe **ana kopya**
       kalır, İngilizce türetilmiş ve bağlayıcı olmayan sürüm olarak işaretlenir

@@ -62,7 +62,7 @@ class Annotation {
 String? noteTextFrom(String body) {
   final headings = HubLanguage.allRequestHeadings.join('|');
   final istek =
-      RegExp('^##\\s+($headings)\\s\*\$', multiLine: true).firstMatch(body);
+      RegExp('^##\\s+($headings)\\s*\$', multiLine: true).firstMatch(body);
   final String region;
   if (istek != null) {
     region = body.substring(istek.end);
