@@ -20,7 +20,7 @@ void main() {
     'lib/app.dart',
   ];
 
-  /// Henüz taşınmamış ekranlar (B-111). Her taşımada buradan bir satır silinir.
+  /// Henüz taşınmamış ekranlar (B-115). Her taşımada buradan bir satır silinir.
   const pending = <String>[
     'lib/features/add_task/add_task_screen.dart',
     'lib/features/browse/activity_screen.dart',

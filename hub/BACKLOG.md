@@ -394,7 +394,7 @@ başlığına ✅ ve tarih yazılır.
       ve `SECURITY.md` bilinçli olarak **ayrı kimlik alanı taşımıyor** —
       `Kaynak:` oturuma işaret ediyor, kimlik oradan çözülüyor; aynı bilgiyi
       iki yerde tutmak ayrışmaya davetiye. 430 test → L-041
-- [x] B-111 · (agent) İngilizce dil seçeneği — altyapı ve dil seçici —
+- [x] B-114 · (agent) İngilizce dil seçeneği — altyapı ve dil seçici —
       ✅ 2026-08-06; sözleşme 1.18. `flutter_localizations` + ARB (`app_tr`,
       `app_en`), `l10n.yaml`, Ayarlar'da **Sistem / Türkçe / English** seçici
       (varsayılan sistem dili, seçim diske yazılıyor). Delege listesi tek
@@ -405,13 +405,13 @@ başlığına ✅ ve tarih yazılır.
       Gövde başlıkları (`## İstek`, `## Notlar`) sözleşmeyle sabit ve
       `noteTextFrom()` onları regex ile arıyor; dile göre değişselerdi mevcut
       bütün kayıtlar ayrıştırılamaz olurdu
-- [ ] B-112 · (agent) İngilizce dil seçeneği — 23 ekranın metinleri.
+- [ ] B-115 · (agent) İngilizce dil seçeneği — 23 ekranın metinleri.
       Kalan iş **ölçülü**: `l10n_coverage_test.dart` hem taşınmış dosyalarda
       Türkçe metin kalmamasını hem bekleyen listesinin gerçekle uyuşmasını
       şart koşuyor, yani "bitti sandım" oluşamaz. Ayrıca iki ARB'nin aynı
       anahtarları taşıması test ediliyor — eksik anahtar sessizdir, gen_l10n
       onu şablondan doldurur ve İngilizce seçen kullanıcı Türkçe görür
-- [ ] B-113 · (agent) Yöntem belgelerinin İngilizce sürümü (README, SYSTEM.md,
+- [ ] B-116 · (agent) Yöntem belgelerinin İngilizce sürümü (README, SYSTEM.md,
       AGENT_PROTOCOL, kurulum talimatı ~1330 satır). Türkçe **ana kopya**
       kalır, İngilizce türetilmiş ve bağlayıcı olmayan sürüm olarak işaretlenir
       — iki bağlayıcı kopya, L-022'deki ayrışmanın davetiyesidir.

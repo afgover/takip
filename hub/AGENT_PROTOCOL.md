@@ -42,6 +42,11 @@ tanımlanır. Prosedür, oturumun konusu ne olursa olsun geçerlidir.
 > saymaz ve hata veren hiçbir şey olmaz. Pencereyi daraltmak bu yüzden
 > prosedürün işi. Çakışma yine de olursa hub'ı okuyan test yakalar; düzeltmesi
 > birini yeniden numaralandırmaktır.
+>
+> Numarayı **dosyadaki en büyükten** türet, hafızandan değil. Eşzamanlılık
+> olmadan da çakışma çıkabilir: uzun bir oturumda "en son kaç vermiştim"
+> sorusunun cevabı yalnız dosyada durur (2026-08-06'da tam bu şekilde
+> B-111 iki kez verildi).
 
 4. **Her kullanıcı mesajını ve her cevabını** `session.md`'ye anında ekle —
    oturum sonuna biriktirme. Kullanıcı mesajları kısaltılmadan; agent cevapları

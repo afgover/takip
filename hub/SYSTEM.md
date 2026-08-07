@@ -10,6 +10,7 @@ başındaki sürüm numarası artırılır.
 (bkz. §10 — her hub kendi kopyasını buradan günceller)
 **Zaman biçimi:** her yerde ISO 8601, UTC (`2026-07-30T14:05:00Z`)
 **Dil:** doküman içerikleri Türkçe; alan adları (frontmatter anahtarları) İngilizce
+**Dosya adları:** küçük harf, Türkçe karakter yok, boşluk yerine tire (`gorev-adi`)
 
 > **Arayüz dili ≠ kayıt dili (v1.18).** Uygulamanın arayüzü Türkçe ya da
 > İngilizce olabilir (kullanıcı seçer), ama hub'a **yazılan** kaydın biçimi
@@ -19,7 +20,7 @@ başındaki sürüm numarası artırılır.
 > okunamaz hâle gelirdi.
 > Kullanıcının **yazdığı metin** elbette kendi dilindedir; sabit olan yalnız
 > iskelet.
-**Dosya adları:** küçük harf, Türkçe karakter yok, boşluk yerine tire (`gorev-adi`)
+
 
 > **Hub kökü (v1.3, K-020):** Bu sözleşmedeki tüm yollar hub köküne görelidir
 > ve hub kökü **her zaman** reponun içindeki **`hub/`** klasörüdür — istisnasız.
