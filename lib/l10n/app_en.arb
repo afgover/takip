@@ -1,14 +1,10 @@
 {
   "@@locale": "en",
-  "appTitle": "Takip",
-  "langSystem": "System language",
   "langTurkish": "Türkçe",
   "langEnglish": "English",
   "settingsLanguage": "Language",
-  "settingsLanguageHelp": "Interface language. The language of tasks and notes written to the hub does not change — their format is fixed by the contract.",
   "navPending": "Pending",
   "navBrowse": "Browser",
-  "navAdd": "Add task",
   "navSettings": "Settings",
   "navAddShort": "Add",
   "browseTitle": "Hub browser",
@@ -116,33 +112,13 @@
   "syncDocsDownloaded": "{count} documents downloaded",
   "intervalSeconds": "{n} seconds",
   "intervalMinutes": "{n} minutes",
-  "connectionSettings": "Connection settings",
-  "errNoConnectionTitle": "No connection",
-  "errNoConnectionBody": "Could not reach the internet. Tasks you add wait in the queue and are sent automatically once you are back online.",
-  "errAuthBody": "You can renew the token in Settings; permissions must be Contents: Read and write and Metadata: Read.",
-  "errRateTitle": "Rate limit reached",
-  "errRateBody": "The GitHub rate limit is reached; it clears itself after a while.",
+  "errAuthBody": "{message}\nYou can renew the token in Settings; permissions must be Contents: Read and write and Metadata: Read.",
+  "errRateTitle": "Request limit reached",
+  "errRateBody": "GitHub's request limit is used up; it clears on its own after a while.",
   "errNotFoundTitle": "Not found",
   "errGenericTitle": "Something went wrong",
-  "addTaskTitle": "Add task",
-  "fieldTitle": "Title",
-  "titleRequired": "Title required",
-  "titleNeedsLetter": "The title must contain a letter or a digit",
-  "fieldDescription": "Description",
-  "fieldPriority": "Priority",
-  "newCategoryName": "New category name",
-  "categoryRequired": "Category name required",
-  "sendToInbox": "Send to inbox",
-  "taskQueuedOffline": "No network — the task is queued and will be sent once you are back online.",
-  "securityEmptyTitle": "No security records",
-  "securityEmptySubtitle": "The agent writes scans, measures and findings here (contract §12).",
-  "securityOpenCount": "{count} open records",
-  "securityFilterEmptyTitle": "No records of this kind",
-  "securityFilterEmptySubtitle": "Remove the filter to see them all.",
   "all": "All",
-  "securityOpen": "open",
   "secKindMeasure": "Measure",
-  "secKindOpen": "Open",
   "secKindTodo": "To do",
   "secKindScan": "Scan",
   "kind": "Kind",
@@ -176,5 +152,215 @@
   "token": "Token",
   "tokenRequiredShort": "Token required.",
   "languageFromHub": "Hub language — declared in `SYSTEM.md`. The interface, the contract and new records follow it; changing it is the agent’s job.",
-  "languageUnknown": "No connection — using the system language"
+  "errSettingsButton": "Connection settings",
+  "errRetry": "Try again",
+  "errNetworkTitle": "No connection",
+  "errNetworkBody": "Could not reach the internet. Tasks you add wait in the queue and are sent on their own once you are back online.",
+  "errAuthTitle": "Token was rejected",
+  "@errAuthBody": {
+    "placeholders": {
+      "message": {
+        "type": "String"
+      }
+    }
+  },
+  "errRateBodyIn": "GitHub's request limit is used up. Retrying in {left}.",
+  "@errRateBodyIn": {
+    "placeholders": {
+      "left": {
+        "type": "String"
+      }
+    }
+  },
+  "errUnexpectedTitle": "Unexpected error",
+  "errLeftSoon": "a moment",
+  "errLeftMinutes": "{count} minutes",
+  "@errLeftMinutes": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "errLeftHours": "{count} hours",
+  "@errLeftHours": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "addTitle": "Add Task",
+  "addFieldTitle": "Title",
+  "addTitleRequired": "Title is required",
+  "addTitleNeedsAlnum": "Title must contain a letter or a digit",
+  "addFieldDescription": "Description",
+  "addFieldPriority": "Priority",
+  "addFieldCategory": "Category",
+  "addNewCategory": "New category…",
+  "addNewCategoryName": "New category name",
+  "addCategoryRequired": "Category name is required",
+  "addSubmit": "Send to Hub",
+  "addSent": "Task sent to the hub.",
+  "addQueued": "No connection — the task is queued and will be sent once you are back online.",
+  "addUnexpected": "Unexpected error: {error}",
+  "@addUnexpected": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "backupTitle": "Backup",
+  "backupExportHeading": "Export",
+  "backupExportIntro": "Your {count} saved connections are turned into a single piece of text. Because that text carries your tokens, it is encrypted with a passphrase you choose — without it the text is useless.",
+  "@backupExportIntro": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "backupPassLabel": "Backup passphrase",
+  "backupPassHelp": "If you forget this, the backup is useless.",
+  "backupExportButton": "Create backup",
+  "backupCopyButton": "Copy to clipboard",
+  "backupCopied": "Copied. Paste it into your password manager.",
+  "backupCopyWarning": "Save this in your password manager. Do not leave it on the clipboard — apps that keep clipboard history can read it.",
+  "backupRestoreHeading": "Restore",
+  "backupRestoreIntro": "Repositories in the backup are added to your list. If one is already saved, its token is refreshed; your existing connections are not removed.",
+  "backupTextLabel": "Backup text",
+  "backupRestoreButton": "Restore",
+  "backupPassTooShort": "The passphrase must be at least 6 characters.",
+  "backupNothingToExport": "There are no connections to back up.",
+  "backupExported": "{count} connections backed up.",
+  "@backupExported": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "backupExportFailed": "Could not create the backup: {error}",
+  "@backupExportFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "backupPasteFirst": "Paste the backup text.",
+  "backupRestored": "{count} connections restored.",
+  "@backupRestored": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "backupImportFailed": "Could not restore: {error}",
+  "@backupImportFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "detailNotHandledYet": "agent has not picked this up yet",
+  "detailAnswerSent": "Answer sent.",
+  "detailReported": "The agent has been told.",
+  "detailQueued": "No connection — queued.",
+  "detailUnexpected": "Unexpected error: {error}",
+  "@detailUnexpected": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "waitingForOtherQuestion": "This question is waiting on {who}. You can answer it too.",
+  "@waitingForOtherQuestion": {
+    "placeholders": {
+      "who": {
+        "type": "String"
+      }
+    }
+  },
+  "waitingForOther": "This work is waiting on {who}.",
+  "@waitingForOther": {
+    "placeholders": {
+      "who": {
+        "type": "String"
+      }
+    }
+  },
+  "waitingQuestion": "The agent is waiting for an answer. Mark your choice; you can add a note if you like.",
+  "waitingWork": "This work is waiting on you. What is expected is written in the notes below; tell the agent once it is done.",
+  "detailMultiHint": "You can pick more than one.",
+  "detailNoteLabel": "Note (optional)",
+  "detailNoteHint": "Write here if none of the options fit",
+  "detailAnswered": "Answered",
+  "detailSendAnswer": "Send answer",
+  "detailReportedShort": "Told",
+  "detailDidIt": "Done",
+  "secEmptyTitle": "No security records",
+  "secEmptySubtitle": "The agent writes scans, measures and findings here (contract §12).",
+  "secOpenCount": "{count} open records",
+  "@secOpenCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "secFilterEmptyTitle": "No records of this kind",
+  "secFilterEmptySubtitle": "Clear the filter to see everything.",
+  "secFilterAll": "All",
+  "secOpenBadge": "open",
+  "secKindHole": "Hole",
+  "kindTask": "Task",
+  "kindComment": "Comment",
+  "kindFix": "Fix",
+  "kindDiscussion": "Discussion",
+  "selTitle": "Record from selection",
+  "selMark": "Mark",
+  "selNote": "Note",
+  "selNoteHelp": "Leave it empty and it stays a mark or note — it does not enter the work queue",
+  "selHintFix": "What is wrong, and what should it say?",
+  "selHintDiscussion": "What is the problem, what do you want to discuss?",
+  "selHintComment": "What should be kept as a note?",
+  "selHintTask": "What should be done?",
+  "selPriority": "Priority",
+  "selAddAsMark": "Add as a mark",
+  "selCreateKind": "Create {kind}",
+  "@selCreateKind": {
+    "placeholders": {
+      "kind": {
+        "type": "String"
+      }
+    }
+  },
+  "selQueuedRecord": "No connection — the record is queued.",
+  "selQueuedNote": "No connection — the note is queued.",
+  "selUnexpected": "Unexpected error: {error}",
+  "@selUnexpected": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "noteBoxTitle": "Add a note",
+  "noteBoxHint": "A note to yourself — the agent gets no work",
+  "noteBoxCancel": "Cancel",
+  "noteBoxAdd": "Add",
+  "annDeleteNote": "Delete note",
+  "annDeleteMark": "Delete mark",
+  "annNoteDeleted": "Note deleted.",
+  "annMarkDeleted": "Mark deleted.",
+  "annAlreadyHandled": "The agent has picked this up; the mark stays in the hub.",
+  "selMarkYellow": "Yellow",
+  "selMarkRed": "Red",
+  "selMarkGreen": "Green",
+  "selMarkBlue": "Blue"
 }

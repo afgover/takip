@@ -5,9 +5,11 @@ import 'package:takip/features/common/hub_markdown.dart';
 import 'package:takip/hub/annotations.dart';
 import 'package:takip/hub/models/task.dart';
 
-Widget wrap(Widget child, {ThemeData? theme}) => MaterialApp(
+import '../helpers/test_app.dart';
+
+Widget wrap(Widget child, {ThemeData? theme}) => testApp(
+      Scaffold(body: SingleChildScrollView(child: child)),
       theme: theme,
-      home: Scaffold(body: SingleChildScrollView(child: child)),
     );
 
 void main() {

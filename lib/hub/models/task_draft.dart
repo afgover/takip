@@ -146,11 +146,11 @@ class TaskDraft {
       // kalır.
       body: '# $title\n\n'
           '## ${lang.requestHeading}\n'
-          '${trimmedNote.isEmpty ? '(not girilmedi)' : trimmedNote}\n\n'
+          '${trimmedNote.isEmpty ? lang.noNoteGiven : trimmedNote}\n\n'
           '## ${lang.whereHeading}\n'
           '${repoSlug == null ? '' : '- **Repo:** `$repoSlug`\n'}'
-          '- **Dosya:** `$sourcePath`\n'
-          '${section == null || section.isEmpty ? '' : '- **Bölüm:** $section\n'}'
+          '- **${lang.fileField}:** `$sourcePath`\n'
+          '${section == null || section.isEmpty ? '' : '- **${lang.sectionField}:** $section\n'}'
           '\n## ${lang.quoteHeading}\n\n'
           '> ${quote.replaceAll('\n', '\n> ')}\n\n'
           '## ${lang.notesHeading}\n',
@@ -213,12 +213,12 @@ class TaskDraft {
     final body = StringBuffer()
       ..writeln('# $title')
       ..writeln()
-      ..writeln(trimmedNote.isEmpty ? '(not girilmedi)' : trimmedNote)
+      ..writeln(trimmedNote.isEmpty ? lang.noNoteGiven : trimmedNote)
       ..writeln()
       ..writeln('## ${lang.whereHeading}')
       ..writeln('${repoSlug == null ? '' : '- **Repo:** `$repoSlug`\n'}'
-          '- **Dosya:** `$sourcePath`'
-          '${section == null || section.isEmpty ? '' : '\n- **Bölüm:** $section'}')
+          '- **${lang.fileField}:** `$sourcePath`'
+          '${section == null || section.isEmpty ? '' : '\n- **${lang.sectionField}:** $section'}')
       ..writeln()
       ..writeln('## ${lang.quoteHeading}')
       ..writeln()
@@ -240,10 +240,15 @@ class TaskDraft {
   ///
   /// Ayrı bir görev olarak gider çünkü app asıl dosyayı taşıyamaz (R-001).
   /// Agent bunu görünce asıl görevi `waiting/`ten çıkarır ve bildirimi kapatır.
-  factory TaskDraft.waitingDone(HubTask task, {String? author, DateTime? now}) {
+  factory TaskDraft.waitingDone(
+    HubTask task, {
+    HubLanguage lang = HubLanguage.tr,
+    String? author,
+    DateTime? now,
+  }) {
     final at = now ?? DateTime.parse(isoNow());
     final label = task.title.trim().isEmpty ? task.id : task.title.trim();
-    final title = '$label — yapıldı';
+    final title = lang.waitingDoneTitle(label);
 
     final draft = HubTask(
       id: 'pending',
@@ -260,10 +265,10 @@ class TaskDraft {
       path: '',
       author: author,
       body: '# $title\n\n'
-          '## İstek\n'
-          '`${task.path}`${task.isPending ? '' : ' (${task.id})'} görevinde '
-          'beklenen iş yapıldı. Asıl görevi `waiting/`ten çıkarabilirsin.\n\n'
-          '## Notlar\n',
+          '## ${lang.requestHeading}\n'
+          '${lang.waitingDoneBody(task.path)}'
+          '${task.isPending ? '' : ' (${task.id})'}\n\n'
+          '## ${lang.notesHeading}\n',
     );
 
     return TaskDraft(
@@ -286,12 +291,13 @@ class TaskDraft {
     HubTask task, {
     required List<String> selected,
     String note = '',
+    HubLanguage lang = HubLanguage.tr,
     String? author,
     DateTime? now,
   }) {
     final at = now ?? DateTime.parse(isoNow());
     final label = task.title.trim().isEmpty ? task.id : task.title.trim();
-    final title = '$label — cevaplandı';
+    final title = lang.waitingAnsweredTitle(label);
     final trimmedNote = note.trim();
 
     final draft = HubTask(
@@ -309,12 +315,13 @@ class TaskDraft {
       path: '',
       author: author,
       body: '# $title\n\n'
-          '## İstek\n'
-          '`${task.path}`${task.isPending ? '' : ' (${task.id})'} '
-          'görevindeki soru cevaplandı.\n\n'
-          '- **Seçim:** ${selected.isEmpty ? '(seçim yapılmadı)' : selected.join(' · ')}\n'
-          '${trimmedNote.isEmpty ? '' : '- **Açıklama:** $trimmedNote\n'}'
-          '\n## Notlar\n',
+          '## ${lang.requestHeading}\n'
+          '${lang.waitingAnsweredBody(task.path)}'
+          '${task.isPending ? '' : ' (${task.id})'}\n\n'
+          '- **${lang.choiceField}:** '
+          '${selected.isEmpty ? lang.noChoiceMade : selected.join(' · ')}\n'
+          '${trimmedNote.isEmpty ? '' : '- **${lang.explanationField}:** $trimmedNote\n'}'
+          '\n## ${lang.notesHeading}\n',
     );
 
     return TaskDraft(
@@ -406,6 +413,6 @@ class TaskDraft {
   static String _body(HubLanguage lang, String title, String description) =>
       '# $title\n\n'
       '## ${lang.requestHeading}\n'
-      '${description.isEmpty ? '(açıklama girilmedi)' : description}\n\n'
+      '${description.isEmpty ? lang.noDescriptionGiven : description}\n\n'
       '## ${lang.notesHeading}\n';
 }

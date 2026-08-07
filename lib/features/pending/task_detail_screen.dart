@@ -3,10 +3,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/errors.dart';
 import '../../hub/hub_config.dart';
+import '../../hub/hub_language.dart';
 import '../../hub/models/task.dart';
 import '../../hub/models/task_draft.dart';
 import '../../hub/outbox.dart';
 import '../../hub/task_repo.dart';
+import '../../l10n/app_localizations.dart';
 import '../common/annotated_document.dart';
 import '../common/hub_error_view.dart';
 import 'pending_screen.dart' show TaskStatusChip;
@@ -68,9 +70,9 @@ class _TaskBody extends StatelessWidget {
             if (!task.isPending)
               _MetaChip(icon: Icons.tag, text: task.id)
             else
-              const _MetaChip(
+              _MetaChip(
                 icon: Icons.schedule,
-                text: 'agent henüz ele almadı',
+                text: L.of(context).detailNotHandledYet,
               ),
             // Kimlik (sözleşme 1.15): `tasks/` ortak alan, "bunu kim açtı"
             // görünmeden takımda cevaplanamaz. Yoksa hiç gösterilmiyor —
@@ -172,6 +174,7 @@ class _WaitingBannerState extends ConsumerState<_WaitingBanner> {
 
   /// Seçenekli soruya cevap (sözleşme 1.12).
   Future<void> _answer() async {
+    final l = L.of(context);
     if (_busy || _selected.isEmpty) return;
     // Seçim sırası listedeki sırayı izlesin; küme sırası dokunma sırasıdır ve
     // agent'ın okuduğu kayıtta rastgele görünürdü.
@@ -182,24 +185,35 @@ class _WaitingBannerState extends ConsumerState<_WaitingBanner> {
         widget.task,
         selected: ordered,
         note: _noteCtrl.text,
+        lang: _writeLanguage,
         author: ref.read(loginForRepoProvider(widget.summary.repoSlug)),
       ),
-      'Cevap gönderildi.',
+      l.detailAnswerSent,
     );
   }
 
   Future<void> _report() async {
+    final l = L.of(context);
     if (_busy) return;
     await _send(
       TaskDraft.waitingDone(
         widget.task,
+        lang: _writeLanguage,
         author: ref.read(loginForRepoProvider(widget.summary.repoSlug)),
       ),
-      'Agent\'a bildirildi.',
+      l.detailReported,
     );
   }
 
+  /// Bildirimin yazılacağı dil, **hedef reponun** dili — arayüzünki değil.
+  /// Kimlikle aynı gerekçe (L-019): bekleyen soru başka repoda olabilir ve o
+  /// repo başka dilde kurulmuş olabilir.
+  HubLanguage get _writeLanguage =>
+      ref.read(languageForRepoProvider(widget.summary.repoSlug)).valueOrNull ??
+      HubLanguage.tr;
+
   Future<void> _send(TaskDraft base, String successMessage) async {
+    final l = L.of(context);
     setState(() {
       _busy = true;
       _error = null;
@@ -215,11 +229,11 @@ class _WaitingBannerState extends ConsumerState<_WaitingBanner> {
     } on HubNetworkError {
       // Ağ yokken bildirim kaybolmasın: normal görevlerle aynı kuyruk (B-032).
       await ref.read(outboxProvider.notifier).add(draft);
-      _finish('Ağ yok — kuyruğa alındı.');
+      _finish(l.detailQueued);
     } on HubError catch (e) {
       if (mounted) setState(() => _error = e.message);
     } catch (e) {
-      if (mounted) setState(() => _error = 'Beklenmeyen hata: $e');
+      if (mounted) setState(() => _error = l.detailUnexpected('$e'));
     } finally {
       if (mounted) setState(() => _busy = false);
     }
@@ -239,6 +253,7 @@ class _WaitingBannerState extends ConsumerState<_WaitingBanner> {
   /// üstlenir. Düğmeler yine de kapatılmıyor: başkası adına cevaplamak meşru
   /// bir takım hareketi ve engellemek, bilgiyi elinde tutan kişiyi durdururdu.
   String _bannerText() {
+    final l = L.of(context);
     final mine = widget.task.waitsFor(
       ref.read(loginForRepoProvider(widget.summary.repoSlug)),
     );
@@ -246,14 +261,10 @@ class _WaitingBannerState extends ConsumerState<_WaitingBanner> {
 
     if (!mine && who != null) {
       return widget.task.isQuestion
-          ? 'Bu soru $who kullanıcısını bekliyor. Cevabı sen de gönderebilirsin.'
-          : 'Bu iş $who kullanıcısını bekliyor.';
+          ? l.waitingForOtherQuestion(who)
+          : l.waitingForOther(who);
     }
-    return widget.task.isQuestion
-        ? 'Agent bir cevap bekliyor. Seçimini işaretle; istersen açıklama da '
-            'yazabilirsin.'
-        : 'Bu iş seni bekliyor. Ne beklendiği aşağıdaki notlarda yazılı; '
-            'yaptıktan sonra agent\'a haber ver.';
+    return widget.task.isQuestion ? l.waitingQuestion : l.waitingWork;
   }
 
   /// Seçenek listesi + isteğe bağlı açıklama + gönder (sözleşme 1.12).
@@ -263,6 +274,7 @@ class _WaitingBannerState extends ConsumerState<_WaitingBanner> {
   /// ikinci cevap göndermek, agent'ın kuyruğunda hangisinin geçerli olduğu
   /// belirsiz iki kayıt bırakırdı.
   List<Widget> _answerSection(ThemeData theme, ColorScheme colors) {
+    final l = L.of(context);
     final options = widget.task.options;
     final locked = _busy || _reported;
 
@@ -281,7 +293,7 @@ class _WaitingBannerState extends ConsumerState<_WaitingBanner> {
         Padding(
           padding: const EdgeInsets.only(top: 4),
           child: Text(
-            'Birden çok seçebilirsin.',
+            l.detailMultiHint,
             style: theme.textTheme.bodySmall
                 ?.copyWith(color: colors.onTertiaryContainer),
           ),
@@ -293,10 +305,10 @@ class _WaitingBannerState extends ConsumerState<_WaitingBanner> {
         enabled: !locked,
         maxLines: 2,
         textCapitalization: TextCapitalization.sentences,
-        decoration: const InputDecoration(
-          labelText: 'Açıklama (isteğe bağlı)',
-          hintText: 'Listede olmayan bir durum varsa buraya yaz',
-          border: OutlineInputBorder(),
+        decoration: InputDecoration(
+          labelText: l.detailNoteLabel,
+          hintText: l.detailNoteHint,
+          border: const OutlineInputBorder(),
           isDense: true,
         ),
       ),
@@ -307,7 +319,7 @@ class _WaitingBannerState extends ConsumerState<_WaitingBanner> {
           key: answerButtonKey,
           onPressed: (locked || _selected.isEmpty) ? null : _answer,
           icon: Icon(_reported ? Icons.check : Icons.send),
-          label: Text(_reported ? 'Cevaplandı' : 'Cevabı gönder'),
+          label: Text(_reported ? l.detailAnswered : l.detailSendAnswer),
         ),
       ),
     ];
@@ -315,6 +327,7 @@ class _WaitingBannerState extends ConsumerState<_WaitingBanner> {
 
   @override
   Widget build(BuildContext context) {
+    final l = L.of(context);
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
 
@@ -365,7 +378,7 @@ class _WaitingBannerState extends ConsumerState<_WaitingBanner> {
                 // ikinci bildirim, agent'ın kuyruğunda kopya demek olurdu.
                 onPressed: (_busy || _reported) ? null : _report,
                 icon: Icon(_reported ? Icons.check : Icons.done),
-                label: Text(_reported ? 'Bildirildi' : 'Yaptım'),
+                label: Text(_reported ? l.detailReportedShort : l.detailDidIt),
               ),
             ),
         ],

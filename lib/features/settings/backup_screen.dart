@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../hub/connections_backup.dart';
 import '../../hub/hub_connections.dart';
+import '../../l10n/app_localizations.dart';
 
 /// Bağlantıların parolayla şifreli yedeği: dışa aktar / geri yükle.
 ///
@@ -52,16 +53,17 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
   }
 
   Future<void> _export() async {
+    final l = L.of(context);
     final pass = _exportPassCtrl.text;
     if (pass.length < 6) {
-      _say('Parola en az 6 karakter olmalı.', error: true);
+      _say(l.backupPassTooShort, error: true);
       return;
     }
 
     final connections =
         ref.read(hubConnectionsProvider).valueOrNull?.connections ?? const [];
     if (connections.isEmpty) {
-      _say('Yedeklenecek bağlantı yok.', error: true);
+      _say(l.backupNothingToExport, error: true);
       return;
     }
 
@@ -75,18 +77,19 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
           await ConnectionsBackup.export(connections, passphrase: pass);
       if (!mounted) return;
       setState(() => _exported = backup);
-      _say('${connections.length} bağlantı yedeklendi.');
+      _say(l.backupExported(connections.length));
     } catch (e) {
-      _say('Yedek alınamadı: $e', error: true);
+      _say(l.backupExportFailed('$e'), error: true);
     } finally {
       if (mounted) setState(() => _busy = false);
     }
   }
 
   Future<void> _import() async {
+    final l = L.of(context);
     final text = _importTextCtrl.text.trim();
     if (text.isEmpty) {
-      _say('Yedek metnini yapıştır.', error: true);
+      _say(l.backupPasteFirst, error: true);
       return;
     }
 
@@ -110,11 +113,11 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
       if (!mounted) return;
       _importTextCtrl.clear();
       _importPassCtrl.clear();
-      _say('${restored.length} bağlantı geri yüklendi.');
+      _say(l.backupRestored(restored.length));
     } on BackupError catch (e) {
       _say(e.message, error: true);
     } catch (e) {
-      _say('Geri yüklenemedi: $e', error: true);
+      _say(l.backupImportFailed('$e'), error: true);
     } finally {
       if (mounted) setState(() => _busy = false);
     }
@@ -122,21 +125,20 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l = L.of(context);
     final theme = Theme.of(context);
     final count =
         ref.watch(hubConnectionsProvider).valueOrNull?.length ?? 0;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Yedekleme')),
+      appBar: AppBar(title: Text(l.backupTitle)),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          Text('Dışa aktar', style: theme.textTheme.titleMedium),
+          Text(l.backupExportHeading, style: theme.textTheme.titleMedium),
           const SizedBox(height: 4),
           Text(
-            'Kayıtlı $count bağlantı tek bir metne çevrilir. Metin '
-            'token\'larını taşıdığı için belirlediğin parolayla şifrelenir — '
-            'parolasız işe yaramaz.',
+            l.backupExportIntro(count),
             style: theme.textTheme.bodySmall,
           ),
           const SizedBox(height: 12),
@@ -147,11 +149,11 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
             obscureText: true,
             autocorrect: false,
             enableSuggestions: false,
-            decoration: const InputDecoration(
-              labelText: 'Yedek parolası',
-              helperText: 'Bunu unutursan yedek işe yaramaz.',
-              border: OutlineInputBorder(),
-              prefixIcon: Icon(Icons.lock_outline),
+            decoration: InputDecoration(
+              labelText: l.backupPassLabel,
+              helperText: l.backupPassHelp,
+              border: const OutlineInputBorder(),
+              prefixIcon: const Icon(Icons.lock_outline),
             ),
           ),
           const SizedBox(height: 12),
@@ -159,7 +161,7 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
             key: BackupScreen.exportButtonKey,
             onPressed: _busy ? null : _export,
             icon: const Icon(Icons.ios_share),
-            label: const Text('Yedek oluştur'),
+            label: Text(l.backupExportButton),
           ),
           if (_exported != null) ...[
             const SizedBox(height: 12),
@@ -179,26 +181,18 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
             OutlinedButton.icon(
               onPressed: () async {
                 await Clipboard.setData(ClipboardData(text: _exported!));
-                _say('Panoya kopyalandı. Parola yöneticine yapıştır.');
+                _say(l.backupCopied);
               },
               icon: const Icon(Icons.copy_all_outlined),
-              label: const Text('Panoya kopyala'),
+              label: Text(l.backupCopyButton),
             ),
             const SizedBox(height: 4),
-            Text(
-              'Bunu parola yöneticine kaydet. Panoda bırakma — pano geçmişi '
-              'tutan uygulamalar okuyabilir.',
-              style: theme.textTheme.bodySmall,
-            ),
+            Text(l.backupCopyWarning, style: theme.textTheme.bodySmall),
           ],
           const Divider(height: 40),
-          Text('Geri yükle', style: theme.textTheme.titleMedium),
+          Text(l.backupRestoreHeading, style: theme.textTheme.titleMedium),
           const SizedBox(height: 4),
-          Text(
-            'Yedekteki repolar listeye eklenir. Zaten kayıtlı bir repo gelirse '
-            'token\'ı tazelenir; mevcut bağlantıların silinmez.',
-            style: theme.textTheme.bodySmall,
-          ),
+          Text(l.backupRestoreIntro, style: theme.textTheme.bodySmall),
           const SizedBox(height: 12),
           TextField(
             key: BackupScreen.importTextKey,
@@ -207,9 +201,9 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
             maxLines: 4,
             autocorrect: false,
             enableSuggestions: false,
-            decoration: const InputDecoration(
-              labelText: 'Yedek metni',
-              border: OutlineInputBorder(),
+            decoration: InputDecoration(
+              labelText: l.backupTextLabel,
+              border: const OutlineInputBorder(),
               alignLabelWithHint: true,
             ),
           ),
@@ -221,10 +215,10 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
             obscureText: true,
             autocorrect: false,
             enableSuggestions: false,
-            decoration: const InputDecoration(
-              labelText: 'Yedek parolası',
-              border: OutlineInputBorder(),
-              prefixIcon: Icon(Icons.lock_outline),
+            decoration: InputDecoration(
+              labelText: l.backupPassLabel,
+              border: const OutlineInputBorder(),
+              prefixIcon: const Icon(Icons.lock_outline),
             ),
           ),
           const SizedBox(height: 12),
@@ -232,7 +226,7 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
             key: BackupScreen.importButtonKey,
             onPressed: _busy ? null : _import,
             icon: const Icon(Icons.settings_backup_restore),
-            label: const Text('Geri yükle'),
+            label: Text(l.backupRestoreButton),
           ),
           if (_message != null) ...[
             const SizedBox(height: 16),

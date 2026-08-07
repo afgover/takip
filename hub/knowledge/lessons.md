@@ -653,3 +653,23 @@ Biçim: `SYSTEM.md` §5.
   fazla bir oturum açık olabilir, o da en yeni tarihli olan. L-041'in dediği
   gibi, agent'ın kendi çıktısını bağlayan kural kontrole bağlanmazsa hafızaya
   bağlıdır.
+
+## L-043 — Ölü çeviri anahtarı, sessizce üzerine yazılan anahtardır
+- **Tarih:** 2026-08-08
+- **Kaynak:** S-2026-08-08-i18n-tamamlama (B-115)
+- **Açıklama:** ARB'ye yeni anahtar eklerken `markYellow`'u ikinci kez yazdım.
+  Var olan değer menüdeki "Sarı işaretle"ydi; benimki seçim kutusundaki "Sarı".
+  JSON'da ikinci atama birinciyi sessizce eziyor — menünün metni değişmişti ve
+  hiçbir test bunu görmüyordu. Yalnız `git diff`'e bakınca çıktı.
+  Arkasından çıkan asıl mesele daha büyüktü: **25 anahtar tanımlıydı ve hiç
+  kullanılmıyordu.** Bir kısmı tam da bu oturumda taşıdığım ekranlar için önden
+  hazırlanmıştı; görmediğim için paralel bir set ürettim. Bir kısmı ise
+  1.18'in iptal edilmiş modelini anlatıyordu (`settingsLanguageHelp`:
+  "hub'a yazılan görev ve notların dili değişmez") — yani yalnız ölü değil,
+  **yanlış**.
+  İki zarar bir arada: çevrilmiş ama görünmeyen metin "yapıldı" sanılıyor, ve
+  aynı ad ikinci kez eklenirken kimse çakışmayı fark etmiyor.
+  **Genel kural:** bir kaynak dosyası (ARB, sabitler, konfig) yalnız *eklenerek*
+  büyüyorsa, kullanılmayanı ölçen bir kontrol şart. `l10n_coverage_test` artık
+  bunu yapıyor: her anahtar `lib/` içinde geçmeli, yoksa test kırılır.
+  L-042'nin aynı biçimi — cevabı repoda duran soruyu insana bırakmamak.

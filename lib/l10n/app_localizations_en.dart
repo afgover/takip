@@ -9,12 +9,6 @@ class LEn extends L {
   LEn([String locale = 'en']) : super(locale);
 
   @override
-  String get appTitle => 'Takip';
-
-  @override
-  String get langSystem => 'System language';
-
-  @override
   String get langTurkish => 'Türkçe';
 
   @override
@@ -24,17 +18,10 @@ class LEn extends L {
   String get settingsLanguage => 'Language';
 
   @override
-  String get settingsLanguageHelp =>
-      'Interface language. The language of tasks and notes written to the hub does not change — their format is fixed by the contract.';
-
-  @override
   String get navPending => 'Pending';
 
   @override
   String get navBrowse => 'Browser';
-
-  @override
-  String get navAdd => 'Add task';
 
   @override
   String get navSettings => 'Settings';
@@ -416,25 +403,16 @@ class LEn extends L {
   }
 
   @override
-  String get connectionSettings => 'Connection settings';
+  String errAuthBody(String message) {
+    return '$message\nYou can renew the token in Settings; permissions must be Contents: Read and write and Metadata: Read.';
+  }
 
   @override
-  String get errNoConnectionTitle => 'No connection';
-
-  @override
-  String get errNoConnectionBody =>
-      'Could not reach the internet. Tasks you add wait in the queue and are sent automatically once you are back online.';
-
-  @override
-  String get errAuthBody =>
-      'You can renew the token in Settings; permissions must be Contents: Read and write and Metadata: Read.';
-
-  @override
-  String get errRateTitle => 'Rate limit reached';
+  String get errRateTitle => 'Request limit reached';
 
   @override
   String get errRateBody =>
-      'The GitHub rate limit is reached; it clears itself after a while.';
+      'GitHub\'s request limit is used up; it clears on its own after a while.';
 
   @override
   String get errNotFoundTitle => 'Not found';
@@ -443,66 +421,10 @@ class LEn extends L {
   String get errGenericTitle => 'Something went wrong';
 
   @override
-  String get addTaskTitle => 'Add task';
-
-  @override
-  String get fieldTitle => 'Title';
-
-  @override
-  String get titleRequired => 'Title required';
-
-  @override
-  String get titleNeedsLetter => 'The title must contain a letter or a digit';
-
-  @override
-  String get fieldDescription => 'Description';
-
-  @override
-  String get fieldPriority => 'Priority';
-
-  @override
-  String get newCategoryName => 'New category name';
-
-  @override
-  String get categoryRequired => 'Category name required';
-
-  @override
-  String get sendToInbox => 'Send to inbox';
-
-  @override
-  String get taskQueuedOffline =>
-      'No network — the task is queued and will be sent once you are back online.';
-
-  @override
-  String get securityEmptyTitle => 'No security records';
-
-  @override
-  String get securityEmptySubtitle =>
-      'The agent writes scans, measures and findings here (contract §12).';
-
-  @override
-  String securityOpenCount(int count) {
-    return '$count open records';
-  }
-
-  @override
-  String get securityFilterEmptyTitle => 'No records of this kind';
-
-  @override
-  String get securityFilterEmptySubtitle =>
-      'Remove the filter to see them all.';
-
-  @override
   String get all => 'All';
 
   @override
-  String get securityOpen => 'open';
-
-  @override
   String get secKindMeasure => 'Measure';
-
-  @override
-  String get secKindOpen => 'Open';
 
   @override
   String get secKindTodo => 'To do';
@@ -624,5 +546,340 @@ class LEn extends L {
       'Hub language — declared in `SYSTEM.md`. The interface, the contract and new records follow it; changing it is the agent’s job.';
 
   @override
-  String get languageUnknown => 'No connection — using the system language';
+  String get errSettingsButton => 'Connection settings';
+
+  @override
+  String get errRetry => 'Try again';
+
+  @override
+  String get errNetworkTitle => 'No connection';
+
+  @override
+  String get errNetworkBody =>
+      'Could not reach the internet. Tasks you add wait in the queue and are sent on their own once you are back online.';
+
+  @override
+  String get errAuthTitle => 'Token was rejected';
+
+  @override
+  String errRateBodyIn(String left) {
+    return 'GitHub\'s request limit is used up. Retrying in $left.';
+  }
+
+  @override
+  String get errUnexpectedTitle => 'Unexpected error';
+
+  @override
+  String get errLeftSoon => 'a moment';
+
+  @override
+  String errLeftMinutes(int count) {
+    return '$count minutes';
+  }
+
+  @override
+  String errLeftHours(int count) {
+    return '$count hours';
+  }
+
+  @override
+  String get addTitle => 'Add Task';
+
+  @override
+  String get addFieldTitle => 'Title';
+
+  @override
+  String get addTitleRequired => 'Title is required';
+
+  @override
+  String get addTitleNeedsAlnum => 'Title must contain a letter or a digit';
+
+  @override
+  String get addFieldDescription => 'Description';
+
+  @override
+  String get addFieldPriority => 'Priority';
+
+  @override
+  String get addFieldCategory => 'Category';
+
+  @override
+  String get addNewCategory => 'New category…';
+
+  @override
+  String get addNewCategoryName => 'New category name';
+
+  @override
+  String get addCategoryRequired => 'Category name is required';
+
+  @override
+  String get addSubmit => 'Send to Hub';
+
+  @override
+  String get addSent => 'Task sent to the hub.';
+
+  @override
+  String get addQueued =>
+      'No connection — the task is queued and will be sent once you are back online.';
+
+  @override
+  String addUnexpected(String error) {
+    return 'Unexpected error: $error';
+  }
+
+  @override
+  String get backupTitle => 'Backup';
+
+  @override
+  String get backupExportHeading => 'Export';
+
+  @override
+  String backupExportIntro(int count) {
+    return 'Your $count saved connections are turned into a single piece of text. Because that text carries your tokens, it is encrypted with a passphrase you choose — without it the text is useless.';
+  }
+
+  @override
+  String get backupPassLabel => 'Backup passphrase';
+
+  @override
+  String get backupPassHelp => 'If you forget this, the backup is useless.';
+
+  @override
+  String get backupExportButton => 'Create backup';
+
+  @override
+  String get backupCopyButton => 'Copy to clipboard';
+
+  @override
+  String get backupCopied => 'Copied. Paste it into your password manager.';
+
+  @override
+  String get backupCopyWarning =>
+      'Save this in your password manager. Do not leave it on the clipboard — apps that keep clipboard history can read it.';
+
+  @override
+  String get backupRestoreHeading => 'Restore';
+
+  @override
+  String get backupRestoreIntro =>
+      'Repositories in the backup are added to your list. If one is already saved, its token is refreshed; your existing connections are not removed.';
+
+  @override
+  String get backupTextLabel => 'Backup text';
+
+  @override
+  String get backupRestoreButton => 'Restore';
+
+  @override
+  String get backupPassTooShort =>
+      'The passphrase must be at least 6 characters.';
+
+  @override
+  String get backupNothingToExport => 'There are no connections to back up.';
+
+  @override
+  String backupExported(int count) {
+    return '$count connections backed up.';
+  }
+
+  @override
+  String backupExportFailed(String error) {
+    return 'Could not create the backup: $error';
+  }
+
+  @override
+  String get backupPasteFirst => 'Paste the backup text.';
+
+  @override
+  String backupRestored(int count) {
+    return '$count connections restored.';
+  }
+
+  @override
+  String backupImportFailed(String error) {
+    return 'Could not restore: $error';
+  }
+
+  @override
+  String get detailNotHandledYet => 'agent has not picked this up yet';
+
+  @override
+  String get detailAnswerSent => 'Answer sent.';
+
+  @override
+  String get detailReported => 'The agent has been told.';
+
+  @override
+  String get detailQueued => 'No connection — queued.';
+
+  @override
+  String detailUnexpected(String error) {
+    return 'Unexpected error: $error';
+  }
+
+  @override
+  String waitingForOtherQuestion(String who) {
+    return 'This question is waiting on $who. You can answer it too.';
+  }
+
+  @override
+  String waitingForOther(String who) {
+    return 'This work is waiting on $who.';
+  }
+
+  @override
+  String get waitingQuestion =>
+      'The agent is waiting for an answer. Mark your choice; you can add a note if you like.';
+
+  @override
+  String get waitingWork =>
+      'This work is waiting on you. What is expected is written in the notes below; tell the agent once it is done.';
+
+  @override
+  String get detailMultiHint => 'You can pick more than one.';
+
+  @override
+  String get detailNoteLabel => 'Note (optional)';
+
+  @override
+  String get detailNoteHint => 'Write here if none of the options fit';
+
+  @override
+  String get detailAnswered => 'Answered';
+
+  @override
+  String get detailSendAnswer => 'Send answer';
+
+  @override
+  String get detailReportedShort => 'Told';
+
+  @override
+  String get detailDidIt => 'Done';
+
+  @override
+  String get secEmptyTitle => 'No security records';
+
+  @override
+  String get secEmptySubtitle =>
+      'The agent writes scans, measures and findings here (contract §12).';
+
+  @override
+  String secOpenCount(int count) {
+    return '$count open records';
+  }
+
+  @override
+  String get secFilterEmptyTitle => 'No records of this kind';
+
+  @override
+  String get secFilterEmptySubtitle => 'Clear the filter to see everything.';
+
+  @override
+  String get secFilterAll => 'All';
+
+  @override
+  String get secOpenBadge => 'open';
+
+  @override
+  String get secKindHole => 'Hole';
+
+  @override
+  String get kindTask => 'Task';
+
+  @override
+  String get kindComment => 'Comment';
+
+  @override
+  String get kindFix => 'Fix';
+
+  @override
+  String get kindDiscussion => 'Discussion';
+
+  @override
+  String get selTitle => 'Record from selection';
+
+  @override
+  String get selMark => 'Mark';
+
+  @override
+  String get selNote => 'Note';
+
+  @override
+  String get selNoteHelp =>
+      'Leave it empty and it stays a mark or note — it does not enter the work queue';
+
+  @override
+  String get selHintFix => 'What is wrong, and what should it say?';
+
+  @override
+  String get selHintDiscussion =>
+      'What is the problem, what do you want to discuss?';
+
+  @override
+  String get selHintComment => 'What should be kept as a note?';
+
+  @override
+  String get selHintTask => 'What should be done?';
+
+  @override
+  String get selPriority => 'Priority';
+
+  @override
+  String get selAddAsMark => 'Add as a mark';
+
+  @override
+  String selCreateKind(String kind) {
+    return 'Create $kind';
+  }
+
+  @override
+  String get selQueuedRecord => 'No connection — the record is queued.';
+
+  @override
+  String get selQueuedNote => 'No connection — the note is queued.';
+
+  @override
+  String selUnexpected(String error) {
+    return 'Unexpected error: $error';
+  }
+
+  @override
+  String get noteBoxTitle => 'Add a note';
+
+  @override
+  String get noteBoxHint => 'A note to yourself — the agent gets no work';
+
+  @override
+  String get noteBoxCancel => 'Cancel';
+
+  @override
+  String get noteBoxAdd => 'Add';
+
+  @override
+  String get annDeleteNote => 'Delete note';
+
+  @override
+  String get annDeleteMark => 'Delete mark';
+
+  @override
+  String get annNoteDeleted => 'Note deleted.';
+
+  @override
+  String get annMarkDeleted => 'Mark deleted.';
+
+  @override
+  String get annAlreadyHandled =>
+      'The agent has picked this up; the mark stays in the hub.';
+
+  @override
+  String get selMarkYellow => 'Yellow';
+
+  @override
+  String get selMarkRed => 'Red';
+
+  @override
+  String get selMarkGreen => 'Green';
+
+  @override
+  String get selMarkBlue => 'Blue';
 }

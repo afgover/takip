@@ -19,10 +19,23 @@ import 'package:takip/l10n/app_localizations.dart';
 /// ilgisi yokmuş gibi görünen bir sebeple kırılır. Sabitlemek ayrıca testi
 /// koşulduğu makinenin diline bağımlı olmaktan çıkarıyor.
 /// İngilizce'yi sınayan test `locale: Locale('en')` verir.
-MaterialApp testApp(Widget home, {Locale locale = const Locale('tr')}) =>
+MaterialApp testApp(
+  Widget home, {
+  Locale locale = const Locale('tr'),
+  ThemeData? theme,
+}) =>
     MaterialApp(
       locale: locale,
+      theme: theme,
       localizationsDelegates: L.localizationsDelegates,
       supportedLocales: L.supportedLocales,
       home: home,
     );
+
+/// Widget ağacı olmadan çeviriye ulaşmak.
+///
+/// `describeHubError` gibi saf fonksiyonlar `L`'yi parametre alıyor; testin de
+/// dili **açıkça** vermesi gerekiyor. Varsayılan Türkçe — `testApp` ile aynı
+/// gerekçe: sabitlenmezse test koşulduğu makinenin diline bağlı olur.
+Future<L> testL([Locale locale = const Locale('tr')]) =>
+    L.delegate.load(locale);

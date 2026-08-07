@@ -7,6 +7,8 @@ import 'package:takip/hub/frontmatter.dart';
 import 'package:takip/hub/models/task.dart';
 import 'package:takip/hub/models/task_draft.dart';
 
+import '../helpers/test_app.dart';
+
 /// İşarete dokununca açılan kart, kullanıcının **kendi yazdığını**
 /// göstermeli. Alıntıyı zaten belgede görüyor; kart onu tekrar edip notu
 /// atlıyordu.
@@ -70,8 +72,8 @@ void main() {
 
     await tester.pumpWidget(UncontrolledProviderScope(
       container: container,
-      child: MaterialApp(
-        home: Scaffold(
+      child: testApp(
+        Scaffold(
           body: Builder(
             builder: (context) => ElevatedButton(
               onPressed: () => openAnnotationCard(
@@ -113,8 +115,8 @@ void main() {
 
     await tester.pumpWidget(UncontrolledProviderScope(
       container: container,
-      child: MaterialApp(
-        home: Scaffold(
+      child: testApp(
+        Scaffold(
           body: Builder(
             builder: (context) => ElevatedButton(
               onPressed: () => openAnnotationCard(

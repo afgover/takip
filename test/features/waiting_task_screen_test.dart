@@ -13,6 +13,8 @@ import 'package:takip/hub/task_repo.dart';
 
 import '../github/contents_api_test.dart' show FakeAdapter, jsonResponse;
 
+import '../helpers/test_app.dart';
+
 const waitingPath = '${Hub.waitingDir}/2026-08-01-token-uret.md';
 const activePath = '${Hub.activeDir}/2026-08-01-baska-is.md';
 
@@ -96,7 +98,7 @@ final _multiQuestionFile =
           TaskRepo(ContentsApi(dio, owner: 'afgover', repo: 'takip')),
         ),
       ],
-      child: MaterialApp(home: TaskDetailScreen(summary: summaryFor(path))),
+      child: testApp(TaskDetailScreen(summary: summaryFor(path))),
     ),
     adapter: adapter,
   );

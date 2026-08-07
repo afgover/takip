@@ -1,14 +1,10 @@
 {
   "@@locale": "tr",
-  "appTitle": "Takip",
-  "langSystem": "Sistem dili",
   "langTurkish": "Türkçe",
   "langEnglish": "English",
   "settingsLanguage": "Dil",
-  "settingsLanguageHelp": "Arayüz dili. Hub'a yazılan görev ve notların dili değişmez — onların biçimi sözleşmeyle sabittir.",
   "navPending": "Bekleyenler",
   "navBrowse": "Tarayıcı",
-  "navAdd": "Görev ekle",
   "navSettings": "Ayarlar",
   "navAddShort": "Ekle",
   "browseTitle": "Hub Tarayıcı",
@@ -284,40 +280,13 @@
       }
     }
   },
-  "connectionSettings": "Bağlantı ayarları",
-  "errNoConnectionTitle": "Bağlantı yok",
-  "errNoConnectionBody": "İnternete bağlanılamadı. Eklediğin görevler kuyrukta bekler ve bağlantı gelince kendiliğinden gönderilir.",
-  "errAuthBody": "Ayarlar'dan token'ı yenileyebilirsin; izinler Contents: Read and write ve Metadata: Read olmalı.",
+  "errAuthBody": "{message}\nAyarlardan token'ı yenileyebilirsin; izinler Contents: Read and write ve Metadata: Read olmalı.",
   "errRateTitle": "İstek limiti doldu",
   "errRateBody": "GitHub istek limiti doldu; bir süre sonra kendiliğinden açılır.",
   "errNotFoundTitle": "Bulunamadı",
   "errGenericTitle": "Bir sorun çıktı",
-  "addTaskTitle": "Görev Ekle",
-  "fieldTitle": "Başlık",
-  "titleRequired": "Başlık gerekli",
-  "titleNeedsLetter": "Başlık harf ya da rakam içermeli",
-  "fieldDescription": "Açıklama",
-  "fieldPriority": "Öncelik",
-  "newCategoryName": "Yeni kategori adı",
-  "categoryRequired": "Kategori adı gerekli",
-  "sendToInbox": "Inbox'a Gönder",
-  "taskQueuedOffline": "Ağ yok — görev kuyruğa alındı, bağlantı gelince gönderilecek.",
-  "securityEmptyTitle": "Güvenlik kaydı yok",
-  "securityEmptySubtitle": "Agent tarama, önlem ve bulguları buraya yazar (sözleşme §12).",
-  "securityOpenCount": "{count} açık kayıt",
-  "@securityOpenCount": {
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  },
-  "securityFilterEmptyTitle": "Bu türde kayıt yok",
-  "securityFilterEmptySubtitle": "Filtreyi kaldırıp tümünü görebilirsin.",
   "all": "Tümü",
-  "securityOpen": "açık",
   "secKindMeasure": "Önlem",
-  "secKindOpen": "Açık",
   "secKindTodo": "Yapılacak",
   "secKindScan": "Tarama",
   "kind": "Tür",
@@ -396,5 +365,215 @@
   "token": "Token",
   "tokenRequiredShort": "Token gerekli.",
   "languageFromHub": "Hub dili — `SYSTEM.md` içinde yazılı. Arayüz, sözleşme ve yeni kayıtlar bunu izler; değiştirmek agent'ın işidir.",
-  "languageUnknown": "Bağlantı yok — sistem dili kullanılıyor"
+  "errSettingsButton": "Bağlantı ayarları",
+  "errRetry": "Yeniden dene",
+  "errNetworkTitle": "Bağlantı yok",
+  "errNetworkBody": "İnternete bağlanılamadı. Eklediğin görevler kuyrukta bekler ve bağlantı gelince kendiliğinden gönderilir.",
+  "errAuthTitle": "Token kabul edilmedi",
+  "@errAuthBody": {
+    "placeholders": {
+      "message": {
+        "type": "String"
+      }
+    }
+  },
+  "errRateBodyIn": "GitHub istek limiti doldu. {left} sonra yeniden denenecek.",
+  "@errRateBodyIn": {
+    "placeholders": {
+      "left": {
+        "type": "String"
+      }
+    }
+  },
+  "errUnexpectedTitle": "Beklenmeyen hata",
+  "errLeftSoon": "Birazdan",
+  "errLeftMinutes": "{count} dakika",
+  "@errLeftMinutes": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "errLeftHours": "{count} saat",
+  "@errLeftHours": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "addTitle": "Görev Ekle",
+  "addFieldTitle": "Başlık",
+  "addTitleRequired": "Başlık gerekli",
+  "addTitleNeedsAlnum": "Başlık harf ya da rakam içermeli",
+  "addFieldDescription": "Açıklama",
+  "addFieldPriority": "Öncelik",
+  "addFieldCategory": "Kategori",
+  "addNewCategory": "Yeni kategori…",
+  "addNewCategoryName": "Yeni kategori adı",
+  "addCategoryRequired": "Kategori adı gerekli",
+  "addSubmit": "Hub'a Gönder",
+  "addSent": "Görev hub'a gönderildi.",
+  "addQueued": "Ağ yok — görev kuyruğa alındı, bağlantı gelince gönderilecek.",
+  "addUnexpected": "Beklenmeyen hata: {error}",
+  "@addUnexpected": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "backupTitle": "Yedekleme",
+  "backupExportHeading": "Dışa aktar",
+  "backupExportIntro": "Kayıtlı {count} bağlantı tek bir metne çevrilir. Metin token'larını taşıdığı için belirlediğin parolayla şifrelenir — parolasız işe yaramaz.",
+  "@backupExportIntro": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "backupPassLabel": "Yedek parolası",
+  "backupPassHelp": "Bunu unutursan yedek işe yaramaz.",
+  "backupExportButton": "Yedek oluştur",
+  "backupCopyButton": "Panoya kopyala",
+  "backupCopied": "Panoya kopyalandı. Parola yöneticine yapıştır.",
+  "backupCopyWarning": "Bunu parola yöneticine kaydet. Panoda bırakma — pano geçmişi tutan uygulamalar okuyabilir.",
+  "backupRestoreHeading": "Geri yükle",
+  "backupRestoreIntro": "Yedekteki repolar listeye eklenir. Zaten kayıtlı bir repo gelirse token'ı tazelenir; mevcut bağlantıların silinmez.",
+  "backupTextLabel": "Yedek metni",
+  "backupRestoreButton": "Geri yükle",
+  "backupPassTooShort": "Parola en az 6 karakter olmalı.",
+  "backupNothingToExport": "Yedeklenecek bağlantı yok.",
+  "backupExported": "{count} bağlantı yedeklendi.",
+  "@backupExported": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "backupExportFailed": "Yedek alınamadı: {error}",
+  "@backupExportFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "backupPasteFirst": "Yedek metnini yapıştır.",
+  "backupRestored": "{count} bağlantı geri yüklendi.",
+  "@backupRestored": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "backupImportFailed": "Geri yüklenemedi: {error}",
+  "@backupImportFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "detailNotHandledYet": "agent henüz ele almadı",
+  "detailAnswerSent": "Cevap gönderildi.",
+  "detailReported": "Agent'a bildirildi.",
+  "detailQueued": "Ağ yok — kuyruğa alındı.",
+  "detailUnexpected": "Beklenmeyen hata: {error}",
+  "@detailUnexpected": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "waitingForOtherQuestion": "Bu soru {who} kullanıcısını bekliyor. Cevabı sen de gönderebilirsin.",
+  "@waitingForOtherQuestion": {
+    "placeholders": {
+      "who": {
+        "type": "String"
+      }
+    }
+  },
+  "waitingForOther": "Bu iş {who} kullanıcısını bekliyor.",
+  "@waitingForOther": {
+    "placeholders": {
+      "who": {
+        "type": "String"
+      }
+    }
+  },
+  "waitingQuestion": "Agent bir cevap bekliyor. Seçimini işaretle; istersen açıklama da yazabilirsin.",
+  "waitingWork": "Bu iş seni bekliyor. Ne beklendiği aşağıdaki notlarda yazılı; yaptıktan sonra agent'a haber ver.",
+  "detailMultiHint": "Birden çok seçebilirsin.",
+  "detailNoteLabel": "Açıklama (isteğe bağlı)",
+  "detailNoteHint": "Listede olmayan bir durum varsa buraya yaz",
+  "detailAnswered": "Cevaplandı",
+  "detailSendAnswer": "Cevabı gönder",
+  "detailReportedShort": "Bildirildi",
+  "detailDidIt": "Yaptım",
+  "secEmptyTitle": "Güvenlik kaydı yok",
+  "secEmptySubtitle": "Agent tarama, önlem ve bulguları buraya yazar (sözleşme §12).",
+  "secOpenCount": "{count} açık kayıt",
+  "@secOpenCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "secFilterEmptyTitle": "Bu türde kayıt yok",
+  "secFilterEmptySubtitle": "Filtreyi kaldırıp tümünü görebilirsin.",
+  "secFilterAll": "Tümü",
+  "secOpenBadge": "açık",
+  "secKindHole": "Açık",
+  "kindTask": "Görev",
+  "kindComment": "Yorum",
+  "kindFix": "Düzeltme",
+  "kindDiscussion": "Tartışma",
+  "selTitle": "Seçimden kayıt",
+  "selMark": "İşaret",
+  "selNote": "Not",
+  "selNoteHelp": "Boş bırakırsan iş kuyruğuna girmez — işaret/not olarak kalır",
+  "selHintFix": "Nesi yanlış, ne olmalı?",
+  "selHintDiscussion": "Sorun ne, neyi tartışmak istiyorsun?",
+  "selHintComment": "Not olarak ne kalsın?",
+  "selHintTask": "Ne yapılsın?",
+  "selPriority": "Öncelik",
+  "selAddAsMark": "İşaret olarak ekle",
+  "selCreateKind": "{kind} oluştur",
+  "@selCreateKind": {
+    "placeholders": {
+      "kind": {
+        "type": "String"
+      }
+    }
+  },
+  "selQueuedRecord": "Ağ yok — kayıt kuyruğa alındı.",
+  "selQueuedNote": "Ağ yok — not kuyruğa alındı.",
+  "selUnexpected": "Beklenmeyen hata: {error}",
+  "@selUnexpected": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "noteBoxTitle": "Not ekle",
+  "noteBoxHint": "Kendine not — agent'a iş düşmez",
+  "noteBoxCancel": "Vazgeç",
+  "noteBoxAdd": "Ekle",
+  "annDeleteNote": "Notu sil",
+  "annDeleteMark": "İşareti sil",
+  "annNoteDeleted": "Not silindi.",
+  "annMarkDeleted": "İşaret silindi.",
+  "annAlreadyHandled": "Agent bu kaydı ele almış; işaret hub'da duruyor.",
+  "selMarkYellow": "Sarı",
+  "selMarkRed": "Kırmızı",
+  "selMarkGreen": "Yeşil",
+  "selMarkBlue": "Mavi"
 }

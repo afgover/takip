@@ -11,6 +11,8 @@ import 'package:takip/github/commits_api.dart';
 import 'package:takip/hub/hub_config.dart';
 import 'package:takip/hub/hub_watcher.dart';
 
+import '../helpers/test_app.dart';
+
 import '../github/contents_api_test.dart' show FakeAdapter, jsonResponse;
 
 class FakeHubConfigNotifier extends HubConfigNotifier {
@@ -34,26 +36,28 @@ void main() {
   setUp(() => SharedPreferences.setMockInitialValues({}));
 
   group('describeHubError — her hata için yapılabilecek bir şey (B-050)', () {
-    test('ağ hatası kuyruğu hatırlatır, ayarlara yollamaz', () {
-      final detail = describeHubError(const HubNetworkError('x'));
+    test('ağ hatası kuyruğu hatırlatır, ayarlara yollamaz', () async {
+      final detail = describeHubError(const HubNetworkError('x'), await testL());
 
       expect(detail.headline, 'Bağlantı yok');
       expect(detail.message, contains('kuyrukta bekler'));
       expect(detail.suggestsSettings, isFalse);
     });
 
-    test('token hatası izinleri söyler ve ayarlara yollar', () {
-      final detail = describeHubError(const HubAuthError('Token geçersiz.'));
+    test('token hatası izinleri söyler ve ayarlara yollar', () async {
+      final detail =
+          describeHubError(const HubAuthError('Token geçersiz.'), await testL());
 
       expect(detail.headline, 'Token kabul edilmedi');
       expect(detail.message, contains('Contents: Read and write'));
       expect(detail.suggestsSettings, isTrue);
     });
 
-    test('rate limit kalan süreyi söyler', () {
+    test('rate limit kalan süreyi söyler', () async {
       final now = DateTime(2026, 7, 30, 12);
       final detail = describeHubError(
         HubRateLimitError('x', resetAt: now.add(const Duration(minutes: 12))),
+        await testL(),
         now: now,
       );
 
@@ -61,18 +65,19 @@ void main() {
       expect(detail.message, contains('12 dakika'));
     });
 
-    test('reset zamanı geçmişse "birazdan" denir', () {
+    test('reset zamanı geçmişse "birazdan" denir', () async {
       final now = DateTime(2026, 7, 30, 12);
       final detail = describeHubError(
         HubRateLimitError('x', resetAt: now.subtract(const Duration(hours: 1))),
+        await testL(),
         now: now,
       );
 
       expect(detail.message, contains('Birazdan'));
     });
 
-    test('bilinmeyen hata da anlaşılır biçimde sunulur', () {
-      final detail = describeHubError(StateError('bir şey'));
+    test('bilinmeyen hata da anlaşılır biçimde sunulur', () async {
+      final detail = describeHubError(StateError('bir şey'), await testL());
 
       expect(detail.headline, 'Beklenmeyen hata');
       expect(detail.message, contains('bir şey'));
@@ -81,8 +86,8 @@ void main() {
 
   testWidgets('token hatasında ayarlar düğmesi çıkar', (tester) async {
     var opened = false;
-    await tester.pumpWidget(MaterialApp(
-      home: Scaffold(
+    await tester.pumpWidget(testApp(
+      Scaffold(
         body: HubErrorView(
           error: const HubAuthError('Token geçersiz.'),
           onOpenSettings: () => opened = true,
@@ -97,8 +102,8 @@ void main() {
   });
 
   testWidgets('ağ hatasında ayarlar düğmesi çıkmaz', (tester) async {
-    await tester.pumpWidget(MaterialApp(
-      home: Scaffold(
+    await tester.pumpWidget(testApp(
+      Scaffold(
         body: HubErrorView(
           error: const HubNetworkError('yok'),
           onOpenSettings: () {},
@@ -121,8 +126,8 @@ void main() {
             hubConfigProvider.overrideWith(FakeHubConfigNotifier.new),
             hubWatcherProvider.overrideWith(() => FakeWatcher(status)),
           ],
-          child: MaterialApp(
-            home: Scaffold(
+          child: testApp(
+            Scaffold(
               body: HubStatusBanner(onOpenSettings: onOpenSettings),
             ),
           ),

@@ -9,12 +9,6 @@ class LTr extends L {
   LTr([String locale = 'tr']) : super(locale);
 
   @override
-  String get appTitle => 'Takip';
-
-  @override
-  String get langSystem => 'Sistem dili';
-
-  @override
   String get langTurkish => 'Türkçe';
 
   @override
@@ -24,17 +18,10 @@ class LTr extends L {
   String get settingsLanguage => 'Dil';
 
   @override
-  String get settingsLanguageHelp =>
-      'Arayüz dili. Hub\'a yazılan görev ve notların dili değişmez — onların biçimi sözleşmeyle sabittir.';
-
-  @override
   String get navPending => 'Bekleyenler';
 
   @override
   String get navBrowse => 'Tarayıcı';
-
-  @override
-  String get navAdd => 'Görev ekle';
 
   @override
   String get navSettings => 'Ayarlar';
@@ -413,18 +400,9 @@ class LTr extends L {
   }
 
   @override
-  String get connectionSettings => 'Bağlantı ayarları';
-
-  @override
-  String get errNoConnectionTitle => 'Bağlantı yok';
-
-  @override
-  String get errNoConnectionBody =>
-      'İnternete bağlanılamadı. Eklediğin görevler kuyrukta bekler ve bağlantı gelince kendiliğinden gönderilir.';
-
-  @override
-  String get errAuthBody =>
-      'Ayarlar\'dan token\'ı yenileyebilirsin; izinler Contents: Read and write ve Metadata: Read olmalı.';
+  String errAuthBody(String message) {
+    return '$message\nAyarlardan token\'ı yenileyebilirsin; izinler Contents: Read and write ve Metadata: Read olmalı.';
+  }
 
   @override
   String get errRateTitle => 'İstek limiti doldu';
@@ -440,66 +418,10 @@ class LTr extends L {
   String get errGenericTitle => 'Bir sorun çıktı';
 
   @override
-  String get addTaskTitle => 'Görev Ekle';
-
-  @override
-  String get fieldTitle => 'Başlık';
-
-  @override
-  String get titleRequired => 'Başlık gerekli';
-
-  @override
-  String get titleNeedsLetter => 'Başlık harf ya da rakam içermeli';
-
-  @override
-  String get fieldDescription => 'Açıklama';
-
-  @override
-  String get fieldPriority => 'Öncelik';
-
-  @override
-  String get newCategoryName => 'Yeni kategori adı';
-
-  @override
-  String get categoryRequired => 'Kategori adı gerekli';
-
-  @override
-  String get sendToInbox => 'Inbox\'a Gönder';
-
-  @override
-  String get taskQueuedOffline =>
-      'Ağ yok — görev kuyruğa alındı, bağlantı gelince gönderilecek.';
-
-  @override
-  String get securityEmptyTitle => 'Güvenlik kaydı yok';
-
-  @override
-  String get securityEmptySubtitle =>
-      'Agent tarama, önlem ve bulguları buraya yazar (sözleşme §12).';
-
-  @override
-  String securityOpenCount(int count) {
-    return '$count açık kayıt';
-  }
-
-  @override
-  String get securityFilterEmptyTitle => 'Bu türde kayıt yok';
-
-  @override
-  String get securityFilterEmptySubtitle =>
-      'Filtreyi kaldırıp tümünü görebilirsin.';
-
-  @override
   String get all => 'Tümü';
 
   @override
-  String get securityOpen => 'açık';
-
-  @override
   String get secKindMeasure => 'Önlem';
-
-  @override
-  String get secKindOpen => 'Açık';
 
   @override
   String get secKindTodo => 'Yapılacak';
@@ -619,5 +541,338 @@ class LTr extends L {
       'Hub dili — `SYSTEM.md` içinde yazılı. Arayüz, sözleşme ve yeni kayıtlar bunu izler; değiştirmek agent\'ın işidir.';
 
   @override
-  String get languageUnknown => 'Bağlantı yok — sistem dili kullanılıyor';
+  String get errSettingsButton => 'Bağlantı ayarları';
+
+  @override
+  String get errRetry => 'Yeniden dene';
+
+  @override
+  String get errNetworkTitle => 'Bağlantı yok';
+
+  @override
+  String get errNetworkBody =>
+      'İnternete bağlanılamadı. Eklediğin görevler kuyrukta bekler ve bağlantı gelince kendiliğinden gönderilir.';
+
+  @override
+  String get errAuthTitle => 'Token kabul edilmedi';
+
+  @override
+  String errRateBodyIn(String left) {
+    return 'GitHub istek limiti doldu. $left sonra yeniden denenecek.';
+  }
+
+  @override
+  String get errUnexpectedTitle => 'Beklenmeyen hata';
+
+  @override
+  String get errLeftSoon => 'Birazdan';
+
+  @override
+  String errLeftMinutes(int count) {
+    return '$count dakika';
+  }
+
+  @override
+  String errLeftHours(int count) {
+    return '$count saat';
+  }
+
+  @override
+  String get addTitle => 'Görev Ekle';
+
+  @override
+  String get addFieldTitle => 'Başlık';
+
+  @override
+  String get addTitleRequired => 'Başlık gerekli';
+
+  @override
+  String get addTitleNeedsAlnum => 'Başlık harf ya da rakam içermeli';
+
+  @override
+  String get addFieldDescription => 'Açıklama';
+
+  @override
+  String get addFieldPriority => 'Öncelik';
+
+  @override
+  String get addFieldCategory => 'Kategori';
+
+  @override
+  String get addNewCategory => 'Yeni kategori…';
+
+  @override
+  String get addNewCategoryName => 'Yeni kategori adı';
+
+  @override
+  String get addCategoryRequired => 'Kategori adı gerekli';
+
+  @override
+  String get addSubmit => 'Hub\'a Gönder';
+
+  @override
+  String get addSent => 'Görev hub\'a gönderildi.';
+
+  @override
+  String get addQueued =>
+      'Ağ yok — görev kuyruğa alındı, bağlantı gelince gönderilecek.';
+
+  @override
+  String addUnexpected(String error) {
+    return 'Beklenmeyen hata: $error';
+  }
+
+  @override
+  String get backupTitle => 'Yedekleme';
+
+  @override
+  String get backupExportHeading => 'Dışa aktar';
+
+  @override
+  String backupExportIntro(int count) {
+    return 'Kayıtlı $count bağlantı tek bir metne çevrilir. Metin token\'larını taşıdığı için belirlediğin parolayla şifrelenir — parolasız işe yaramaz.';
+  }
+
+  @override
+  String get backupPassLabel => 'Yedek parolası';
+
+  @override
+  String get backupPassHelp => 'Bunu unutursan yedek işe yaramaz.';
+
+  @override
+  String get backupExportButton => 'Yedek oluştur';
+
+  @override
+  String get backupCopyButton => 'Panoya kopyala';
+
+  @override
+  String get backupCopied => 'Panoya kopyalandı. Parola yöneticine yapıştır.';
+
+  @override
+  String get backupCopyWarning =>
+      'Bunu parola yöneticine kaydet. Panoda bırakma — pano geçmişi tutan uygulamalar okuyabilir.';
+
+  @override
+  String get backupRestoreHeading => 'Geri yükle';
+
+  @override
+  String get backupRestoreIntro =>
+      'Yedekteki repolar listeye eklenir. Zaten kayıtlı bir repo gelirse token\'ı tazelenir; mevcut bağlantıların silinmez.';
+
+  @override
+  String get backupTextLabel => 'Yedek metni';
+
+  @override
+  String get backupRestoreButton => 'Geri yükle';
+
+  @override
+  String get backupPassTooShort => 'Parola en az 6 karakter olmalı.';
+
+  @override
+  String get backupNothingToExport => 'Yedeklenecek bağlantı yok.';
+
+  @override
+  String backupExported(int count) {
+    return '$count bağlantı yedeklendi.';
+  }
+
+  @override
+  String backupExportFailed(String error) {
+    return 'Yedek alınamadı: $error';
+  }
+
+  @override
+  String get backupPasteFirst => 'Yedek metnini yapıştır.';
+
+  @override
+  String backupRestored(int count) {
+    return '$count bağlantı geri yüklendi.';
+  }
+
+  @override
+  String backupImportFailed(String error) {
+    return 'Geri yüklenemedi: $error';
+  }
+
+  @override
+  String get detailNotHandledYet => 'agent henüz ele almadı';
+
+  @override
+  String get detailAnswerSent => 'Cevap gönderildi.';
+
+  @override
+  String get detailReported => 'Agent\'a bildirildi.';
+
+  @override
+  String get detailQueued => 'Ağ yok — kuyruğa alındı.';
+
+  @override
+  String detailUnexpected(String error) {
+    return 'Beklenmeyen hata: $error';
+  }
+
+  @override
+  String waitingForOtherQuestion(String who) {
+    return 'Bu soru $who kullanıcısını bekliyor. Cevabı sen de gönderebilirsin.';
+  }
+
+  @override
+  String waitingForOther(String who) {
+    return 'Bu iş $who kullanıcısını bekliyor.';
+  }
+
+  @override
+  String get waitingQuestion =>
+      'Agent bir cevap bekliyor. Seçimini işaretle; istersen açıklama da yazabilirsin.';
+
+  @override
+  String get waitingWork =>
+      'Bu iş seni bekliyor. Ne beklendiği aşağıdaki notlarda yazılı; yaptıktan sonra agent\'a haber ver.';
+
+  @override
+  String get detailMultiHint => 'Birden çok seçebilirsin.';
+
+  @override
+  String get detailNoteLabel => 'Açıklama (isteğe bağlı)';
+
+  @override
+  String get detailNoteHint => 'Listede olmayan bir durum varsa buraya yaz';
+
+  @override
+  String get detailAnswered => 'Cevaplandı';
+
+  @override
+  String get detailSendAnswer => 'Cevabı gönder';
+
+  @override
+  String get detailReportedShort => 'Bildirildi';
+
+  @override
+  String get detailDidIt => 'Yaptım';
+
+  @override
+  String get secEmptyTitle => 'Güvenlik kaydı yok';
+
+  @override
+  String get secEmptySubtitle =>
+      'Agent tarama, önlem ve bulguları buraya yazar (sözleşme §12).';
+
+  @override
+  String secOpenCount(int count) {
+    return '$count açık kayıt';
+  }
+
+  @override
+  String get secFilterEmptyTitle => 'Bu türde kayıt yok';
+
+  @override
+  String get secFilterEmptySubtitle => 'Filtreyi kaldırıp tümünü görebilirsin.';
+
+  @override
+  String get secFilterAll => 'Tümü';
+
+  @override
+  String get secOpenBadge => 'açık';
+
+  @override
+  String get secKindHole => 'Açık';
+
+  @override
+  String get kindTask => 'Görev';
+
+  @override
+  String get kindComment => 'Yorum';
+
+  @override
+  String get kindFix => 'Düzeltme';
+
+  @override
+  String get kindDiscussion => 'Tartışma';
+
+  @override
+  String get selTitle => 'Seçimden kayıt';
+
+  @override
+  String get selMark => 'İşaret';
+
+  @override
+  String get selNote => 'Not';
+
+  @override
+  String get selNoteHelp =>
+      'Boş bırakırsan iş kuyruğuna girmez — işaret/not olarak kalır';
+
+  @override
+  String get selHintFix => 'Nesi yanlış, ne olmalı?';
+
+  @override
+  String get selHintDiscussion => 'Sorun ne, neyi tartışmak istiyorsun?';
+
+  @override
+  String get selHintComment => 'Not olarak ne kalsın?';
+
+  @override
+  String get selHintTask => 'Ne yapılsın?';
+
+  @override
+  String get selPriority => 'Öncelik';
+
+  @override
+  String get selAddAsMark => 'İşaret olarak ekle';
+
+  @override
+  String selCreateKind(String kind) {
+    return '$kind oluştur';
+  }
+
+  @override
+  String get selQueuedRecord => 'Ağ yok — kayıt kuyruğa alındı.';
+
+  @override
+  String get selQueuedNote => 'Ağ yok — not kuyruğa alındı.';
+
+  @override
+  String selUnexpected(String error) {
+    return 'Beklenmeyen hata: $error';
+  }
+
+  @override
+  String get noteBoxTitle => 'Not ekle';
+
+  @override
+  String get noteBoxHint => 'Kendine not — agent\'a iş düşmez';
+
+  @override
+  String get noteBoxCancel => 'Vazgeç';
+
+  @override
+  String get noteBoxAdd => 'Ekle';
+
+  @override
+  String get annDeleteNote => 'Notu sil';
+
+  @override
+  String get annDeleteMark => 'İşareti sil';
+
+  @override
+  String get annNoteDeleted => 'Not silindi.';
+
+  @override
+  String get annMarkDeleted => 'İşaret silindi.';
+
+  @override
+  String get annAlreadyHandled =>
+      'Agent bu kaydı ele almış; işaret hub\'da duruyor.';
+
+  @override
+  String get selMarkYellow => 'Sarı';
+
+  @override
+  String get selMarkRed => 'Kırmızı';
+
+  @override
+  String get selMarkGreen => 'Yeşil';
+
+  @override
+  String get selMarkBlue => 'Mavi';
 }

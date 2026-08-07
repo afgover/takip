@@ -246,7 +246,7 @@ class SettingsScreen extends ConsumerWidget {
     if (!sync.hasOfflineCopy) {
       return sync.error == null
           ? l.syncNever
-          : l.syncFailed(describeHubError(sync.error!).headline);
+          : l.syncFailed(describeHubError(sync.error!, l).headline);
     }
 
     final base = l.syncDocsDownloaded(sync.docCount);
@@ -260,7 +260,7 @@ class SettingsScreen extends ConsumerWidget {
   }
 
   static String _statusText(L l, HubStatus status) {
-    if (status.error != null) return describeHubError(status.error!).headline;
+    if (status.error != null) return describeHubError(status.error!, l).headline;
     if (status.lastCheckedAt == null) return l.watchNever;
 
     final ago = DateTime.now().difference(status.lastCheckedAt!);

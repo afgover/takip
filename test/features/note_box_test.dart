@@ -3,14 +3,16 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:takip/features/common/selection_record.dart';
 
+import '../helpers/test_app.dart';
+
 void main() {
   testWidgets('not kutusu yazılan notu geri döndürür', (tester) async {
     String? result;
 
     await tester.pumpWidget(
       ProviderScope(
-        child: MaterialApp(
-          home: Scaffold(
+        child: testApp(
+          Scaffold(
             body: Builder(
               builder: (context) => ElevatedButton(
                 onPressed: () async {
@@ -47,8 +49,8 @@ void main() {
 
     await tester.pumpWidget(
       ProviderScope(
-        child: MaterialApp(
-          home: Scaffold(
+        child: testApp(
+          Scaffold(
             body: Builder(
               builder: (context) => ElevatedButton(
                 onPressed: () async {

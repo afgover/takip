@@ -8,6 +8,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:takip/features/common/annotated_document.dart';
 import 'package:takip/hub/hub_connections.dart';
 
+import '../helpers/test_app.dart';
+
 Future<void> pumpDoc(WidgetTester tester) async {
   SharedPreferences.setMockInitialValues({});
   FlutterSecureStorage.setMockInitialValues({
@@ -17,9 +19,9 @@ Future<void> pumpDoc(WidgetTester tester) async {
   });
 
   await tester.pumpWidget(
-    const ProviderScope(
-      child: MaterialApp(
-        home: Scaffold(
+    ProviderScope(
+      child: testApp(
+        Scaffold(
           body: AnnotatedDocument(
             data: 'Seçilebilir bir cümle burada duruyor.',
             sourcePath: 'hub/sessions/2026-08-02-x/session.md',

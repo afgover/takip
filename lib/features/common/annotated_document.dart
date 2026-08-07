@@ -121,6 +121,7 @@ class _AnnotatedDocumentState extends ConsumerState<AnnotatedDocument> {
       createNote(
         container: captured.container,
         messenger: captured.messenger,
+        l: L.of(context),
         quote: selection,
         sourcePath: widget.sourcePath,
         // Notsuz yolda zaten boş; yer iminde dolu olabilir ve kaybolmamalı.
@@ -134,6 +135,7 @@ class _AnnotatedDocumentState extends ConsumerState<AnnotatedDocument> {
     createSelectionRecord(
       container: captured.container,
       messenger: captured.messenger,
+      l: L.of(context),
       quote: selection,
       sourcePath: widget.sourcePath,
       kind: request.kind,
@@ -160,11 +162,15 @@ class _AnnotatedDocumentState extends ConsumerState<AnnotatedDocument> {
   /// değil `createNote`'tan geçiyor ve Bekleyenler'de görünmüyor.
   Future<void> _openNote(String selection) async {
     final captured = _capture(selection);
+    // Dil kutu açılmadan **önce** okunuyor: `await`ten sonra context ölmüş
+    // olabilir (L-025'in aynı tuzağı, bu sefer çeviri tarafında).
+    final l = L.of(context);
     final note = await openNoteBox(context, quote: selection);
     if (note == null) return;
     createNote(
       container: captured.container,
       messenger: captured.messenger,
+      l: l,
       quote: selection,
       sourcePath: widget.sourcePath,
       note: note,

@@ -14,6 +14,7 @@ import '../../hub/models/task.dart';
 import '../../hub/models/task_draft.dart';
 import '../../hub/outbox.dart';
 import '../../hub/task_repo.dart';
+import '../../l10n/app_localizations.dart';
 
 /// Seçilen metinden oluşturulabilecek kayıt türleri (sözleşme 1.5).
 ///
@@ -21,16 +22,26 @@ import '../../hub/task_repo.dart';
 /// alanı ne olduğunu söyler. Agent bunu okuyup nasıl ele alacağını bilir:
 /// `duzeltme` belgeyi düzeltmeyi, `tartisma` cevap vermeyi gerektirir.
 enum RecordKind {
-  gorev('Görev', 'gorev', Icons.add_task, TaskMark.highlight),
-  yorum('Yorum', 'yorum', Icons.chat_bubble_outline, TaskMark.comment),
-  duzeltme('Düzeltme', 'duzeltme', Icons.edit_outlined, TaskMark.underline),
-  tartisma('Tartışma', 'tartisma', Icons.forum_outlined, TaskMark.highlight);
+  gorev('gorev', Icons.add_task, TaskMark.highlight),
+  yorum('yorum', Icons.chat_bubble_outline, TaskMark.comment),
+  duzeltme('duzeltme', Icons.edit_outlined, TaskMark.underline),
+  tartisma('tartisma', Icons.forum_outlined, TaskMark.highlight);
 
-  const RecordKind(this.label, this.category, this.icon, this.defaultMark);
+  const RecordKind(this.category, this.icon, this.defaultMark);
 
-  final String label;
+  /// Kayda **yazılan** değer (sözleşme §4 kategorileri) — çevrilmez, yoksa
+  /// aynı hub'da iki dilde kategori birikirdi.
   final String category;
   final IconData icon;
+
+  /// Ekranda görünen ad. Kategoriden ayrı: biri dosyada duruyor, diğeri
+  /// okuyanın dilinde.
+  String labelIn(L l) => switch (this) {
+        gorev => l.kindTask,
+        yorum => l.kindComment,
+        duzeltme => l.kindFix,
+        tartisma => l.kindDiscussion,
+      };
 
   /// Düzeltme kırmızı altı çizili başlar — "burası yanlış" demenin görsel
   /// karşılığı; diğerleri sarı işaret.
@@ -109,6 +120,7 @@ class _SelectionRecordSheetState extends ConsumerState<SelectionRecordSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final l = L.of(context);
     final theme = Theme.of(context);
 
     return Padding(
@@ -123,7 +135,7 @@ class _SelectionRecordSheetState extends ConsumerState<SelectionRecordSheet> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Seçimden kayıt', style: theme.textTheme.titleMedium),
+            Text(l.selTitle, style: theme.textTheme.titleMedium),
             const SizedBox(height: 8),
             Container(
               width: double.infinity,
@@ -150,7 +162,7 @@ class _SelectionRecordSheetState extends ConsumerState<SelectionRecordSheet> {
                   ChoiceChip(
                     key: SelectionRecordSheet.kindKey(kind),
                     avatar: Icon(kind.icon, size: 16),
-                    label: Text(kind.label),
+                    label: Text(kind.labelIn(l)),
                     selected: _kind == kind,
                     onSelected: (_) => setState(() {
                       _kind = kind;
@@ -162,7 +174,7 @@ class _SelectionRecordSheetState extends ConsumerState<SelectionRecordSheet> {
             const SizedBox(height: 12),
             Row(
               children: [
-                Text('İşaret', style: theme.textTheme.labelLarge),
+                Text(l.selMark, style: theme.textTheme.labelLarge),
                 const SizedBox(width: 12),
                 for (final mark in TaskMark.values)
                   Padding(
@@ -170,10 +182,10 @@ class _SelectionRecordSheetState extends ConsumerState<SelectionRecordSheet> {
                     child: ChoiceChip(
                       key: SelectionRecordSheet.markKey(mark),
                       label: Text(switch (mark) {
-                        TaskMark.highlight => 'Sarı',
-                        TaskMark.underline => 'Kırmızı',
-                        TaskMark.comment => 'Yeşil',
-                        TaskMark.bookmark => 'Mavi',
+                        TaskMark.highlight => l.selMarkYellow,
+                        TaskMark.underline => l.selMarkRed,
+                        TaskMark.comment => l.selMarkGreen,
+                        TaskMark.bookmark => l.selMarkBlue,
                       }),
                       selected: _mark == mark,
                       onSelected: (_) => setState(() => _mark = mark),
@@ -190,15 +202,14 @@ class _SelectionRecordSheetState extends ConsumerState<SelectionRecordSheet> {
               // Boş/dolu geçişinde buton etiketi değişsin diye yeniden çiz.
               onChanged: (_) => setState(() {}),
               decoration: InputDecoration(
-                labelText: 'Not',
-                helperText:
-                    'Boş bırakırsan iş kuyruğuna girmez — işaret/not olarak kalır',
+                labelText: l.selNote,
+                helperText: l.selNoteHelp,
                 helperMaxLines: 2,
                 hintText: switch (_kind) {
-                  RecordKind.duzeltme => 'Nesi yanlış, ne olmalı?',
-                  RecordKind.tartisma => 'Sorun ne, neyi tartışmak istiyorsun?',
-                  RecordKind.yorum => 'Not olarak ne kalsın?',
-                  RecordKind.gorev => 'Ne yapılsın?',
+                  RecordKind.duzeltme => l.selHintFix,
+                  RecordKind.tartisma => l.selHintDiscussion,
+                  RecordKind.yorum => l.selHintComment,
+                  RecordKind.gorev => l.selHintTask,
                 },
                 border: const OutlineInputBorder(),
               ),
@@ -206,7 +217,7 @@ class _SelectionRecordSheetState extends ConsumerState<SelectionRecordSheet> {
             const SizedBox(height: 12),
             Row(
               children: [
-                Text('Öncelik', style: theme.textTheme.labelLarge),
+                Text(l.selPriority, style: theme.textTheme.labelLarge),
                 const SizedBox(width: 12),
                 Expanded(
                   child: DropdownButtonFormField<String>(
@@ -238,8 +249,8 @@ class _SelectionRecordSheetState extends ConsumerState<SelectionRecordSheet> {
                     ? Icons.brush_outlined
                     : _kind.icon),
                 label: Text(_noteCtrl.text.trim().isEmpty
-                    ? 'İşaret olarak ekle'
-                    : '${_kind.label} oluştur'),
+                    ? l.selAddAsMark
+                    : l.selCreateKind(_kind.labelIn(l))),
               ),
             ),
           ],
@@ -262,9 +273,14 @@ class _SelectionRecordSheetState extends ConsumerState<SelectionRecordSheet> {
 /// (L-026). İşaret önce yerel katmana yazılıyor, gönderim arkada sürüyor.
 /// Kalıcı bir hata olursa işaret geri alınıyor — yalancı bir iz bırakmaktansa
 /// kaybolması dürüst.
+
+/// [l] parametre olarak geçiyor: bu fonksiyonlar widget değil ve `messenger`
+/// dışında bir bağlamları yok. Çağıranın dili vermesi, gizlice global bir dile
+/// bağlanmaktan iyi (aynı gerekçe: `describeHubError`).
 void createSelectionRecord({
   required ProviderContainer container,
   required ScaffoldMessengerState messenger,
+  required L l,
   required String quote,
   required String sourcePath,
   required RecordKind kind,
@@ -312,7 +328,7 @@ void createSelectionRecord({
       // Ağ yok: kuyruğa alınır, işaret kalır — kayıt kaybolmadı (B-032).
       await container.read(outboxProvider.notifier).add(draft);
       messenger.showSnackBar(
-        const SnackBar(content: Text('Ağ yok — kayıt kuyruğa alındı.')),
+        SnackBar(content: Text(l.selQueuedRecord)),
       );
     } on HubError catch (e) {
       container.read(freshAnnotationsProvider.notifier).remove(sourcePath, annotation);
@@ -320,7 +336,7 @@ void createSelectionRecord({
     } catch (e) {
       container.read(freshAnnotationsProvider.notifier).remove(sourcePath, annotation);
       messenger.showSnackBar(
-        SnackBar(content: Text('Beklenmeyen hata: $e')),
+        SnackBar(content: Text(l.selUnexpected('$e'))),
       );
     }
     container.invalidate(allPendingTasksProvider);
@@ -340,6 +356,7 @@ void createSelectionRecord({
 void createNote({
   required ProviderContainer container,
   required ScaffoldMessengerState messenger,
+  required L l,
   required String quote,
   required String sourcePath,
   String note = '',
@@ -379,7 +396,7 @@ void createNote({
     } on HubNetworkError {
       await container.read(outboxProvider.notifier).add(draft);
       messenger.showSnackBar(
-        const SnackBar(content: Text('Ağ yok — not kuyruğa alındı.')),
+        SnackBar(content: Text(l.selQueuedNote)),
       );
     } on HubError catch (e) {
       container
@@ -390,7 +407,7 @@ void createNote({
       container
           .read(freshAnnotationsProvider.notifier)
           .remove(sourcePath, annotation);
-      messenger.showSnackBar(SnackBar(content: Text('Beklenmeyen hata: $e')));
+      messenger.showSnackBar(SnackBar(content: Text(l.selUnexpected('$e'))));
     }
     // Bekleyenler'i tazelemeye gerek yok: not oraya hiç girmiyor.
   }());
@@ -429,7 +446,7 @@ Future<String?> openNoteBox(
   return showDialog<String>(
     context: context,
     builder: (dialogContext) => AlertDialog(
-      title: const Text('Not ekle'),
+      title: Text(L.of(dialogContext).noteBoxTitle),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -455,9 +472,9 @@ Future<String?> openNoteBox(
             autofocus: true,
             maxLines: 3,
             textCapitalization: TextCapitalization.sentences,
-            decoration: const InputDecoration(
-              hintText: 'Kendine not — agent\'a iş düşmez',
-              border: OutlineInputBorder(),
+            decoration: InputDecoration(
+              hintText: L.of(dialogContext).noteBoxHint,
+              border: const OutlineInputBorder(),
             ),
           ),
         ],
@@ -465,13 +482,13 @@ Future<String?> openNoteBox(
       actions: [
         TextButton(
           onPressed: () => Navigator.of(dialogContext).pop(),
-          child: const Text('Vazgeç'),
+          child: Text(L.of(dialogContext).noteBoxCancel),
         ),
         FilledButton(
           key: noteSubmitKey,
           onPressed: () =>
               Navigator.of(dialogContext).pop(controller.text.trim()),
-          child: const Text('Ekle'),
+          child: Text(L.of(dialogContext).noteBoxAdd),
         ),
       ],
     ),
@@ -493,6 +510,7 @@ Future<bool> openAnnotationCard(
   required ProviderContainer container,
   required ScaffoldMessengerState messenger,
 }) async {
+  final l = L.of(context);
   final deleted = await showModalBottomSheet<bool>(
     context: context,
     showDragHandle: true,
@@ -568,8 +586,8 @@ Future<bool> openAnnotationCard(
                   onPressed: () => Navigator.of(sheetContext).pop(true),
                   icon: const Icon(Icons.delete_outline),
                   label: Text(isNotePath(annotation.path)
-                      ? 'Notu sil'
-                      : 'İşareti sil'),
+                      ? L.of(sheetContext).annDeleteNote
+                      : L.of(sheetContext).annDeleteMark),
                 ),
               ),
             ],
@@ -591,13 +609,13 @@ Future<bool> openAnnotationCard(
   final fileName = annotation.path.split('/').last;
   final folder =
       isNotePath(annotation.path) ? HubFolder.notes : HubFolder.inbox;
-  var message = folder == HubFolder.notes ? 'Not silindi.' : 'İşaret silindi.';
+  var message = folder == HubFolder.notes ? l.annNoteDeleted : l.annMarkDeleted;
   try {
     final removed = await container
         .read(taskRepoForSlugProvider(annotation.repoSlug))
         .deleteFrom(folder, fileName);
     if (!removed) {
-      message = 'Agent bu kaydı ele almış; işaret hub\'da duruyor.';
+      message = l.annAlreadyHandled;
     }
   } on HubError catch (e) {
     message = e.message;

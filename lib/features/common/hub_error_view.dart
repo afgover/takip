@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../core/errors.dart';
+import '../../l10n/app_localizations.dart';
 
 /// Hata gösteriminin tek yeri (B-050).
 ///
@@ -25,7 +26,7 @@ class HubErrorView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final detail = describeHubError(error);
+    final detail = describeHubError(error, L.of(context));
 
     return Center(
       child: Padding(
@@ -55,13 +56,13 @@ class HubErrorView extends StatelessWidget {
                   FilledButton.icon(
                     onPressed: onOpenSettings,
                     icon: const Icon(Icons.settings),
-                    label: const Text('Bağlantı ayarları'),
+                    label: Text(L.of(context).errSettingsButton),
                   ),
                 if (onRetry != null)
                   OutlinedButton.icon(
                     onPressed: onRetry,
                     icon: const Icon(Icons.refresh),
-                    label: const Text('Yeniden dene'),
+                    label: Text(L.of(context).errRetry),
                   ),
               ],
             ),
@@ -74,6 +75,10 @@ class HubErrorView extends StatelessWidget {
 
 /// Hata tipinin kullanıcıya nasıl anlatılacağı — banner ve tam ekran gösterim
 /// aynı metni kullansın diye tek yerde.
+///
+/// Metinler `L` üzerinden geliyor ve `L` **parametre olarak** alınıyor: bu saf
+/// bir fonksiyon, `BuildContext`i yok. Çağıranın dili vermesi, fonksiyonun
+/// gizlice global bir dile bağlanmasından iyi — test dili açıkça verebilir.
 class HubErrorDetail {
   const HubErrorDetail({
     required this.icon,
@@ -93,39 +98,36 @@ class HubErrorDetail {
   final bool suggestsSettings;
 }
 
-HubErrorDetail describeHubError(Object error, {DateTime? now}) {
+HubErrorDetail describeHubError(Object error, L l, {DateTime? now}) {
   switch (error) {
     case HubNetworkError():
-      return const HubErrorDetail(
+      return HubErrorDetail(
         icon: Icons.wifi_off,
-        headline: 'Bağlantı yok',
-        message: 'İnternete bağlanılamadı. Eklediğin görevler kuyrukta bekler '
-            've bağlantı gelince kendiliğinden gönderilir.',
+        headline: l.errNetworkTitle,
+        message: l.errNetworkBody,
       );
 
     case HubAuthError(:final message):
       return HubErrorDetail(
         icon: Icons.key_off,
-        headline: 'Token kabul edilmedi',
-        message: '$message\nAyarlardan token\'ı yenileyebilirsin; izinler '
-            'Contents: Read and write ve Metadata: Read olmalı.',
+        headline: l.errAuthTitle,
+        message: l.errAuthBody(message),
         suggestsSettings: true,
       );
 
     case HubRateLimitError(:final resetAt):
       return HubErrorDetail(
         icon: Icons.hourglass_top,
-        headline: 'İstek limiti doldu',
+        headline: l.errRateTitle,
         message: resetAt == null
-            ? 'GitHub istek limiti doldu; bir süre sonra kendiliğinden açılır.'
-            : 'GitHub istek limiti doldu. ${_remaining(resetAt, now)} sonra '
-                'yeniden denenecek.',
+            ? l.errRateBody
+            : l.errRateBodyIn(_remaining(resetAt, l, now)),
       );
 
     case HubNotFoundError(:final message):
       return HubErrorDetail(
         icon: Icons.search_off,
-        headline: 'Bulunamadı',
+        headline: l.errNotFoundTitle,
         message: message,
         suggestsSettings: true,
       );
@@ -133,24 +135,24 @@ HubErrorDetail describeHubError(Object error, {DateTime? now}) {
     case HubError(:final message):
       return HubErrorDetail(
         icon: Icons.error_outline,
-        headline: 'Bir sorun çıktı',
+        headline: l.errGenericTitle,
         message: message,
       );
 
     default:
       return HubErrorDetail(
         icon: Icons.error_outline,
-        headline: 'Beklenmeyen hata',
+        headline: l.errUnexpectedTitle,
         message: '$error',
       );
   }
 }
 
-String _remaining(DateTime resetAt, DateTime? now) {
+String _remaining(DateTime resetAt, L l, DateTime? now) {
   final left = resetAt.difference(now ?? DateTime.now());
-  if (left.isNegative || left.inSeconds < 60) return 'Birazdan';
-  if (left.inMinutes < 60) return '${left.inMinutes} dakika';
-  return '${left.inHours} saat';
+  if (left.isNegative || left.inSeconds < 60) return l.errLeftSoon;
+  if (left.inMinutes < 60) return l.errLeftMinutes(left.inMinutes);
+  return l.errLeftHours(left.inHours);
 }
 
 /// Liste boşken gösterilen bilgilendirme.

@@ -97,18 +97,6 @@ abstract class L {
     Locale('tr')
   ];
 
-  /// No description provided for @appTitle.
-  ///
-  /// In tr, this message translates to:
-  /// **'Takip'**
-  String get appTitle;
-
-  /// No description provided for @langSystem.
-  ///
-  /// In tr, this message translates to:
-  /// **'Sistem dili'**
-  String get langSystem;
-
   /// No description provided for @langTurkish.
   ///
   /// In tr, this message translates to:
@@ -127,12 +115,6 @@ abstract class L {
   /// **'Dil'**
   String get settingsLanguage;
 
-  /// No description provided for @settingsLanguageHelp.
-  ///
-  /// In tr, this message translates to:
-  /// **'Arayüz dili. Hub\'a yazılan görev ve notların dili değişmez — onların biçimi sözleşmeyle sabittir.'**
-  String get settingsLanguageHelp;
-
   /// No description provided for @navPending.
   ///
   /// In tr, this message translates to:
@@ -144,12 +126,6 @@ abstract class L {
   /// In tr, this message translates to:
   /// **'Tarayıcı'**
   String get navBrowse;
-
-  /// No description provided for @navAdd.
-  ///
-  /// In tr, this message translates to:
-  /// **'Görev ekle'**
-  String get navAdd;
 
   /// No description provided for @navSettings.
   ///
@@ -793,29 +769,11 @@ abstract class L {
   /// **'{n} dakika'**
   String intervalMinutes(int n);
 
-  /// No description provided for @connectionSettings.
-  ///
-  /// In tr, this message translates to:
-  /// **'Bağlantı ayarları'**
-  String get connectionSettings;
-
-  /// No description provided for @errNoConnectionTitle.
-  ///
-  /// In tr, this message translates to:
-  /// **'Bağlantı yok'**
-  String get errNoConnectionTitle;
-
-  /// No description provided for @errNoConnectionBody.
-  ///
-  /// In tr, this message translates to:
-  /// **'İnternete bağlanılamadı. Eklediğin görevler kuyrukta bekler ve bağlantı gelince kendiliğinden gönderilir.'**
-  String get errNoConnectionBody;
-
   /// No description provided for @errAuthBody.
   ///
   /// In tr, this message translates to:
-  /// **'Ayarlar\'dan token\'ı yenileyebilirsin; izinler Contents: Read and write ve Metadata: Read olmalı.'**
-  String get errAuthBody;
+  /// **'{message}\nAyarlardan token\'ı yenileyebilirsin; izinler Contents: Read and write ve Metadata: Read olmalı.'**
+  String errAuthBody(String message);
 
   /// No description provided for @errRateTitle.
   ///
@@ -841,119 +799,17 @@ abstract class L {
   /// **'Bir sorun çıktı'**
   String get errGenericTitle;
 
-  /// No description provided for @addTaskTitle.
-  ///
-  /// In tr, this message translates to:
-  /// **'Görev Ekle'**
-  String get addTaskTitle;
-
-  /// No description provided for @fieldTitle.
-  ///
-  /// In tr, this message translates to:
-  /// **'Başlık'**
-  String get fieldTitle;
-
-  /// No description provided for @titleRequired.
-  ///
-  /// In tr, this message translates to:
-  /// **'Başlık gerekli'**
-  String get titleRequired;
-
-  /// No description provided for @titleNeedsLetter.
-  ///
-  /// In tr, this message translates to:
-  /// **'Başlık harf ya da rakam içermeli'**
-  String get titleNeedsLetter;
-
-  /// No description provided for @fieldDescription.
-  ///
-  /// In tr, this message translates to:
-  /// **'Açıklama'**
-  String get fieldDescription;
-
-  /// No description provided for @fieldPriority.
-  ///
-  /// In tr, this message translates to:
-  /// **'Öncelik'**
-  String get fieldPriority;
-
-  /// No description provided for @newCategoryName.
-  ///
-  /// In tr, this message translates to:
-  /// **'Yeni kategori adı'**
-  String get newCategoryName;
-
-  /// No description provided for @categoryRequired.
-  ///
-  /// In tr, this message translates to:
-  /// **'Kategori adı gerekli'**
-  String get categoryRequired;
-
-  /// No description provided for @sendToInbox.
-  ///
-  /// In tr, this message translates to:
-  /// **'Inbox\'a Gönder'**
-  String get sendToInbox;
-
-  /// No description provided for @taskQueuedOffline.
-  ///
-  /// In tr, this message translates to:
-  /// **'Ağ yok — görev kuyruğa alındı, bağlantı gelince gönderilecek.'**
-  String get taskQueuedOffline;
-
-  /// No description provided for @securityEmptyTitle.
-  ///
-  /// In tr, this message translates to:
-  /// **'Güvenlik kaydı yok'**
-  String get securityEmptyTitle;
-
-  /// No description provided for @securityEmptySubtitle.
-  ///
-  /// In tr, this message translates to:
-  /// **'Agent tarama, önlem ve bulguları buraya yazar (sözleşme §12).'**
-  String get securityEmptySubtitle;
-
-  /// No description provided for @securityOpenCount.
-  ///
-  /// In tr, this message translates to:
-  /// **'{count} açık kayıt'**
-  String securityOpenCount(int count);
-
-  /// No description provided for @securityFilterEmptyTitle.
-  ///
-  /// In tr, this message translates to:
-  /// **'Bu türde kayıt yok'**
-  String get securityFilterEmptyTitle;
-
-  /// No description provided for @securityFilterEmptySubtitle.
-  ///
-  /// In tr, this message translates to:
-  /// **'Filtreyi kaldırıp tümünü görebilirsin.'**
-  String get securityFilterEmptySubtitle;
-
   /// No description provided for @all.
   ///
   /// In tr, this message translates to:
   /// **'Tümü'**
   String get all;
 
-  /// No description provided for @securityOpen.
-  ///
-  /// In tr, this message translates to:
-  /// **'açık'**
-  String get securityOpen;
-
   /// No description provided for @secKindMeasure.
   ///
   /// In tr, this message translates to:
   /// **'Önlem'**
   String get secKindMeasure;
-
-  /// No description provided for @secKindOpen.
-  ///
-  /// In tr, this message translates to:
-  /// **'Açık'**
-  String get secKindOpen;
 
   /// No description provided for @secKindTodo.
   ///
@@ -1153,11 +1009,599 @@ abstract class L {
   /// **'Hub dili — `SYSTEM.md` içinde yazılı. Arayüz, sözleşme ve yeni kayıtlar bunu izler; değiştirmek agent\'ın işidir.'**
   String get languageFromHub;
 
-  /// No description provided for @languageUnknown.
+  /// No description provided for @errSettingsButton.
   ///
   /// In tr, this message translates to:
-  /// **'Bağlantı yok — sistem dili kullanılıyor'**
-  String get languageUnknown;
+  /// **'Bağlantı ayarları'**
+  String get errSettingsButton;
+
+  /// No description provided for @errRetry.
+  ///
+  /// In tr, this message translates to:
+  /// **'Yeniden dene'**
+  String get errRetry;
+
+  /// No description provided for @errNetworkTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bağlantı yok'**
+  String get errNetworkTitle;
+
+  /// No description provided for @errNetworkBody.
+  ///
+  /// In tr, this message translates to:
+  /// **'İnternete bağlanılamadı. Eklediğin görevler kuyrukta bekler ve bağlantı gelince kendiliğinden gönderilir.'**
+  String get errNetworkBody;
+
+  /// No description provided for @errAuthTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Token kabul edilmedi'**
+  String get errAuthTitle;
+
+  /// No description provided for @errRateBodyIn.
+  ///
+  /// In tr, this message translates to:
+  /// **'GitHub istek limiti doldu. {left} sonra yeniden denenecek.'**
+  String errRateBodyIn(String left);
+
+  /// No description provided for @errUnexpectedTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Beklenmeyen hata'**
+  String get errUnexpectedTitle;
+
+  /// No description provided for @errLeftSoon.
+  ///
+  /// In tr, this message translates to:
+  /// **'Birazdan'**
+  String get errLeftSoon;
+
+  /// No description provided for @errLeftMinutes.
+  ///
+  /// In tr, this message translates to:
+  /// **'{count} dakika'**
+  String errLeftMinutes(int count);
+
+  /// No description provided for @errLeftHours.
+  ///
+  /// In tr, this message translates to:
+  /// **'{count} saat'**
+  String errLeftHours(int count);
+
+  /// No description provided for @addTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Görev Ekle'**
+  String get addTitle;
+
+  /// No description provided for @addFieldTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Başlık'**
+  String get addFieldTitle;
+
+  /// No description provided for @addTitleRequired.
+  ///
+  /// In tr, this message translates to:
+  /// **'Başlık gerekli'**
+  String get addTitleRequired;
+
+  /// No description provided for @addTitleNeedsAlnum.
+  ///
+  /// In tr, this message translates to:
+  /// **'Başlık harf ya da rakam içermeli'**
+  String get addTitleNeedsAlnum;
+
+  /// No description provided for @addFieldDescription.
+  ///
+  /// In tr, this message translates to:
+  /// **'Açıklama'**
+  String get addFieldDescription;
+
+  /// No description provided for @addFieldPriority.
+  ///
+  /// In tr, this message translates to:
+  /// **'Öncelik'**
+  String get addFieldPriority;
+
+  /// No description provided for @addFieldCategory.
+  ///
+  /// In tr, this message translates to:
+  /// **'Kategori'**
+  String get addFieldCategory;
+
+  /// No description provided for @addNewCategory.
+  ///
+  /// In tr, this message translates to:
+  /// **'Yeni kategori…'**
+  String get addNewCategory;
+
+  /// No description provided for @addNewCategoryName.
+  ///
+  /// In tr, this message translates to:
+  /// **'Yeni kategori adı'**
+  String get addNewCategoryName;
+
+  /// No description provided for @addCategoryRequired.
+  ///
+  /// In tr, this message translates to:
+  /// **'Kategori adı gerekli'**
+  String get addCategoryRequired;
+
+  /// No description provided for @addSubmit.
+  ///
+  /// In tr, this message translates to:
+  /// **'Hub\'a Gönder'**
+  String get addSubmit;
+
+  /// No description provided for @addSent.
+  ///
+  /// In tr, this message translates to:
+  /// **'Görev hub\'a gönderildi.'**
+  String get addSent;
+
+  /// No description provided for @addQueued.
+  ///
+  /// In tr, this message translates to:
+  /// **'Ağ yok — görev kuyruğa alındı, bağlantı gelince gönderilecek.'**
+  String get addQueued;
+
+  /// No description provided for @addUnexpected.
+  ///
+  /// In tr, this message translates to:
+  /// **'Beklenmeyen hata: {error}'**
+  String addUnexpected(String error);
+
+  /// No description provided for @backupTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Yedekleme'**
+  String get backupTitle;
+
+  /// No description provided for @backupExportHeading.
+  ///
+  /// In tr, this message translates to:
+  /// **'Dışa aktar'**
+  String get backupExportHeading;
+
+  /// No description provided for @backupExportIntro.
+  ///
+  /// In tr, this message translates to:
+  /// **'Kayıtlı {count} bağlantı tek bir metne çevrilir. Metin token\'larını taşıdığı için belirlediğin parolayla şifrelenir — parolasız işe yaramaz.'**
+  String backupExportIntro(int count);
+
+  /// No description provided for @backupPassLabel.
+  ///
+  /// In tr, this message translates to:
+  /// **'Yedek parolası'**
+  String get backupPassLabel;
+
+  /// No description provided for @backupPassHelp.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bunu unutursan yedek işe yaramaz.'**
+  String get backupPassHelp;
+
+  /// No description provided for @backupExportButton.
+  ///
+  /// In tr, this message translates to:
+  /// **'Yedek oluştur'**
+  String get backupExportButton;
+
+  /// No description provided for @backupCopyButton.
+  ///
+  /// In tr, this message translates to:
+  /// **'Panoya kopyala'**
+  String get backupCopyButton;
+
+  /// No description provided for @backupCopied.
+  ///
+  /// In tr, this message translates to:
+  /// **'Panoya kopyalandı. Parola yöneticine yapıştır.'**
+  String get backupCopied;
+
+  /// No description provided for @backupCopyWarning.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bunu parola yöneticine kaydet. Panoda bırakma — pano geçmişi tutan uygulamalar okuyabilir.'**
+  String get backupCopyWarning;
+
+  /// No description provided for @backupRestoreHeading.
+  ///
+  /// In tr, this message translates to:
+  /// **'Geri yükle'**
+  String get backupRestoreHeading;
+
+  /// No description provided for @backupRestoreIntro.
+  ///
+  /// In tr, this message translates to:
+  /// **'Yedekteki repolar listeye eklenir. Zaten kayıtlı bir repo gelirse token\'ı tazelenir; mevcut bağlantıların silinmez.'**
+  String get backupRestoreIntro;
+
+  /// No description provided for @backupTextLabel.
+  ///
+  /// In tr, this message translates to:
+  /// **'Yedek metni'**
+  String get backupTextLabel;
+
+  /// No description provided for @backupRestoreButton.
+  ///
+  /// In tr, this message translates to:
+  /// **'Geri yükle'**
+  String get backupRestoreButton;
+
+  /// No description provided for @backupPassTooShort.
+  ///
+  /// In tr, this message translates to:
+  /// **'Parola en az 6 karakter olmalı.'**
+  String get backupPassTooShort;
+
+  /// No description provided for @backupNothingToExport.
+  ///
+  /// In tr, this message translates to:
+  /// **'Yedeklenecek bağlantı yok.'**
+  String get backupNothingToExport;
+
+  /// No description provided for @backupExported.
+  ///
+  /// In tr, this message translates to:
+  /// **'{count} bağlantı yedeklendi.'**
+  String backupExported(int count);
+
+  /// No description provided for @backupExportFailed.
+  ///
+  /// In tr, this message translates to:
+  /// **'Yedek alınamadı: {error}'**
+  String backupExportFailed(String error);
+
+  /// No description provided for @backupPasteFirst.
+  ///
+  /// In tr, this message translates to:
+  /// **'Yedek metnini yapıştır.'**
+  String get backupPasteFirst;
+
+  /// No description provided for @backupRestored.
+  ///
+  /// In tr, this message translates to:
+  /// **'{count} bağlantı geri yüklendi.'**
+  String backupRestored(int count);
+
+  /// No description provided for @backupImportFailed.
+  ///
+  /// In tr, this message translates to:
+  /// **'Geri yüklenemedi: {error}'**
+  String backupImportFailed(String error);
+
+  /// No description provided for @detailNotHandledYet.
+  ///
+  /// In tr, this message translates to:
+  /// **'agent henüz ele almadı'**
+  String get detailNotHandledYet;
+
+  /// No description provided for @detailAnswerSent.
+  ///
+  /// In tr, this message translates to:
+  /// **'Cevap gönderildi.'**
+  String get detailAnswerSent;
+
+  /// No description provided for @detailReported.
+  ///
+  /// In tr, this message translates to:
+  /// **'Agent\'a bildirildi.'**
+  String get detailReported;
+
+  /// No description provided for @detailQueued.
+  ///
+  /// In tr, this message translates to:
+  /// **'Ağ yok — kuyruğa alındı.'**
+  String get detailQueued;
+
+  /// No description provided for @detailUnexpected.
+  ///
+  /// In tr, this message translates to:
+  /// **'Beklenmeyen hata: {error}'**
+  String detailUnexpected(String error);
+
+  /// No description provided for @waitingForOtherQuestion.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bu soru {who} kullanıcısını bekliyor. Cevabı sen de gönderebilirsin.'**
+  String waitingForOtherQuestion(String who);
+
+  /// No description provided for @waitingForOther.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bu iş {who} kullanıcısını bekliyor.'**
+  String waitingForOther(String who);
+
+  /// No description provided for @waitingQuestion.
+  ///
+  /// In tr, this message translates to:
+  /// **'Agent bir cevap bekliyor. Seçimini işaretle; istersen açıklama da yazabilirsin.'**
+  String get waitingQuestion;
+
+  /// No description provided for @waitingWork.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bu iş seni bekliyor. Ne beklendiği aşağıdaki notlarda yazılı; yaptıktan sonra agent\'a haber ver.'**
+  String get waitingWork;
+
+  /// No description provided for @detailMultiHint.
+  ///
+  /// In tr, this message translates to:
+  /// **'Birden çok seçebilirsin.'**
+  String get detailMultiHint;
+
+  /// No description provided for @detailNoteLabel.
+  ///
+  /// In tr, this message translates to:
+  /// **'Açıklama (isteğe bağlı)'**
+  String get detailNoteLabel;
+
+  /// No description provided for @detailNoteHint.
+  ///
+  /// In tr, this message translates to:
+  /// **'Listede olmayan bir durum varsa buraya yaz'**
+  String get detailNoteHint;
+
+  /// No description provided for @detailAnswered.
+  ///
+  /// In tr, this message translates to:
+  /// **'Cevaplandı'**
+  String get detailAnswered;
+
+  /// No description provided for @detailSendAnswer.
+  ///
+  /// In tr, this message translates to:
+  /// **'Cevabı gönder'**
+  String get detailSendAnswer;
+
+  /// No description provided for @detailReportedShort.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bildirildi'**
+  String get detailReportedShort;
+
+  /// No description provided for @detailDidIt.
+  ///
+  /// In tr, this message translates to:
+  /// **'Yaptım'**
+  String get detailDidIt;
+
+  /// No description provided for @secEmptyTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Güvenlik kaydı yok'**
+  String get secEmptyTitle;
+
+  /// No description provided for @secEmptySubtitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Agent tarama, önlem ve bulguları buraya yazar (sözleşme §12).'**
+  String get secEmptySubtitle;
+
+  /// No description provided for @secOpenCount.
+  ///
+  /// In tr, this message translates to:
+  /// **'{count} açık kayıt'**
+  String secOpenCount(int count);
+
+  /// No description provided for @secFilterEmptyTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bu türde kayıt yok'**
+  String get secFilterEmptyTitle;
+
+  /// No description provided for @secFilterEmptySubtitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Filtreyi kaldırıp tümünü görebilirsin.'**
+  String get secFilterEmptySubtitle;
+
+  /// No description provided for @secFilterAll.
+  ///
+  /// In tr, this message translates to:
+  /// **'Tümü'**
+  String get secFilterAll;
+
+  /// No description provided for @secOpenBadge.
+  ///
+  /// In tr, this message translates to:
+  /// **'açık'**
+  String get secOpenBadge;
+
+  /// No description provided for @secKindHole.
+  ///
+  /// In tr, this message translates to:
+  /// **'Açık'**
+  String get secKindHole;
+
+  /// No description provided for @kindTask.
+  ///
+  /// In tr, this message translates to:
+  /// **'Görev'**
+  String get kindTask;
+
+  /// No description provided for @kindComment.
+  ///
+  /// In tr, this message translates to:
+  /// **'Yorum'**
+  String get kindComment;
+
+  /// No description provided for @kindFix.
+  ///
+  /// In tr, this message translates to:
+  /// **'Düzeltme'**
+  String get kindFix;
+
+  /// No description provided for @kindDiscussion.
+  ///
+  /// In tr, this message translates to:
+  /// **'Tartışma'**
+  String get kindDiscussion;
+
+  /// No description provided for @selTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Seçimden kayıt'**
+  String get selTitle;
+
+  /// No description provided for @selMark.
+  ///
+  /// In tr, this message translates to:
+  /// **'İşaret'**
+  String get selMark;
+
+  /// No description provided for @selNote.
+  ///
+  /// In tr, this message translates to:
+  /// **'Not'**
+  String get selNote;
+
+  /// No description provided for @selNoteHelp.
+  ///
+  /// In tr, this message translates to:
+  /// **'Boş bırakırsan iş kuyruğuna girmez — işaret/not olarak kalır'**
+  String get selNoteHelp;
+
+  /// No description provided for @selHintFix.
+  ///
+  /// In tr, this message translates to:
+  /// **'Nesi yanlış, ne olmalı?'**
+  String get selHintFix;
+
+  /// No description provided for @selHintDiscussion.
+  ///
+  /// In tr, this message translates to:
+  /// **'Sorun ne, neyi tartışmak istiyorsun?'**
+  String get selHintDiscussion;
+
+  /// No description provided for @selHintComment.
+  ///
+  /// In tr, this message translates to:
+  /// **'Not olarak ne kalsın?'**
+  String get selHintComment;
+
+  /// No description provided for @selHintTask.
+  ///
+  /// In tr, this message translates to:
+  /// **'Ne yapılsın?'**
+  String get selHintTask;
+
+  /// No description provided for @selPriority.
+  ///
+  /// In tr, this message translates to:
+  /// **'Öncelik'**
+  String get selPriority;
+
+  /// No description provided for @selAddAsMark.
+  ///
+  /// In tr, this message translates to:
+  /// **'İşaret olarak ekle'**
+  String get selAddAsMark;
+
+  /// No description provided for @selCreateKind.
+  ///
+  /// In tr, this message translates to:
+  /// **'{kind} oluştur'**
+  String selCreateKind(String kind);
+
+  /// No description provided for @selQueuedRecord.
+  ///
+  /// In tr, this message translates to:
+  /// **'Ağ yok — kayıt kuyruğa alındı.'**
+  String get selQueuedRecord;
+
+  /// No description provided for @selQueuedNote.
+  ///
+  /// In tr, this message translates to:
+  /// **'Ağ yok — not kuyruğa alındı.'**
+  String get selQueuedNote;
+
+  /// No description provided for @selUnexpected.
+  ///
+  /// In tr, this message translates to:
+  /// **'Beklenmeyen hata: {error}'**
+  String selUnexpected(String error);
+
+  /// No description provided for @noteBoxTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Not ekle'**
+  String get noteBoxTitle;
+
+  /// No description provided for @noteBoxHint.
+  ///
+  /// In tr, this message translates to:
+  /// **'Kendine not — agent\'a iş düşmez'**
+  String get noteBoxHint;
+
+  /// No description provided for @noteBoxCancel.
+  ///
+  /// In tr, this message translates to:
+  /// **'Vazgeç'**
+  String get noteBoxCancel;
+
+  /// No description provided for @noteBoxAdd.
+  ///
+  /// In tr, this message translates to:
+  /// **'Ekle'**
+  String get noteBoxAdd;
+
+  /// No description provided for @annDeleteNote.
+  ///
+  /// In tr, this message translates to:
+  /// **'Notu sil'**
+  String get annDeleteNote;
+
+  /// No description provided for @annDeleteMark.
+  ///
+  /// In tr, this message translates to:
+  /// **'İşareti sil'**
+  String get annDeleteMark;
+
+  /// No description provided for @annNoteDeleted.
+  ///
+  /// In tr, this message translates to:
+  /// **'Not silindi.'**
+  String get annNoteDeleted;
+
+  /// No description provided for @annMarkDeleted.
+  ///
+  /// In tr, this message translates to:
+  /// **'İşaret silindi.'**
+  String get annMarkDeleted;
+
+  /// No description provided for @annAlreadyHandled.
+  ///
+  /// In tr, this message translates to:
+  /// **'Agent bu kaydı ele almış; işaret hub\'da duruyor.'**
+  String get annAlreadyHandled;
+
+  /// No description provided for @selMarkYellow.
+  ///
+  /// In tr, this message translates to:
+  /// **'Sarı'**
+  String get selMarkYellow;
+
+  /// No description provided for @selMarkRed.
+  ///
+  /// In tr, this message translates to:
+  /// **'Kırmızı'**
+  String get selMarkRed;
+
+  /// No description provided for @selMarkGreen.
+  ///
+  /// In tr, this message translates to:
+  /// **'Yeşil'**
+  String get selMarkGreen;
+
+  /// No description provided for @selMarkBlue.
+  ///
+  /// In tr, this message translates to:
+  /// **'Mavi'**
+  String get selMarkBlue;
 }
 
 class _LDelegate extends LocalizationsDelegate<L> {

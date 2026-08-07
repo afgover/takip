@@ -18,6 +18,7 @@ void main() {
   /// Arayüz metni **artık** buradan gelmeli.
   const migrated = <String>[
     'lib/app.dart',
+    'lib/features/add_task/add_task_screen.dart',
     'lib/features/browse/activity_screen.dart',
     'lib/features/browse/annotations_screen.dart',
     'lib/features/browse/browse_screen.dart',
@@ -25,30 +26,31 @@ void main() {
     'lib/features/browse/document_screen.dart',
     'lib/features/browse/knowledge_screen.dart',
     'lib/features/browse/roadmap_screen.dart',
+    'lib/features/browse/security_screen.dart',
     'lib/features/common/annotated_document.dart',
+    'lib/features/common/hub_error_view.dart',
     'lib/features/common/hub_markdown.dart',
     'lib/features/common/hub_status_banner.dart',
     'lib/features/common/hub_watcher_scope.dart',
     'lib/features/common/repo_switcher.dart',
+    'lib/features/common/selection_record.dart',
     'lib/features/common/token_scope_warning_dialog.dart',
     'lib/features/onboarding/onboarding_screen.dart',
     'lib/features/pending/done_screen.dart',
     'lib/features/pending/pending_screen.dart',
+    'lib/features/pending/task_detail_screen.dart',
+    'lib/features/settings/backup_screen.dart',
     'lib/features/settings/connection_screen.dart',
     'lib/features/settings/connections_screen.dart',
     'lib/features/settings/settings_screen.dart',
     'lib/features/shell.dart',
   ];
 
-  /// Henüz taşınmamış ekranlar (B-115). Her taşımada buradan bir satır silinir.
-  const pending = <String>[
-    'lib/features/add_task/add_task_screen.dart',
-    'lib/features/browse/security_screen.dart',
-    'lib/features/common/hub_error_view.dart',
-    'lib/features/common/selection_record.dart',
-    'lib/features/pending/task_detail_screen.dart',
-    'lib/features/settings/backup_screen.dart',
-  ];
+  /// Henüz taşınmamış ekranlar (B-115). Boş: hepsi taşındı.
+  ///
+  /// Liste boş diye test silinmiyor — **geri kayma** ölçüsü olarak duruyor:
+  /// yeni bir ekran Türkçe metinle gelirse burada görünür ve test kırılır.
+  const pending = <String>[];
 
   test('taşınmış dosyalarda Türkçe arayüz metni kalmadı', () {
     for (final path in migrated) {
@@ -72,6 +74,31 @@ void main() {
       ..sort();
 
     expect(actual, pending, reason: 'çeviri bekleyen dosya listesi güncellenmeli');
+  });
+
+  test('kullanılmayan çeviri anahtarı yok', () {
+    // Ölü anahtar sessizdir ve iki kere zarar verir: (a) çevrilmiş ama hiçbir
+    // yerde görünmeyen metin "yapıldı" sanılır, (b) aynı adı ikinci kez
+    // eklerken farkında olmadan **üzerine yazılır**. İkincisi bu oturumda
+    // gerçekten oldu: `markYellow` menüde kullanılıyordu, seçim kutusu için
+    // aynı ad ikinci kez eklenince menünün metni sessizce değişti (L-043).
+    final keys = (jsonDecode(File('lib/l10n/app_tr.arb').readAsStringSync())
+            as Map<String, dynamic>)
+        .keys
+        .where((k) => !k.startsWith('@'));
+
+    final source = Directory('lib')
+        .listSync(recursive: true)
+        .whereType<File>()
+        .where((f) => f.path.endsWith('.dart'))
+        .where((f) => !f.path.startsWith('lib/l10n/'))
+        .map((f) => f.readAsStringSync())
+        .join('\n');
+
+    final unused = keys.where((k) => !RegExp('\\b$k\\b').hasMatch(source)).toList();
+
+    expect(unused, isEmpty,
+        reason: 'ARB anahtarı tanımlı ama kullanılmıyor: kaldır ya da bağla');
   });
 
   test('iki dil aynı anahtarları taşıyor', () {

@@ -28,6 +28,46 @@ enum HubLanguage {
   String get whereHeading => this == tr ? 'Nerede' : 'Where';
   String get quoteHeading => this == tr ? 'Alıntı' : 'Quote';
 
+  /// Gövde içi alan adları (`- **Ad:** değer`). Başlıklarla aynı kural: bunlar
+  /// **kayıt içeriği**, frontmatter anahtarı değil, dolayısıyla hub dilinde.
+  String get choiceField => this == tr ? 'Seçim' : 'Choice';
+  String get explanationField => this == tr ? 'Açıklama' : 'Explanation';
+
+  /// Güvenlik kaydının alanları (sözleşme §12).
+  String get typeField => this == tr ? 'Tür' : 'Type';
+  String get statusField => this == tr ? 'Durum' : 'Status';
+
+  /// `Durum` alanının "kapanmamış" değeri. Dosyada Türkçe karaktersiz yazılır
+  /// (dosya adı kuralıyla aynı gerekçe).
+  String get openValue => this == tr ? 'acik' : 'open';
+
+  /// `waiting/` bildirimlerinin gövdesi — kullanıcı bir soruyu cevaplayınca ya
+  /// da bekleneni yapınca `inbox/`a düşen kayıt.
+  String waitingDoneTitle(String label) =>
+      this == tr ? '$label — yapıldı' : '$label — done';
+  String waitingAnsweredTitle(String label) =>
+      this == tr ? '$label — cevaplandı' : '$label — answered';
+  String waitingDoneBody(String ref) => this == tr
+      ? '`$ref` görevinde beklenen iş yapıldı. Asıl görevi `waiting/`ten '
+          'çıkarabilirsin.'
+      : 'The work awaited in `$ref` is done. You can move the original task '
+          'out of `waiting/`.';
+  String waitingAnsweredBody(String ref) => this == tr
+      ? '`$ref` görevindeki soru cevaplandı.'
+      : 'The question in `$ref` has been answered.';
+  String get noChoiceMade => this == tr ? '(seçim yapılmadı)' : '(no choice)';
+
+  /// İşaret/not kaydının "nerede" alanları.
+  String get fileField => this == tr ? 'Dosya' : 'File';
+  String get sectionField => this == tr ? 'Bölüm' : 'Section';
+
+  /// Kullanıcının boş bıraktığı alanlar. Boş bırakmak bir bilgi: "yazacak bir
+  /// şey yoktu" ile "alan hiç yoktu" farklı şeyler, o yüzden yazılıyor.
+  String get noNoteGiven =>
+      this == tr ? '(not girilmedi)' : '(no note given)';
+  String get noDescriptionGiven =>
+      this == tr ? '(açıklama girilmedi)' : '(no description given)';
+
   static HubLanguage parse(String? code) {
     for (final l in HubLanguage.values) {
       if (l.code == code) return l;
@@ -46,6 +86,15 @@ enum HubLanguage {
   /// maliyeti okunamayan kayıt.
   static List<String> get allRequestHeadings =>
       HubLanguage.values.map((l) => l.requestHeading).toList();
+
+  /// Ayrıştırma tarafı — [allRequestHeadings] ile aynı gerekçe: okurken geniş,
+  /// yazarken hub dilinde.
+  static List<String> get allTypeFields =>
+      HubLanguage.values.map((l) => l.typeField).toList();
+  static List<String> get allStatusFields =>
+      HubLanguage.values.map((l) => l.statusField).toList();
+  static List<String> get allOpenValues =>
+      HubLanguage.values.map((l) => l.openValue).toList();
 }
 
 /// Hub'ın `SYSTEM.md`'sinde ilan edilen dil.

@@ -37,7 +37,7 @@ class HubStatusBanner extends ConsumerWidget {
       );
     }
 
-    final detail = describeHubError(status.error!);
+    final detail = describeHubError(status.error!, L.of(context));
     return _Bar(
       key: bannerKey,
       icon: detail.icon,

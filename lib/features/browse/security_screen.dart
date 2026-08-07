@@ -3,7 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/constants.dart';
 import '../../hub/browse_repo.dart';
+import '../../hub/hub_language.dart';
 import '../../hub/models/hub_doc.dart';
+import '../../l10n/app_localizations.dart';
 import '../common/annotated_document.dart';
 import '../common/hub_error_view.dart';
 
@@ -30,16 +32,16 @@ class _SecurityScreenState extends ConsumerState<SecurityScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l = L.of(context);
     final entries = ref.watch(securityProvider);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Security')),
+      appBar: AppBar(title: Text(l.catSecurity)),
       body: switch (entries) {
-        AsyncData(:final value) when value.isEmpty => const HubEmptyView(
+        AsyncData(:final value) when value.isEmpty => HubEmptyView(
             icon: Icons.shield_outlined,
-            title: 'Güvenlik kaydı yok',
-            subtitle: 'Agent tarama, önlem ve bulguları buraya yazar '
-                '(sözleşme §12).',
+            title: l.secEmptyTitle,
+            subtitle: l.secEmptySubtitle,
           ),
         AsyncData(:final value) => _List(
             entries: _ordered(value),
@@ -96,7 +98,7 @@ class _List extends StatelessWidget {
                     size: 16, color: Theme.of(context).colorScheme.error),
                 const SizedBox(width: 6),
                 Text(
-                  '$openCount açık kayıt',
+                  L.of(context).secOpenCount(openCount),
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
                         color: Theme.of(context).colorScheme.error,
                       ),
@@ -107,10 +109,10 @@ class _List extends StatelessWidget {
         const Divider(height: 1),
         Expanded(
           child: shown.isEmpty
-              ? const HubEmptyView(
+              ? HubEmptyView(
                   icon: Icons.filter_alt_off_outlined,
-                  title: 'Bu türde kayıt yok',
-                  subtitle: 'Filtreyi kaldırıp tümünü görebilirsin.',
+                  title: L.of(context).secFilterEmptyTitle,
+                  subtitle: L.of(context).secFilterEmptySubtitle,
                 )
               : ListView.separated(
                   itemCount: shown.length,
@@ -154,7 +156,7 @@ class _Filters extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
             child: ChoiceChip(
               key: const Key('security-filter-all'),
-              label: const Text('Tümü'),
+              label: Text(L.of(context).secFilterAll),
               selected: selected == null,
               onSelected: (_) => onChanged(null),
             ),
@@ -165,7 +167,7 @@ class _Filters extends StatelessWidget {
               child: ChoiceChip(
                 key: Key('security-filter-${kind.name}'),
                 avatar: Icon(kind.icon, size: 16),
-                label: Text(kind.label),
+                label: Text(kind.labelIn(L.of(context))),
                 selected: selected == kind,
                 onSelected: (_) => onChanged(kind),
               ),
@@ -208,10 +210,10 @@ class _SecurityTile extends StatelessWidget {
         crossAxisAlignment: WrapCrossAlignment.center,
         children: [
           _Tag(entry.id, color: theme.colorScheme.primary),
-          if (kind != null) _Tag(kind.label, color: muted),
+          if (kind != null) _Tag(kind.labelIn(L.of(context)), color: muted),
           // Kapalı kayıtta rozet yok: ekranın taşıdığı bilgi "hangileri
           // kapanmadı"; her satıra rozet koymak onu görünmez kılardı.
-          if (open) _Tag('açık', color: theme.colorScheme.error),
+          if (open) _Tag(L.of(context).secOpenBadge, color: theme.colorScheme.error),
           if (entry.date != null) _Tag(entry.date!, color: muted),
         ],
       ),
@@ -254,27 +256,42 @@ class _Tag extends StatelessWidget {
   }
 }
 
-/// Güvenlik kaydının türü (sözleşme §12 `Tür` alanı).
+/// Güvenlik kaydının türü (sözleşme §12 `Tür` / `Type` alanı).
+///
+/// Enum adları dosyada geçen **değerler**; etiket arayüzden gelir. İkisi ayrı
+/// çünkü değer kayıtta duruyor ve dil değiştirdiğinde geçmiş kayıtlar aynen
+/// kalıyor — etiketse okuyanın diline göre değişmeli.
 enum SecurityKind {
-  tarama('Tarama', Icons.search),
-  onlem('Önlem', Icons.verified_user_outlined),
-  acik('Açık', Icons.report_gmailerrorred_outlined),
-  yapilacak('Yapılacak', Icons.build_outlined);
+  tarama(Icons.search, ['tarama', 'scan']),
+  onlem(Icons.verified_user_outlined, ['onlem', 'measure']),
+  acik(Icons.report_gmailerrorred_outlined, ['acik', 'hole']),
+  yapilacak(Icons.build_outlined, ['yapilacak', 'todo']);
 
-  const SecurityKind(this.label, this.icon);
+  const SecurityKind(this.icon, this.fileValues);
 
-  final String label;
   final IconData icon;
+
+  /// Dosyada bu türü gösterebilecek değerler — **bütün diller**.
+  /// [HubLanguage.allRequestHeadings] ile aynı gerekçe: okurken geniş olmak
+  /// bedava, dar olmak kaydı okunamaz kılıyor.
+  final List<String> fileValues;
+
+  String labelIn(L l) => switch (this) {
+        tarama => l.secKindScan,
+        onlem => l.secKindMeasure,
+        acik => l.secKindHole,
+        yapilacak => l.secKindTodo,
+      };
 }
 
-/// Kayıt gövdesindeki `- **Tür:**` satırını okur. Dosyada Türkçe karaktersiz
-/// yazılıyor (dosya adı kuralıyla aynı gerekçe), ekranda okunabilir hâli
-/// gösteriliyor.
+/// Kayıt gövdesindeki `- **Tür:**` (ya da İngilizce hub'da `- **Type:**`)
+/// satırını okur. Dosyada Türkçe karaktersiz yazılıyor — dosya adı kuralıyla
+/// aynı gerekçe.
 SecurityKind? securityKindOf(KnowledgeEntry entry) {
-  final raw = entry.field('Tür')?.toLowerCase();
+  final raw = _fieldInAnyLanguage(entry, HubLanguage.allTypeFields);
   if (raw == null) return null;
   for (final kind in SecurityKind.values) {
-    if (raw == kind.name) return kind;
+    if (kind.fileValues.contains(raw)) return kind;
   }
   return null;
 }
@@ -284,5 +301,15 @@ SecurityKind? securityKindOf(KnowledgeEntry entry) {
 /// için. Geçersizleşen kayıt (R-004) hiçbir zaman açık sayılmaz.
 bool isSecurityOpen(KnowledgeEntry entry) {
   if (entry.isInvalidated) return false;
-  return entry.field('Durum')?.toLowerCase() == 'acik';
+  final raw = _fieldInAnyLanguage(entry, HubLanguage.allStatusFields);
+  return raw != null && HubLanguage.allOpenValues.contains(raw);
+}
+
+/// Alan adı hub diline göre değişiyor; ilk bulunan kazanır.
+String? _fieldInAnyLanguage(KnowledgeEntry entry, List<String> names) {
+  for (final name in names) {
+    final value = entry.field(name);
+    if (value != null) return value.toLowerCase();
+  }
+  return null;
 }

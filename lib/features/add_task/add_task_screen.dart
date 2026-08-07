@@ -10,6 +10,7 @@ import '../../hub/hub_language.dart';
 import '../../hub/models/task_draft.dart';
 import '../../hub/outbox.dart';
 import '../../hub/task_repo.dart';
+import '../../l10n/app_localizations.dart';
 
 /// Görev ekleme: başlık, açıklama, öncelik, kategori → `tasks/inbox/` (B-030).
 ///
@@ -55,6 +56,7 @@ class _AddTaskScreenState extends ConsumerState<AddTaskScreen> {
       _isNewCategory ? _newCategoryCtrl.text.trim() : _category;
 
   Future<void> _submit() async {
+    final l = L.of(context);
     if (_busy || !_formKey.currentState!.validate()) return;
 
     setState(() {
@@ -75,18 +77,15 @@ class _AddTaskScreenState extends ConsumerState<AddTaskScreen> {
 
     try {
       await ref.read(taskRepoProvider).send(draft);
-      await _finishSuccessfully(category, 'Görev hub\'a gönderildi.');
+      await _finishSuccessfully(category, l.addSent);
     } on HubNetworkError {
       // Ağ yokken görev kaybolmaz: kuyruğa alınır, bağlantı gelince gider.
       await ref.read(outboxProvider.notifier).add(draft);
-      await _finishSuccessfully(
-        category,
-        'Ağ yok — görev kuyruğa alındı, bağlantı gelince gönderilecek.',
-      );
+      await _finishSuccessfully(category, l.addQueued);
     } on HubError catch (e) {
       if (mounted) setState(() => _error = e.message);
     } catch (e) {
-      if (mounted) setState(() => _error = 'Beklenmeyen hata: $e');
+      if (mounted) setState(() => _error = l.addUnexpected('$e'));
     } finally {
       if (mounted) setState(() => _busy = false);
     }
@@ -109,11 +108,12 @@ class _AddTaskScreenState extends ConsumerState<AddTaskScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l = L.of(context);
     final categories =
         ref.watch(taskCategoriesProvider).valueOrNull ?? Hub.defaultCategories;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Görev Ekle')),
+      appBar: AppBar(title: Text(l.addTitle)),
       body: Form(
         key: _formKey,
         child: ListView(
@@ -124,16 +124,16 @@ class _AddTaskScreenState extends ConsumerState<AddTaskScreen> {
               controller: _titleCtrl,
               enabled: !_busy,
               textCapitalization: TextCapitalization.sentences,
-              decoration: const InputDecoration(
-                labelText: 'Başlık',
-                border: OutlineInputBorder(),
+              decoration: InputDecoration(
+                labelText: l.addFieldTitle,
+                border: const OutlineInputBorder(),
               ),
               validator: (v) {
                 final value = (v ?? '').trim();
-                if (value.isEmpty) return 'Başlık gerekli';
+                if (value.isEmpty) return l.addTitleRequired;
                 // Dosya adı slug'dan üretiliyor; hiç harf/rakam yoksa
                 // sözleşmeye uygun ad çıkmaz.
-                if (slugIsEmpty(value)) return 'Başlık harf ya da rakam içermeli';
+                if (slugIsEmpty(value)) return l.addTitleNeedsAlnum;
                 return null;
               },
             ),
@@ -144,18 +144,18 @@ class _AddTaskScreenState extends ConsumerState<AddTaskScreen> {
               enabled: !_busy,
               maxLines: 5,
               textCapitalization: TextCapitalization.sentences,
-              decoration: const InputDecoration(
-                labelText: 'Açıklama',
+              decoration: InputDecoration(
+                labelText: l.addFieldDescription,
                 alignLabelWithHint: true,
-                border: OutlineInputBorder(),
+                border: const OutlineInputBorder(),
               ),
             ),
             const SizedBox(height: 16),
             DropdownButtonFormField<String>(
               initialValue: _priority,
-              decoration: const InputDecoration(
-                labelText: 'Öncelik',
-                border: OutlineInputBorder(),
+              decoration: InputDecoration(
+                labelText: l.addFieldPriority,
+                border: const OutlineInputBorder(),
               ),
               items: [
                 for (final p in Hub.priorities)
@@ -167,16 +167,16 @@ class _AddTaskScreenState extends ConsumerState<AddTaskScreen> {
             DropdownButtonFormField<String>(
               key: AddTaskScreen.categoryFieldKey,
               initialValue: _category,
-              decoration: const InputDecoration(
-                labelText: 'Kategori',
-                border: OutlineInputBorder(),
+              decoration: InputDecoration(
+                labelText: l.addFieldCategory,
+                border: const OutlineInputBorder(),
               ),
               items: [
                 for (final c in categories)
                   DropdownMenuItem(value: c, child: Text(c)),
-                const DropdownMenuItem(
+                DropdownMenuItem(
                   value: AddTaskScreen.newCategoryValue,
-                  child: Text('Yeni kategori…'),
+                  child: Text(l.addNewCategory),
                 ),
               ],
               onChanged: _busy ? null : (v) => setState(() => _category = v!),
@@ -187,12 +187,12 @@ class _AddTaskScreenState extends ConsumerState<AddTaskScreen> {
                 key: AddTaskScreen.newCategoryFieldKey,
                 controller: _newCategoryCtrl,
                 enabled: !_busy,
-                decoration: const InputDecoration(
-                  labelText: 'Yeni kategori adı',
-                  border: OutlineInputBorder(),
+                decoration: InputDecoration(
+                  labelText: l.addNewCategoryName,
+                  border: const OutlineInputBorder(),
                 ),
                 validator: (v) => _isNewCategory && (v ?? '').trim().isEmpty
-                    ? 'Kategori adı gerekli'
+                    ? l.addCategoryRequired
                     : null,
               ),
             ],
@@ -211,7 +211,7 @@ class _AddTaskScreenState extends ConsumerState<AddTaskScreen> {
                       child: CircularProgressIndicator(strokeWidth: 2),
                     )
                   : const Icon(Icons.send),
-              label: const Text('Hub\'a Gönder'),
+              label: Text(l.addSubmit),
             ),
           ],
         ),
