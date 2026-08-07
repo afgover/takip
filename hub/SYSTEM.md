@@ -5,11 +5,20 @@ ve hangi şemaya uyacağını** tanımlar. Agent ve kullanıcı uygulaması bu s
 dışına çıkmaz. Sözleşme değişiklikleri `EVOLUTION.md`'ye kaydedilir ve bu dosyanın
 başındaki sürüm numarası artırılır.
 
-**Sözleşme sürümü:** 1.17
+**Sözleşme sürümü:** 1.18
 **Ana kopya (master):** `afgover/takip` → `hub/SYSTEM.md`
 (bkz. §10 — her hub kendi kopyasını buradan günceller)
 **Zaman biçimi:** her yerde ISO 8601, UTC (`2026-07-30T14:05:00Z`)
 **Dil:** doküman içerikleri Türkçe; alan adları (frontmatter anahtarları) İngilizce
+
+> **Arayüz dili ≠ kayıt dili (v1.18).** Uygulamanın arayüzü Türkçe ya da
+> İngilizce olabilir (kullanıcı seçer), ama hub'a **yazılan** kaydın biçimi
+> dilden bağımsızdır: gövde başlıkları (`## İstek`, `## Notlar`, `## Nerede`,
+> `## Alıntı`) sözleşmenin parçasıdır ve ayrıştırıcı onları arar. Arayüz diline
+> göre değişselerdi aynı hub'da iki farklı şema oluşur ve mevcut kayıtlar
+> okunamaz hâle gelirdi.
+> Kullanıcının **yazdığı metin** elbette kendi dilindedir; sabit olan yalnız
+> iskelet.
 **Dosya adları:** küçük harf, Türkçe karakter yok, boşluk yerine tire (`gorev-adi`)
 
 > **Hub kökü (v1.3, K-020):** Bu sözleşmedeki tüm yollar hub köküne görelidir
