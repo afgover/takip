@@ -240,4 +240,175 @@ class LTr extends L {
 
   @override
   String get activityEmptySubtitle => 'Hub\'a kayıt düştükçe burada görünür.';
+
+  @override
+  String get settingsTitle => 'Ayarlar';
+
+  @override
+  String get secConnection => 'Bağlantı';
+
+  @override
+  String get secPolling => 'Yoklama';
+
+  @override
+  String get secOffline => 'Çevrimdışı';
+
+  @override
+  String get secData => 'Veri';
+
+  @override
+  String get repos => 'Repolar';
+
+  @override
+  String reposSubtitle(String name, int count) {
+    return '$name · $count repo kayıtlı';
+  }
+
+  @override
+  String get pollIntervalTitle => 'Kontrol aralığı';
+
+  @override
+  String get pollIntervalHelp =>
+      'Değişiklik yokken kontroller GitHub istek limitinden düşmez, bu yüzden sık yoklamanın maliyeti yalnız batarya.';
+
+  @override
+  String get backup => 'Yedekleme';
+
+  @override
+  String get backupSubtitle =>
+      'Bağlantıları parolayla şifreli tek metne çevir / geri yükle';
+
+  @override
+  String get downloadNow => 'Şimdi indir';
+
+  @override
+  String get offlineHelp =>
+      'Tarayıcıdaki her şey cihaza indirilir ve hub değiştikçe kendiliğinden güncellenir; ağ yokken de açılır. Yalnızca değişen dosyalar indirilir.';
+
+  @override
+  String get trySendNow => 'Şimdi dene';
+
+  @override
+  String get clearCache => 'Önbelleği temizle';
+
+  @override
+  String get clearCacheSubtitle =>
+      'Cihazdaki kopya dahil, her şey yeniden iner';
+
+  @override
+  String get resetConnection => 'Bağlantıyı sıfırla';
+
+  @override
+  String get resetAllConnections => 'Tüm bağlantıları sıfırla';
+
+  @override
+  String get resetScopeOne => 'Bağlantı silinir, onboarding\'e dönülür';
+
+  @override
+  String resetScopeAll(int count) {
+    return '$count bağlantının tamamı cihazdan silinir';
+  }
+
+  @override
+  String get resetConfirmOne => 'Bağlantı sıfırlansın mı?';
+
+  @override
+  String get resetConfirmAll => 'Bütün bağlantılar sıfırlansın mı?';
+
+  @override
+  String resetBody(String scope) {
+    return '$scope ve onboarding ekranına dönersin.';
+  }
+
+  @override
+  String resetBodyQueued(String scope, int count) {
+    return '$scope. Kuyrukta bekleyen $count görev gönderilemeden kalır.';
+  }
+
+  @override
+  String get reset => 'Sıfırla';
+
+  @override
+  String get syncChecking => 'Değişiklik aranıyor…';
+
+  @override
+  String get syncNever => 'Henüz indirilmedi';
+
+  @override
+  String syncFailed(String reason) {
+    return 'İndirilemedi — $reason';
+  }
+
+  @override
+  String syncJustNow(String base) {
+    return '$base · az önce güncellendi';
+  }
+
+  @override
+  String syncMinutes(String base, int n) {
+    return '$base · $n dakika önce';
+  }
+
+  @override
+  String syncHours(String base, int n) {
+    return '$base · $n saat önce';
+  }
+
+  @override
+  String syncDays(String base, int n) {
+    return '$base · $n gün önce';
+  }
+
+  @override
+  String get watchNever => 'Henüz kontrol edilmedi';
+
+  @override
+  String get watchJustNow => 'Az önce kontrol edildi';
+
+  @override
+  String watchMinutes(int n) {
+    return '$n dakika önce kontrol edildi';
+  }
+
+  @override
+  String watchHours(int n) {
+    return '$n saat önce kontrol edildi';
+  }
+
+  @override
+  String get cacheCleared => 'Temizlendi, yeniden indiriliyor.';
+
+  @override
+  String get resetSubtitleOne => 'Token silinir, onboarding\'e dönülür';
+
+  @override
+  String resetSubtitleAll(int count) {
+    return '$count reponun token\'ı silinir, onboarding\'e dönülür';
+  }
+
+  @override
+  String get statusTitle => 'Durum';
+
+  @override
+  String get offlineCopyTitle => 'Cihazdaki kopya';
+
+  @override
+  String syncDownloading(int done, int total) {
+    return '$done/$total belge indiriliyor…';
+  }
+
+  @override
+  String syncDocsDownloaded(int count) {
+    return '$count belge indirildi';
+  }
+
+  @override
+  String intervalSeconds(int n) {
+    return '$n saniye';
+  }
+
+  @override
+  String intervalMinutes(int n) {
+    return '$n dakika';
+  }
 }

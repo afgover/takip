@@ -108,5 +108,180 @@
   "activityHubOnly": "Yalnız hub kayıtlarını göster",
   "activityShowCode": "Kod commit'lerini de göster",
   "activityEmptyTitle": "Akış boş",
-  "activityEmptySubtitle": "Hub'a kayıt düştükçe burada görünür."
+  "activityEmptySubtitle": "Hub'a kayıt düştükçe burada görünür.",
+  "settingsTitle": "Ayarlar",
+  "secConnection": "Bağlantı",
+  "secPolling": "Yoklama",
+  "secOffline": "Çevrimdışı",
+  "secData": "Veri",
+  "repos": "Repolar",
+  "reposSubtitle": "{name} · {count} repo kayıtlı",
+  "@reposSubtitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "pollIntervalTitle": "Kontrol aralığı",
+  "pollIntervalHelp": "Değişiklik yokken kontroller GitHub istek limitinden düşmez, bu yüzden sık yoklamanın maliyeti yalnız batarya.",
+  "backup": "Yedekleme",
+  "backupSubtitle": "Bağlantıları parolayla şifreli tek metne çevir / geri yükle",
+  "downloadNow": "Şimdi indir",
+  "offlineHelp": "Tarayıcıdaki her şey cihaza indirilir ve hub değiştikçe kendiliğinden güncellenir; ağ yokken de açılır. Yalnızca değişen dosyalar indirilir.",
+  "trySendNow": "Şimdi dene",
+  "clearCache": "Önbelleği temizle",
+  "clearCacheSubtitle": "Cihazdaki kopya dahil, her şey yeniden iner",
+  "resetConnection": "Bağlantıyı sıfırla",
+  "resetAllConnections": "Tüm bağlantıları sıfırla",
+  "resetScopeOne": "Bağlantı silinir, onboarding'e dönülür",
+  "resetScopeAll": "{count} bağlantının tamamı cihazdan silinir",
+  "@resetScopeAll": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "resetConfirmOne": "Bağlantı sıfırlansın mı?",
+  "resetConfirmAll": "Bütün bağlantılar sıfırlansın mı?",
+  "resetBody": "{scope} ve onboarding ekranına dönersin.",
+  "@resetBody": {
+    "placeholders": {
+      "scope": {
+        "type": "String"
+      }
+    }
+  },
+  "resetBodyQueued": "{scope}. Kuyrukta bekleyen {count} görev gönderilemeden kalır.",
+  "@resetBodyQueued": {
+    "placeholders": {
+      "scope": {
+        "type": "String"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "reset": "Sıfırla",
+  "syncChecking": "Değişiklik aranıyor…",
+  "syncNever": "Henüz indirilmedi",
+  "syncFailed": "İndirilemedi — {reason}",
+  "@syncFailed": {
+    "placeholders": {
+      "reason": {
+        "type": "String"
+      }
+    }
+  },
+  "syncJustNow": "{base} · az önce güncellendi",
+  "@syncJustNow": {
+    "placeholders": {
+      "base": {
+        "type": "String"
+      }
+    }
+  },
+  "syncMinutes": "{base} · {n} dakika önce",
+  "@syncMinutes": {
+    "placeholders": {
+      "base": {
+        "type": "String"
+      },
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "syncHours": "{base} · {n} saat önce",
+  "@syncHours": {
+    "placeholders": {
+      "base": {
+        "type": "String"
+      },
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "syncDays": "{base} · {n} gün önce",
+  "@syncDays": {
+    "placeholders": {
+      "base": {
+        "type": "String"
+      },
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "watchNever": "Henüz kontrol edilmedi",
+  "watchJustNow": "Az önce kontrol edildi",
+  "watchMinutes": "{n} dakika önce kontrol edildi",
+  "@watchMinutes": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "watchHours": "{n} saat önce kontrol edildi",
+  "@watchHours": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "cacheCleared": "Temizlendi, yeniden indiriliyor.",
+  "resetSubtitleOne": "Token silinir, onboarding'e dönülür",
+  "resetSubtitleAll": "{count} reponun token'ı silinir, onboarding'e dönülür",
+  "@resetSubtitleAll": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "statusTitle": "Durum",
+  "offlineCopyTitle": "Cihazdaki kopya",
+  "syncDownloading": "{done}/{total} belge indiriliyor…",
+  "@syncDownloading": {
+    "placeholders": {
+      "done": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "syncDocsDownloaded": "{count} belge indirildi",
+  "@syncDocsDownloaded": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "intervalSeconds": "{n} saniye",
+  "@intervalSeconds": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "intervalMinutes": "{n} dakika",
+  "@intervalMinutes": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  }
 }

@@ -241,4 +241,177 @@ class LEn extends L {
   @override
   String get activityEmptySubtitle =>
       'Records appear here as they land in the hub.';
+
+  @override
+  String get settingsTitle => 'Settings';
+
+  @override
+  String get secConnection => 'Connection';
+
+  @override
+  String get secPolling => 'Polling';
+
+  @override
+  String get secOffline => 'Offline';
+
+  @override
+  String get secData => 'Data';
+
+  @override
+  String get repos => 'Repositories';
+
+  @override
+  String reposSubtitle(String name, int count) {
+    return '$name · $count repositories';
+  }
+
+  @override
+  String get pollIntervalTitle => 'Check interval';
+
+  @override
+  String get pollIntervalHelp =>
+      'When nothing changed, checks do not count against the GitHub rate limit, so frequent polling only costs battery.';
+
+  @override
+  String get backup => 'Backup';
+
+  @override
+  String get backupSubtitle =>
+      'Turn connections into one password-encrypted text / restore them';
+
+  @override
+  String get downloadNow => 'Download now';
+
+  @override
+  String get offlineHelp =>
+      'Everything in the browser is downloaded to the device and updates itself as the hub changes; it opens without a network too. Only changed files are downloaded.';
+
+  @override
+  String get trySendNow => 'Try now';
+
+  @override
+  String get clearCache => 'Clear cache';
+
+  @override
+  String get clearCacheSubtitle =>
+      'Everything re-downloads, including the on-device copy';
+
+  @override
+  String get resetConnection => 'Reset connection';
+
+  @override
+  String get resetAllConnections => 'Reset all connections';
+
+  @override
+  String get resetScopeOne =>
+      'The connection is deleted and you return to onboarding';
+
+  @override
+  String resetScopeAll(int count) {
+    return 'All $count connections are deleted from the device';
+  }
+
+  @override
+  String get resetConfirmOne => 'Reset the connection?';
+
+  @override
+  String get resetConfirmAll => 'Reset all connections?';
+
+  @override
+  String resetBody(String scope) {
+    return '$scope and you return to the onboarding screen.';
+  }
+
+  @override
+  String resetBodyQueued(String scope, int count) {
+    return '$scope. $count queued tasks will remain unsent.';
+  }
+
+  @override
+  String get reset => 'Reset';
+
+  @override
+  String get syncChecking => 'Looking for changes…';
+
+  @override
+  String get syncNever => 'Not downloaded yet';
+
+  @override
+  String syncFailed(String reason) {
+    return 'Download failed — $reason';
+  }
+
+  @override
+  String syncJustNow(String base) {
+    return '$base · updated just now';
+  }
+
+  @override
+  String syncMinutes(String base, int n) {
+    return '$base · $n minutes ago';
+  }
+
+  @override
+  String syncHours(String base, int n) {
+    return '$base · $n hours ago';
+  }
+
+  @override
+  String syncDays(String base, int n) {
+    return '$base · $n days ago';
+  }
+
+  @override
+  String get watchNever => 'Not checked yet';
+
+  @override
+  String get watchJustNow => 'Checked just now';
+
+  @override
+  String watchMinutes(int n) {
+    return 'Checked $n minutes ago';
+  }
+
+  @override
+  String watchHours(int n) {
+    return 'Checked $n hours ago';
+  }
+
+  @override
+  String get cacheCleared => 'Cleared, downloading again.';
+
+  @override
+  String get resetSubtitleOne =>
+      'The token is deleted and you return to onboarding';
+
+  @override
+  String resetSubtitleAll(int count) {
+    return 'Tokens for $count repositories are deleted and you return to onboarding';
+  }
+
+  @override
+  String get statusTitle => 'Status';
+
+  @override
+  String get offlineCopyTitle => 'On-device copy';
+
+  @override
+  String syncDownloading(int done, int total) {
+    return 'Downloading $done/$total documents…';
+  }
+
+  @override
+  String syncDocsDownloaded(int count) {
+    return '$count documents downloaded';
+  }
+
+  @override
+  String intervalSeconds(int n) {
+    return '$n seconds';
+  }
+
+  @override
+  String intervalMinutes(int n) {
+    return '$n minutes';
+  }
 }

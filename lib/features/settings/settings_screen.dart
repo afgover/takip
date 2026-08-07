@@ -36,23 +36,24 @@ class SettingsScreen extends ConsumerWidget {
     final connectionCount =
         ref.watch(hubConnectionsProvider).valueOrNull?.length ?? 1;
     final sync = ref.watch(hubSyncProvider);
+    final l = L.of(context);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Ayarlar')),
+      appBar: AppBar(title: Text(l.settingsTitle)),
       body: ListView(
         children: [
-          _SectionTitle(L.of(context).settingsLanguage),
+          _SectionTitle(l.settingsLanguage),
           const _LanguageTile(),
           const Divider(),
-          const _SectionTitle('Bağlantı'),
+          _SectionTitle(l.secConnection),
           ListTile(
             key: reposKey,
             leading: const Icon(Icons.folder_copy_outlined),
-            title: const Text('Repolar'),
+            title: Text(l.repos),
             subtitle: Text(
               connectionCount <= 1
                   ? (config?.displayName ?? '—')
-                  : '${config?.displayName ?? '—'} · $connectionCount repo kayıtlı',
+                  : l.reposSubtitle(config?.displayName ?? '—', connectionCount),
             ),
             trailing: const Icon(Icons.chevron_right),
             onTap: () => Navigator.of(context).push(
@@ -67,15 +68,15 @@ class SettingsScreen extends ConsumerWidget {
                   ? Icons.cloud_done_outlined
                   : Icons.cloud_off,
             ),
-            title: const Text('Durum'),
-            subtitle: Text(_statusText(status)),
+            title: Text(l.statusTitle),
+            subtitle: Text(_statusText(l, status)),
           ),
           const Divider(),
-          const _SectionTitle('Yoklama'),
+          _SectionTitle(l.secPolling),
           ListTile(
             key: intervalKey,
             leading: const Icon(Icons.timer_outlined),
-            title: const Text('Kontrol aralığı'),
+            title: Text(l.pollIntervalTitle),
             trailing: DropdownButton<Duration>(
               value: interval,
               underline: const SizedBox.shrink(),
@@ -83,7 +84,7 @@ class SettingsScreen extends ConsumerWidget {
                 for (final choice in AppSettings.intervalChoices)
                   DropdownMenuItem(
                     value: choice,
-                    child: Text(_intervalLabel(choice)),
+                    child: Text(_intervalLabel(l, choice)),
                   ),
               ],
               onChanged: (value) {
@@ -93,28 +94,25 @@ class SettingsScreen extends ConsumerWidget {
               },
             ),
           ),
-          const Padding(
-            padding: EdgeInsets.fromLTRB(16, 0, 16, 8),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
             child: Text(
-              'Değişiklik yokken kontroller GitHub istek limitinden düşmez, '
-              'bu yüzden sık yoklamanın maliyeti yalnız batarya.',
-              style: TextStyle(fontSize: 12),
+              l.pollIntervalHelp,
+              style: const TextStyle(fontSize: 12),
             ),
           ),
           ListTile(
             key: backupKey,
             leading: const Icon(Icons.shield_outlined),
-            title: const Text('Yedekleme'),
-            subtitle: const Text(
-              'Bağlantıları parolayla şifreli tek metne çevir / geri yükle',
-            ),
+            title: Text(l.backup),
+            subtitle: Text(l.backupSubtitle),
             trailing: const Icon(Icons.chevron_right),
             onTap: () => Navigator.of(context).push(
               MaterialPageRoute<void>(builder: (_) => const BackupScreen()),
             ),
           ),
           const Divider(),
-          const _SectionTitle('Çevrimdışı'),
+          _SectionTitle(l.secOffline),
           ListTile(
             key: offlineKey,
             leading: Icon(
@@ -124,8 +122,8 @@ class SettingsScreen extends ConsumerWidget {
                       ? Icons.offline_pin_outlined
                       : Icons.cloud_off_outlined),
             ),
-            title: const Text('Cihazdaki kopya'),
-            subtitle: Text(_offlineText(sync)),
+            title: Text(l.offlineCopyTitle),
+            subtitle: Text(_offlineText(l, sync)),
             trailing: sync.syncing
                 ? const SizedBox(
                     height: 20,
@@ -135,35 +133,30 @@ class SettingsScreen extends ConsumerWidget {
                 : TextButton(
                     key: syncNowKey,
                     onPressed: () => ref.read(hubSyncProvider.notifier).syncNow(),
-                    child: const Text('Şimdi indir'),
+                    child: Text(l.downloadNow),
                   ),
           ),
-          const Padding(
-            padding: EdgeInsets.fromLTRB(16, 0, 16, 8),
-            child: Text(
-              'Tarayıcıdaki her şey cihaza indirilir ve hub değiştikçe '
-              'kendiliğinden güncellenir; ağ yokken de açılır. Yalnızca '
-              'değişen dosyalar indirilir.',
-              style: TextStyle(fontSize: 12),
-            ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+            child: Text(l.offlineHelp, style: const TextStyle(fontSize: 12)),
           ),
           const Divider(),
-          const _SectionTitle('Veri'),
+          _SectionTitle(l.secData),
           if (queued.isNotEmpty)
             ListTile(
               leading: const Icon(Icons.cloud_upload_outlined),
-              title: Text('${queued.length} görev kuyrukta'),
-              subtitle: const Text('Bağlantı gelince gönderilecek'),
+              title: Text(l.queuedTasks(queued.length)),
+              subtitle: Text(l.outboxQueuedSubtitle),
               trailing: TextButton(
                 onPressed: () => ref.read(outboxProvider.notifier).flush(),
-                child: const Text('Şimdi dene'),
+                child: Text(l.trySendNow),
               ),
             ),
           ListTile(
             key: clearCacheKey,
             leading: const Icon(Icons.cleaning_services_outlined),
-            title: const Text('Önbelleği temizle'),
-            subtitle: const Text('Cihazdaki kopya dahil, her şey yeniden iner'),
+            title: Text(l.clearCache),
+            subtitle: Text(l.clearCacheSubtitle),
             onTap: () async {
               ref.read(etagCacheProvider).clear();
               // Yerel kopya da gitmeli: yalnız ETag önbelleği silinseydi
@@ -174,7 +167,7 @@ class SettingsScreen extends ConsumerWidget {
               unawaited(ref.read(hubSyncProvider.notifier).syncNow());
               if (context.mounted) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Temizlendi, yeniden indiriliyor.')),
+                  SnackBar(content: Text(l.cacheCleared)),
                 );
               }
             },
@@ -185,13 +178,13 @@ class SettingsScreen extends ConsumerWidget {
             leading: const Icon(Icons.logout),
             title: Text(
               connectionCount <= 1
-                  ? 'Bağlantıyı sıfırla'
-                  : 'Tüm bağlantıları sıfırla',
+                  ? l.resetConnection
+                  : l.resetAllConnections,
             ),
             subtitle: Text(
               connectionCount <= 1
-                  ? 'Token silinir, onboarding\'e dönülür'
-                  : '$connectionCount reponun token\'ı silinir, onboarding\'e dönülür',
+                  ? l.resetSubtitleOne
+                  : l.resetSubtitleAll(connectionCount),
             ),
             onTap: () =>
                 _confirmReset(context, ref, queued.length, connectionCount),
@@ -207,32 +200,32 @@ class SettingsScreen extends ConsumerWidget {
     int queuedCount,
     int connectionCount,
   ) async {
+    final l = L.of(context);
     final scope = connectionCount <= 1
-        ? 'Token cihazdan silinir'
-        : '$connectionCount reponun token\'ı cihazdan silinir';
+        ? l.resetScopeOne
+        : l.resetScopeAll(connectionCount);
 
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
         title: Text(
           connectionCount <= 1
-              ? 'Bağlantı sıfırlansın mı?'
-              : 'Bütün bağlantılar sıfırlansın mı?',
+              ? l.resetConfirmOne
+              : l.resetConfirmAll,
         ),
         content: Text(
           queuedCount == 0
-              ? '$scope ve onboarding ekranına dönersin.'
-              : '$scope. Kuyrukta bekleyen $queuedCount görev '
-                  'gönderilemeden kalır.',
+              ? l.resetBody(scope)
+              : l.resetBodyQueued(scope, queuedCount),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('Vazgeç'),
+            child: Text(l.cancel),
           ),
           FilledButton(
             onPressed: () => Navigator.of(context).pop(true),
-            child: const Text('Sıfırla'),
+            child: Text(l.reset),
           ),
         ],
       ),
@@ -243,41 +236,42 @@ class SettingsScreen extends ConsumerWidget {
     }
   }
 
-  static String _offlineText(SyncStatus sync) {
+  static String _offlineText(L l, SyncStatus sync) {
     if (sync.syncing) {
       return sync.total == 0
-          ? 'Değişiklik aranıyor…'
-          : '${sync.done}/${sync.total} belge indiriliyor…';
+          ? l.syncChecking
+          : l.syncDownloading(sync.done, sync.total);
     }
     if (!sync.hasOfflineCopy) {
       return sync.error == null
-          ? 'Henüz indirilmedi'
-          : 'İndirilemedi — ${describeHubError(sync.error!).headline}';
+          ? l.syncNever
+          : l.syncFailed(describeHubError(sync.error!).headline);
     }
 
-    final base = '${sync.docCount} belge indirildi';
+    final base = l.syncDocsDownloaded(sync.docCount);
     if (sync.syncedAt == null) return base;
 
     final ago = DateTime.now().difference(sync.syncedAt!);
-    if (ago.inMinutes < 1) return '$base · az önce güncellendi';
-    if (ago.inHours < 1) return '$base · ${ago.inMinutes} dakika önce';
-    if (ago.inDays < 1) return '$base · ${ago.inHours} saat önce';
-    return '$base · ${ago.inDays} gün önce';
+    if (ago.inMinutes < 1) return l.syncJustNow(base);
+    if (ago.inHours < 1) return l.syncMinutes(base, ago.inMinutes);
+    if (ago.inDays < 1) return l.syncHours(base, ago.inHours);
+    return l.syncDays(base, ago.inDays);
   }
 
-  static String _statusText(HubStatus status) {
+  static String _statusText(L l, HubStatus status) {
     if (status.error != null) return describeHubError(status.error!).headline;
-    if (status.lastCheckedAt == null) return 'Henüz kontrol edilmedi';
+    if (status.lastCheckedAt == null) return l.watchNever;
 
     final ago = DateTime.now().difference(status.lastCheckedAt!);
-    if (ago.inMinutes < 1) return 'Az önce kontrol edildi';
-    if (ago.inHours < 1) return '${ago.inMinutes} dakika önce kontrol edildi';
-    return '${ago.inHours} saat önce kontrol edildi';
+    if (ago.inMinutes < 1) return l.watchJustNow;
+    if (ago.inHours < 1) return l.watchMinutes(ago.inMinutes);
+    return l.watchHours(ago.inHours);
   }
 
-  static String _intervalLabel(Duration interval) => interval.inSeconds < 60
-      ? '${interval.inSeconds} saniye'
-      : '${interval.inMinutes} dakika';
+  static String _intervalLabel(L l, Duration interval) =>
+      interval.inSeconds < 60
+          ? l.intervalSeconds(interval.inSeconds)
+          : l.intervalMinutes(interval.inMinutes);
 }
 
 /// Arayüz dili seçici (sözleşme 1.18).

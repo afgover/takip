@@ -10,7 +10,8 @@ import 'package:takip/hub/hub_access.dart';
 import 'package:takip/hub/hub_config.dart';
 import 'package:takip/hub/hub_watcher.dart';
 import 'package:takip/hub/settings.dart';
-import 'package:takip/l10n/app_localizations.dart';
+
+import '../helpers/test_app.dart';
 
 class FakeHubConfigNotifier extends HubConfigNotifier {
   FakeHubConfigNotifier([this.config = const HubConfig(
@@ -73,13 +74,7 @@ class QuietWatcher extends HubWatcher {
               : await verifier(candidate);
         }),
       ],
-      child: MaterialApp(
-        // Ekran L.of(context) kullanıyor; delegeler olmadan test ortamı
-        // uygulamanın kendisinden farklı davranır.
-        localizationsDelegates: L.localizationsDelegates,
-        supportedLocales: L.supportedLocales,
-        home: home,
-      ),
+      child: testApp(home),
     ),
     config: notifier,
     verified: verified,
@@ -101,6 +96,11 @@ void main() {
     await tester.pumpWidget(build().widget);
     await tester.pumpAndSettle();
 
+    // L-015: liste uzadıkça satır görünür alanın dışına düşüyor; dil bölümü
+    // eklenince yoklama satırı da bu duruma geldi.
+    await tester.scrollUntilVisible(
+        find.byKey(SettingsScreen.intervalKey), 200);
+    await tester.pumpAndSettle();
     await tester.tap(find.byType(DropdownButton<Duration>));
     await tester.pumpAndSettle();
     await tester.tap(find.text('5 dakika').last);
@@ -233,11 +233,7 @@ void main() {
         hubWatcherProvider.overrideWith(QuietWatcher.new),
         etagCacheProvider.overrideWithValue(cache),
       ],
-      child: MaterialApp(
-        localizationsDelegates: L.localizationsDelegates,
-        supportedLocales: L.supportedLocales,
-        home: const SettingsScreen(),
-      ),
+      child: testApp(const SettingsScreen()),
     ));
     await tester.pumpAndSettle();
 

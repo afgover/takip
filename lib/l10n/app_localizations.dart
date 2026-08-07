@@ -522,6 +522,276 @@ abstract class L {
   /// In tr, this message translates to:
   /// **'Hub\'a kayıt düştükçe burada görünür.'**
   String get activityEmptySubtitle;
+
+  /// No description provided for @settingsTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Ayarlar'**
+  String get settingsTitle;
+
+  /// No description provided for @secConnection.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bağlantı'**
+  String get secConnection;
+
+  /// No description provided for @secPolling.
+  ///
+  /// In tr, this message translates to:
+  /// **'Yoklama'**
+  String get secPolling;
+
+  /// No description provided for @secOffline.
+  ///
+  /// In tr, this message translates to:
+  /// **'Çevrimdışı'**
+  String get secOffline;
+
+  /// No description provided for @secData.
+  ///
+  /// In tr, this message translates to:
+  /// **'Veri'**
+  String get secData;
+
+  /// No description provided for @repos.
+  ///
+  /// In tr, this message translates to:
+  /// **'Repolar'**
+  String get repos;
+
+  /// No description provided for @reposSubtitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'{name} · {count} repo kayıtlı'**
+  String reposSubtitle(String name, int count);
+
+  /// No description provided for @pollIntervalTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Kontrol aralığı'**
+  String get pollIntervalTitle;
+
+  /// No description provided for @pollIntervalHelp.
+  ///
+  /// In tr, this message translates to:
+  /// **'Değişiklik yokken kontroller GitHub istek limitinden düşmez, bu yüzden sık yoklamanın maliyeti yalnız batarya.'**
+  String get pollIntervalHelp;
+
+  /// No description provided for @backup.
+  ///
+  /// In tr, this message translates to:
+  /// **'Yedekleme'**
+  String get backup;
+
+  /// No description provided for @backupSubtitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bağlantıları parolayla şifreli tek metne çevir / geri yükle'**
+  String get backupSubtitle;
+
+  /// No description provided for @downloadNow.
+  ///
+  /// In tr, this message translates to:
+  /// **'Şimdi indir'**
+  String get downloadNow;
+
+  /// No description provided for @offlineHelp.
+  ///
+  /// In tr, this message translates to:
+  /// **'Tarayıcıdaki her şey cihaza indirilir ve hub değiştikçe kendiliğinden güncellenir; ağ yokken de açılır. Yalnızca değişen dosyalar indirilir.'**
+  String get offlineHelp;
+
+  /// No description provided for @trySendNow.
+  ///
+  /// In tr, this message translates to:
+  /// **'Şimdi dene'**
+  String get trySendNow;
+
+  /// No description provided for @clearCache.
+  ///
+  /// In tr, this message translates to:
+  /// **'Önbelleği temizle'**
+  String get clearCache;
+
+  /// No description provided for @clearCacheSubtitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Cihazdaki kopya dahil, her şey yeniden iner'**
+  String get clearCacheSubtitle;
+
+  /// No description provided for @resetConnection.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bağlantıyı sıfırla'**
+  String get resetConnection;
+
+  /// No description provided for @resetAllConnections.
+  ///
+  /// In tr, this message translates to:
+  /// **'Tüm bağlantıları sıfırla'**
+  String get resetAllConnections;
+
+  /// No description provided for @resetScopeOne.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bağlantı silinir, onboarding\'e dönülür'**
+  String get resetScopeOne;
+
+  /// No description provided for @resetScopeAll.
+  ///
+  /// In tr, this message translates to:
+  /// **'{count} bağlantının tamamı cihazdan silinir'**
+  String resetScopeAll(int count);
+
+  /// No description provided for @resetConfirmOne.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bağlantı sıfırlansın mı?'**
+  String get resetConfirmOne;
+
+  /// No description provided for @resetConfirmAll.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bütün bağlantılar sıfırlansın mı?'**
+  String get resetConfirmAll;
+
+  /// No description provided for @resetBody.
+  ///
+  /// In tr, this message translates to:
+  /// **'{scope} ve onboarding ekranına dönersin.'**
+  String resetBody(String scope);
+
+  /// No description provided for @resetBodyQueued.
+  ///
+  /// In tr, this message translates to:
+  /// **'{scope}. Kuyrukta bekleyen {count} görev gönderilemeden kalır.'**
+  String resetBodyQueued(String scope, int count);
+
+  /// No description provided for @reset.
+  ///
+  /// In tr, this message translates to:
+  /// **'Sıfırla'**
+  String get reset;
+
+  /// No description provided for @syncChecking.
+  ///
+  /// In tr, this message translates to:
+  /// **'Değişiklik aranıyor…'**
+  String get syncChecking;
+
+  /// No description provided for @syncNever.
+  ///
+  /// In tr, this message translates to:
+  /// **'Henüz indirilmedi'**
+  String get syncNever;
+
+  /// No description provided for @syncFailed.
+  ///
+  /// In tr, this message translates to:
+  /// **'İndirilemedi — {reason}'**
+  String syncFailed(String reason);
+
+  /// No description provided for @syncJustNow.
+  ///
+  /// In tr, this message translates to:
+  /// **'{base} · az önce güncellendi'**
+  String syncJustNow(String base);
+
+  /// No description provided for @syncMinutes.
+  ///
+  /// In tr, this message translates to:
+  /// **'{base} · {n} dakika önce'**
+  String syncMinutes(String base, int n);
+
+  /// No description provided for @syncHours.
+  ///
+  /// In tr, this message translates to:
+  /// **'{base} · {n} saat önce'**
+  String syncHours(String base, int n);
+
+  /// No description provided for @syncDays.
+  ///
+  /// In tr, this message translates to:
+  /// **'{base} · {n} gün önce'**
+  String syncDays(String base, int n);
+
+  /// No description provided for @watchNever.
+  ///
+  /// In tr, this message translates to:
+  /// **'Henüz kontrol edilmedi'**
+  String get watchNever;
+
+  /// No description provided for @watchJustNow.
+  ///
+  /// In tr, this message translates to:
+  /// **'Az önce kontrol edildi'**
+  String get watchJustNow;
+
+  /// No description provided for @watchMinutes.
+  ///
+  /// In tr, this message translates to:
+  /// **'{n} dakika önce kontrol edildi'**
+  String watchMinutes(int n);
+
+  /// No description provided for @watchHours.
+  ///
+  /// In tr, this message translates to:
+  /// **'{n} saat önce kontrol edildi'**
+  String watchHours(int n);
+
+  /// No description provided for @cacheCleared.
+  ///
+  /// In tr, this message translates to:
+  /// **'Temizlendi, yeniden indiriliyor.'**
+  String get cacheCleared;
+
+  /// No description provided for @resetSubtitleOne.
+  ///
+  /// In tr, this message translates to:
+  /// **'Token silinir, onboarding\'e dönülür'**
+  String get resetSubtitleOne;
+
+  /// No description provided for @resetSubtitleAll.
+  ///
+  /// In tr, this message translates to:
+  /// **'{count} reponun token\'ı silinir, onboarding\'e dönülür'**
+  String resetSubtitleAll(int count);
+
+  /// No description provided for @statusTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Durum'**
+  String get statusTitle;
+
+  /// No description provided for @offlineCopyTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Cihazdaki kopya'**
+  String get offlineCopyTitle;
+
+  /// No description provided for @syncDownloading.
+  ///
+  /// In tr, this message translates to:
+  /// **'{done}/{total} belge indiriliyor…'**
+  String syncDownloading(int done, int total);
+
+  /// No description provided for @syncDocsDownloaded.
+  ///
+  /// In tr, this message translates to:
+  /// **'{count} belge indirildi'**
+  String syncDocsDownloaded(int count);
+
+  /// No description provided for @intervalSeconds.
+  ///
+  /// In tr, this message translates to:
+  /// **'{n} saniye'**
+  String intervalSeconds(int n);
+
+  /// No description provided for @intervalMinutes.
+  ///
+  /// In tr, this message translates to:
+  /// **'{n} dakika'**
+  String intervalMinutes(int n);
 }
 
 class _LDelegate extends LocalizationsDelegate<L> {
