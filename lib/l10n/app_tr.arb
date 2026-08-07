@@ -52,5 +52,61 @@
   "tokenHelpStored": "Token yalnızca bu cihazın güvenli deposunda saklanır.",
   "tokenRequired": "Token gerekli",
   "repoFieldLabel": "Repo (owner/ad)",
-  "tokenFieldLabel": "Fine-grained token"
+  "tokenFieldLabel": "Fine-grained token",
+  "roadmapTitle": "Yol Haritası",
+  "knowledgeTitle": "Bilgi Tabanı",
+  "annotationsTitle": "İşaretler",
+  "statusQueued": "{count} görev gönderilmeyi bekliyor",
+  "@statusQueued": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "docMalformedFrontmatter": "Bu dosyanın başlık bloğu okunamadı; içerik ham hâliyle gösteriliyor.",
+  "cancel": "Vazgeç",
+  "connectAnyway": "Yine de bağlan",
+  "manageRepos": "Repoları yönet",
+  "queuedTasks": "{count} görev kuyrukta",
+  "@queuedTasks": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "queuedTasksWithSlug": "{slug} · {count} görev kuyrukta",
+  "@queuedTasksWithSlug": {
+    "placeholders": {
+      "slug": {
+        "type": "String"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "markYellow": "Sarı işaretle",
+  "markRed": "Kırmızı çizgi",
+  "markBookmark": "Yer imi",
+  "addNote": "Not ekle",
+  "createTask": "Görev oluştur",
+  "copy": "Kopyala",
+  "knowledgeEmptyTitle": "{label} boş",
+  "@knowledgeEmptyTitle": {
+    "placeholders": {
+      "label": {
+        "type": "String"
+      }
+    }
+  },
+  "knowledgeEmptySubtitle": "Agent yeni kayıt ekledikçe burada görünür.",
+  "knowledgeSuperseded": "geçersiz kayıt",
+  "annotationsEmptyTitle": "Henüz işaret yok",
+  "annotationsEmptySubtitle": "Bir belgede metin seçip yer imi koyabilir, işaretleyebilir ya da not düşebilirsin. Hepsi burada toplanır.",
+  "activityHubOnly": "Yalnız hub kayıtlarını göster",
+  "activityShowCode": "Kod commit'lerini de göster",
+  "activityEmptyTitle": "Akış boş",
+  "activityEmptySubtitle": "Hub'a kayıt düştükçe burada görünür."
 }

@@ -154,4 +154,90 @@ class LTr extends L {
 
   @override
   String get tokenFieldLabel => 'Fine-grained token';
+
+  @override
+  String get roadmapTitle => 'Yol Haritası';
+
+  @override
+  String get knowledgeTitle => 'Bilgi Tabanı';
+
+  @override
+  String get annotationsTitle => 'İşaretler';
+
+  @override
+  String statusQueued(int count) {
+    return '$count görev gönderilmeyi bekliyor';
+  }
+
+  @override
+  String get docMalformedFrontmatter =>
+      'Bu dosyanın başlık bloğu okunamadı; içerik ham hâliyle gösteriliyor.';
+
+  @override
+  String get cancel => 'Vazgeç';
+
+  @override
+  String get connectAnyway => 'Yine de bağlan';
+
+  @override
+  String get manageRepos => 'Repoları yönet';
+
+  @override
+  String queuedTasks(int count) {
+    return '$count görev kuyrukta';
+  }
+
+  @override
+  String queuedTasksWithSlug(String slug, int count) {
+    return '$slug · $count görev kuyrukta';
+  }
+
+  @override
+  String get markYellow => 'Sarı işaretle';
+
+  @override
+  String get markRed => 'Kırmızı çizgi';
+
+  @override
+  String get markBookmark => 'Yer imi';
+
+  @override
+  String get addNote => 'Not ekle';
+
+  @override
+  String get createTask => 'Görev oluştur';
+
+  @override
+  String get copy => 'Kopyala';
+
+  @override
+  String knowledgeEmptyTitle(String label) {
+    return '$label boş';
+  }
+
+  @override
+  String get knowledgeEmptySubtitle =>
+      'Agent yeni kayıt ekledikçe burada görünür.';
+
+  @override
+  String get knowledgeSuperseded => 'geçersiz kayıt';
+
+  @override
+  String get annotationsEmptyTitle => 'Henüz işaret yok';
+
+  @override
+  String get annotationsEmptySubtitle =>
+      'Bir belgede metin seçip yer imi koyabilir, işaretleyebilir ya da not düşebilirsin. Hepsi burada toplanır.';
+
+  @override
+  String get activityHubOnly => 'Yalnız hub kayıtlarını göster';
+
+  @override
+  String get activityShowCode => 'Kod commit\'lerini de göster';
+
+  @override
+  String get activityEmptyTitle => 'Akış boş';
+
+  @override
+  String get activityEmptySubtitle => 'Hub\'a kayıt düştükçe burada görünür.';
 }

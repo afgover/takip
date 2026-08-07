@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../hub/token_scope.dart';
+import '../../l10n/app_localizations.dart';
 
 /// Kapsamı geniş bir token bulunduğunda gösterilen onay kutusu (B-092).
 ///
@@ -27,12 +28,12 @@ Future<bool> confirmWideTokenScope(
         TextButton(
           key: tokenScopeCancelKey,
           onPressed: () => Navigator.of(context).pop(false),
-          child: const Text('Vazgeç'),
+          child: Text(L.of(context).cancel),
         ),
         FilledButton(
           key: tokenScopeContinueKey,
           onPressed: () => Navigator.of(context).pop(true),
-          child: const Text('Yine de bağlan'),
+          child: Text(L.of(context).connectAnyway),
         ),
       ],
     ),

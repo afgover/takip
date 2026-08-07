@@ -5,6 +5,7 @@ import '../../hub/browse_repo.dart';
 import '../../hub/models/hub_doc.dart';
 import '../common/annotated_document.dart';
 import '../common/hub_error_view.dart';
+import '../../l10n/app_localizations.dart';
 
 /// Bilgi tabanı (B-043): kurallar, skiller, dersler.
 ///
@@ -21,7 +22,7 @@ class KnowledgeScreen extends ConsumerWidget {
       length: KnowledgeFile.values.length,
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Bilgi Tabanı'),
+          title: Text(L.of(context).knowledgeTitle),
           bottom: TabBar(
             tabs: [
               for (final file in KnowledgeFile.values) Tab(text: file.label),
@@ -50,8 +51,8 @@ class _KnowledgeTab extends ConsumerWidget {
     return switch (entries) {
       AsyncData(:final value) when value.isEmpty => HubEmptyView(
           icon: Icons.school_outlined,
-          title: '${file.label} boş',
-          subtitle: 'Agent yeni kayıt ekledikçe burada görünür.',
+          title: L.of(context).knowledgeEmptyTitle(file.label),
+          subtitle: L.of(context).knowledgeEmptySubtitle,
         ),
       AsyncData(:final value) => ListView.separated(
           itemCount: value.length,
@@ -98,7 +99,7 @@ class _EntryTile extends StatelessWidget {
             : null,
       ),
       subtitle: entry.isInvalidated
-          ? const Text('geçersiz kayıt')
+          ? Text(L.of(context).knowledgeSuperseded)
           : (entry.date == null ? null : Text(entry.date!)),
       childrenPadding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
       children: [

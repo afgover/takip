@@ -154,4 +154,91 @@ class LEn extends L {
 
   @override
   String get tokenFieldLabel => 'Fine-grained token';
+
+  @override
+  String get roadmapTitle => 'Roadmap';
+
+  @override
+  String get knowledgeTitle => 'Knowledge base';
+
+  @override
+  String get annotationsTitle => 'Marks';
+
+  @override
+  String statusQueued(int count) {
+    return '$count tasks waiting to be sent';
+  }
+
+  @override
+  String get docMalformedFrontmatter =>
+      'This file’s header block could not be read; the content is shown raw.';
+
+  @override
+  String get cancel => 'Cancel';
+
+  @override
+  String get connectAnyway => 'Connect anyway';
+
+  @override
+  String get manageRepos => 'Manage repositories';
+
+  @override
+  String queuedTasks(int count) {
+    return '$count tasks queued';
+  }
+
+  @override
+  String queuedTasksWithSlug(String slug, int count) {
+    return '$slug · $count tasks queued';
+  }
+
+  @override
+  String get markYellow => 'Highlight yellow';
+
+  @override
+  String get markRed => 'Underline red';
+
+  @override
+  String get markBookmark => 'Bookmark';
+
+  @override
+  String get addNote => 'Add note';
+
+  @override
+  String get createTask => 'Create task';
+
+  @override
+  String get copy => 'Copy';
+
+  @override
+  String knowledgeEmptyTitle(String label) {
+    return '$label is empty';
+  }
+
+  @override
+  String get knowledgeEmptySubtitle =>
+      'New records appear here as the agent adds them.';
+
+  @override
+  String get knowledgeSuperseded => 'superseded record';
+
+  @override
+  String get annotationsEmptyTitle => 'No marks yet';
+
+  @override
+  String get annotationsEmptySubtitle =>
+      'Select text in any document to bookmark, highlight or add a note. They all gather here.';
+
+  @override
+  String get activityHubOnly => 'Show hub records only';
+
+  @override
+  String get activityShowCode => 'Show code commits too';
+
+  @override
+  String get activityEmptyTitle => 'The feed is empty';
+
+  @override
+  String get activityEmptySubtitle =>
+      'Records appear here as they land in the hub.';
 }

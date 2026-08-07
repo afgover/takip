@@ -9,6 +9,7 @@ import '../../hub/hub_watcher.dart';
 import '../../hub/outbox.dart';
 import '../settings/connection_screen.dart';
 import '../settings/connections_screen.dart';
+import '../../l10n/app_localizations.dart';
 
 /// Aktif repoyu gösteren ve değiştiren şerit (T-003).
 ///
@@ -123,7 +124,7 @@ class _RepoSheet extends ConsumerWidget {
           ),
           ListTile(
             leading: const Icon(Icons.tune),
-            title: const Text('Repoları yönet'),
+            title: Text(L.of(context).manageRepos),
             onTap: () {
               Navigator.of(context).pop();
               Navigator.of(context).push(
@@ -158,10 +159,13 @@ class _RepoTile extends ConsumerWidget {
       leading: Icon(isActive ? Icons.check_circle : Icons.circle_outlined),
       title: Text(connection.displayName),
       subtitle: connection.displayName == connection.slug
-          ? (queuedCount > 0 ? Text('$queuedCount görev kuyrukta') : null)
+          ? (queuedCount > 0
+              ? Text(L.of(context).queuedTasks(queuedCount))
+              : null)
           : Text(
               queuedCount > 0
-                  ? '${connection.slug} · $queuedCount görev kuyrukta'
+                  ? L.of(context)
+                      .queuedTasksWithSlug(connection.slug, queuedCount)
                   : connection.slug,
             ),
       onTap: isActive

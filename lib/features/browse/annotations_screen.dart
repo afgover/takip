@@ -6,6 +6,7 @@ import '../../hub/hub_config.dart';
 import '../../hub/models/task.dart';
 import '../common/hub_error_view.dart';
 import 'document_screen.dart';
+import '../../l10n/app_localizations.dart';
 
 /// **Aktif repodaki** işaretler tek listede (sözleşme 1.13).
 ///
@@ -40,7 +41,7 @@ class _AnnotationsScreenState extends ConsumerState<AnnotationsScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('İşaretler'),
+        title: Text(L.of(context).annotationsTitle),
         // Liste tek repoya ait; hangisi olduğu görünmezse kullanıcı eksik bir
         // listeyi tam sanır.
         bottom: active == null
@@ -241,11 +242,11 @@ class _Empty extends StatelessWidget {
           children: [
             const Icon(Icons.bookmark_border, size: 48),
             const SizedBox(height: 12),
-            Text('Henüz işaret yok', style: Theme.of(context).textTheme.titleMedium),
+            Text(L.of(context).annotationsEmptyTitle,
+                style: Theme.of(context).textTheme.titleMedium),
             const SizedBox(height: 8),
             Text(
-              'Bir belgede metin seçip yer imi koyabilir, işaretleyebilir ya '
-              'da not düşebilirsin. Hepsi burada toplanır.',
+              L.of(context).annotationsEmptySubtitle,
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.bodySmall,
             ),

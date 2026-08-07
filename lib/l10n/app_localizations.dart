@@ -372,6 +372,156 @@ abstract class L {
   /// In tr, this message translates to:
   /// **'Fine-grained token'**
   String get tokenFieldLabel;
+
+  /// No description provided for @roadmapTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Yol Haritası'**
+  String get roadmapTitle;
+
+  /// No description provided for @knowledgeTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bilgi Tabanı'**
+  String get knowledgeTitle;
+
+  /// No description provided for @annotationsTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'İşaretler'**
+  String get annotationsTitle;
+
+  /// No description provided for @statusQueued.
+  ///
+  /// In tr, this message translates to:
+  /// **'{count} görev gönderilmeyi bekliyor'**
+  String statusQueued(int count);
+
+  /// No description provided for @docMalformedFrontmatter.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bu dosyanın başlık bloğu okunamadı; içerik ham hâliyle gösteriliyor.'**
+  String get docMalformedFrontmatter;
+
+  /// No description provided for @cancel.
+  ///
+  /// In tr, this message translates to:
+  /// **'Vazgeç'**
+  String get cancel;
+
+  /// No description provided for @connectAnyway.
+  ///
+  /// In tr, this message translates to:
+  /// **'Yine de bağlan'**
+  String get connectAnyway;
+
+  /// No description provided for @manageRepos.
+  ///
+  /// In tr, this message translates to:
+  /// **'Repoları yönet'**
+  String get manageRepos;
+
+  /// No description provided for @queuedTasks.
+  ///
+  /// In tr, this message translates to:
+  /// **'{count} görev kuyrukta'**
+  String queuedTasks(int count);
+
+  /// No description provided for @queuedTasksWithSlug.
+  ///
+  /// In tr, this message translates to:
+  /// **'{slug} · {count} görev kuyrukta'**
+  String queuedTasksWithSlug(String slug, int count);
+
+  /// No description provided for @markYellow.
+  ///
+  /// In tr, this message translates to:
+  /// **'Sarı işaretle'**
+  String get markYellow;
+
+  /// No description provided for @markRed.
+  ///
+  /// In tr, this message translates to:
+  /// **'Kırmızı çizgi'**
+  String get markRed;
+
+  /// No description provided for @markBookmark.
+  ///
+  /// In tr, this message translates to:
+  /// **'Yer imi'**
+  String get markBookmark;
+
+  /// No description provided for @addNote.
+  ///
+  /// In tr, this message translates to:
+  /// **'Not ekle'**
+  String get addNote;
+
+  /// No description provided for @createTask.
+  ///
+  /// In tr, this message translates to:
+  /// **'Görev oluştur'**
+  String get createTask;
+
+  /// No description provided for @copy.
+  ///
+  /// In tr, this message translates to:
+  /// **'Kopyala'**
+  String get copy;
+
+  /// No description provided for @knowledgeEmptyTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'{label} boş'**
+  String knowledgeEmptyTitle(String label);
+
+  /// No description provided for @knowledgeEmptySubtitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Agent yeni kayıt ekledikçe burada görünür.'**
+  String get knowledgeEmptySubtitle;
+
+  /// No description provided for @knowledgeSuperseded.
+  ///
+  /// In tr, this message translates to:
+  /// **'geçersiz kayıt'**
+  String get knowledgeSuperseded;
+
+  /// No description provided for @annotationsEmptyTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Henüz işaret yok'**
+  String get annotationsEmptyTitle;
+
+  /// No description provided for @annotationsEmptySubtitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bir belgede metin seçip yer imi koyabilir, işaretleyebilir ya da not düşebilirsin. Hepsi burada toplanır.'**
+  String get annotationsEmptySubtitle;
+
+  /// No description provided for @activityHubOnly.
+  ///
+  /// In tr, this message translates to:
+  /// **'Yalnız hub kayıtlarını göster'**
+  String get activityHubOnly;
+
+  /// No description provided for @activityShowCode.
+  ///
+  /// In tr, this message translates to:
+  /// **'Kod commit\'lerini de göster'**
+  String get activityShowCode;
+
+  /// No description provided for @activityEmptyTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Akış boş'**
+  String get activityEmptyTitle;
+
+  /// No description provided for @activityEmptySubtitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Hub\'a kayıt düştükçe burada görünür.'**
+  String get activityEmptySubtitle;
 }
 
 class _LDelegate extends LocalizationsDelegate<L> {

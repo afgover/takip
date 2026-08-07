@@ -5,6 +5,7 @@ import '../../core/constants.dart';
 import '../../hub/browse_repo.dart';
 import '../common/annotated_document.dart';
 import '../common/hub_error_view.dart';
+import '../../l10n/app_localizations.dart';
 
 /// Yol haritası (B-044): `BACKLOG.md` ve `EVOLUTION.md`.
 ///
@@ -20,7 +21,7 @@ class RoadmapScreen extends StatelessWidget {
       length: 2,
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Yol Haritası'),
+          title: Text(L.of(context).roadmapTitle),
           bottom: const TabBar(
             tabs: [
               Tab(text: 'Backlog'),

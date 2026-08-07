@@ -5,6 +5,7 @@ import '../../hub/browse_repo.dart';
 import '../../hub/frontmatter.dart';
 import '../common/annotated_document.dart';
 import '../common/hub_error_view.dart';
+import '../../l10n/app_localizations.dart';
 
 /// Hub'daki herhangi bir markdown dosyasını gösteren ortak görüntüleyici
 /// (oturumlar, artifact'lar, yol haritası).
@@ -63,12 +64,9 @@ class _Document extends StatelessWidget {
       padding: const EdgeInsets.all(16),
       children: [
         if (fm.isMalformed)
-          const Padding(
-            padding: EdgeInsets.only(bottom: 12),
-            child: Text(
-              'Bu dosyanın başlık bloğu okunamadı; içerik ham hâliyle '
-              'gösteriliyor.',
-            ),
+          Padding(
+            padding: const EdgeInsets.only(bottom: 12),
+            child: Text(L.of(context).docMalformedFrontmatter),
           ),
         if (fm.hasFrontmatter) ...[
           _MetaChips(fields: fm.fields),

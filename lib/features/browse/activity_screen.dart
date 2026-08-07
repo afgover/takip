@@ -5,6 +5,7 @@ import '../../github/commits_api.dart';
 import '../../hub/hub_watcher.dart';
 import '../../hub/models/activity.dart';
 import '../common/hub_error_view.dart';
+import '../../l10n/app_localizations.dart';
 
 /// Aktivite akışı (B-045): commit geçmişi, sözleşmenin §8 öneklerine göre
 /// insan diline çevrilmiş.
@@ -48,8 +49,8 @@ class _ActivityScreenState extends ConsumerState<ActivityScreen> {
           IconButton(
             key: ActivityScreen.codeToggleKey,
             tooltip: _showCode
-                ? 'Yalnız hub kayıtlarını göster'
-                : 'Kod commit\'lerini de göster',
+                ? L.of(context).activityHubOnly
+                : L.of(context).activityShowCode,
             icon: Icon(_showCode ? Icons.code_off : Icons.code),
             onPressed: () => setState(() => _showCode = !_showCode),
           ),
@@ -76,10 +77,10 @@ class _ActivityScreenState extends ConsumerState<ActivityScreen> {
         _showCode ? all : all.where((e) => e.kind.isHubRecord).toList();
 
     if (visible.isEmpty) {
-      return const HubEmptyView(
+      return HubEmptyView(
         icon: Icons.history,
-        title: 'Akış boş',
-        subtitle: 'Hub\'a kayıt düştükçe burada görünür.',
+        title: L.of(context).activityEmptyTitle,
+        subtitle: L.of(context).activityEmptySubtitle,
       );
     }
 

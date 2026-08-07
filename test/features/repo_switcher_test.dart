@@ -9,6 +9,8 @@ import 'package:takip/features/common/repo_switcher.dart';
 import 'package:takip/hub/hub_connections.dart';
 import 'package:takip/hub/hub_watcher.dart';
 
+import '../helpers/test_app.dart';
+
 /// Repo geçişi yoklamayı yeniden başlatır (periyodik zamanlayıcı). Test
 /// bitmeden durdurulmazsa çerçeve "askıda timer" diye haklı olarak patlar.
 void stopWatcher(ProviderContainer container) =>
@@ -40,8 +42,8 @@ Future<ProviderContainer> pumpSwitcher(
   await tester.pumpWidget(
     UncontrolledProviderScope(
       container: container,
-      child: const MaterialApp(
-        home: Scaffold(body: Column(children: [RepoSwitcher()])),
+      child: testApp(
+        const Scaffold(body: Column(children: [RepoSwitcher()])),
       ),
     ),
   );

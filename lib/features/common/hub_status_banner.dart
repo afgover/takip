@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../hub/hub_watcher.dart';
 import '../../hub/outbox.dart';
 import 'hub_error_view.dart';
+import '../../l10n/app_localizations.dart';
 
 /// Uygulamanın her ekranında görünen durum şeridi (B-050).
 ///
@@ -30,7 +31,7 @@ class HubStatusBanner extends ConsumerWidget {
       return _Bar(
         key: bannerKey,
         icon: Icons.cloud_upload_outlined,
-        text: '${queued.length} görev gönderilmeyi bekliyor',
+        text: L.of(context).statusQueued(queued.length),
         background: theme.colorScheme.secondaryContainer,
         foreground: theme.colorScheme.onSecondaryContainer,
       );
