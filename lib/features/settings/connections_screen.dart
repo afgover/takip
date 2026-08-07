@@ -8,6 +8,7 @@ import '../../hub/hub_connections.dart';
 import '../../hub/outbox.dart';
 import '../common/repo_switcher.dart';
 import 'connection_screen.dart';
+import '../../l10n/app_localizations.dart';
 
 /// Kayıtlı repoların listesi: geçiş, düzenleme, silme, ekleme (T-003).
 class ConnectionsScreen extends ConsumerWidget {
@@ -53,7 +54,7 @@ class ConnectionsScreen extends ConsumerWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   IconButton(
-                    tooltip: 'Düzenle',
+                    tooltip: L.of(context).edit,
                     icon: const Icon(Icons.edit_outlined),
                     onPressed: () => Navigator.of(context).push(
                       MaterialPageRoute<void>(
@@ -66,7 +67,7 @@ class ConnectionsScreen extends ConsumerWidget {
                   ),
                   IconButton(
                     key: removeKey(connection.slug),
-                    tooltip: 'Kaldır',
+                    tooltip: L.of(context).remove,
                     icon: const Icon(Icons.delete_outline),
                     onPressed: () => _confirmRemove(
                       context,
@@ -92,13 +93,11 @@ class ConnectionsScreen extends ConsumerWidget {
               ),
             ),
           ),
-          const Padding(
-            padding: EdgeInsets.fromLTRB(16, 8, 16, 24),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
             child: Text(
-              'Her repo kendi token\'ıyla saklanır. Bir token yalnızca kendi '
-              'reposunu kapsamalı — tek token\'ı bütün repolara yetkilendirmek, '
-              'telefonu kaybettiğinde kaybın büyümesi demektir.',
-              style: TextStyle(fontSize: 12),
+              L.of(context).reposHelp,
+              style: const TextStyle(fontSize: 12),
             ),
           ),
         ],
@@ -117,33 +116,33 @@ class ConnectionsScreen extends ConsumerWidget {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (dialogContext) => AlertDialog(
-        title: Text('${connection.displayName} kaldırılsın mı?'),
+        title: Text(L.of(dialogContext).removeRepoTitle(connection.displayName)),
         content: Text(
           [
-            'Bu reponun token\'ı cihazdan silinir.',
+            L.of(dialogContext).removeRepoBody,
             if (queuedCount > 0)
-              'Kuyrukta bu repoya ait $queuedCount görev var; '
-                  'repo kaldırılırsa gönderilemezler.',
-            if (isLast) 'Bu son repo — kaldırırsan onboarding ekranına dönersin.',
+              L.of(dialogContext).removeRepoQueued(queuedCount),
+            if (isLast) L.of(dialogContext).removeRepoLast,
           ].join('\n\n'),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(dialogContext).pop(false),
-            child: const Text('Vazgeç'),
+            child: Text(L.of(dialogContext).cancel),
           ),
           FilledButton(
             onPressed: () => Navigator.of(dialogContext).pop(true),
-            child: const Text('Kaldır'),
+            child: Text(L.of(dialogContext).remove),
           ),
         ],
       ),
     );
 
     if (confirmed ?? false) {
+      final label = L.of(context).repoRemoved(connection.displayName);
       await ref.read(hubConnectionsProvider.notifier).remove(connection.slug);
       messenger.showSnackBar(
-        SnackBar(content: Text('${connection.displayName} kaldırıldı.')),
+        SnackBar(content: Text(label)),
       );
     }
   }
@@ -162,8 +161,6 @@ class ConnectionsScreen extends ConsumerWidget {
 class _IdentityLine extends StatelessWidget {
   const _IdentityLine({required this.login});
 
-  static const emptyText = 'Kimlik yok — Düzenle\'den yazabilirsin';
-
   final String? login;
 
   @override
@@ -181,7 +178,7 @@ class _IdentityLine extends StatelessWidget {
         const SizedBox(width: 4),
         Expanded(
           child: Text(
-            known ? login! : emptyText,
+            known ? login! : L.of(context).identityMissing,
             style: theme.textTheme.labelSmall,
             overflow: TextOverflow.ellipsis,
           ),
@@ -201,7 +198,7 @@ class _ContractLine extends StatelessWidget {
     final theme = Theme.of(context);
     if (version == null) {
       return Text(
-        'Sözleşme sürümü okunamadı',
+        L.of(context).contractUnreadable,
         style: theme.textTheme.labelSmall,
       );
     }
@@ -218,9 +215,8 @@ class _ContractLine extends StatelessWidget {
         Expanded(
           child: Text(
             stale
-                ? 'Sözleşme $version — ana kopya ${Hub.contractVersion}, '
-                    'agent güncellemeli'
-                : 'Sözleşme $version',
+                ? L.of(context).contractStale(version!, Hub.contractVersion)
+                : L.of(context).contractCurrent(version!),
             style: theme.textTheme.labelSmall?.copyWith(
               color: stale ? theme.colorScheme.error : null,
             ),

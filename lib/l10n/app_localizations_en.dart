@@ -414,4 +414,208 @@ class LEn extends L {
   String intervalMinutes(int n) {
     return '$n minutes';
   }
+
+  @override
+  String get connectionSettings => 'Connection settings';
+
+  @override
+  String get errNoConnectionTitle => 'No connection';
+
+  @override
+  String get errNoConnectionBody =>
+      'Could not reach the internet. Tasks you add wait in the queue and are sent automatically once you are back online.';
+
+  @override
+  String get errAuthBody =>
+      'You can renew the token in Settings; permissions must be Contents: Read and write and Metadata: Read.';
+
+  @override
+  String get errRateTitle => 'Rate limit reached';
+
+  @override
+  String get errRateBody =>
+      'The GitHub rate limit is reached; it clears itself after a while.';
+
+  @override
+  String get errNotFoundTitle => 'Not found';
+
+  @override
+  String get errGenericTitle => 'Something went wrong';
+
+  @override
+  String get addTaskTitle => 'Add task';
+
+  @override
+  String get fieldTitle => 'Title';
+
+  @override
+  String get titleRequired => 'Title required';
+
+  @override
+  String get titleNeedsLetter => 'The title must contain a letter or a digit';
+
+  @override
+  String get fieldDescription => 'Description';
+
+  @override
+  String get fieldPriority => 'Priority';
+
+  @override
+  String get newCategoryName => 'New category name';
+
+  @override
+  String get categoryRequired => 'Category name required';
+
+  @override
+  String get sendToInbox => 'Send to inbox';
+
+  @override
+  String get taskQueuedOffline =>
+      'No network — the task is queued and will be sent once you are back online.';
+
+  @override
+  String get securityEmptyTitle => 'No security records';
+
+  @override
+  String get securityEmptySubtitle =>
+      'The agent writes scans, measures and findings here (contract §12).';
+
+  @override
+  String securityOpenCount(int count) {
+    return '$count open records';
+  }
+
+  @override
+  String get securityFilterEmptyTitle => 'No records of this kind';
+
+  @override
+  String get securityFilterEmptySubtitle =>
+      'Remove the filter to see them all.';
+
+  @override
+  String get all => 'All';
+
+  @override
+  String get securityOpen => 'open';
+
+  @override
+  String get secKindMeasure => 'Measure';
+
+  @override
+  String get secKindOpen => 'Open';
+
+  @override
+  String get secKindTodo => 'To do';
+
+  @override
+  String get secKindScan => 'Scan';
+
+  @override
+  String get kind => 'Kind';
+
+  @override
+  String get edit => 'Edit';
+
+  @override
+  String get remove => 'Remove';
+
+  @override
+  String get reposHelp =>
+      'Each repository is stored with its own token. A token should cover only its own repository — authorising one token for every repository means a bigger loss if you lose the phone.';
+
+  @override
+  String removeRepoTitle(String name) {
+    return 'Remove $name?';
+  }
+
+  @override
+  String get removeRepoBody =>
+      'This repository’s token is deleted from the device.';
+
+  @override
+  String removeRepoQueued(int count) {
+    return 'There are $count queued tasks for this repository; they cannot be sent if it is removed.';
+  }
+
+  @override
+  String get removeRepoLast =>
+      'This is the last repository — removing it returns you to onboarding.';
+
+  @override
+  String repoRemoved(String name) {
+    return '$name removed.';
+  }
+
+  @override
+  String get identityMissing => 'No identity — you can set it under Edit';
+
+  @override
+  String get contractUnreadable => 'Contract version could not be read';
+
+  @override
+  String contractStale(String version, String master) {
+    return 'Contract $version — master is $master, the agent should update';
+  }
+
+  @override
+  String contractCurrent(String version) {
+    return 'Contract $version';
+  }
+
+  @override
+  String get connectionUpdated => 'Connection updated.';
+
+  @override
+  String get repoAdded => 'Repository added.';
+
+  @override
+  String get connectionTitle => 'Connection';
+
+  @override
+  String get addRepo => 'Add repository';
+
+  @override
+  String get repoLocked =>
+      'The repository cannot be changed — use “Add repository” instead.';
+
+  @override
+  String get labelOptional => 'Name (optional)';
+
+  @override
+  String get labelHelp =>
+      'Shown in the repository switcher; owner/name is used when empty.';
+
+  @override
+  String get identityLabel => 'Identity (GitHub username)';
+
+  @override
+  String get identityHelp =>
+      'Written as `author` on tasks and notes you create. If left empty it is read from the token.';
+
+  @override
+  String get tokenDifferent => 'Use a different token (optional)';
+
+  @override
+  String get tokenKeepIfEmpty => 'New token (unchanged if left empty)';
+
+  @override
+  String get verifyAndSave => 'Verify and save';
+
+  @override
+  String get reuseTokenHelp =>
+      'Reuse the same token if it covers more than one repository.';
+
+  @override
+  String get enterNewToken => 'I will enter a new token';
+
+  @override
+  String useTokenOf(String name) {
+    return 'Use $name’s token';
+  }
+
+  @override
+  String get token => 'Token';
+
+  @override
+  String get tokenRequiredShort => 'Token required.';
 }

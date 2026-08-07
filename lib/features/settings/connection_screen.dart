@@ -10,6 +10,7 @@ import '../../hub/hub_connections.dart';
 import '../../hub/hub_watcher.dart';
 import '../../hub/token_scope.dart';
 import '../common/token_scope_warning_dialog.dart';
+import '../../l10n/app_localizations.dart';
 
 /// Ekran ne yapıyor: yeni repo mu ekliyor, var olanı mı düzenliyor (T-003).
 enum ConnectionMode { add, edit }
@@ -104,10 +105,11 @@ class _ConnectionScreenState extends ConsumerState<ConnectionScreen> {
     );
 
     if (candidate.token.isEmpty) {
-      setState(() => _error = 'Token gerekli.');
+      setState(() => _error = L.of(context).tokenRequiredShort);
       return;
     }
 
+    final l = L.of(context);
     setState(() {
       _busy = true;
       _error = null;
@@ -140,7 +142,7 @@ class _ConnectionScreenState extends ConsumerState<ConnectionScreen> {
       Navigator.of(context).pop();
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(_isAdd ? 'Repo eklendi.' : 'Bağlantı güncellendi.'),
+          content: Text(_isAdd ? l.repoAdded : l.connectionUpdated),
         ),
       );
     } on HubError catch (e) {
@@ -182,9 +184,10 @@ class _ConnectionScreenState extends ConsumerState<ConnectionScreen> {
     // "başka bir repo" olurdu ve eski bağlantı listede öksüz kalırdı. Repo
     // değiştirmek isteyen ekler, sonra eskisini kaldırır.
     final repoLocked = !_isAdd && _target != null;
+    final l = L.of(context);
 
     return Scaffold(
-      appBar: AppBar(title: Text(_isAdd ? 'Repo ekle' : 'Bağlantı')),
+      appBar: AppBar(title: Text(_isAdd ? l.addRepo : l.connectionTitle)),
       body: Form(
         key: _formKey,
         child: ListView(
@@ -196,15 +199,15 @@ class _ConnectionScreenState extends ConsumerState<ConnectionScreen> {
               enabled: !_busy && !repoLocked,
               autocorrect: false,
               decoration: InputDecoration(
-                labelText: 'Repo (owner/ad)',
+                labelText: l.repoFieldLabel,
                 border: const OutlineInputBorder(),
                 prefixIcon: const Icon(Icons.folder_outlined),
                 helperText: repoLocked
-                    ? 'Repo değiştirilemez — yeni repo eklemek için "Repo ekle".'
+                    ? l.repoLocked
                     : null,
               ),
               validator: (v) => HubConfig.parseRepo(v ?? '') == null
-                  ? 'owner/ad biçiminde girin'
+                  ? l.repoFieldInvalid
                   : null,
             ),
             const SizedBox(height: 16),
@@ -212,11 +215,11 @@ class _ConnectionScreenState extends ConsumerState<ConnectionScreen> {
               key: ConnectionScreen.labelFieldKey,
               controller: _labelCtrl,
               enabled: !_busy,
-              decoration: const InputDecoration(
-                labelText: 'Ad (isteğe bağlı)',
-                helperText: 'Repo seçicide görünür; boşsa owner/ad gösterilir.',
-                border: OutlineInputBorder(),
-                prefixIcon: Icon(Icons.label_outline),
+              decoration: InputDecoration(
+                labelText: l.labelOptional,
+                helperText: l.labelHelp,
+                border: const OutlineInputBorder(),
+                prefixIcon: const Icon(Icons.label_outline),
               ),
             ),
             const SizedBox(height: 16),
@@ -225,12 +228,11 @@ class _ConnectionScreenState extends ConsumerState<ConnectionScreen> {
               controller: _loginCtrl,
               enabled: !_busy,
               autocorrect: false,
-              decoration: const InputDecoration(
-                labelText: 'Kimlik (GitHub kullanıcı adı)',
-                helperText: 'Açtığın görev ve notlara `author` olarak yazılır. '
-                    'Boş bırakırsan token\'dan okunmaya çalışılır.',
+              decoration: InputDecoration(
+                labelText: l.identityLabel,
+                helperText: l.identityHelp,
                 helperMaxLines: 3,
-                border: OutlineInputBorder(),
+                border: const OutlineInputBorder(),
                 prefixIcon: Icon(Icons.person_outline),
               ),
             ),
@@ -255,9 +257,9 @@ class _ConnectionScreenState extends ConsumerState<ConnectionScreen> {
               enableSuggestions: false,
               decoration: InputDecoration(
                 labelText: switch ((_isAdd, _reusedFrom)) {
-                  (true, null) => 'Fine-grained token',
-                  (true, _) => 'Farklı token kullan (isteğe bağlı)',
-                  _ => 'Yeni token (boş bırakılırsa değişmez)',
+                  (true, null) => l.tokenFieldLabel,
+                  (true, _) => l.tokenDifferent,
+                  _ => l.tokenKeepIfEmpty,
                 },
                 border: const OutlineInputBorder(),
                 prefixIcon: const Icon(Icons.key_outlined),
@@ -271,7 +273,7 @@ class _ConnectionScreenState extends ConsumerState<ConnectionScreen> {
               // Mevcut bir token seçildiyse alanın boş kalması normaldir.
               validator: (v) =>
                   _isAdd && _reusedFrom == null && (v == null || v.trim().isEmpty)
-                      ? 'Token gerekli'
+                      ? l.tokenRequired
                       : null,
             ),
             if (_error != null) ...[
@@ -288,7 +290,7 @@ class _ConnectionScreenState extends ConsumerState<ConnectionScreen> {
                       width: 20,
                       child: CircularProgressIndicator(strokeWidth: 2),
                     )
-                  : const Text('Doğrula ve kaydet'),
+                  : Text(l.verifyAndSave),
             ),
           ],
         ),
@@ -328,19 +330,20 @@ class _ReuseTokenField extends ConsumerWidget {
       key: ConnectionScreen.reuseTokenKey,
       initialValue: selected?.slug,
       isExpanded: true,
-      decoration: const InputDecoration(
-        labelText: 'Token',
-        helperText: 'Aynı token birden çok repoyu kapsıyorsa yeniden kullan.',
-        border: OutlineInputBorder(),
-        prefixIcon: Icon(Icons.vpn_key_outlined),
+      decoration: InputDecoration(
+        labelText: L.of(context).token,
+        helperText: L.of(context).reuseTokenHelp,
+        border: const OutlineInputBorder(),
+        prefixIcon: const Icon(Icons.vpn_key_outlined),
       ),
       items: [
-        const DropdownMenuItem(value: null, child: Text('Yeni token gireceğim')),
+        DropdownMenuItem(
+            value: null, child: Text(L.of(context).enterNewToken)),
         for (final c in connections)
           DropdownMenuItem(
             value: c.slug,
             child: Text(
-              '${c.displayName} token\'ını kullan',
+              L.of(context).useTokenOf(c.displayName),
               overflow: TextOverflow.ellipsis,
             ),
           ),

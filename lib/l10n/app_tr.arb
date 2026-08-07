@@ -320,5 +320,79 @@
   "secKindOpen": "Açık",
   "secKindTodo": "Yapılacak",
   "secKindScan": "Tarama",
-  "kind": "Tür"
+  "kind": "Tür",
+  "edit": "Düzenle",
+  "remove": "Kaldır",
+  "reposHelp": "Her repo kendi token'ıyla saklanır. Bir token yalnızca kendi reposunu kapsamalı — tek token'ı bütün repolara yetkilendirmek, telefonu kaybettiğinde kaybın büyümesi demektir.",
+  "removeRepoTitle": "{name} kaldırılsın mı?",
+  "@removeRepoTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "removeRepoBody": "Bu reponun token'ı cihazdan silinir.",
+  "removeRepoQueued": "Kuyrukta bu repoya ait {count} görev var; repo kaldırılırsa gönderilemezler.",
+  "@removeRepoQueued": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "removeRepoLast": "Bu son repo — kaldırırsan onboarding ekranına dönersin.",
+  "repoRemoved": "{name} kaldırıldı.",
+  "@repoRemoved": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "identityMissing": "Kimlik yok — Düzenle'den yazabilirsin",
+  "contractUnreadable": "Sözleşme sürümü okunamadı",
+  "contractStale": "Sözleşme {version} — ana kopya {master}, agent güncellemeli",
+  "@contractStale": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      },
+      "master": {
+        "type": "String"
+      }
+    }
+  },
+  "contractCurrent": "Sözleşme {version}",
+  "@contractCurrent": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "connectionUpdated": "Bağlantı güncellendi.",
+  "repoAdded": "Repo eklendi.",
+  "connectionTitle": "Bağlantı",
+  "addRepo": "Repo ekle",
+  "repoLocked": "Repo değiştirilemez — yeni repo eklemek için \"Repo ekle\".",
+  "labelOptional": "Ad (isteğe bağlı)",
+  "labelHelp": "Repo seçicide görünür; boşsa owner/ad gösterilir.",
+  "identityLabel": "Kimlik (GitHub kullanıcı adı)",
+  "identityHelp": "Açtığın görev ve notlara `author` olarak yazılır. Boş bırakırsan token'dan okunmaya çalışılır.",
+  "tokenDifferent": "Farklı token kullan (isteğe bağlı)",
+  "tokenKeepIfEmpty": "Yeni token (boş bırakılırsa değişmez)",
+  "verifyAndSave": "Doğrula ve kaydet",
+  "reuseTokenHelp": "Aynı token birden çok repoyu kapsıyorsa yeniden kullan.",
+  "enterNewToken": "Yeni token gireceğim",
+  "useTokenOf": "{name} token'ını kullan",
+  "@useTokenOf": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "token": "Token",
+  "tokenRequiredShort": "Token gerekli."
 }

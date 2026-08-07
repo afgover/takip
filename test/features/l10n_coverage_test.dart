@@ -34,6 +34,8 @@ void main() {
     'lib/features/onboarding/onboarding_screen.dart',
     'lib/features/pending/done_screen.dart',
     'lib/features/pending/pending_screen.dart',
+    'lib/features/settings/connection_screen.dart',
+    'lib/features/settings/connections_screen.dart',
     'lib/features/settings/settings_screen.dart',
     'lib/features/shell.dart',
   ];
@@ -46,8 +48,6 @@ void main() {
     'lib/features/common/selection_record.dart',
     'lib/features/pending/task_detail_screen.dart',
     'lib/features/settings/backup_screen.dart',
-    'lib/features/settings/connection_screen.dart',
-    'lib/features/settings/connections_screen.dart',
   ];
 
   test('taşınmış dosyalarda Türkçe arayüz metni kalmadı', () {

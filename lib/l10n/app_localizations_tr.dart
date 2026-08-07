@@ -411,4 +411,206 @@ class LTr extends L {
   String intervalMinutes(int n) {
     return '$n dakika';
   }
+
+  @override
+  String get connectionSettings => 'Bağlantı ayarları';
+
+  @override
+  String get errNoConnectionTitle => 'Bağlantı yok';
+
+  @override
+  String get errNoConnectionBody =>
+      'İnternete bağlanılamadı. Eklediğin görevler kuyrukta bekler ve bağlantı gelince kendiliğinden gönderilir.';
+
+  @override
+  String get errAuthBody =>
+      'Ayarlar\'dan token\'ı yenileyebilirsin; izinler Contents: Read and write ve Metadata: Read olmalı.';
+
+  @override
+  String get errRateTitle => 'İstek limiti doldu';
+
+  @override
+  String get errRateBody =>
+      'GitHub istek limiti doldu; bir süre sonra kendiliğinden açılır.';
+
+  @override
+  String get errNotFoundTitle => 'Bulunamadı';
+
+  @override
+  String get errGenericTitle => 'Bir sorun çıktı';
+
+  @override
+  String get addTaskTitle => 'Görev Ekle';
+
+  @override
+  String get fieldTitle => 'Başlık';
+
+  @override
+  String get titleRequired => 'Başlık gerekli';
+
+  @override
+  String get titleNeedsLetter => 'Başlık harf ya da rakam içermeli';
+
+  @override
+  String get fieldDescription => 'Açıklama';
+
+  @override
+  String get fieldPriority => 'Öncelik';
+
+  @override
+  String get newCategoryName => 'Yeni kategori adı';
+
+  @override
+  String get categoryRequired => 'Kategori adı gerekli';
+
+  @override
+  String get sendToInbox => 'Inbox\'a Gönder';
+
+  @override
+  String get taskQueuedOffline =>
+      'Ağ yok — görev kuyruğa alındı, bağlantı gelince gönderilecek.';
+
+  @override
+  String get securityEmptyTitle => 'Güvenlik kaydı yok';
+
+  @override
+  String get securityEmptySubtitle =>
+      'Agent tarama, önlem ve bulguları buraya yazar (sözleşme §12).';
+
+  @override
+  String securityOpenCount(int count) {
+    return '$count açık kayıt';
+  }
+
+  @override
+  String get securityFilterEmptyTitle => 'Bu türde kayıt yok';
+
+  @override
+  String get securityFilterEmptySubtitle =>
+      'Filtreyi kaldırıp tümünü görebilirsin.';
+
+  @override
+  String get all => 'Tümü';
+
+  @override
+  String get securityOpen => 'açık';
+
+  @override
+  String get secKindMeasure => 'Önlem';
+
+  @override
+  String get secKindOpen => 'Açık';
+
+  @override
+  String get secKindTodo => 'Yapılacak';
+
+  @override
+  String get secKindScan => 'Tarama';
+
+  @override
+  String get kind => 'Tür';
+
+  @override
+  String get edit => 'Düzenle';
+
+  @override
+  String get remove => 'Kaldır';
+
+  @override
+  String get reposHelp =>
+      'Her repo kendi token\'ıyla saklanır. Bir token yalnızca kendi reposunu kapsamalı — tek token\'ı bütün repolara yetkilendirmek, telefonu kaybettiğinde kaybın büyümesi demektir.';
+
+  @override
+  String removeRepoTitle(String name) {
+    return '$name kaldırılsın mı?';
+  }
+
+  @override
+  String get removeRepoBody => 'Bu reponun token\'ı cihazdan silinir.';
+
+  @override
+  String removeRepoQueued(int count) {
+    return 'Kuyrukta bu repoya ait $count görev var; repo kaldırılırsa gönderilemezler.';
+  }
+
+  @override
+  String get removeRepoLast =>
+      'Bu son repo — kaldırırsan onboarding ekranına dönersin.';
+
+  @override
+  String repoRemoved(String name) {
+    return '$name kaldırıldı.';
+  }
+
+  @override
+  String get identityMissing => 'Kimlik yok — Düzenle\'den yazabilirsin';
+
+  @override
+  String get contractUnreadable => 'Sözleşme sürümü okunamadı';
+
+  @override
+  String contractStale(String version, String master) {
+    return 'Sözleşme $version — ana kopya $master, agent güncellemeli';
+  }
+
+  @override
+  String contractCurrent(String version) {
+    return 'Sözleşme $version';
+  }
+
+  @override
+  String get connectionUpdated => 'Bağlantı güncellendi.';
+
+  @override
+  String get repoAdded => 'Repo eklendi.';
+
+  @override
+  String get connectionTitle => 'Bağlantı';
+
+  @override
+  String get addRepo => 'Repo ekle';
+
+  @override
+  String get repoLocked =>
+      'Repo değiştirilemez — yeni repo eklemek için \"Repo ekle\".';
+
+  @override
+  String get labelOptional => 'Ad (isteğe bağlı)';
+
+  @override
+  String get labelHelp => 'Repo seçicide görünür; boşsa owner/ad gösterilir.';
+
+  @override
+  String get identityLabel => 'Kimlik (GitHub kullanıcı adı)';
+
+  @override
+  String get identityHelp =>
+      'Açtığın görev ve notlara `author` olarak yazılır. Boş bırakırsan token\'dan okunmaya çalışılır.';
+
+  @override
+  String get tokenDifferent => 'Farklı token kullan (isteğe bağlı)';
+
+  @override
+  String get tokenKeepIfEmpty => 'Yeni token (boş bırakılırsa değişmez)';
+
+  @override
+  String get verifyAndSave => 'Doğrula ve kaydet';
+
+  @override
+  String get reuseTokenHelp =>
+      'Aynı token birden çok repoyu kapsıyorsa yeniden kullan.';
+
+  @override
+  String get enterNewToken => 'Yeni token gireceğim';
+
+  @override
+  String useTokenOf(String name) {
+    return '$name token\'ını kullan';
+  }
+
+  @override
+  String get token => 'Token';
+
+  @override
+  String get tokenRequiredShort => 'Token gerekli.';
 }

@@ -792,6 +792,360 @@ abstract class L {
   /// In tr, this message translates to:
   /// **'{n} dakika'**
   String intervalMinutes(int n);
+
+  /// No description provided for @connectionSettings.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bağlantı ayarları'**
+  String get connectionSettings;
+
+  /// No description provided for @errNoConnectionTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bağlantı yok'**
+  String get errNoConnectionTitle;
+
+  /// No description provided for @errNoConnectionBody.
+  ///
+  /// In tr, this message translates to:
+  /// **'İnternete bağlanılamadı. Eklediğin görevler kuyrukta bekler ve bağlantı gelince kendiliğinden gönderilir.'**
+  String get errNoConnectionBody;
+
+  /// No description provided for @errAuthBody.
+  ///
+  /// In tr, this message translates to:
+  /// **'Ayarlar\'dan token\'ı yenileyebilirsin; izinler Contents: Read and write ve Metadata: Read olmalı.'**
+  String get errAuthBody;
+
+  /// No description provided for @errRateTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'İstek limiti doldu'**
+  String get errRateTitle;
+
+  /// No description provided for @errRateBody.
+  ///
+  /// In tr, this message translates to:
+  /// **'GitHub istek limiti doldu; bir süre sonra kendiliğinden açılır.'**
+  String get errRateBody;
+
+  /// No description provided for @errNotFoundTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bulunamadı'**
+  String get errNotFoundTitle;
+
+  /// No description provided for @errGenericTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bir sorun çıktı'**
+  String get errGenericTitle;
+
+  /// No description provided for @addTaskTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Görev Ekle'**
+  String get addTaskTitle;
+
+  /// No description provided for @fieldTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Başlık'**
+  String get fieldTitle;
+
+  /// No description provided for @titleRequired.
+  ///
+  /// In tr, this message translates to:
+  /// **'Başlık gerekli'**
+  String get titleRequired;
+
+  /// No description provided for @titleNeedsLetter.
+  ///
+  /// In tr, this message translates to:
+  /// **'Başlık harf ya da rakam içermeli'**
+  String get titleNeedsLetter;
+
+  /// No description provided for @fieldDescription.
+  ///
+  /// In tr, this message translates to:
+  /// **'Açıklama'**
+  String get fieldDescription;
+
+  /// No description provided for @fieldPriority.
+  ///
+  /// In tr, this message translates to:
+  /// **'Öncelik'**
+  String get fieldPriority;
+
+  /// No description provided for @newCategoryName.
+  ///
+  /// In tr, this message translates to:
+  /// **'Yeni kategori adı'**
+  String get newCategoryName;
+
+  /// No description provided for @categoryRequired.
+  ///
+  /// In tr, this message translates to:
+  /// **'Kategori adı gerekli'**
+  String get categoryRequired;
+
+  /// No description provided for @sendToInbox.
+  ///
+  /// In tr, this message translates to:
+  /// **'Inbox\'a Gönder'**
+  String get sendToInbox;
+
+  /// No description provided for @taskQueuedOffline.
+  ///
+  /// In tr, this message translates to:
+  /// **'Ağ yok — görev kuyruğa alındı, bağlantı gelince gönderilecek.'**
+  String get taskQueuedOffline;
+
+  /// No description provided for @securityEmptyTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Güvenlik kaydı yok'**
+  String get securityEmptyTitle;
+
+  /// No description provided for @securityEmptySubtitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Agent tarama, önlem ve bulguları buraya yazar (sözleşme §12).'**
+  String get securityEmptySubtitle;
+
+  /// No description provided for @securityOpenCount.
+  ///
+  /// In tr, this message translates to:
+  /// **'{count} açık kayıt'**
+  String securityOpenCount(int count);
+
+  /// No description provided for @securityFilterEmptyTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bu türde kayıt yok'**
+  String get securityFilterEmptyTitle;
+
+  /// No description provided for @securityFilterEmptySubtitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Filtreyi kaldırıp tümünü görebilirsin.'**
+  String get securityFilterEmptySubtitle;
+
+  /// No description provided for @all.
+  ///
+  /// In tr, this message translates to:
+  /// **'Tümü'**
+  String get all;
+
+  /// No description provided for @securityOpen.
+  ///
+  /// In tr, this message translates to:
+  /// **'açık'**
+  String get securityOpen;
+
+  /// No description provided for @secKindMeasure.
+  ///
+  /// In tr, this message translates to:
+  /// **'Önlem'**
+  String get secKindMeasure;
+
+  /// No description provided for @secKindOpen.
+  ///
+  /// In tr, this message translates to:
+  /// **'Açık'**
+  String get secKindOpen;
+
+  /// No description provided for @secKindTodo.
+  ///
+  /// In tr, this message translates to:
+  /// **'Yapılacak'**
+  String get secKindTodo;
+
+  /// No description provided for @secKindScan.
+  ///
+  /// In tr, this message translates to:
+  /// **'Tarama'**
+  String get secKindScan;
+
+  /// No description provided for @kind.
+  ///
+  /// In tr, this message translates to:
+  /// **'Tür'**
+  String get kind;
+
+  /// No description provided for @edit.
+  ///
+  /// In tr, this message translates to:
+  /// **'Düzenle'**
+  String get edit;
+
+  /// No description provided for @remove.
+  ///
+  /// In tr, this message translates to:
+  /// **'Kaldır'**
+  String get remove;
+
+  /// No description provided for @reposHelp.
+  ///
+  /// In tr, this message translates to:
+  /// **'Her repo kendi token\'ıyla saklanır. Bir token yalnızca kendi reposunu kapsamalı — tek token\'ı bütün repolara yetkilendirmek, telefonu kaybettiğinde kaybın büyümesi demektir.'**
+  String get reposHelp;
+
+  /// No description provided for @removeRepoTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'{name} kaldırılsın mı?'**
+  String removeRepoTitle(String name);
+
+  /// No description provided for @removeRepoBody.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bu reponun token\'ı cihazdan silinir.'**
+  String get removeRepoBody;
+
+  /// No description provided for @removeRepoQueued.
+  ///
+  /// In tr, this message translates to:
+  /// **'Kuyrukta bu repoya ait {count} görev var; repo kaldırılırsa gönderilemezler.'**
+  String removeRepoQueued(int count);
+
+  /// No description provided for @removeRepoLast.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bu son repo — kaldırırsan onboarding ekranına dönersin.'**
+  String get removeRepoLast;
+
+  /// No description provided for @repoRemoved.
+  ///
+  /// In tr, this message translates to:
+  /// **'{name} kaldırıldı.'**
+  String repoRemoved(String name);
+
+  /// No description provided for @identityMissing.
+  ///
+  /// In tr, this message translates to:
+  /// **'Kimlik yok — Düzenle\'den yazabilirsin'**
+  String get identityMissing;
+
+  /// No description provided for @contractUnreadable.
+  ///
+  /// In tr, this message translates to:
+  /// **'Sözleşme sürümü okunamadı'**
+  String get contractUnreadable;
+
+  /// No description provided for @contractStale.
+  ///
+  /// In tr, this message translates to:
+  /// **'Sözleşme {version} — ana kopya {master}, agent güncellemeli'**
+  String contractStale(String version, String master);
+
+  /// No description provided for @contractCurrent.
+  ///
+  /// In tr, this message translates to:
+  /// **'Sözleşme {version}'**
+  String contractCurrent(String version);
+
+  /// No description provided for @connectionUpdated.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bağlantı güncellendi.'**
+  String get connectionUpdated;
+
+  /// No description provided for @repoAdded.
+  ///
+  /// In tr, this message translates to:
+  /// **'Repo eklendi.'**
+  String get repoAdded;
+
+  /// No description provided for @connectionTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bağlantı'**
+  String get connectionTitle;
+
+  /// No description provided for @addRepo.
+  ///
+  /// In tr, this message translates to:
+  /// **'Repo ekle'**
+  String get addRepo;
+
+  /// No description provided for @repoLocked.
+  ///
+  /// In tr, this message translates to:
+  /// **'Repo değiştirilemez — yeni repo eklemek için \"Repo ekle\".'**
+  String get repoLocked;
+
+  /// No description provided for @labelOptional.
+  ///
+  /// In tr, this message translates to:
+  /// **'Ad (isteğe bağlı)'**
+  String get labelOptional;
+
+  /// No description provided for @labelHelp.
+  ///
+  /// In tr, this message translates to:
+  /// **'Repo seçicide görünür; boşsa owner/ad gösterilir.'**
+  String get labelHelp;
+
+  /// No description provided for @identityLabel.
+  ///
+  /// In tr, this message translates to:
+  /// **'Kimlik (GitHub kullanıcı adı)'**
+  String get identityLabel;
+
+  /// No description provided for @identityHelp.
+  ///
+  /// In tr, this message translates to:
+  /// **'Açtığın görev ve notlara `author` olarak yazılır. Boş bırakırsan token\'dan okunmaya çalışılır.'**
+  String get identityHelp;
+
+  /// No description provided for @tokenDifferent.
+  ///
+  /// In tr, this message translates to:
+  /// **'Farklı token kullan (isteğe bağlı)'**
+  String get tokenDifferent;
+
+  /// No description provided for @tokenKeepIfEmpty.
+  ///
+  /// In tr, this message translates to:
+  /// **'Yeni token (boş bırakılırsa değişmez)'**
+  String get tokenKeepIfEmpty;
+
+  /// No description provided for @verifyAndSave.
+  ///
+  /// In tr, this message translates to:
+  /// **'Doğrula ve kaydet'**
+  String get verifyAndSave;
+
+  /// No description provided for @reuseTokenHelp.
+  ///
+  /// In tr, this message translates to:
+  /// **'Aynı token birden çok repoyu kapsıyorsa yeniden kullan.'**
+  String get reuseTokenHelp;
+
+  /// No description provided for @enterNewToken.
+  ///
+  /// In tr, this message translates to:
+  /// **'Yeni token gireceğim'**
+  String get enterNewToken;
+
+  /// No description provided for @useTokenOf.
+  ///
+  /// In tr, this message translates to:
+  /// **'{name} token\'ını kullan'**
+  String useTokenOf(String name);
+
+  /// No description provided for @token.
+  ///
+  /// In tr, this message translates to:
+  /// **'Token'**
+  String get token;
+
+  /// No description provided for @tokenRequiredShort.
+  ///
+  /// In tr, this message translates to:
+  /// **'Token gerekli.'**
+  String get tokenRequiredShort;
 }
 
 class _LDelegate extends LocalizationsDelegate<L> {
