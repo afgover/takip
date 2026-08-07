@@ -51,3 +51,44 @@ bu haftanın üç kez tekrarlanan hatası olurdu (L-035, L-039, L-040): iddia
 edilen ama ölçülmeyen davranış.
 
 435 test, analyze temiz.
+
+### Kullanıcı
+> dil secimi ile ilgi bir ayrimi netlestirmek istiyoruym,
+> ingilizce yada diger bir dili secince, sozlesme o dilde olmali(referans olarak
+> bilgiler ordan gelecegi icin) uygulama dili ingilizce olmali, akabinde
+> olusturulcak icerik de o dilde devam edecektir,
+> dili degistirmek daha cok ilk kurulumda yapilcak bir is, daha sonra dil
+> degistirilince eklenen kayitlar dokumanlar gibi seylerin dilinin degismesi cok
+> anlamli degil,
+> dil secenegi koymamizin sebebi repoyu farkli dilleri konusanlarinda
+> kullanabilmesidir
+
+### Agent — sözleşme 1.19, 1.18'i tersine çevirdi
+Kullanıcının modeli benimkinden tutarlı çıktı ve **kendi kuralımı geri aldım**.
+
+1.18'de "arayüz dili ≠ kayıt dili; gövde başlıkları Türkçe sabit" demiştim.
+Gerekçe geçerliydi (aynı hub'da iki başlık şeması = okunamayan kayıt) ama çözümü
+yanlış yerden almışım: tutarlılığı **şemayı tek dile sabitleyerek** değil,
+**hub başına tek dil** ile sağlamak gerekiyordu. Benimki İngilizce çalışan birine
+Türkçe başlıklı kayıt yazdırırdı — yani dil seçeneğini eklemenin sebebini baştan
+çürütürdü. → K-037
+
+**Uygulanan model:** dil hub'ın özelliği, `SYSTEM.md`'de `**Hub dili:**` olarak
+yazılı; sözleşme, arayüz ve yeni kayıtlar birlikte onu izliyor. Sonradan
+değiştirmek geriye dönük bir şey yapmıyor ve bu kabul edilmiş bir durum.
+
+Çoklu repoda arayüz dili **aktif hub**'ı izliyor (kullanıcı seçti); yazma
+hedefinin dili ise o reponun (`languageForRepoProvider` — L-019'un aynı
+gerekçesi: kimlik gibi dil de yazılacak repodan seçilmeli).
+
+**Ayrıştırıcı bütün dillerin başlıklarını tanıyor**, hub'ın ilan ettiğiyle
+sınırlı değil: dil alanı eklenmeden önceki kayıtlar, elle düzenlemeler ve dili
+değişmiş hub'lar var. Geniş kabulün maliyeti yok; dar kabulün maliyeti okunamayan
+kayıt. Testte "hub İngilizce'ye geçti, Türkçe kayıtlar duruyor" senaryosu var.
+
+**İki temizlik:** Ayarlar'daki dil seçici bir tercih olmaktan çıkıp **bilgi**ye
+dönüştü — uygulama `SYSTEM.md`'ye yazamaz (R-001), dolayısıyla dili
+değiştiremez. Cihaz ayarı (`localeCode`/`setLocale`) tamamen silindi: hiçbir
+şeyi sürmeyen ama sürüyormuş gibi duran bir ayar, ayarın kendisinden kötü.
+
+445 test, analyze temiz. → B-117, K-037
