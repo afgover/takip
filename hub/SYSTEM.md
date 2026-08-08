@@ -5,9 +5,10 @@ ve hangi şemaya uyacağını** tanımlar. Agent ve kullanıcı uygulaması bu s
 dışına çıkmaz. Sözleşme değişiklikleri `EVOLUTION.md`'ye kaydedilir ve bu dosyanın
 başındaki sürüm numarası artırılır.
 
-**Sözleşme sürümü:** 1.20
-**Ana kopya (master):** `afgover/takip` → `hub/SYSTEM.md`
-(bkz. §10 — her hub kendi kopyasını buradan günceller)
+**Sözleşme sürümü:** 1.21
+**Ana kopya (master):** `afgover/takip` → `hub/SYSTEM.md` (tr, **kanonik**) ·
+`hub/SYSTEM.en.md` (en)
+(bkz. §10 — her hub kendi kopyasını, kendi dilindeki varyanttan günceller)
 **Zaman biçimi:** her yerde ISO 8601, UTC (`2026-07-30T14:05:00Z`)
 **Hub dili:** tr
 **Dil kuralı:** alan adları (frontmatter anahtarları) her zaman İngilizce; her
@@ -48,6 +49,10 @@ başındaki sürüm numarası artırılır.
 >
 > `**Hub dili:**` yazılmamışsa **`tr`** varsayılır — bu, alan eklenmeden
 > önceki bütün hub'ların gerçek durumu.
+>
+> **Gövde içi alan adları da aynı kurala tabi:** `Seçim`/`Choice`,
+> `Açıklama`/`Explanation`, `Dosya`/`File`, `Bölüm`/`Section`,
+> `Tür`/`Type`, `Durum`/`Status`.
 
 
 > **Hub kökü (v1.3, K-020):** Bu sözleşmedeki tüm yollar hub köküne görelidir
@@ -487,16 +492,42 @@ son hâlinin öngördüğü davranışı hiç göstermez. Bu gerçekten yaşand�
 `financer_takip` 1.3'te kalmışken `waiting/` klasörünü kullanıyordu, yani
 kullandığı klasörü kendi sözleşmesi tanımlamıyordu (L-020).
 
+### Dil varyantları (v1.21)
+
+Ana kopya iki dosyada durur ve **her hub kendi diline uyan varyantı** çeker:
+
+| Hub dili | Çekilecek ana kopya |
+|---|---|
+| `tr` | `hub/SYSTEM.md`, `hub/AGENT_PROTOCOL.md` |
+| `en` | `hub/SYSTEM.en.md`, `hub/AGENT_PROTOCOL.en.md` |
+
+Hangi varyantı çekerse çeksin, hub onu **kendi** `hub/SYSTEM.md` ve
+`hub/AGENT_PROTOCOL.md` dosyasına yazar. Hub içindeki dosya adı dil eki
+taşımaz — varyantlar yalnız ana kopyada yan yana durur. Böylece bu
+sözleşmedeki her yol her dilde aynı kalıyor ve dosyayı bulmak için dili
+bilmek gerekmiyor (uygulama `hub/SYSTEM.md` okur).
+
+Türkçe dosya **kanoniktir**: iki varyant çelişirse doğru olan Türkçe olandır,
+İngilizcede bir çeviri hatası var demektir. Ona göre davranmak yerine bildir ve
+ana kopyada düzelt. İki **bağlayıcı** kopya sessizce ayrışır — bu proje tam
+olarak onu yaşadı (L-022).
+
 ### Kural dizisi
 
 Her agent, **her oturum açılışında** şunu yapar:
 
-1. Kendi hub'ındaki `hub/SYSTEM.md`'nin ilk satırlarındaki
-   **Sözleşme sürümü**nü oku.
-2. Ana kopyayla karşılaştır. Tek komut, hem sürümü hem içeriği kapsar (v1.17):
+1. Kendi hub'ındaki `hub/SYSTEM.md`'nin ilk satırlarındaki **Sözleşme
+   sürümü**nü ve `**Hub dili:**` alanını oku.
+2. Ana kopyayla karşılaştır. Tek komut, hem sürümü hem içeriği kapsar (v1.17);
+   dosyayı hub'ının diline göre seç (v1.21):
 
    ```bash
+   # Hub dili: tr
    curl -fsSL https://raw.githubusercontent.com/afgover/takip/main/hub/SYSTEM.md \
+     -o /tmp/SYSTEM.master.md && diff /tmp/SYSTEM.master.md hub/SYSTEM.md
+
+   # Hub dili: en
+   curl -fsSL https://raw.githubusercontent.com/afgover/takip/main/hub/SYSTEM.en.md \
      -o /tmp/SYSTEM.master.md && diff /tmp/SYSTEM.master.md hub/SYSTEM.md
    ```
 
@@ -514,7 +545,8 @@ Her agent, **her oturum açılışında** şunu yapar:
 3. **Sürümler aynıysa** bir şey yapma.
 4. **Kendi kopyan geridyse:**
    - Ana kopyayı olduğu gibi al, `hub/SYSTEM.md`'nin üzerine yaz.
-   - `hub/AGENT_PROTOCOL.md`'yi de aynı şekilde tazele (o da ana kopyadan gelir).
+   - `hub/AGENT_PROTOCOL.md`'yi de aynı şekilde tazele (o da ana kopyadan, aynı
+     dil varyantından gelir).
    - Yeni sürümün getirdiği klasörler yoksa oluştur (örn. `tasks/waiting/`).
    - Commit: `system: sözleşme <eski> → <yeni> güncellendi`
    - `EVOLUTION.md`'ye tek satır not düş: hangi sürümden hangisine geçildi.

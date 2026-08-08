@@ -108,8 +108,13 @@ Future<HubLanguage> hubLanguageOf(HubConfig connection) async {
 }
 
 /// `**Hub dili:** tr` satırından kodu çıkarır. Bulunamazsa null.
+///
+/// **İki yazımı da tanır** (v1.21): İngilizce bir hub'ın `SYSTEM.md`'si
+/// `**Hub language:**` yazar. Alanın kendisi hub dilinde olduğu için, dili
+/// okuyan ifade dilden bağımsız olmak zorunda — yoksa İngilizce bir hub
+/// "dil alanı yok" görünür ve sessizce `tr`'ye düşerdi.
 String? languageCodeIn(String systemMd) => RegExp(
-      r'\*\*Hub dili:\*\*\s*([A-Za-z-]+)',
+      r'\*\*Hub (?:dili|language):\*\*\s*([A-Za-z-]+)',
     ).firstMatch(systemMd)?.group(1);
 
 /// **Aktif** hub'ın dili — arayüz bunu izler.

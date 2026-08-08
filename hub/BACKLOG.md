@@ -420,12 +420,20 @@ başlığına ✅ ve tarih yazılır.
       okunamayan kayıt. Ayarlardaki dil seçici **bilgi**ye dönüştü (uygulama
       `SYSTEM.md`'ye yazamaz, R-001) ve ölü kalan cihaz ayarı silindi.
       445 test. → K-037
-- [ ] B-115 · (agent) İngilizce dil seçeneği — 23 ekranın metinleri.
-      Kalan iş **ölçülü**: `l10n_coverage_test.dart` hem taşınmış dosyalarda
-      Türkçe metin kalmamasını hem bekleyen listesinin gerçekle uyuşmasını
-      şart koşuyor, yani "bitti sandım" oluşamaz. Ayrıca iki ARB'nin aynı
-      anahtarları taşıması test ediliyor — eksik anahtar sessizdir, gen_l10n
-      onu şablondan doldurur ve İngilizce seçen kullanıcı Türkçe görür
+- [x] B-115 · (agent) İngilizce dil seçeneği — 23 ekranın metinleri —
+      ✅ 2026-08-08. 337 metin taşındı; kapsam listesi boşaldı ama test
+      **geri kayma ölçüsü** olarak duruyor: yeni bir ekran Türkçe metinle
+      gelirse kırılır.
+      Son 6 ekranda iki yapısal şey çıktı:
+      (a) Metinlerin bir kısmı arayüz değil **hub verisiydi** — güvenlik
+      kaydının `Tür`/`Durum` alanları, `waiting/` bildirimlerinin gövdesi.
+      Bunlar `L`'ye değil `HubLanguage`'a taşındı: arayüz **aktif** hub'ın
+      dilini, kayıt **yazılacak reponun** dilini izler (L-019 doktrini).
+      `waitingDone`/`waitingAnswer` hub diline hiç bakmıyordu — İngilizce bir
+      hub'a Türkçe kayıt yazıyorlardı. `record_language_test` bunu ölçüyor.
+      (b) 25 ARB anahtarı tanımlıydı ve hiç kullanılmıyordu; biri yeni anahtar
+      eklerken sessizce üzerine yazıldı ve menü metnini değiştirdi. Ölü
+      anahtarı ölçen test eklendi. → L-043
 - [x] B-118 · (agent) Dil seçiminin **girişi** — kısır döngü kırıldı —
       ✅ 2026-08-08. Mekanizma dili okuyordu ama yazan yol yoktu ve talimatın
       kendisi Türkçe'ydi: İngilizce konuşan biri ne dili seçebiliyor ne de
@@ -454,12 +462,25 @@ başlığına ✅ ve tarih yazılır.
       `session_state_test` bunu ölçüyor, protokol madde 11 genişletildi.
       Eski oturum kapatıldı; özeti kendi kaydından türetildi ve türetildiği
       dosyada yazılı — yeni bilgi eklenmedi. → L-042
-- [ ] B-116 · (agent) Yöntem belgelerinin İngilizce sürümü (README, SYSTEM.md,
-      AGENT_PROTOCOL, kurulum talimatı ~1330 satır). Türkçe **ana kopya**
-      kalır, İngilizce türetilmiş ve bağlayıcı olmayan sürüm olarak işaretlenir
-      — iki bağlayıcı kopya, L-022'deki ayrışmanın davetiyesidir.
-      **B-097'nin (public) ön koşulu:** K-032 asıl varlığın yöntem olduğunu
-      söylüyor; Türkçe bir sözleşme, dışarıdan birinin benimsemesini engeller
+- [x] B-116 · (agent) Yöntem belgelerinin İngilizce sürümü — ✅ 2026-08-08.
+      `SYSTEM.en.md` ve `AGENT_PROTOCOL.en.md` yazıldı; sözleşme 1.21 **dil
+      varyantı** kuralını getirdi: hub `**Hub dili:**` alanına göre `SYSTEM.md`
+      ya da `SYSTEM.en.md` çeker ve hangisini çekerse çeksin kendi hub'ında
+      **düz adla** saklar. Hub dosyaları dil eki taşımıyor — böylece
+      sözleşmedeki her yol her dilde aynı kalıyor ve uygulamanın dosyayı
+      bulmak için dili bilmesi gerekmiyor.
+      Türkçe kopya **kanonik** ve bu, İngilizce belgelerin **içinde** yazılı —
+      dışarıda dursa belgeyi tek başına okuyan iki eşit otorite görürdü. Daha
+      iyi olduğu için değil: iki bağlayıcı kopya sessizce ayrışır (L-022).
+      Uygulama tarafı: `languageCodeIn` ve `contractVersionOf` iki yazımı da
+      tanıyor. Alanın kendisi hub dilinde olduğu için dili okuyan ifadenin
+      dilden bağımsız olması zorunlu — yoksa İngilizce bir hub "dil alanı yok"
+      görünüp sessizce `tr`'ye düşerdi. Test **gerçek** `SYSTEM.en.md`'ye karşı
+      koşuyor, uydurma metne değil.
+      Çevrilmeyenler bilerek: kayda **yazılan** kategori değerleri (`gorev`,
+      `duzeltme`…) ve güvenlik `Tür` değerleri. Onlar veri; çevirmek aynı
+      hub'da tek kategorinin iki yazımını biriktirirdi. Sınır İngilizce
+      belgelerde açıkça yazılı. → B-097 artık açık
 - [ ] B-110 · (agent) Çoklu kullanıcı — Katman 3+4: `assignee` yazımı ve
       paylaşılan dosya yazım kuralları. Sözleşme 1.15 alanı tanımladı ama
       uygulama/protokol tarafı **ikinci kişi geldiğinde** yapılacak;

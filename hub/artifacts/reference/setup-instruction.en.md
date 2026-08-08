@@ -4,7 +4,7 @@ session: none
 type: info
 title: "Agent setup instruction — build the hub, reconstruct the history, follow the protocol"
 created: 2026-08-08T00:00:00Z
-contract: "1.19"
+contract: "1.21"
 language: en
 translated_from: hub/artifacts/reference/agent-kurulum-talimati.md
 ---
@@ -20,7 +20,7 @@ system, the user pastes it as-is; the agent does the rest.
 > because a system with two authoritative copies drifts, and drift here is
 > silent (see the contract, §10).
 >
-> Written against **contract 1.19**. If the contract itself is newer, the
+> Written against **contract 1.21**. If the contract itself is newer, the
 > contract wins — see §1.
 
 ---
@@ -82,12 +82,18 @@ English-speaking user to a Turkish hub.
 `tasks/inbox/` and `notes/` (R-001), so the language is a decision you make at
 setup. If the user wants to change it later, they come to you again.
 
-> **Current limitation, stated honestly:** the contract (`SYSTEM.md`) and the
-> protocol (`AGENT_PROTOCOL.md`) exist only in Turkish for now; the English
-> variants are tracked as B-116 in the master repository's backlog. Until they
-> land, an English hub means: **you** read the Turkish contract and apply it,
-> while everything you *write* is in English. Say this to the user rather than
-> pretending the hub is fully English.
+> **What "English" covers, stated plainly (contract 1.21):** the contract and
+> the protocol both exist in English (`SYSTEM.en.md`, `AGENT_PROTOCOL.en.md`)
+> and an English hub fetches those. The **canonical** copy is still the Turkish
+> one: if the two ever disagree, the Turkish one is correct and the English one
+> has a translation bug — report it instead of acting on it. That is not about
+> which language is better; it is that a system with two authorities drifts and
+> nobody notices while it does (L-022, lived).
+>
+> Still Turkish in an English hub: the category **values** written into records
+> (`gorev`, `duzeltme`, `tartisma`…) and the security `Type` values. Those are
+> data, not prose — translating them would make the same hub carry two spellings
+> of one category. Their labels are shown translated in the app.
 
 ---
 
@@ -101,17 +107,26 @@ Two files never change from project to project; they are copied from the master
 
 Master copy: `afgover/takip` → `hub/`.
 
+**Fetch the variant matching the language chosen in §0** (contract 1.21).
+Whichever one you fetch, it is stored under the plain name — a hub's own files
+never carry a language suffix, so every path in the contract stays the same in
+every language:
+
 ```bash
-curl -fsSL https://raw.githubusercontent.com/afgover/takip/main/hub/SYSTEM.md \
+# Hub language: en
+curl -fsSL https://raw.githubusercontent.com/afgover/takip/main/hub/SYSTEM.en.md \
   -o hub/SYSTEM.md
-curl -fsSL https://raw.githubusercontent.com/afgover/takip/main/hub/AGENT_PROTOCOL.md \
+curl -fsSL https://raw.githubusercontent.com/afgover/takip/main/hub/AGENT_PROTOCOL.en.md \
   -o hub/AGENT_PROTOCOL.md
+
+# Hub language: tr → same commands without the .en suffix
 ```
 
 ### At every session opening: compare the version
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/afgover/takip/main/hub/SYSTEM.md \
+# Hub language: en — use SYSTEM.md for a tr hub
+curl -fsSL https://raw.githubusercontent.com/afgover/takip/main/hub/SYSTEM.en.md \
   -o /tmp/SYSTEM.master.md && diff /tmp/SYSTEM.master.md hub/SYSTEM.md
 ```
 

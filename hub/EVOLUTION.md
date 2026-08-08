@@ -353,6 +353,14 @@ toplanır ve gerekiyorsa Faz 6 maddelerini (B-060…B-064) yeniden sıralar.
   (L-042, sözleşme 1.20). Aşamanın kendi dersi de bu — sistemi kullanmak,
   yalnız kullanınca görünen şeyleri gösteriyor.
 
+- 2026-08-08: **Yöntem iki dilde tam** (B-115, B-116; sözleşme 1.21). Arayüz,
+  sözleşme ve protokol İngilizce'ye açıldı; hub dili artık yalnız okunan değil,
+  **yazılan** tarafta da işliyor. Taşırken arayüz metni ile hub verisi
+  arasındaki sınır netleşti (K-039) ve iki sessiz kusur çıktı: `waiting`
+  bildirimleri hub diline hiç bakmıyordu, 25 çeviri anahtarı da tanımlıydı ama
+  kullanılmıyordu (L-043). İkisi de artık ölçülüyor.
+  `B-097` (repoyu public yapmak) böylece **açıldı** — tek kalan ön koşuldu.
+
 **Kararlar:**
 - **K-019:** Kolaylık için token'ın korumasız bir dizeye çevrilmesine izin
   verilmez. Çok repolu kurulumda veri kaybı sonrası token'ları tek tek yeniden
@@ -614,3 +622,25 @@ toplanır ve gerekiyorsa Faz 6 maddelerini (B-060…B-064) yeniden sıralar.
   soruyordu; "açık kalan var mı" diye sormuyordu, yani hiçbir oturum bütüne
   bakmakla yükümlü değildi. Kural `session_state_test`'e bağlandı: cevabı
   repoda duran bir soru insana bırakılmaz (L-041, L-042).
+- **K-039:** Aynı metin, **kim okuyacağına** göre farklı yerden gelir.
+  Bir ekranda görünen her Türkçe cümle "arayüz metni" değil: güvenlik kaydının
+  `Tür`/`Durum` alanları ve `waiting/` bildirimlerinin gövdesi ekranda görünüyor
+  ama **dosyada duruyor**. İkisini aynı çeviri katmanına koymak, dosyada duran
+  bir alan adını okuyanın diline göre değiştirmek demekti — aynı hub'da iki
+  yazım birikir ve eski kayıtlar okunamaz hâle gelir.
+  Ayrım sorunun kendisinde: arayüz "**okuyan** hangi dili konuşuyor" sorusuna,
+  kayıt "bu dosya **hangi hub'a** yazılıyor" sorusuna cevap veriyor. Çoklu
+  repoda ikisinin cevabı farklı olabiliyor, o yüzden arayüz aktif hub'ın,
+  kayıt yazılacak reponun dilini izliyor (L-019'un aynı gerekçesi).
+  Okuma tarafı ise bilerek **geniş**: ayrıştırıcı bütün dillerin alan adlarını
+  tanıyor. Geniş kabulün maliyeti yok, dar kabulün maliyeti okunamayan kayıt.
+  **Genelleştirilebilir kısım:** "bunu çevirelim mi" sorusunun cevabı metnin
+  göründüğü yerde değil, **durduğu** yerde. Ekranda görünen bir şey veri
+  olabilir; veri, onu okuyan kişinin diline göre değişmez.
+- **Sözleşme 1.21 (2026-08-08):** Dil varyantları. Ana kopya `SYSTEM.md` (tr,
+  **kanonik**) ve `SYSTEM.en.md` (en) olarak iki dosyada; her hub kendi diline
+  uyanı çeker ama kendi hub'ında **düz adla** saklar. Dil ekini hub tarafına
+  taşımak, sözleşmedeki her yolu dile bağımlı kılardı ve uygulamanın dosyayı
+  bulmak için önce dili bilmesi gerekirdi — ama dili o dosyadan okuyor.
+  Kanonik olanın Türkçe olması belgelerin **içinde** yazılı: dışarıda dursa,
+  belgeyi tek başına okuyan iki eşit otorite görürdü (L-022).

@@ -53,6 +53,7 @@ aynı yerdedir.
 | `lib/` | Uygulama kodu |
 | `hub/SYSTEM.md` | Format sözleşmesi — **ana kopya**, diğer projeler buradan günceller |
 | `hub/AGENT_PROTOCOL.md` | Agent'ın kayıt prosedürü |
+| `hub/SYSTEM.en.md` · `hub/AGENT_PROTOCOL.en.md` | İngilizce varyantlar (İngilizce hub bunları çeker) |
 | `hub/artifacts/reference/agent-kurulum-talimati.md` | Yeni bir projeye kurulum talimatı (TR — **ana kopya**) |
 | `hub/artifacts/reference/setup-instruction.en.md` | Aynı talimatın İngilizcesi |
 | `hub/` (gerisi) | Bu projenin kendi hafızası: oturumlar, görevler, backlog, dersler |
@@ -96,9 +97,11 @@ token'ı siliyordu.
 Sürüm 0.1.0. Günlük kullanımda ama **tek kullanıcılık varsayımlarla** yazıldı:
 
 - **Android**; iOS hiç denenmedi.
-- Arayüz Türkçe ve İngilizce. Dil **hub'ın özelliğidir**, kurulumda seçilir
-  (`SYSTEM.md` → `Hub dili`); sözleşme, arayüz ve yeni kayıtlar onu izler.
-  Sözleşmenin kendisi şimdilik yalnız Türkçe — İngilizce varyantı `B-116`.
+- Arayüz, sözleşme ve protokol Türkçe ve İngilizce. Dil **hub'ın
+  özelliğidir**, kurulumda seçilir (`SYSTEM.md` → `Hub dili`); sözleşme,
+  arayüz ve yeni kayıtlar onu izler. Türkçe kopya **kanoniktir**: iki varyant
+  çelişirse doğru olan odur. Kayıtlara yazılan kategori **değerleri**
+  (`gorev`, `duzeltme`…) çevrilmez — onlar veri, düzyazı değil.
 - Kimlik doğrulama **kişisel erişim token'ı** ile. Token yalnız cihazın güvenli
   deposunda durur, hiçbir dosyaya/commit'e/log'a yazılmaz. Uygulama klasik
   (`ghp_`) bir token verildiğinde uyarır ama **fine-grained bir token'ın "All
@@ -112,7 +115,7 @@ Güvenlik geçmişinin tamamı: [`hub/SECURITY.md`](hub/SECURITY.md) — alınan
 
 ## Sözleşme sürümü
 
-Şu an **1.20**. Her hub kendi kopyasını taşır ve agent her oturum açılışında ana
+Şu an **1.21**. Her hub kendi kopyasını taşır ve agent her oturum açılışında ana
 kopyayla karşılaştırıp geriden geliyorsa günceller (`SYSTEM.md` §10). Sürüm eşit
 ama içerik farklıysa (ayrışma) üzerine yazılmaz — bu, yalnız numaraya bakan bir
 kontrolün göremediği ve gerçekten yaşanmış bir durumdur.

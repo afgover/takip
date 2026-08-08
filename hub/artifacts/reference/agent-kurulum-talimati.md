@@ -5,7 +5,7 @@ type: info
 title: "Agent kurulum talimatı — hub'ı kur, geçmişi topla, protokole göre çalış"
 created: 2026-08-01T00:00:00Z
 updated: 2026-08-04T00:00:00Z
-contract: "1.19"
+contract: "1.21"
 ---
 
 # Agent Kurulum Talimatı
@@ -20,7 +20,7 @@ kolaylık içindir ve zamanla bayatlar; şüphede kalınırsa bu dosya esas alı
 talimatın İngilizcesi. İkisi çelişirse **bu dosya** geçerlidir: iki bağlayıcı
 kopya sessizce ayrışır (sözleşme §10, L-022).
 
-**Bu belge sözleşme sürümü 1.19'a göre yazıldı.** Sözleşmenin kendisi daha
+**Bu belge sözleşme sürümü 1.21'e göre yazıldı.** Sözleşmenin kendisi daha
 yeniyse o kazanır — bkz. §1.
 
 ---
@@ -63,7 +63,8 @@ sonradan pahalıya dönen bir karar.
 
 Cevabı aldıktan sonra:
 
-1. Sözleşmenin **o dildeki varyantını** al (§1).
+1. Sözleşmenin **o dildeki varyantını** al (§1) — `tr` → `SYSTEM.md`,
+   `en` → `SYSTEM.en.md`.
 2. `hub/SYSTEM.md`'nin başındaki `**Hub dili:**` alanına kodu yaz.
 3. Hub'da ürettiğin **her şeyi** o dilde yaz: oturum kayıtları, backlog
    maddeleri, knowledge kayıtları, görev gövdeleri.
@@ -81,12 +82,22 @@ değiştirmek isterse yine sana gelir.
 
 ## 1. Sözleşmeyi al ve sürümünü kontrol et
 
-İki dosya projeden projeye değişmez, ana kopyadan **olduğu gibi** kopyalanır:
+İki dosya projeden projeye değişmez, ana kopyadan **olduğu gibi** kopyalanır.
+**§0'da seçilen dile uyan varyantı al** (sözleşme 1.21):
 
 ```
+# Hub dili: tr
 https://raw.githubusercontent.com/afgover/takip/main/hub/SYSTEM.md
 https://raw.githubusercontent.com/afgover/takip/main/hub/AGENT_PROTOCOL.md
+
+# Hub dili: en
+https://raw.githubusercontent.com/afgover/takip/main/hub/SYSTEM.en.md
+https://raw.githubusercontent.com/afgover/takip/main/hub/AGENT_PROTOCOL.en.md
 ```
+
+Hangisini alırsan al, hub'ında **düz adla** durur (`hub/SYSTEM.md`): hub'ın
+kendi dosyaları dil eki taşımaz, böylece sözleşmedeki her yol her dilde aynı
+kalır. Türkçe kopya **kanoniktir** — iki varyant çelişirse doğru olan odur.
 
 - `SYSTEM.md` — hangi dosya nerede durur, nasıl adlanır, hangi şemaya uyar
 - `AGENT_PROTOCOL.md` — ne zaman ne kaydedersin

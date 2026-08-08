@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 
-/// Giriş belgeleri iki dilde de var mı? (B-118)
+/// Giriş belgeleri ve yöntem belgeleri iki dilde de var mı? (B-118, B-116)
 ///
 /// Kısır döngü şuydu: "İngilizce kurulum nasıl yapılır"ı anlatan belge Türkçe
 /// olduğu için İngilizce konuşan biri **başlayamıyordu**. Dil seçeneği ancak
@@ -17,6 +17,10 @@ void main() {
     'README.md': 'README.en.md',
     'hub/artifacts/reference/agent-kurulum-talimati.md':
         'hub/artifacts/reference/setup-instruction.en.md',
+    // B-116: yöntemin kendisi de iki dilde. Bunlar giriş değil **referans**
+    // belgeleri, ama aynı ayrışma riskini taşıyorlar.
+    'hub/SYSTEM.md': 'hub/SYSTEM.en.md',
+    'hub/AGENT_PROTOCOL.md': 'hub/AGENT_PROTOCOL.en.md',
   };
 
   test('her giriş belgesinin İngilizce karşılığı var', () {
@@ -38,6 +42,32 @@ void main() {
       expect(en, contains(trName),
           reason: '${entry.value} Türkçe ana kopyaya link vermiyor');
     }
+  });
+
+  test('İngilizce yöntem belgeleri kanonik kopyayı açıkça söylüyor', () {
+    // "Türkçe olan geçerlidir" cümlesi belgenin **içinde** duruyor. Dışarıda
+    // bir yerde dursa, belgeyi tek başına okuyan biri iki eşit otorite görür
+    // ve çeliştiklerinde hangisine uyacağını bilemez (L-022).
+    for (final path in ['hub/SYSTEM.en.md', 'hub/AGENT_PROTOCOL.en.md']) {
+      final text = File(path).readAsStringSync();
+      expect(text.toLowerCase(), contains('canonical'), reason: path);
+    }
+  });
+
+  test('iki sözleşme aynı sürümü söylüyor', () {
+    // Sürüm ayrışması burada özellikle sinsi: §10 sürüm karşılaştırmasıyla
+    // çalışıyor, yani İngilizce varyant geride kalırsa İngilizce hub'lar
+    // güncellemeyi **hiç** görmez.
+    String versionOf(String path) => RegExp(
+          r'\*\*(?:Sözleşme sürümü|Contract version):\*\*\s*([0-9.]+)',
+        ).firstMatch(File(path).readAsStringSync())!.group(1)!;
+
+    expect(versionOf('hub/SYSTEM.en.md'), versionOf('hub/SYSTEM.md'));
+  });
+
+  test('İngilizce sözleşme hub dilini en olarak ilan ediyor', () {
+    final en = File('hub/SYSTEM.en.md').readAsStringSync();
+    expect(RegExp(r'\*\*Hub language:\*\*\s*en').hasMatch(en), isTrue);
   });
 
   test('İngilizce sürüm hangi ana kopyadan türediğini söylüyor', () {

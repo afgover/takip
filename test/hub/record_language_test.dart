@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:takip/features/browse/security_screen.dart';
 import 'package:takip/hub/hub_language.dart';
@@ -69,6 +71,29 @@ void main() {
       );
 
       expect(answer.content, contains('(no choice)'));
+    });
+  });
+
+  group('uygulama İngilizce sözleşmeyi okuyabiliyor (B-116)', () {
+    // Gerçek dosyaya karşı koşuyor, uydurma bir metne değil: İngilizce bir hub
+    // kendi `hub/SYSTEM.md`'sine bu dosyanın **içeriğini** koyacak. Ayrıştırıcı
+    // başlıkları tanımazsa hub sessizce `tr` görünür — hata vermez, yalnız
+    // arayüz yanlış dilde çizilir ve kayıtlar yanlış dilde yazılır.
+    final english = File('hub/SYSTEM.en.md').readAsStringSync();
+    final turkish = File('hub/SYSTEM.md').readAsStringSync();
+
+    test('İngilizce başlıktan dil okunuyor', () {
+      expect(languageCodeIn(english), 'en');
+      expect(HubLanguage.parse(languageCodeIn(english)), HubLanguage.en);
+    });
+
+    test('Türkçe başlık aynen çalışmaya devam ediyor', () {
+      expect(languageCodeIn(turkish), 'tr');
+    });
+
+    test('alan hiç yoksa tr varsayılıyor', () {
+      expect(languageCodeIn('# bir belge\n'), isNull);
+      expect(HubLanguage.parse(null), HubLanguage.tr);
     });
   });
 

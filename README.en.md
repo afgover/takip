@@ -57,11 +57,21 @@ The reason the option exists is so that people who speak other languages can use
 this. Changing it later does not act retroactively — existing records stay in
 the language they were written in.
 
-> **Current state, stated plainly:** the contract and the protocol exist only in
-> Turkish so far. The entry documents — this README and the
-> [setup instruction](hub/artifacts/reference/setup-instruction.en.md) — are
-> available in English. Full English variants of the contract are tracked as
-> `B-116` in [`hub/BACKLOG.md`](hub/BACKLOG.md).
+> **What "English" covers, stated plainly:** the contract
+> ([`SYSTEM.en.md`](hub/SYSTEM.en.md)), the protocol
+> ([`AGENT_PROTOCOL.en.md`](hub/AGENT_PROTOCOL.en.md)), this README and the
+> [setup instruction](hub/artifacts/reference/setup-instruction.en.md) are all
+> available in English, and an English hub fetches the English variants.
+>
+> The Turkish copies remain **canonical**: if the two disagree, the Turkish one
+> is correct and the English one has a translation bug. Not because it is
+> better — because a system with two authorities drifts, and nobody notices
+> while it does.
+>
+> Still Turkish inside an English hub: the category **values** stored in records
+> (`gorev`, `duzeltme`, `tartisma`…). Those are data, not prose — translating
+> them would leave one hub carrying two spellings of the same category. The app
+> shows their labels translated.
 
 ## Repository layout
 
@@ -72,6 +82,7 @@ live in the same place.
 |---|---|
 | `lib/` | App code |
 | `hub/SYSTEM.md` | The format contract — **master copy**, other projects update from here |
+| `hub/SYSTEM.en.md` · `hub/AGENT_PROTOCOL.en.md` | The English variants an English hub fetches |
 | `hub/AGENT_PROTOCOL.md` | The agent's recording procedure |
 | `hub/artifacts/reference/setup-instruction.en.md` | Setup instruction for a new project (English) |
 | `hub/` (the rest) | This project's own memory: sessions, tasks, backlog, lessons |
@@ -131,7 +142,7 @@ taken, known holes and outstanding work, all in one place.
 
 ## Contract version
 
-Currently **1.20**. Every hub carries its own copy, and at each session opening
+Currently **1.21**. Every hub carries its own copy, and at each session opening
 the agent compares it with the master and updates if it is behind
 (`SYSTEM.md` §10). If the versions match but the content differs — divergence —
 nothing is overwritten: that is a case a version-number-only check cannot see,

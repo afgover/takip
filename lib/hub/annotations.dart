@@ -251,8 +251,11 @@ bool isMyNote(String path, String? login) {
 Future<String?> contractVersionOf(HubConfig connection) async {
   final doc = await OfflineStore(connection.slug).readDoc(Hub.systemFile);
   if (doc == null) return null;
-  final match = RegExp(r'\*\*Sözleşme sürümü:\*\*\s*([0-9]+\.[0-9]+)')
-      .firstMatch(doc.content);
+  // İki yazım da tanınır (v1.21): İngilizce hub'ın kopyası
+  // `**Contract version:**` yazar. Bkz. [languageCodeIn], aynı gerekçe.
+  final match =
+      RegExp(r'\*\*(?:Sözleşme sürümü|Contract version):\*\*\s*([0-9]+\.[0-9]+)')
+          .firstMatch(doc.content);
   return match?.group(1);
 }
 

@@ -1,5 +1,8 @@
 # AGENT_PROTOCOL.md — Agent Kayıt Prosedürü
 
+***Türkçe** (kanonik) · [English](AGENT_PROTOCOL.en.md)* — İngilizce sürüm
+bundan türer; çeliştiklerinde bu dosya geçerlidir (`SYSTEM.md` §10).
+
 Bu doküman, bu hub ile çalışan **her agent oturumunun uymak zorunda olduğu**
 prosedürdür. Format ayrıntıları `SYSTEM.md`'dedir; burada *ne zaman ne yapılacağı*
 tanımlanır. Prosedür, oturumun konusu ne olursa olsun geçerlidir.
@@ -22,7 +25,9 @@ tanımlanır. Prosedür, oturumun konusu ne olursa olsun geçerlidir.
    - Kullanıcının talimatına göre ele al; ele aldığını `active/`e taşı.
    - Kullanıcı farklı bir konu açtıysa inbox'ı sadece raporla, kendiliğinden işleme.
 3. `BACKLOG.md`'ye bak; yarım kalmış işleri hatırla.
-   **Sözleşmeyi ana kopyayla karşılaştır** (`SYSTEM.md` §10) — tek komut:
+   **Sözleşmeyi ana kopyayla karşılaştır** (`SYSTEM.md` §10) — tek komut,
+   dosyayı hub'ının diline göre seç (v1.21: `tr` → `SYSTEM.md`, `en` →
+   `SYSTEM.en.md`):
    `curl -fsSL https://raw.githubusercontent.com/afgover/takip/main/hub/SYSTEM.md
    -o /tmp/SYSTEM.master.md && diff /tmp/SYSTEM.master.md hub/SYSTEM.md`.
    İstek başarısız olursa kontrol **koşmamıştır**; "güncelim" diye yorumlama ve
