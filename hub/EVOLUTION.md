@@ -361,6 +361,15 @@ toplanır ve gerekiyorsa Faz 6 maddelerini (B-060…B-064) yeniden sıralar.
   kullanılmıyordu (L-043). İkisi de artık ölçülüyor.
   `B-097` (repoyu public yapmak) böylece **açıldı** — tek kalan ön koşuldu.
 
+- 2026-08-11: **Telefondan açılan dört görev** (T-012…T-015; sözleşme 1.22).
+  Aşamanın hedefi tam olarak buydu — sistemi kullanmak, yalnız kullanınca
+  görünen şeyleri çıkardı: çevrimdışı okuma yolunun eksikliği, sıralamanın
+  yokluğu, "yaptım" demenin yanına bir şey ekleyememek. Üçü de sohbette değil
+  **uygulamanın kendi kanalından** geldi (B-053'ün ölçtüğü şey).
+  Sözleşmeye §13 (geçici maddeler) eklendi: yöntemin kendisi yaşlandıkça,
+  yalnız eski hub'ları ilgilendiren kuralların kalıcı kurallardan ayrı
+  durması gerekiyor.
+
 **Kararlar:**
 - **K-019:** Kolaylık için token'ın korumasız bir dizeye çevrilmesine izin
   verilmez. Çok repolu kurulumda veri kaybı sonrası token'ları tek tek yeniden
@@ -644,3 +653,11 @@ toplanır ve gerekiyorsa Faz 6 maddelerini (B-060…B-064) yeniden sıralar.
   bulmak için önce dili bilmesi gerekirdi — ama dili o dosyadan okuyor.
   Kanonik olanın Türkçe olması belgelerin **içinde** yazılı: dışarıda dursa,
   belgeyi tek başına okuyan iki eşit otorite görürdü (L-022).
+- **Sözleşme 1.22 (2026-08-11):** §13 **Geçici maddeler**. Yalnız belirli bir
+  sürümden önce kurulmuş hub'ları ilgilendiren ve işi bitince kaldırılacak
+  kurallar için ayrı bölüm; ilk madde G-001 (1.12 öncesi `waiting/` sorularına
+  seçenek ekleme).
+  Ayrım yapısal: sıfırdan kurulan bir hub'da bu maddeler hiçbir şey yapmaz ve
+  sözleşmenin gövdesinde dursalardı, yöntemi ilk kez okuyan biri için kalıcı
+  kural gibi görünürlerdi. Bölüm her maddeden **kalkma koşulu** istiyor —
+  koşulu olmayan geçici bir madde, kalıcı bir maddedir.

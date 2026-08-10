@@ -7,7 +7,7 @@ named, and what schema it follows**. Neither the agent nor the user application
 steps outside it. Contract changes are recorded in `EVOLUTION.md` and the
 version number at the top of this file is incremented.
 
-**Contract version:** 1.21
+**Contract version:** 1.22
 **Master copy:** `afgover/takip` → `hub/SYSTEM.md` (Turkish) ·
 `hub/SYSTEM.en.md` (English)
 (see §10 — every hub updates its own copy from there)
@@ -737,3 +737,49 @@ the screen shows readable equivalents.
   them go into this file (or any other hub file). A record describes **what is
   protected**, not the protected thing itself.
 - The user sees this log in the app under **Browse → Security**.
+
+## 13. Transitional rules (v1.22)
+
+This section holds rules that apply only to **hubs set up before a given
+version** and that are **removed** once their work is done. The reason they sit
+in their own section is concrete: in a hub created from scratch they do nothing,
+and had they lived in the body of the contract, somebody reading the method for
+the first time would take them for permanent rules. Putting a temporary rule
+among the permanent ones makes the contract unreadable over time.
+
+Every entry states three things: **who it concerns**, **when it goes away**, and
+**why it is temporary**. No entry is added to this section without them — a
+temporary rule with no removal condition is a permanent rule.
+
+### G-001 — Add options to old `waiting/` questions
+
+- **Who it concerns:** hubs with `waiting/` tasks opened **before contract
+  1.12**. Nothing to do in a newly created hub.
+- **When it goes away:** once applied in the hubs it concerns; it ends for
+  everyone when the master copy deletes the entry.
+- **Why it is temporary:** 1.12 introduced waiting-with-options but **was not
+  retroactive**. Questions opened before that date still sit behind a single
+  "Done" button, even though their answer is a **decision**, not "done".
+
+At session opening the agent looks at the tasks in `tasks/waiting/` and adds
+options (`options`, and `multi` if needed) to those whose body awaits a
+**decision** but which carry no `options` field. It tells the user what it
+changed.
+
+The distinction is sharp and is not applied in reverse:
+
+| What is awaited | What to do |
+|---|---|
+| A **decision** ("which one should we do?") | add `options` |
+| A **piece of work** ("generate a token") | leave it alone — the answer really is "done" |
+
+The rule is **idempotent**: a task that already carries `options` is skipped.
+That is why no "did this run in this hub" record is kept — the state is carried
+by the task itself, and a separate flag could drift from the files.
+
+> **Adding options is an improvement, not an obligation.** Since v1.22 the user
+> can write **free text** in an option-less waiting task too (T-014), so the
+> problem of an answer having nowhere to go is already solved. This entry exists
+> to make the answer *machine-readable*. A task you are unsure about is left as
+> it is: an invented option list forces the user into a frame the agent never
+> thought through, and records a wrong answer in a form that looks right.

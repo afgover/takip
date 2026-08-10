@@ -673,3 +673,22 @@ Biçim: `SYSTEM.md` §5.
   büyüyorsa, kullanılmayanı ölçen bir kontrol şart. `l10n_coverage_test` artık
   bunu yapıyor: her anahtar `lib/` içinde geçmeli, yoksa test kırılır.
   L-042'nin aynı biçimi — cevabı repoda duran soruyu insana bırakmamak.
+
+## L-044 — Kaba bir ölçüt, ölçtüğünü sandığın şeyi ölçmeyebilir
+- **Tarih:** 2026-08-11
+- **Kaynak:** S-2026-08-11-inbox-dort-gorev (T-013)
+- **Açıklama:** Çeviri kapsam testi "Türkçe'ye özgü harf içeren string sabiti"
+  arıyor ve kendi yorumunda "kaba ama bu iş için yeterli" diyor. Yeterli
+  değilmiş: `'Temizle'`, `'Bekleyenler'`, `'Yenile'` bu harflerden hiçbirini
+  taşımıyor. Üçü de ekranda duruyordu, üçü de çevrilmemişti ve dosyalar
+  **taşındı listesinde**ydi — yani test "bu dosyada Türkçe metin kalmadı"
+  diyordu, oysa kalmıştı.
+  Zarar iki katmanlı: metin çevrilmemiş kaldı (küçük), ve test **yanlış bir
+  güven** üretti (büyük). Ölçmediğini ölçüyor sanmak, hiç ölçmemekten kötü —
+  hiç ölçmesen bakmaya devam edersin.
+  Ölçütü tamamlamak (bütün UI metinlerini bulmak) kolay değil; string sabiti
+  ile kullanıcıya görünen metni ayırmak statik olarak zor. O yüzden ölçüt aynen
+  kaldı ama **yorumu düzeltildi**: artık neyi kaçırdığını söylüyor.
+  **Genel kural:** sezgisel bir kontrol yazarken, sınırını yorumda değil
+  **testin kendi çıktısında** görünür kıl. "Kaba ama yeterli" diye yazılmış bir
+  sınır, onu yazan kişi dışında kimseye ulaşmaz ve zamanla o kişi de unutur.

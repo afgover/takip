@@ -122,8 +122,18 @@ void main() {
   });
 }
 
-/// Türkçe'ye özgü harf içeren string sabitleri. Kaba ama bu iş için yeterli:
-/// arayüz metinlerinin neredeyse tamamı bu harflerden birini içeriyor.
+/// Türkçe'ye özgü harf içeren string sabitleri.
+///
+/// **Bu ölçüt eksik ve eksikliği biliniyor (L-044).** `'Temizle'`,
+/// `'Bekleyenler'`, `'Yenile'` gibi Türkçe'ye özgü harf taşımayan metinleri
+/// görmez; üçü de gerçekten kaçtı ve test o dosyalar için "temiz" dedi.
+/// Ölçütü tamamlamak, string sabiti ile kullanıcıya görünen metni statik
+/// olarak ayırmayı gerektirir — bu ayrım güvenilir biçimde yapılamıyor.
+///
+/// Yani geçen bir test **"çeviri bitti" demez**, yalnız "bilinen kalıptan
+/// geriye kayma olmadı" der. Sınır burada yazılı çünkü yorumda kalan bir
+/// sınırı, onu yazan kişi dışında kimse görmüyor.
+///
 /// Yorum satırları sayılmaz — onlar kullanıcıya görünmüyor.
 List<String> _turkishLiterals(String source) {
   final withoutComments = source

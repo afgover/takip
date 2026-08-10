@@ -48,6 +48,11 @@ what*. The procedure holds whatever the session is about.
    **verified** — a version with a known hole is never written up as "clean"
    without asking, L-035.)*
 
+5. **Check the transitional rules (`SYSTEM.md` §13).** If the section is empty,
+   skip it. If an entry's "who it concerns" line matches your hub, apply it and
+   tell the user what you did. These are not permanent rules; they end when the
+   master copy deletes them.
+
 ## During the session (at every exchange)
 
 > **When assigning an ID (v1.15).** Run `git pull --rebase` **right before**

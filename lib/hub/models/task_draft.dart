@@ -242,6 +242,7 @@ class TaskDraft {
   /// Agent bunu görünce asıl görevi `waiting/`ten çıkarır ve bildirimi kapatır.
   factory TaskDraft.waitingDone(
     HubTask task, {
+    String note = '',
     HubLanguage lang = HubLanguage.tr,
     String? author,
     DateTime? now,
@@ -249,6 +250,7 @@ class TaskDraft {
     final at = now ?? DateTime.parse(isoNow());
     final label = task.title.trim().isEmpty ? task.id : task.title.trim();
     final title = lang.waitingDoneTitle(label);
+    final trimmedNote = note.trim();
 
     final draft = HubTask(
       id: 'pending',
@@ -264,11 +266,16 @@ class TaskDraft {
       status: TaskStatus.inbox,
       path: '',
       author: author,
+      // Kullanıcının açıklaması **`## Notlar`a** yazılıyor, isteğe değil:
+      // istek "beklenen iş yapıldı" olgusu, not ise kullanıcının o iş hakkında
+      // söylediği şey. İkisini birleştirmek, agent'ın makinece okuduğu cümleyi
+      // serbest metinle karıştırırdı (T-014).
       body: '# $title\n\n'
           '## ${lang.requestHeading}\n'
           '${lang.waitingDoneBody(task.path)}'
           '${task.isPending ? '' : ' (${task.id})'}\n\n'
-          '## ${lang.notesHeading}\n',
+          '## ${lang.notesHeading}\n'
+          '${trimmedNote.isEmpty ? '' : '$trimmedNote\n'}',
     );
 
     return TaskDraft(

@@ -43,6 +43,11 @@ tanımlanır. Prosedür, oturumun konusu ne olursa olsun geçerlidir.
    projenin paket yöneticisidir; sonucun **doğrulanmış** olması şarttır —
    bilinen açığı olan bir sürüm de sorulmadan "temiz" yazılmaz, L-035.)*
 
+5. **Geçici maddelere bak (`SYSTEM.md` §13).** Bölüm boşsa geçilir. Her
+   maddenin "kimi ilgilendiriyor" satırı hub'ına uyuyorsa uygula ve
+   kullanıcıya ne yaptığını söyle. Bu maddeler kalıcı kural değildir; ana
+   kopya sildiğinde biter.
+
 ## Oturum boyunca (her mesaj alışverişinde)
 
 > **ID atarken (v1.15).** Yeni bir `T-`, `B-`, `L-`, `SK-`, `R-`, `SEC-`, `K-`

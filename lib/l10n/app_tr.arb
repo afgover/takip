@@ -575,5 +575,16 @@
   "selMarkYellow": "Sarı",
   "selMarkRed": "Kırmızı",
   "selMarkGreen": "Yeşil",
-  "selMarkBlue": "Mavi"
+  "selMarkBlue": "Mavi",
+  "pendingTitle": "Bekleyenler",
+  "pendingRefresh": "Yenile",
+  "filterClear": "Temizle",
+  "sortTooltip": "Sıralama",
+  "sortWaitingFirst": "Bekleyenler önce",
+  "sortByDate": "Tarihe göre",
+  "sortByPriority": "Önceliğe göre",
+  "sortAscending": "artan",
+  "sortDescending": "azalan",
+  "detailDoneNoteLabel": "Eklemek istediğin bir şey var mı? (isteğe bağlı)",
+  "detailDoneNoteHint": "Nasıl yaptığın, çıkan bir aksaklık, agent’ın bilmesi gereken bir şey"
 }

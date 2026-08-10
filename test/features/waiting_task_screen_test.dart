@@ -130,6 +130,53 @@ void main() {
     expect(find.textContaining('token üretilip'), findsOneWidget);
   });
 
+  group('seçeneksiz beklemede metin cevabı (T-014)', () {
+    // "Yaptım" tek başına yeterli sanılmıştı. Değilmiş: kullanıcı işi yaparken
+    // bir şey öğreniyor ve söyleyecek yeri olmayınca ya sohbete dönüyor ya hiç
+    // söylemiyor. İkincisi sessiz kayıp — `waiting/` klasörünün var olma
+    // sebebinin aynısı (K-022).
+    testWidgets('açıklama alanı seçenek olmadan da görünür', (tester) async {
+      await tester.pumpWidget(buildScreen(waitingPath).widget);
+      await tester.pumpAndSettle();
+
+      expect(find.byKey(const Key('waiting-answer-note')), findsOneWidget);
+      expect(doneButton, findsOneWidget);
+    });
+
+    testWidgets('yazılan açıklama bildirimin notlarına geçer', (tester) async {
+      final built = buildScreen(waitingPath);
+      await tester.pumpWidget(built.widget);
+      await tester.pumpAndSettle();
+
+      await tester.enterText(
+        find.byKey(const Key('waiting-answer-note')),
+        'token üretildi ama Metadata iznini bulamadım',
+      );
+      await tester.tap(doneButton);
+      await tester.pumpAndSettle();
+
+      final body = sentBody(built.adapter);
+      expect(body, contains('token üretildi ama Metadata iznini bulamadım'));
+      // Not `## Notlar` altına gider: `## İstek` agent'ın makinece okuduğu
+      // olguyu taşıyor, serbest metin oraya karışmamalı.
+      final istek = body.indexOf('## İstek');
+      final notlar = body.indexOf('## Notlar');
+      expect(notlar, greaterThan(istek));
+      expect(body.indexOf('token üretildi'), greaterThan(notlar));
+    });
+
+    testWidgets('boş bırakılırsa gövdeye boş satır eklenmez', (tester) async {
+      final built = buildScreen(waitingPath);
+      await tester.pumpWidget(built.widget);
+      await tester.pumpAndSettle();
+
+      await tester.tap(doneButton);
+      await tester.pumpAndSettle();
+
+      expect(sentBody(built.adapter), endsWith('## Notlar\n'));
+    });
+  });
+
   testWidgets('bekleyen olmayan görevde düğme yok', (tester) async {
     await tester.pumpWidget(buildScreen(activePath).widget);
     await tester.pumpAndSettle();

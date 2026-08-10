@@ -481,6 +481,23 @@ başlığına ✅ ve tarih yazılır.
       `duzeltme`…) ve güvenlik `Tür` değerleri. Onlar veri; çevirmek aynı
       hub'da tek kategorinin iki yazımını biriktirirdi. Sınır İngilizce
       belgelerde açıkça yazılı. → B-097 artık açık
+- [x] B-120 · (agent) Çevrimdışı okuma yolu — ✅ 2026-08-11 · T-012.
+      Senkron zaten her `.md` dosyasını indiriyordu; liste de yerel kopyadan
+      çiziliyordu (B-057). Eksik olan **okuma yoluydu**: `TaskRepo.read` ve
+      `_list` doğrudan API'ye gidiyordu, yani çevrimdışında liste görünüp
+      göreve tıklanınca "bağlantı yok" çıkıyordu. `listDone` de aynı kusuru
+      taşıyordu (bildirilmemişti). `offline_read_test` ağı kasten kırık kurup
+      ölçüyor
+- [x] B-121 · (agent) Bekleyenlerde sıralama — ✅ 2026-08-11 · T-013.
+      Tarihe ve önceliğe göre, artan/azalan; varsayılan "bekleyenler önce"
+      menüde bir seçenek olarak duruyor ve kullanıcının açık seçiminin üstüne
+      binmiyor. Filtre (repo/öncelik/kategori) zaten vardı
+- [x] B-122 · (agent) Seçeneksiz beklemede metin cevabı — ✅ 2026-08-11 · T-014.
+      Metin `## Notlar`a gidiyor, `## İstek`e değil: istek olgu, not
+      kullanıcının o iş hakkında söylediği şey
+- [x] B-123 · (agent) Sözleşme §13 geçici maddeler — ✅ 2026-08-11 · T-015,
+      sözleşme 1.22. İlk madde G-001. Bölüm her maddeden kalkma koşulu
+      istiyor — koşulu olmayan geçici bir madde, kalıcı bir maddedir
 - [ ] B-110 · (agent) Çoklu kullanıcı — Katman 3+4: `assignee` yazımı ve
       paylaşılan dosya yazım kuralları. Sözleşme 1.15 alanı tanımladı ama
       uygulama/protokol tarafı **ikinci kişi geldiğinde** yapılacak;

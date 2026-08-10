@@ -5,7 +5,7 @@ ve hangi şemaya uyacağını** tanımlar. Agent ve kullanıcı uygulaması bu s
 dışına çıkmaz. Sözleşme değişiklikleri `EVOLUTION.md`'ye kaydedilir ve bu dosyanın
 başındaki sürüm numarası artırılır.
 
-**Sözleşme sürümü:** 1.21
+**Sözleşme sürümü:** 1.22
 **Ana kopya (master):** `afgover/takip` → `hub/SYSTEM.md` (tr, **kanonik**) ·
 `hub/SYSTEM.en.md` (en)
 (bkz. §10 — her hub kendi kopyasını, kendi dilindeki varyanttan günceller)
@@ -714,3 +714,48 @@ okunabilir karşılıkları gösterilir.
   (ya da başka bir hub dosyasına) yazılmaz. Kayıt "neyin korunduğunu" anlatır,
   korunan şeyin kendisini değil.
 - Kullanıcı uygulamada bu logu **Tarayıcı → Security** altında görür.
+
+## 13. Geçici maddeler (v1.22)
+
+Bu bölüm, **belirli bir sürümden önce kurulmuş hub'lar** için geçerli olan ve
+işi bitince **kaldırılacak** kuralları taşır. Ayrı bir bölüm olmalarının sebebi
+somut: sıfırdan kurulan bir hub'da bu maddeler hiçbir şey yapmaz ve sözleşmenin
+gövdesinde dursalardı, yöntemi ilk kez okuyan biri için kalıcı kural gibi
+görünürlerdi. Geçici bir kuralı kalıcı kuralların arasına koymak, sözleşmeyi
+zamanla anlaşılmaz kılar.
+
+Her madde üç şeyi yazar: **kimi ilgilendirdiği**, **ne zaman kalkacağı** ve
+**neden geçici olduğu**. Bunlar yazılmadan bu bölüme madde eklenmez — kalkma
+koşulu olmayan geçici bir madde, kalıcı bir maddedir.
+
+### G-001 — Eski `waiting/` sorularına seçenek ekle
+
+- **Kimi ilgilendiriyor:** sözleşme **1.12'den önce** açılmış `waiting/`
+  görevleri bulunan hub'lar. Yeni kurulan bir hub'da yapacak bir şey yok.
+- **Ne zaman kalkar:** ilgilendiği hub'larda uygulandıktan sonra; ana kopya
+  maddeyi sildiğinde herkes için biter.
+- **Neden geçici:** 1.12 seçenekli beklemeyi getirdi ama **geriye dönük
+  çalışmadı**. O tarihten önce açılmış sorular hâlâ tek bir "Yaptım" düğmesiyle
+  duruyor, oysa cevabı "yaptım" değil bir **karar**.
+
+Agent, oturum açılışında `tasks/waiting/` içindeki görevlere bakar ve gövdesinde
+beklenen şey bir **karar** olan ama `options` alanı bulunmayan görevlere seçenek
+ekler (`options`, gerekiyorsa `multi`). Kullanıcıya ne değiştirdiğini söyler.
+
+Ayrım nettir ve tersi yapılmaz:
+
+| Beklenen şey | Ne yapılır |
+|---|---|
+| Bir **karar** ("hangisini yapalım?") | `options` eklenir |
+| Bir **iş** ("token üret") | dokunulmaz — cevabı gerçekten "yaptım" |
+
+Kural **idempotent**: `options` taşıyan görev atlanır. Bu yüzden "bu hub'da
+koştu mu" diye bir kayıt tutulmaz — durumu görevin kendisi taşıyor, ayrıca
+tutulan bir bayrak dosyayla ayrışabilirdi.
+
+> **Seçenek eklemek zorunlu değil, iyileştirme.** v1.22'den beri seçeneksiz
+> beklemede de kullanıcı **serbest metin** yazabiliyor (T-014), yani cevapsız
+> kalma sorunu zaten kapandı. Bu madde cevabı *makinece okunur* kılmak için
+> var. Emin olunamayan bir görev olduğu gibi bırakılır: uydurulmuş bir seçenek
+> listesi, kullanıcıyı agent'ın hiç düşünmediği bir çerçeveye sıkıştırır ve
+> yanlış cevabı doğru görünen bir biçimde kaydeder.

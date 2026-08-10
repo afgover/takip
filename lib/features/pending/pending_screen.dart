@@ -30,6 +30,8 @@ class PendingScreen extends ConsumerWidget {
     final status = ref.watch(hubWatcherProvider);
     final queued = ref.watch(outboxProvider).valueOrNull ?? const [];
     final filter = ref.watch(taskFilterProvider);
+    final order = ref.watch(taskOrderProvider);
+    final l = L.of(context);
 
     Future<void> refresh() async {
       await ref.read(hubWatcherProvider.notifier).checkNow();
@@ -41,8 +43,9 @@ class PendingScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Bekleyenler'),
+        title: Text(l.pendingTitle),
         actions: [
+          const TaskSortButton(),
           if (status.checking)
             const Padding(
               padding: EdgeInsets.symmetric(horizontal: 16),
@@ -56,7 +59,7 @@ class PendingScreen extends ConsumerWidget {
             )
           else
             IconButton(
-              tooltip: 'Yenile',
+              tooltip: l.pendingRefresh,
               icon: const Icon(Icons.refresh),
               onPressed: refresh,
             ),
@@ -68,7 +71,7 @@ class PendingScreen extends ConsumerWidget {
           Expanded(
             child: RefreshIndicator(
               onRefresh: refresh,
-              child: _list(context, ref, tasks, queued, filter),
+              child: _list(context, ref, tasks, queued, filter, order),
             ),
           ),
         ],
@@ -82,6 +85,7 @@ class PendingScreen extends ConsumerWidget {
     AsyncValue<List<TaskSummary>> tasks,
     List<TaskDraft> queued,
     TaskFilter filter,
+    TaskOrder order,
   ) {
     return switch (tasks) {
       AsyncData(:final value) when value.isEmpty && queued.isEmpty =>
@@ -94,7 +98,7 @@ class PendingScreen extends ConsumerWidget {
         ),
       AsyncData(:final value) => Builder(
           builder: (context) {
-            final shown = value.where(filter.allows).toList();
+            final shown = order.apply(value.where(filter.allows).toList());
             if (shown.isEmpty && queued.isEmpty) {
               return _Scrollable(
                 child: HubEmptyView(
@@ -300,7 +304,7 @@ class TaskFilterBar extends ConsumerWidget {
               ActionChip(
                 key: clearKey,
                 avatar: const Icon(Icons.close, size: 16),
-                label: const Text('Temizle'),
+                label: Text(L.of(context).filterClear),
                 onPressed: notifier.clear,
               ),
               const SizedBox(width: 12),
@@ -416,4 +420,66 @@ class TaskTagRow extends StatelessWidget {
         'high' => colors.tertiaryContainer,
         _ => colors.surfaceContainerHighest,
       };
+}
+
+/// Sıralama seçici (T-013).
+///
+/// Menü, çip şeridine değil **başlığa** kondu: filtre çipleri "neyi
+/// göster"i, sıralama "hangi sırayla"yı anlatıyor ve ikisi aynı şeritte
+/// olunca seçili bir sıralama çipi filtreymiş gibi okunuyordu.
+class TaskSortButton extends ConsumerWidget {
+  const TaskSortButton({super.key});
+
+  static const buttonKey = Key('task-sort-button');
+  static Key itemKey(TaskSort sort) => Key('task-sort-${sort.name}');
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l = L.of(context);
+    final order = ref.watch(taskOrderProvider);
+
+    String label(TaskSort sort) {
+      final base = switch (sort) {
+        TaskSort.waitingFirst => l.sortWaitingFirst,
+        TaskSort.date => l.sortByDate,
+        TaskSort.priority => l.sortByPriority,
+      };
+      // Yön yalnız **seçili** ölçütte yazılıyor: seçili olmayanın yönünü
+      // göstermek, dokunmadan önce ne olacağını yanlış vaat ederdi (ikinci
+      // dokunuş yönü çevirir).
+      if (!sort.hasDirection || sort != order.sort) return base;
+      return '$base · ${order.ascending ? l.sortAscending : l.sortDescending}';
+    }
+
+    return PopupMenuButton<TaskSort>(
+      key: buttonKey,
+      tooltip: l.sortTooltip,
+      icon: Icon(order.isDefault ? Icons.sort : Icons.sort_rounded,
+          color: order.isDefault ? null : Theme.of(context).colorScheme.primary),
+      onSelected: ref.read(taskOrderProvider.notifier).select,
+      itemBuilder: (context) => [
+        for (final sort in TaskSort.values)
+          PopupMenuItem(
+            key: itemKey(sort),
+            value: sort,
+            child: Row(
+              children: [
+                Icon(
+                  sort != order.sort
+                      ? Icons.remove
+                      : (!sort.hasDirection
+                          ? Icons.check
+                          : (order.ascending
+                              ? Icons.arrow_upward
+                              : Icons.arrow_downward)),
+                  size: 16,
+                ),
+                const SizedBox(width: 8),
+                Text(label(sort)),
+              ],
+            ),
+          ),
+      ],
+    );
+  }
 }

@@ -9,11 +9,21 @@ import 'hub_connections.dart';
 import 'hub_watcher.dart';
 import 'models/task.dart';
 import 'models/task_draft.dart';
+import 'offline_store.dart';
 
 /// Görev deposu — sözleşme (SYSTEM.md §4) ile Contents API arasındaki köprü.
 class TaskRepo {
-  TaskRepo(this._api);
+  TaskRepo(this._api, {OfflineStore? store}) : _store = store;
   final ContentsApi _api;
+
+  /// Cihazdaki kopya (B-057, T-012). **Yalnız okuma** için; yazma her zaman
+  /// ağa gider — kuyruğu `outbox` tutar.
+  ///
+  /// Liste zaten yerel kopyadan çiziliyordu (`pendingFromStore`), ama okuma
+  /// yolları ağa gidiyordu: çevrimdışıyken liste görünüyor, göreve
+  /// tıklayınca "bağlantı yok" çıkıyordu. Senkron dosyaları çoktan indirmiş
+  /// olduğu için eksik olan indirme değil, okuma yoluydu.
+  final OfflineStore? _store;
 
   /// Uygulamanın **tek yazma kapısı** (R-001).
   ///
@@ -226,6 +236,23 @@ class TaskRepo {
       _sorted(await _list(Hub.doneDir, TaskStatus.done));
 
   Future<List<TaskSummary>> _list(String dir, TaskStatus status) async {
+    // Yerel kopya varsa ağ hiç kullanılmaz (B-057'nin tarayıcıda verdiği
+    // kararın aynısı). Kopya yoksa — ilk açılış, senkron bitmeden — ağa
+    // düşülür ve davranış eskisi gibi kalır.
+    final tree = await _store?.readTree();
+    if (tree != null && tree.isNotEmpty) {
+      return tree
+          .where((e) => e.isFile && e.path.startsWith('$dir/'))
+          .map((e) => TaskSummary.fromEntry(
+                path: e.path,
+                name: e.path.split('/').last,
+                sha: e.sha,
+                status: status,
+              ))
+          .whereType<TaskSummary>()
+          .toList();
+    }
+
     final entries = await _api.listDir(dir);
     return entries
         .where((e) => !e.isDirectory)
@@ -262,6 +289,16 @@ class TaskRepo {
 
   /// Görev dosyasının tam içeriği — detay ekranı açılınca çekilir.
   Future<HubTask> read(TaskSummary summary) async {
+    final stored = await _store?.readDoc(summary.path);
+    if (stored != null) {
+      return HubTask.parse(
+        path: summary.path,
+        content: stored.content,
+        status: summary.status,
+        sha: stored.sha,
+      );
+    }
+
     final file = await _api.getFile(summary.path);
     return HubTask.parse(
       path: file.path,
@@ -272,8 +309,10 @@ class TaskRepo {
   }
 }
 
-final taskRepoProvider =
-    Provider<TaskRepo>((ref) => TaskRepo(ref.watch(contentsApiProvider)));
+final taskRepoProvider = Provider<TaskRepo>((ref) => TaskRepo(
+      ref.watch(contentsApiProvider),
+      store: ref.watch(offlineStoreProvider),
+    ));
 
 /// **Belirli bir repo** için görev deposu.
 ///
@@ -290,11 +329,15 @@ final taskRepoForSlugProvider =
       slug == null ? null : connections?.bySlug(slug);
   if (connection == null) return ref.watch(taskRepoProvider);
 
-  return TaskRepo(ContentsApi(
-    ref.watch(githubDioProvider),
-    owner: connection.owner,
-    repo: connection.repo,
-  ));
+  return TaskRepo(
+    ContentsApi(
+      ref.watch(githubDioProvider),
+      owner: connection.owner,
+      repo: connection.repo,
+    ),
+    // Görevin **kendi** reposunun kopyası; aktif repo başkası olabilir (L-031).
+    store: OfflineStore(connection.slug),
+  );
 });
 
 /// **Aktif olmayan** bir bağlantıya yazmak için tek seferlik görev deposu

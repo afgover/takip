@@ -1602,6 +1602,72 @@ abstract class L {
   /// In tr, this message translates to:
   /// **'Mavi'**
   String get selMarkBlue;
+
+  /// No description provided for @pendingTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bekleyenler'**
+  String get pendingTitle;
+
+  /// No description provided for @pendingRefresh.
+  ///
+  /// In tr, this message translates to:
+  /// **'Yenile'**
+  String get pendingRefresh;
+
+  /// No description provided for @filterClear.
+  ///
+  /// In tr, this message translates to:
+  /// **'Temizle'**
+  String get filterClear;
+
+  /// No description provided for @sortTooltip.
+  ///
+  /// In tr, this message translates to:
+  /// **'Sıralama'**
+  String get sortTooltip;
+
+  /// No description provided for @sortWaitingFirst.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bekleyenler önce'**
+  String get sortWaitingFirst;
+
+  /// No description provided for @sortByDate.
+  ///
+  /// In tr, this message translates to:
+  /// **'Tarihe göre'**
+  String get sortByDate;
+
+  /// No description provided for @sortByPriority.
+  ///
+  /// In tr, this message translates to:
+  /// **'Önceliğe göre'**
+  String get sortByPriority;
+
+  /// No description provided for @sortAscending.
+  ///
+  /// In tr, this message translates to:
+  /// **'artan'**
+  String get sortAscending;
+
+  /// No description provided for @sortDescending.
+  ///
+  /// In tr, this message translates to:
+  /// **'azalan'**
+  String get sortDescending;
+
+  /// No description provided for @detailDoneNoteLabel.
+  ///
+  /// In tr, this message translates to:
+  /// **'Eklemek istediğin bir şey var mı? (isteğe bağlı)'**
+  String get detailDoneNoteLabel;
+
+  /// No description provided for @detailDoneNoteHint.
+  ///
+  /// In tr, this message translates to:
+  /// **'Nasıl yaptığın, çıkan bir aksaklık, agent’ın bilmesi gereken bir şey'**
+  String get detailDoneNoteHint;
 }
 
 class _LDelegate extends LocalizationsDelegate<L> {

@@ -362,5 +362,16 @@
   "selMarkYellow": "Yellow",
   "selMarkRed": "Red",
   "selMarkGreen": "Green",
-  "selMarkBlue": "Blue"
+  "selMarkBlue": "Blue",
+  "pendingTitle": "Pending",
+  "pendingRefresh": "Refresh",
+  "filterClear": "Clear",
+  "sortTooltip": "Sort",
+  "sortWaitingFirst": "Waiting first",
+  "sortByDate": "By date",
+  "sortByPriority": "By priority",
+  "sortAscending": "ascending",
+  "sortDescending": "descending",
+  "detailDoneNoteLabel": "Anything to add? (optional)",
+  "detailDoneNoteHint": "How you did it, something that came up, anything the agent should know"
 }

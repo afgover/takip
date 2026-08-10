@@ -198,6 +198,7 @@ class _WaitingBannerState extends ConsumerState<_WaitingBanner> {
     await _send(
       TaskDraft.waitingDone(
         widget.task,
+        note: _noteCtrl.text,
         lang: _writeLanguage,
         author: ref.read(loginForRepoProvider(widget.summary.repoSlug)),
       ),
@@ -265,6 +266,47 @@ class _WaitingBannerState extends ConsumerState<_WaitingBanner> {
           : l.waitingForOther(who);
     }
     return widget.task.isQuestion ? l.waitingQuestion : l.waitingWork;
+  }
+
+  /// Seçeneksiz bekleme: "Yaptım" + **isteğe bağlı** açıklama (T-014).
+  ///
+  /// Açıklama alanı 1.12'de yalnız seçenekli sorulara konmuştu; "yaptım"
+  /// yeterli sanılmıştı. Değilmiş: kullanıcı işi yaparken bir şey öğreniyor
+  /// ("yaptım ama şu da çıktı") ve söyleyecek yeri olmayınca ya sohbete
+  /// dönüyor ya hiç söylemiyor. İkincisi sessiz kayıp — tam olarak `waiting/`
+  /// klasörünün çözmek için var olduğu şeyin aynısı (K-022).
+  ///
+  /// Metin `## Notlar`a gidiyor, `## İstek`e değil: istek "beklenen iş
+  /// yapıldı" olgusudur, not kullanıcının o iş hakkında söylediği şey.
+  List<Widget> _doneSection(L l) {
+    final locked = _busy || _reported;
+    return [
+      TextField(
+        key: answerNoteKey,
+        controller: _noteCtrl,
+        enabled: !locked,
+        maxLines: 2,
+        textCapitalization: TextCapitalization.sentences,
+        decoration: InputDecoration(
+          labelText: l.detailDoneNoteLabel,
+          hintText: l.detailDoneNoteHint,
+          border: const OutlineInputBorder(),
+          isDense: true,
+        ),
+      ),
+      const SizedBox(height: 12),
+      Align(
+        alignment: Alignment.centerRight,
+        child: FilledButton.icon(
+          key: doneButtonKey,
+          // Bir kez bildirildikten sonra düğme kapanır: aynı iş için ikinci
+          // bildirim, agent'ın kuyruğunda kopya demek olurdu.
+          onPressed: locked ? null : _report,
+          icon: Icon(_reported ? Icons.check : Icons.done),
+          label: Text(_reported ? l.detailReportedShort : l.detailDidIt),
+        ),
+      ),
+    ];
   }
 
   /// Seçenek listesi + isteğe bağlı açıklama + gönder (sözleşme 1.12).
@@ -370,17 +412,7 @@ class _WaitingBannerState extends ConsumerState<_WaitingBanner> {
           if (widget.task.isQuestion)
             ..._answerSection(theme, colors)
           else
-            Align(
-              alignment: Alignment.centerRight,
-              child: FilledButton.icon(
-                key: doneButtonKey,
-                // Bir kez bildirildikten sonra düğme kapanır: aynı iş için
-                // ikinci bildirim, agent'ın kuyruğunda kopya demek olurdu.
-                onPressed: (_busy || _reported) ? null : _report,
-                icon: Icon(_reported ? Icons.check : Icons.done),
-                label: Text(_reported ? l.detailReportedShort : l.detailDidIt),
-              ),
-            ),
+            ..._doneSection(l),
         ],
       ),
     );

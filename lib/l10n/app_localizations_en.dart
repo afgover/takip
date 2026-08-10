@@ -882,4 +882,38 @@ class LEn extends L {
 
   @override
   String get selMarkBlue => 'Blue';
+
+  @override
+  String get pendingTitle => 'Pending';
+
+  @override
+  String get pendingRefresh => 'Refresh';
+
+  @override
+  String get filterClear => 'Clear';
+
+  @override
+  String get sortTooltip => 'Sort';
+
+  @override
+  String get sortWaitingFirst => 'Waiting first';
+
+  @override
+  String get sortByDate => 'By date';
+
+  @override
+  String get sortByPriority => 'By priority';
+
+  @override
+  String get sortAscending => 'ascending';
+
+  @override
+  String get sortDescending => 'descending';
+
+  @override
+  String get detailDoneNoteLabel => 'Anything to add? (optional)';
+
+  @override
+  String get detailDoneNoteHint =>
+      'How you did it, something that came up, anything the agent should know';
 }

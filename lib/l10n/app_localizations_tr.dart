@@ -875,4 +875,39 @@ class LTr extends L {
 
   @override
   String get selMarkBlue => 'Mavi';
+
+  @override
+  String get pendingTitle => 'Bekleyenler';
+
+  @override
+  String get pendingRefresh => 'Yenile';
+
+  @override
+  String get filterClear => 'Temizle';
+
+  @override
+  String get sortTooltip => 'Sıralama';
+
+  @override
+  String get sortWaitingFirst => 'Bekleyenler önce';
+
+  @override
+  String get sortByDate => 'Tarihe göre';
+
+  @override
+  String get sortByPriority => 'Önceliğe göre';
+
+  @override
+  String get sortAscending => 'artan';
+
+  @override
+  String get sortDescending => 'azalan';
+
+  @override
+  String get detailDoneNoteLabel =>
+      'Eklemek istediğin bir şey var mı? (isteğe bağlı)';
+
+  @override
+  String get detailDoneNoteHint =>
+      'Nasıl yaptığın, çıkan bir aksaklık, agent’ın bilmesi gereken bir şey';
 }

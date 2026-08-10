@@ -69,6 +69,94 @@ class TaskFilter {
 final taskFilterProvider =
     NotifierProvider<TaskFilterNotifier, TaskFilter>(TaskFilterNotifier.new);
 
+/// Bekleyenler listesinin sıralaması (T-013).
+///
+/// Varsayılan [waitingFirst] korunuyor: `waiting/` listedeki tek "senden bir
+/// şey isteniyor" kalemi ve tarihe karışırsa eski bir bekleme listenin dibinde
+/// kaybolur — görünmemesi zaten K-022'nin çözdüğü sorundu. Ama kullanıcı
+/// **açıkça** bir sıralama seçtiyse ona uyuluyor: seçimin üstüne sessizce
+/// binen bir kural, sıralamayı bozuk gösterir.
+enum TaskSort {
+  waitingFirst,
+  date,
+  priority;
+
+  /// Yön yalnız [date] ve [priority] için anlamlı.
+  bool get hasDirection => this != waitingFirst;
+}
+
+/// Öncelik sırası — sözleşme §4'teki değerler. Bilinmeyen (yerel kopya henüz
+/// inmemiş ya da serbest değer) **sona** düşer: bilinmeyeni "normal" saymak,
+/// okunamamış bir görevi olduğundan önemli ya da önemsiz gösterirdi.
+const _priorityRank = {'urgent': 0, 'high': 1, 'normal': 2, 'low': 3};
+
+class TaskOrder {
+  const TaskOrder({this.sort = TaskSort.waitingFirst, this.ascending = false});
+
+  final TaskSort sort;
+
+  /// `false` = azalan (yeniden eskiye, yüksekten düşüğe) — listelerin
+  /// alışılmış yönü.
+  final bool ascending;
+
+  bool get isDefault => sort == TaskSort.waitingFirst;
+
+  List<TaskSummary> apply(List<TaskSummary> tasks) {
+    if (sort == TaskSort.waitingFirst) return tasks;
+
+    final sorted = [...tasks];
+    sorted.sort((a, b) {
+      // Değeri bilinmeyen görev **yönden bağımsız** olarak sona gider. Yönün
+      // içine karışsaydı "artan"da listenin tepesi bilgisizlerle dolardı;
+      // bilinmeyen öncelik/tarih gerçek bir durum (yerel kopya inmeden
+      // okunamıyor), gizlemek de öne almak da yanlış cevap olurdu.
+      final known = _known(a);
+      if (known != _known(b)) return known ? -1 : 1;
+      if (!known) return a.fileName.compareTo(b.fileName);
+
+      final cmp = switch (sort) {
+        TaskSort.date => a.date!.compareTo(b.date!),
+        // Rank küçük = öncelik yüksek; kullanıcı için "azalan" yüksekten
+        // düşüğe demek, o yüzden burada ters çevriliyor.
+        TaskSort.priority =>
+          _priorityRank[b.priority]!.compareTo(_priorityRank[a.priority]!),
+        TaskSort.waitingFirst => 0,
+      };
+      // Eşitlikte dosya adı: aynı listeyi iki kez çizerken sıra oynamasın,
+      // yoksa kullanıcı listenin kendiliğinden değiştiğini sanır.
+      return cmp != 0
+          ? (ascending ? cmp : -cmp)
+          : a.fileName.compareTo(b.fileName);
+    });
+    return sorted;
+  }
+
+  bool _known(TaskSummary t) => switch (sort) {
+        TaskSort.date => t.date != null,
+        TaskSort.priority => _priorityRank.containsKey(t.priority),
+        TaskSort.waitingFirst => true,
+      };
+
+  TaskOrder with_({TaskSort? sort, bool? ascending}) => TaskOrder(
+        sort: sort ?? this.sort,
+        ascending: ascending ?? this.ascending,
+      );
+}
+
+class TaskOrderNotifier extends Notifier<TaskOrder> {
+  @override
+  TaskOrder build() => const TaskOrder();
+
+  /// Aynı ölçüte ikinci dokunuş **yönü çevirir** — ayrı bir yön düğmesi
+  /// koymaktansa, listelerde alışılmış davranış.
+  void select(TaskSort sort) => state = sort == state.sort && sort.hasDirection
+      ? state.with_(ascending: !state.ascending)
+      : TaskOrder(sort: sort, ascending: false);
+}
+
+final taskOrderProvider =
+    NotifierProvider<TaskOrderNotifier, TaskOrder>(TaskOrderNotifier.new);
+
 class TaskFilterNotifier extends Notifier<TaskFilter> {
   @override
   TaskFilter build() => const TaskFilter();
