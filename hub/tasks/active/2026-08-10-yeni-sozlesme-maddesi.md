@@ -1,5 +1,5 @@
 ---
-id: pending
+id: T-015
 title: yeni sözleşme maddesi
 created_by: user
 created: "2026-08-10T15:53:22Z"
@@ -7,9 +7,10 @@ updated: "2026-08-10T15:53:22Z"
 priority: normal
 category: gorev
 tags: []
-session: none
+session: S-2026-08-11-inbox-dort-gorev
 result: none
 author: afgover
+assignee: afgover
 ---
 
 # yeni sözleşme maddesi
