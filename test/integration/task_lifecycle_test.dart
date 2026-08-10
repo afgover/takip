@@ -11,6 +11,7 @@ import 'package:takip/features/pending/pending_screen.dart';
 import 'package:takip/github/client.dart';
 import 'package:takip/hub/frontmatter.dart';
 import 'package:takip/hub/hub_config.dart';
+import 'package:takip/hub/all_tasks.dart';
 import 'package:takip/hub/hub_watcher.dart';
 import 'package:takip/hub/models/task.dart';
 import 'package:takip/hub/outbox.dart';
@@ -132,6 +133,23 @@ void main() {
         child: testApp(child),
       );
 
+  /// Yoklamayı koştur **ve listenin yeniden hesaplanmasını bekle**.
+  ///
+  /// `pumpAndSettle` yetmiyor: yalnız kare pompalar, gerçek async işi
+  /// sürmez. `allPendingTasksProvider` ise cihazdaki kopyayı okuyor, yani
+  /// `SharedPreferences` üzerinden bir platform kanalına gidiyor. Beklemeden
+  /// doğrulama yapmak testi **yarışa** sokuyordu: 10 koşumda 2'si kırılıyordu
+  /// ve kırılan koşum "liste tazelenmedi" diye bir hata gösteriyordu — oysa
+  /// hata testin kendisindeydi. Yarı yarıya yalan söyleyen bir test, kırık
+  /// testten kötüdür (L-045).
+  Future<void> pollAndSettle(WidgetTester tester) async {
+    await tester.runAsync(() async {
+      await container.read(hubWatcherProvider.notifier).checkNow();
+      await container.read(allPendingTasksProvider.future);
+    });
+    await tester.pumpAndSettle();
+  }
+
   testWidgets('görev app\'ten eklenir, agent tamamlar, app\'te görünür',
       (tester) async {
     // ---- 1. Kullanıcı app'ten görev ekler --------------------------------
@@ -162,10 +180,7 @@ void main() {
 
     // ---- 2. App'te "Yeni" olarak görünür ---------------------------------
     await tester.pumpWidget(wrap(const PendingScreen()));
-    await tester.runAsync(
-      () => container.read(hubWatcherProvider.notifier).checkNow(),
-    );
-    await tester.pumpAndSettle();
+    await pollAndSettle(tester);
 
     expect(find.text('Market listesi'), findsOneWidget);
     expect(find.text('Yeni'), findsOneWidget);
@@ -179,10 +194,7 @@ void main() {
           .replaceFirst('session: none', 'session: S-2026-07-30-deneme'),
     );
 
-    await tester.runAsync(
-      () => container.read(hubWatcherProvider.notifier).checkNow(),
-    );
-    await tester.pumpAndSettle();
+    await pollAndSettle(tester);
 
     expect(find.text('Ele alınıyor'), findsOneWidget,
         reason: 'yoklama değişikliği görüp listeyi tazelemeli');
@@ -195,10 +207,7 @@ void main() {
           content.replaceFirst('result: none', 'result: "Liste hazırlandı"'),
     );
 
-    await tester.runAsync(
-      () => container.read(hubWatcherProvider.notifier).checkNow(),
-    );
-    await tester.pumpAndSettle();
+    await pollAndSettle(tester);
 
     // ---- 5. Bekleyenlerden düşer, tamamlananlarda görünür ----------------
     expect(find.text('Market listesi'), findsNothing);

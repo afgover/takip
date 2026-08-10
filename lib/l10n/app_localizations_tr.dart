@@ -883,9 +883,6 @@ class LTr extends L {
   String get pendingRefresh => 'Yenile';
 
   @override
-  String get filterClear => 'Temizle';
-
-  @override
   String get sortTooltip => 'Sıralama';
 
   @override
@@ -910,4 +907,19 @@ class LTr extends L {
   @override
   String get detailDoneNoteHint =>
       'Nasıl yaptığın, çıkan bir aksaklık, agent’ın bilmesi gereken bir şey';
+
+  @override
+  String get filterRepo => 'Repo';
+
+  @override
+  String get filterCategory => 'Kategori';
+
+  @override
+  String get filterPriority => 'Öncelik';
+
+  @override
+  String get filterReset => 'Sıfırla';
+
+  @override
+  String get filterNone => '(seçenek yok)';
 }

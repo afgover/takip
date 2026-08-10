@@ -365,7 +365,6 @@
   "selMarkBlue": "Blue",
   "pendingTitle": "Pending",
   "pendingRefresh": "Refresh",
-  "filterClear": "Clear",
   "sortTooltip": "Sort",
   "sortWaitingFirst": "Waiting first",
   "sortByDate": "By date",
@@ -373,5 +372,10 @@
   "sortAscending": "ascending",
   "sortDescending": "descending",
   "detailDoneNoteLabel": "Anything to add? (optional)",
-  "detailDoneNoteHint": "How you did it, something that came up, anything the agent should know"
+  "detailDoneNoteHint": "How you did it, something that came up, anything the agent should know",
+  "filterRepo": "Repo",
+  "filterCategory": "Category",
+  "filterPriority": "Priority",
+  "filterReset": "Reset",
+  "filterNone": "(no options)"
 }

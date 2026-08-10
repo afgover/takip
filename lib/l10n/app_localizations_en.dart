@@ -890,9 +890,6 @@ class LEn extends L {
   String get pendingRefresh => 'Refresh';
 
   @override
-  String get filterClear => 'Clear';
-
-  @override
   String get sortTooltip => 'Sort';
 
   @override
@@ -916,4 +913,19 @@ class LEn extends L {
   @override
   String get detailDoneNoteHint =>
       'How you did it, something that came up, anything the agent should know';
+
+  @override
+  String get filterRepo => 'Repo';
+
+  @override
+  String get filterCategory => 'Category';
+
+  @override
+  String get filterPriority => 'Priority';
+
+  @override
+  String get filterReset => 'Reset';
+
+  @override
+  String get filterNone => '(no options)';
 }

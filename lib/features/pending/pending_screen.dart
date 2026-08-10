@@ -45,7 +45,6 @@ class PendingScreen extends ConsumerWidget {
       appBar: AppBar(
         title: Text(l.pendingTitle),
         actions: [
-          const TaskSortButton(),
           if (status.checking)
             const Padding(
               padding: EdgeInsets.symmetric(horizontal: 16),
@@ -67,7 +66,7 @@ class PendingScreen extends ConsumerWidget {
       ),
       body: Column(
         children: [
-          const TaskFilterBar(),
+          const TaskToolbar(),
           Expanded(
             child: RefreshIndicator(
               onRefresh: refresh,
@@ -274,105 +273,6 @@ class TaskStatusChip extends StatelessWidget {
 /// Seçenekler sabit değil, **listede gerçekten geçen** değerlerden türer —
 /// hiç kullanılmayan bir kategoriyi filtre olarak sunmak, boş sonuç vaat
 /// etmek olurdu. Tek repo varken repo satırı hiç görünmez.
-class TaskFilterBar extends ConsumerWidget {
-  const TaskFilterBar({super.key});
-
-  static const barKey = Key('task-filter-bar');
-  static const clearKey = Key('task-filter-clear');
-  static Key chipKey(String kind, String value) =>
-      Key('task-filter-$kind-$value');
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final facets = ref.watch(taskFacetsProvider);
-    final filter = ref.watch(taskFilterProvider);
-    if (!facets.hasAnything) return const SizedBox.shrink();
-
-    final notifier = ref.read(taskFilterProvider.notifier);
-    final theme = Theme.of(context);
-
-    return Container(
-      key: barKey,
-      width: double.infinity,
-      color: theme.colorScheme.surfaceContainerLow,
-      child: SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-        child: Row(
-          children: [
-            if (filter.activeCount > 0) ...[
-              ActionChip(
-                key: clearKey,
-                avatar: const Icon(Icons.close, size: 16),
-                label: Text(L.of(context).filterClear),
-                onPressed: notifier.clear,
-              ),
-              const SizedBox(width: 12),
-            ],
-            for (final entry in facets.repos.entries)
-              if (facets.repos.length > 1)
-                _Chip(
-                  key: TaskFilterBar.chipKey('repo', entry.key),
-                  label: entry.value,
-                  icon: Icons.folder_outlined,
-                  selected: filter.repos.contains(entry.key),
-                  onTap: () => notifier.toggle(repo: entry.key),
-                ),
-            for (final priority in facets.priorities)
-              _Chip(
-                key: TaskFilterBar.chipKey('priority', priority),
-                label: priority,
-                icon: Icons.flag_outlined,
-                selected: filter.priorities.contains(priority),
-                onTap: () => notifier.toggle(priority: priority),
-              ),
-            for (final category in facets.categories)
-              _Chip(
-                key: TaskFilterBar.chipKey('category', category),
-                label: category,
-                icon: Icons.label_outline,
-                selected: filter.categories.contains(category),
-                onTap: () => notifier.toggle(category: category),
-              ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _Chip extends StatelessWidget {
-  const _Chip({
-    super.key,
-    required this.label,
-    required this.icon,
-    required this.selected,
-    required this.onTap,
-  });
-
-  final String label;
-  final IconData icon;
-  final bool selected;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) => Padding(
-        padding: const EdgeInsets.only(right: 8),
-        child: FilterChip(
-          avatar: Icon(icon, size: 16),
-          label: Text(label),
-          selected: selected,
-          onSelected: (_) => onTap(),
-          visualDensity: VisualDensity.compact,
-        ),
-      );
-}
-
-/// Görev satırındaki etiketler: repo · öncelik · kategori.
-///
-/// Öncelik ve kategori yalnız cihazdaki kopyadan okunabildiği için (B-057)
-/// null olabilirler; o durumda etiket hiç çizilmez — boş bir rozet
-/// göstermek "bilgi yok"u "değer yok" gibi gösterirdi.
 class TaskTagRow extends StatelessWidget {
   const TaskTagRow({super.key, required this.task, this.showRepo = true});
 
@@ -422,11 +322,214 @@ class TaskTagRow extends StatelessWidget {
       };
 }
 
-/// Sıralama seçici (T-013).
+/// Bekleyenler'in filtre + sıralama şeridi (T-016).
 ///
-/// Menü, çip şeridine değil **başlığa** kondu: filtre çipleri "neyi
-/// göster"i, sıralama "hangi sırayla"yı anlatıyor ve ikisi aynı şeritte
-/// olunca seçili bir sıralama çipi filtreymiş gibi okunuyordu.
+/// Önceki hâli yan yana dizilmiş çiplerdi: her repo, her kategori ve her
+/// öncelik için ayrı bir çip. Değer sayısı arttıkça şerit yatay kaydırma
+/// gerektiriyordu, yani **hangi seçeneklerin var olduğu görünmüyordu** —
+/// kullanıcı kaydırmadan bilemiyordu. Üç menü, seçenek sayısından bağımsız
+/// olarak sabit genişlikte duruyor.
+///
+/// Sıralama da bu şeride indi: dördü `AppBar`'a sığmıyor (başlık ve yenile
+/// zaten orada) ve seçicilerin bir arada olması, "neyi göster" ile "hangi
+/// sırayla"nın aynı işin iki yüzü olduğunu gösteriyor.
+class TaskToolbar extends ConsumerWidget {
+  const TaskToolbar({super.key});
+
+  static const barKey = Key('task-filter-bar');
+  static const resetKey = Key('task-filter-clear');
+  static Key menuKey(String kind) => Key('task-filter-menu-$kind');
+  static Key chipKey(String kind, String value) =>
+      Key('task-filter-$kind-$value');
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l = L.of(context);
+    final facets = ref.watch(taskFacetsProvider);
+    final filter = ref.watch(taskFilterProvider);
+    final order = ref.watch(taskOrderProvider);
+    if (!facets.hasAnything) return const SizedBox.shrink();
+
+    final notifier = ref.read(taskFilterProvider.notifier);
+    final theme = Theme.of(context);
+
+    return Container(
+      key: barKey,
+      width: double.infinity,
+      color: theme.colorScheme.surfaceContainerLow,
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      child: Row(
+        children: [
+          Expanded(
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children: [
+                  _FilterMenu(
+                    kind: 'repo',
+                    label: l.filterRepo,
+                    icon: Icons.folder_outlined,
+                    // slug → görünen ad; menüde ad, kayıtta slug.
+                    values: facets.repos,
+                    selected: filter.repos,
+                    onToggle: (v) => notifier.toggle(repo: v),
+                  ),
+                  _FilterMenu(
+                    kind: 'category',
+                    label: l.filterCategory,
+                    icon: Icons.label_outline,
+                    values: {for (final c in facets.categories) c: c},
+                    selected: filter.categories,
+                    onToggle: (v) => notifier.toggle(category: v),
+                  ),
+                  _FilterMenu(
+                    kind: 'priority',
+                    label: l.filterPriority,
+                    icon: Icons.flag_outlined,
+                    values: {for (final p in facets.priorities) p: p},
+                    selected: filter.priorities,
+                    onToggle: (v) => notifier.toggle(priority: v),
+                  ),
+                  const TaskSortButton(),
+                ],
+              ),
+            ),
+          ),
+          // Sıfırla yalnız **bir şey seçiliyken** var: hiçbir şey seçili
+          // değilken duran bir sıfırlama düğmesi, dokunulunca hiçbir şey
+          // yapmayan bir düğmedir.
+          if (filter.activeCount > 0 || !order.isDefault)
+            IconButton(
+              key: resetKey,
+              tooltip: l.filterReset,
+              icon: const Icon(Icons.filter_alt_off_outlined),
+              onPressed: () {
+                notifier.clear();
+                ref.read(taskOrderProvider.notifier).reset();
+              },
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Tek bir boyutun çoklu seçim menüsü.
+///
+/// Menü seçimde **kapanmıyor** (`PopupMenuItem` yerine durum tutan bir
+/// gövde): "birden fazla seçenek seçilebilsin" isteğinin karşılığı, her
+/// seçimde menüyü yeniden açtırmamak.
+class _FilterMenu extends StatelessWidget {
+  const _FilterMenu({
+    required this.kind,
+    required this.label,
+    required this.icon,
+    required this.values,
+    required this.selected,
+    required this.onToggle,
+  });
+
+  final String kind;
+  final String label;
+  final IconData icon;
+
+  /// değer → görünen ad
+  final Map<String, String> values;
+  final Set<String> selected;
+  final void Function(String value) onToggle;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final active = values.keys.where(selected.contains).length;
+    final on = active > 0;
+
+    return Padding(
+      padding: const EdgeInsets.only(right: 8),
+      child: PopupMenuButton<String>(
+        key: TaskToolbar.menuKey(kind),
+        tooltip: label,
+        // Kapanmasın diye seçim `onTap` üzerinden gidiyor; `PopupMenuItem`in
+        // kendi `value` yolu menüyü kapatırdı.
+        itemBuilder: (context) => values.isEmpty
+            ? [
+                PopupMenuItem(
+                  enabled: false,
+                  child: Text(L.of(context).filterNone),
+                ),
+              ]
+            : [
+                for (final entry in values.entries)
+                  PopupMenuItem(
+                    key: TaskToolbar.chipKey(kind, entry.key),
+                    padding: EdgeInsets.zero,
+                    child: _MenuRow(
+                      label: entry.value,
+                      selected: selected.contains(entry.key),
+                      onChanged: () => onToggle(entry.key),
+                    ),
+                  ),
+              ],
+        child: Chip(
+          avatar: Icon(icon,
+              size: 16,
+              color: on ? theme.colorScheme.onSecondaryContainer : null),
+          // Sayı, menüyü açmadan kaç seçenek seçili olduğunu söylüyor —
+          // kapalı bir menünün içeriği başka türlü görünmez.
+          label: Text(on ? '$label ($active)' : label),
+          backgroundColor: on ? theme.colorScheme.secondaryContainer : null,
+          side: on ? BorderSide.none : null,
+          deleteIcon: const Icon(Icons.arrow_drop_down, size: 18),
+          onDeleted: null,
+        ),
+      ),
+    );
+  }
+}
+
+/// Menü satırı — kendi seçili durumunu tutar ki menü kapanmadan işaret
+/// değişsin. Üstteki durum yine tek kaynakta (`taskFilterProvider`); buradaki
+/// yalnız açık menünün görüntüsü.
+class _MenuRow extends StatefulWidget {
+  const _MenuRow({
+    required this.label,
+    required this.selected,
+    required this.onChanged,
+  });
+
+  final String label;
+  final bool selected;
+  final VoidCallback onChanged;
+
+  @override
+  State<_MenuRow> createState() => _MenuRowState();
+}
+
+class _MenuRowState extends State<_MenuRow> {
+  late bool _selected = widget.selected;
+
+  @override
+  Widget build(BuildContext context) => InkWell(
+        onTap: () {
+          setState(() => _selected = !_selected);
+          widget.onChanged();
+        },
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+          child: Row(
+            children: [
+              Icon(
+                _selected ? Icons.check_box : Icons.check_box_outline_blank,
+                size: 18,
+              ),
+              const SizedBox(width: 10),
+              Text(widget.label),
+            ],
+          ),
+        ),
+      );
+}
+
 class TaskSortButton extends ConsumerWidget {
   const TaskSortButton({super.key});
 
@@ -436,26 +539,27 @@ class TaskSortButton extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l = L.of(context);
+    final theme = Theme.of(context);
     final order = ref.watch(taskOrderProvider);
 
+    String nameOf(TaskSort sort) => switch (sort) {
+          TaskSort.waitingFirst => l.sortWaitingFirst,
+          TaskSort.date => l.sortByDate,
+          TaskSort.priority => l.sortByPriority,
+        };
+
     String label(TaskSort sort) {
-      final base = switch (sort) {
-        TaskSort.waitingFirst => l.sortWaitingFirst,
-        TaskSort.date => l.sortByDate,
-        TaskSort.priority => l.sortByPriority,
-      };
       // Yön yalnız **seçili** ölçütte yazılıyor: seçili olmayanın yönünü
       // göstermek, dokunmadan önce ne olacağını yanlış vaat ederdi (ikinci
       // dokunuş yönü çevirir).
-      if (!sort.hasDirection || sort != order.sort) return base;
-      return '$base · ${order.ascending ? l.sortAscending : l.sortDescending}';
+      if (!sort.hasDirection || sort != order.sort) return nameOf(sort);
+      return '${nameOf(sort)} · '
+          '${order.ascending ? l.sortAscending : l.sortDescending}';
     }
 
     return PopupMenuButton<TaskSort>(
       key: buttonKey,
       tooltip: l.sortTooltip,
-      icon: Icon(order.isDefault ? Icons.sort : Icons.sort_rounded,
-          color: order.isDefault ? null : Theme.of(context).colorScheme.primary),
       onSelected: ref.read(taskOrderProvider.notifier).select,
       itemBuilder: (context) => [
         for (final sort in TaskSort.values)
@@ -480,6 +584,20 @@ class TaskSortButton extends ConsumerWidget {
             ),
           ),
       ],
+      child: Chip(
+        avatar: Icon(
+          Icons.sort,
+          size: 16,
+          color:
+              order.isDefault ? null : theme.colorScheme.onSecondaryContainer,
+        ),
+        label: Text(order.isDefault ? l.sortTooltip : nameOf(order.sort)),
+        backgroundColor:
+            order.isDefault ? null : theme.colorScheme.secondaryContainer,
+        side: order.isDefault ? null : BorderSide.none,
+        deleteIcon: const Icon(Icons.arrow_drop_down, size: 18),
+        onDeleted: null,
+      ),
     );
   }
 }

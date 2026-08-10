@@ -1615,12 +1615,6 @@ abstract class L {
   /// **'Yenile'**
   String get pendingRefresh;
 
-  /// No description provided for @filterClear.
-  ///
-  /// In tr, this message translates to:
-  /// **'Temizle'**
-  String get filterClear;
-
   /// No description provided for @sortTooltip.
   ///
   /// In tr, this message translates to:
@@ -1668,6 +1662,36 @@ abstract class L {
   /// In tr, this message translates to:
   /// **'Nasıl yaptığın, çıkan bir aksaklık, agent’ın bilmesi gereken bir şey'**
   String get detailDoneNoteHint;
+
+  /// No description provided for @filterRepo.
+  ///
+  /// In tr, this message translates to:
+  /// **'Repo'**
+  String get filterRepo;
+
+  /// No description provided for @filterCategory.
+  ///
+  /// In tr, this message translates to:
+  /// **'Kategori'**
+  String get filterCategory;
+
+  /// No description provided for @filterPriority.
+  ///
+  /// In tr, this message translates to:
+  /// **'Öncelik'**
+  String get filterPriority;
+
+  /// No description provided for @filterReset.
+  ///
+  /// In tr, this message translates to:
+  /// **'Sıfırla'**
+  String get filterReset;
+
+  /// No description provided for @filterNone.
+  ///
+  /// In tr, this message translates to:
+  /// **'(seçenek yok)'**
+  String get filterNone;
 }
 
 class _LDelegate extends LocalizationsDelegate<L> {

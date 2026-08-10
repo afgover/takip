@@ -498,6 +498,10 @@ başlığına ✅ ve tarih yazılır.
 - [x] B-123 · (agent) Sözleşme §13 geçici maddeler — ✅ 2026-08-11 · T-015,
       sözleşme 1.22. İlk madde G-001. Bölüm her maddeden kalkma koşulu
       istiyor — koşulu olmayan geçici bir madde, kalıcı bir maddedir
+- [x] B-124 · (agent) Bekleyenlerde filtre menüleri — ✅ 2026-08-11 · T-016.
+      Çipler menülere dönüştü (repo/kategori/öncelik), sıralama aynı şeritte,
+      seçimler kalıcı, sıfırla filtre+sıralamayı birlikte temizliyor. Menü
+      seçimde kapanmıyor; kapalı menü seçili sayıyı gösteriyor
 - [ ] B-110 · (agent) Çoklu kullanıcı — Katman 3+4: `assignee` yazımı ve
       paylaşılan dosya yazım kuralları. Sözleşme 1.15 alanı tanımladı ama
       uygulama/protokol tarafı **ikinci kişi geldiğinde** yapılacak;

@@ -1,4 +1,8 @@
+import 'dart:async';
+import 'dart:convert';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../core/constants.dart';
 import 'frontmatter.dart';
@@ -144,27 +148,129 @@ class TaskOrder {
 }
 
 class TaskOrderNotifier extends Notifier<TaskOrder> {
+  static const _sortKey = 'task_sort';
+  static const _ascKey = 'task_sort_ascending';
+
   @override
-  TaskOrder build() => const TaskOrder();
+  TaskOrder build() {
+    unawaited(_restore());
+    return const TaskOrder();
+  }
+
+  Future<void> _restore() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final name = prefs.getString(_sortKey);
+      if (name == null) return;
+      final sort = TaskSort.values.firstWhere(
+        (s) => s.name == name,
+        // Tanınmayan değer (eski/yeni sürüm) varsayılana düşer; sıralama
+        // bilinmeyen bir duruma girmektense bilinen bir duruma dönmeli.
+        orElse: () => TaskSort.waitingFirst,
+      );
+      state = TaskOrder(
+        sort: sort,
+        ascending: prefs.getBool(_ascKey) ?? false,
+      );
+    } catch (_) {
+      // Okunamazsa varsayılan sıralamayla devam.
+    }
+  }
+
+  Future<void> _persist() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString(_sortKey, state.sort.name);
+      await prefs.setBool(_ascKey, state.ascending);
+    } catch (_) {}
+  }
+
+  /// Sıfırlama filtreyle **birlikte** çalışıyor: kullanıcı "sıfırla"ya
+  /// bastığında listenin tamamen bilinen bir hâle dönmesini bekler, yarısının
+  /// dönmesini değil.
+  void reset() {
+    state = const TaskOrder();
+    unawaited(_persist());
+  }
 
   /// Aynı ölçüte ikinci dokunuş **yönü çevirir** — ayrı bir yön düğmesi
   /// koymaktansa, listelerde alışılmış davranış.
-  void select(TaskSort sort) => state = sort == state.sort && sort.hasDirection
-      ? state.with_(ascending: !state.ascending)
-      : TaskOrder(sort: sort, ascending: false);
+  void select(TaskSort sort) {
+    state = sort == state.sort && sort.hasDirection
+        ? state.with_(ascending: !state.ascending)
+        : TaskOrder(sort: sort, ascending: false);
+    unawaited(_persist());
+  }
 }
 
 final taskOrderProvider =
     NotifierProvider<TaskOrderNotifier, TaskOrder>(TaskOrderNotifier.new);
 
+/// Filtre ve sıralama **kalıcı** (T-016).
+///
+/// Ayarlarla aynı desen (`AppSettings`): senkron bir varsayılanla başlanıyor,
+/// disktekiler gelince güncelleniyor. Liste, tercih okunsun diye beklemiyor —
+/// beklerse açılışta bir kare boş görünürdü.
+///
+/// Yazma tarafında bir tuzak var: seçilen değer o an listede olmayabilir
+/// (ilgili repo silinmiş, o kategoride görev kalmamış). Kaydedilen değer
+/// **olduğu gibi** saklanıyor, mevcut değerlerle kesişimi alınmıyor: görev
+/// yeniden ortaya çıktığında kullanıcının seçimi de geri gelsin diye. Filtre
+/// zaten olmayan değeri süzemez, yani zararsız.
 class TaskFilterNotifier extends Notifier<TaskFilter> {
+  static const _key = 'task_filter';
+
   @override
-  TaskFilter build() => const TaskFilter();
+  TaskFilter build() {
+    unawaited(_restore());
+    return const TaskFilter();
+  }
 
-  void toggle({String? repo, String? priority, String? category}) =>
-      state = state.toggled(repo: repo, priority: priority, category: category);
+  Future<void> _restore() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final raw = prefs.getString(_key);
+      if (raw == null) return;
+      final json = jsonDecode(raw) as Map<String, dynamic>;
+      Set<String> read(String k) =>
+          ((json[k] as List?)?.cast<String>() ?? const <String>[]).toSet();
+      state = TaskFilter(
+        repos: read('repos'),
+        priorities: read('priorities'),
+        categories: read('categories'),
+      );
+    } catch (_) {
+      // Bozuk ya da okunamayan tercih listeyi engellemez: filtresiz açılır.
+      // Burada "her şeyi göster" güvenli taraf — yanlış bir filtre, görevleri
+      // sessizce gizlerdi.
+    }
+  }
 
-  void clear() => state = const TaskFilter();
+  Future<void> _persist() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString(
+        _key,
+        jsonEncode({
+          'repos': state.repos.toList(),
+          'priorities': state.priorities.toList(),
+          'categories': state.categories.toList(),
+        }),
+      );
+    } catch (_) {
+      // Yazılamazsa oturum içinde çalışmaya devam eder.
+    }
+  }
+
+  void toggle({String? repo, String? priority, String? category}) {
+    state = state.toggled(repo: repo, priority: priority, category: category);
+    unawaited(_persist());
+  }
+
+  void clear() {
+    state = const TaskFilter();
+    unawaited(_persist());
+  }
 }
 
 /// Yolun bir görev dosyası olup olmadığı (dört durum klasöründen biri).

@@ -578,7 +578,6 @@
   "selMarkBlue": "Mavi",
   "pendingTitle": "Bekleyenler",
   "pendingRefresh": "Yenile",
-  "filterClear": "Temizle",
   "sortTooltip": "Sıralama",
   "sortWaitingFirst": "Bekleyenler önce",
   "sortByDate": "Tarihe göre",
@@ -586,5 +585,10 @@
   "sortAscending": "artan",
   "sortDescending": "azalan",
   "detailDoneNoteLabel": "Eklemek istediğin bir şey var mı? (isteğe bağlı)",
-  "detailDoneNoteHint": "Nasıl yaptığın, çıkan bir aksaklık, agent’ın bilmesi gereken bir şey"
+  "detailDoneNoteHint": "Nasıl yaptığın, çıkan bir aksaklık, agent’ın bilmesi gereken bir şey",
+  "filterRepo": "Repo",
+  "filterCategory": "Kategori",
+  "filterPriority": "Öncelik",
+  "filterReset": "Sıfırla",
+  "filterNone": "(seçenek yok)"
 }
