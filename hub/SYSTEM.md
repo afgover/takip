@@ -5,7 +5,7 @@ ve hangi şemaya uyacağını** tanımlar. Agent ve kullanıcı uygulaması bu s
 dışına çıkmaz. Sözleşme değişiklikleri `EVOLUTION.md`'ye kaydedilir ve bu dosyanın
 başındaki sürüm numarası artırılır.
 
-**Sözleşme sürümü:** 1.22
+**Sözleşme sürümü:** 1.23
 **Ana kopya (master):** `afgover/takip` → `hub/SYSTEM.md` (tr, **kanonik**) ·
 `hub/SYSTEM.en.md` (en)
 (bkz. §10 — her hub kendi kopyasını, kendi dilindeki varyanttan günceller)
@@ -135,6 +135,20 @@ Kurallar:
   geriye dönük yazılmış bir kayıt, gerçek zamanlı kaydın taşıdığı zaman damgası
   doğruluğunu iddia edemez. Zaman damgaları atlanabilir ya da yaklaşık verilir.
   *(Kural `financer_takip`'te doğdu, ana kopyaya oradan alındı — K-025.)*
+- **(v1.23) Ara kayıt (30 dakika ritmi).** Açık bir oturumda biriken kayıt
+  en geç **30 dakikada bir** güncellenip push'lanır — oturum `open` kalır,
+  `## Özet` yine kapanışta yazılır. Bu, "push'lanmamış kayıt yapılmamış
+  kayıttır" kuralına bir **zaman sınırı** koyar: sohbet beklenmedik biçimde
+  ölürse (bağlam sıkıştırması, kapanan pencere) kaybolan en fazla 30
+  dakikadır. `reconstructed: true` istisnası (v1.6) tam bu boşluktan
+  doğmuştu; ara kayıt o boşluğu daraltır ve geriye dönük yazma ihtiyacını
+  azaltır.
+  Aynı ritimde `tasks/inbox/` da kontrol edilir: kullanıcı oturum sürerken
+  telefondan görev atabilir ve bunu sohbette söylemek zorunda olmamalı —
+  uygulamanın var olma sebebi bu. Ek tetikleyici: kullanıcı **30 dakikadan
+  uzun bir aradan sonra** ilk mesajını yazdığında ya da oturum sıfırdan
+  başlamadıysa (sıkıştırma sonrası devam), açılıştaki inbox kontrolü
+  tekrarlanır.
 - **(v1.20) Aynı anda yalnız bir oturum açık olabilir**, o da en yeni tarihli
   olan. Yeni bir oturum açarken daha eski bir oturum `open` duruyorsa önce o
   kapatılır: özeti kendi kaydından türetilir ve `## Özet` içinde **türetildiği

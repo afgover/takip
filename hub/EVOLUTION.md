@@ -661,3 +661,9 @@ toplanır ve gerekiyorsa Faz 6 maddelerini (B-060…B-064) yeniden sıralar.
   sözleşmenin gövdesinde dursalardı, yöntemi ilk kez okuyan biri için kalıcı
   kural gibi görünürlerdi. Bölüm her maddeden **kalkma koşulu** istiyor —
   koşulu olmayan geçici bir madde, kalıcı bir maddedir.
+- **Sözleşme 1.23 (2026-08-11):** 30 dakika ritmi. Açık oturumun kayıtları en
+  geç 30 dakikada bir push'lanır; aynı ritimde ve uzun aradan dönüşte
+  `tasks/inbox/` kontrol edilir. Tek sayı, üç sayaç yerine — ve gerekçe
+  sözleşmede zaten yaşıyordu: `reconstructed: true` (v1.6) tam bu boşluktan
+  doğmuştu, ara kayıt boşluğu daraltıp o istisnayı ihtiyaç olmaktan çıkarmayı
+  hedefliyor.

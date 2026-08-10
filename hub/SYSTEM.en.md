@@ -7,7 +7,7 @@ named, and what schema it follows**. Neither the agent nor the user application
 steps outside it. Contract changes are recorded in `EVOLUTION.md` and the
 version number at the top of this file is incremented.
 
-**Contract version:** 1.22
+**Contract version:** 1.23
 **Master copy:** `afgover/takip` → `hub/SYSTEM.md` (Turkish) ·
 `hub/SYSTEM.en.md` (English)
 (see §10 — every hub updates its own copy from there)
@@ -142,6 +142,20 @@ Rules:
   one. Timestamps may be omitted or approximate.
   *(The rule was born in `financer_takip` and taken into the master from
   there — K-025.)*
+- **(v1.23) Checkpoints (the 30-minute rhythm).** The records accumulating in
+  an open session are updated and pushed at most **30 minutes** apart — the
+  session stays `open`, and `## Summary` is still written at close. This puts a
+  **time bound** on "a record not pushed is a record never made": if the chat
+  dies unexpectedly (context compaction, a closed window), at most 30 minutes
+  are lost. The `reconstructed: true` exception (v1.6) was born from exactly
+  that gap; checkpoints narrow it and reduce the need for after-the-fact
+  records.
+  On the same rhythm `tasks/inbox/` is checked too: the user may file tasks
+  from the phone while the session runs, and should not have to say so in
+  chat — that is what the app exists for. Extra trigger: when the user writes
+  their first message **after a gap longer than 30 minutes**, or when the
+  session did not start from zero (continuing after compaction), the opening
+  inbox check is repeated.
 - **(v1.20) Only one session may be open at a time**, and it must be the most
   recent one. If an older session is still `open` when you open a new one, close
   it first: derive its summary from its own record and **say in the `## Summary`

@@ -502,6 +502,10 @@ başlığına ✅ ve tarih yazılır.
       Çipler menülere dönüştü (repo/kategori/öncelik), sıralama aynı şeritte,
       seçimler kalıcı, sıfırla filtre+sıralamayı birlikte temizliyor. Menü
       seçimde kapanmıyor; kapalı menü seçili sayıyı gösteriyor
+- [x] B-125 · (agent) Sözleşme 1.23: 30 dakika ritmi — ✅ 2026-08-11.
+      Ara kayıt (en geç 30 dk'da bir push, oturum open kalır) + aynı ritimde
+      inbox kontrolü + aradan dönüşte/sıkıştırma sonrası inbox tekrarı.
+      reconstructed (v1.6) istisnasının doğduğu boşluğu daraltıyor
 - [ ] B-110 · (agent) Çoklu kullanıcı — Katman 3+4: `assignee` yazımı ve
       paylaşılan dosya yazım kuralları. Sözleşme 1.15 alanı tanımladı ama
       uygulama/protokol tarafı **ikinci kişi geldiğinde** yapılacak;

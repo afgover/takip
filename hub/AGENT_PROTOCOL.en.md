@@ -55,6 +55,14 @@ what*. The procedure holds whatever the session is about.
 
 ## During the session (at every exchange)
 
+> **The 30-minute rhythm (v1.23).** While work is happening, at most every 30
+> minutes: (a) update `session.md`, `BACKLOG.md` and the knowledge records and
+> **push** — the session stays `open`, the summary waits for close; (b) look at
+> `tasks/inbox/` and tell the user about new tasks. Repeat the inbox check when
+> the user returns after a gap longer than 30 minutes, or when the session
+> continues after compaction. At most 30 minutes of work may be lost; the
+> `reconstructed` exception should stop being needed.
+
 > **When assigning an ID (v1.15).** Run `git pull --rebase` **right before**
 > issuing a new `T-`, `B-`, `L-`, `SK-`, `R-`, `SEC-`, `K-` or `A-` number, and
 > push **right after**. The counters are single, and if two agents work at the

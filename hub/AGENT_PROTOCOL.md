@@ -50,6 +50,14 @@ tanımlanır. Prosedür, oturumun konusu ne olursa olsun geçerlidir.
 
 ## Oturum boyunca (her mesaj alışverişinde)
 
+> **30 dakika ritmi (v1.23).** İş yapılırken en geç 30 dakikada bir:
+> (a) `session.md`, `BACKLOG.md` ve knowledge kayıtlarını güncelle ve
+> **push'la** — oturum `open` kalır, özet kapanışa; (b) `tasks/inbox/`a bak,
+> yeni görev varsa kullanıcıya söyle. Kullanıcı 30 dakikadan uzun bir aradan
+> sonra döndüğünde ya da oturum sıkıştırma sonrası devam ediyorsa inbox
+> kontrolünü tekrarla. Kaybolan iş en fazla 30 dakika olsun; `reconstructed`
+> istisnası ihtiyaç olmaktan çıksın.
+
 > **ID atarken (v1.15).** Yeni bir `T-`, `B-`, `L-`, `SK-`, `R-`, `SEC-`, `K-`
 > ya da `A-` numarası vermeden **hemen önce** `git pull --rebase`, verdikten
 > **hemen sonra** push et. Sayaçlar tekildir ve iki agent aynı anda çalışırsa
