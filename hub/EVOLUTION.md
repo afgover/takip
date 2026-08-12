@@ -370,6 +370,15 @@ toplanır ve gerekiyorsa Faz 6 maddelerini (B-060…B-064) yeniden sıralar.
   yalnız eski hub'ları ilgilendiren kuralların kalıcı kurallardan ayrı
   durması gerekiyor.
 
+- 2026-08-12: **Çoklu-hub mekanizması ilk gerçek sınavını verdi.** Uygulamanın
+  kuyruğu üç bekleyen-görev bildirimini yanlış hub'a (financer) düşürdü; iki
+  agent'ın raporu üzerine kök neden bu repoda bulundu — `outbox.add` damgalı
+  taslağın damgasını eziyordu (B-126, L-045) — ve sözleşme 1.24 bildirime
+  kimlik kazandırdı (`- **Repo:**` satırı + doğrulama kuralı, B-127).
+  Değerlendirme: doktrin katmanı hasarı önledi (yabancı kayda dokunmama,
+  dosya adıyla doğrulama, §10 yükseltme yolu üç hub'da da işledi); yapısal
+  boşluğu bu sürüm kapattı. Düzeltme cihaza kuruldu.
+
 **Kararlar:**
 - **K-019:** Kolaylık için token'ın korumasız bir dizeye çevrilmesine izin
   verilmez. Çok repolu kurulumda veri kaybı sonrası token'ları tek tek yeniden

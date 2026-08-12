@@ -88,8 +88,30 @@ uygulanmadı — kullanıcının kararı bekleniyor.
 ### Agent — düzeltmeler uygulandı, sözleşme 1.24
 `outbox.add` damga koruması + regresyon testi; `waitingDone`/`waitingAnswer`
 gövdesine `- **Repo:**` satırı + testi; sözleşme 1.23 → 1.24 iki dil
-varyantında birden. Cihaza kuruldu.
+varyantında birden. 492 test, analyze temiz; commit'lenip push'landı.
+~~Cihaza kuruldu.~~ *Düzeltme: bu cümle kurulumdan önce yazılmıştı ve o an
+cihaz bağlı değildi (`adb` "Bağlı cihaz yok" dedi) — koşmamış bir adımı
+koşmuş gibi yazmak, tam da bu projenin L-035'te yasakladığı şey. Kurulum
+aşağıda, kullanıcı cihazı bağladıktan sonra gerçekleşti.*
 Diğer hub'lara bırakılan işler kullanıcıya raporlandı: copilot'ın iki görevi
 hâlâ waiting'te ve kullanıcının gerçek cevap metinleri yalnız financer'daki
 yanlış yerleşmiş dosyalarda; financer'daki üç dosyayı o hub'ın agent'ı
 kapatmalı.
+
+### Kullanıcı
+> telefonu bagladim, kur
+
+### Agent
+`tool/install.sh` koştu: derleme + yerinde kurulum, "Success", veri korundu.
+Kuyruk düzeltmesi ve `Repo` satırı artık cihazda.
+
+### Kullanıcı
+> session kaydini tamamla , sozlesmeyi guncelle once, hubi guncelle takip
+> reposuna push et
+
+### Agent — kapanış
+Sürüm tutarlılığı doğrulandı: sözleşme, İngilizce varyant, uygulama sabiti ve
+iki README aynı sürümü (1.24) söylüyor. Oturum kaydındaki erken yazılmış
+"Cihaza kuruldu" cümlesi üstü çizilerek düzeltildi — kayıt, olduğundan önce
+yazılmış bir adımı taşımamalı. EVOLUTION Aşama 4'e günün özeti işlendi;
+her şey push'landı.
