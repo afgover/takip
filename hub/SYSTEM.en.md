@@ -7,7 +7,7 @@ named, and what schema it follows**. Neither the agent nor the user application
 steps outside it. Contract changes are recorded in `EVOLUTION.md` and the
 version number at the top of this file is incremented.
 
-**Contract version:** 1.23
+**Contract version:** 1.24
 **Master copy:** `afgover/takip` → `hub/SYSTEM.md` (Turkish) ·
 `hub/SYSTEM.en.md` (English)
 (see §10 — every hub updates its own copy from there)
@@ -374,6 +374,8 @@ tags: [waiting-done]
 
 ## Request
 The work awaited in `tasks/waiting/<file>.md` (T-00X) is done.
+
+- **Repo:** `afgover/<project>_takip`
 ```
 
 When an option question is answered, the same schema goes with
@@ -384,9 +386,22 @@ choice and, if given, the explanation:
 ## Request
 The question in `tasks/waiting/<file>.md` (T-00X) has been answered.
 
+- **Repo:** `afgover/<project>_takip`
 - **Choice:** I will generate a fine-grained token
 - **Explanation:** I will do it this week.
 ```
+
+> **A notification names its own hub (v1.24).** The `Repo` line is the hub the
+> notification belongs to. The path is hub-relative and task IDs are per-hub —
+> neither identifies the hub; a notification that lands in the wrong hub can
+> only be diagnosed by this line. This actually happened: the app's queue
+> dropped three notifications into `financer_takip`, and because the IDs
+> (`T-008`, `T-009`) collided with tasks there, the wrong tasks were nearly
+> closed (goverco L-009).
+> **Agent rule:** before closing a notification, verify the `Repo` line names
+> your hub. If it does not, **do not touch it** — tell the user. If the line
+> is missing (a pre-v1.24 notification), search for the file name in your own
+> `waiting/` folder; do not trust the ID.
 
 When the agent sees this notification it moves the original task from
 `waiting/` to `done/` (or back to `active/` if the work continues) and closes

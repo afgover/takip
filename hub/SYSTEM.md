@@ -5,7 +5,7 @@ ve hangi şemaya uyacağını** tanımlar. Agent ve kullanıcı uygulaması bu s
 dışına çıkmaz. Sözleşme değişiklikleri `EVOLUTION.md`'ye kaydedilir ve bu dosyanın
 başındaki sürüm numarası artırılır.
 
-**Sözleşme sürümü:** 1.23
+**Sözleşme sürümü:** 1.24
 **Ana kopya (master):** `afgover/takip` → `hub/SYSTEM.md` (tr, **kanonik**) ·
 `hub/SYSTEM.en.md` (en)
 (bkz. §10 — her hub kendi kopyasını, kendi dilindeki varyanttan günceller)
@@ -361,6 +361,8 @@ tags: [waiting-done]
 
 ## İstek
 `tasks/waiting/<dosya>.md` (T-00X) görevinde beklenen iş yapıldı.
+
+- **Repo:** `afgover/<proje>_takip`
 ```
 
 Seçenekli bir soruya cevap verildiğinde aynı şema, `tags: [waiting-answer]`
@@ -370,9 +372,21 @@ ve başlıkta "— cevaplandı" ile gider; gövde seçimi ve varsa açıklamayı
 ## İstek
 `tasks/waiting/<dosya>.md` (T-00X) görevindeki soru cevaplandı.
 
+- **Repo:** `afgover/<proje>_takip`
 - **Seçim:** Fine-grained token üreteceğim
 - **Açıklama:** Bu hafta içinde üretirim.
 ```
+
+> **Bildirim hedef hub'ını kendisi söyler (v1.24).** `Repo` satırı bildirimin
+> ait olduğu hub'dır. Yol hub-göreli, task ID hub başına — ikisi de hub'ı
+> tanımlamaz; yanlış hub'a düşmüş bir bildirim ancak bu satırla teşhis edilir.
+> Bu gerçekten yaşandı: uygulamanın kuyruğu üç bildirimi `financer_takip`e
+> düşürdü ve ID'ler (`T-008`, `T-009`) oradaki görevlerle çakıştığı için az
+> kalsın yanlış görevler kapatılıyordu (goverco L-009).
+> **Agent kuralı:** bildirimi kapatmadan önce `Repo` satırının kendi hub'ı
+> olduğunu doğrula. Değilse **dokunma** — kullanıcıya söyle. Satır yoksa
+> (v1.24 öncesi bildirim) dosya adını kendi `waiting/` klasöründe ara;
+> ID'ye güvenme.
 
 Agent bu bildirimi gördüğünde asıl görevi `waiting/` → `done/` taşır (ya da iş
 devam ediyorsa `active/`e alır) ve bildirim görevini `done/`a kapatır.

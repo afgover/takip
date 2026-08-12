@@ -63,6 +63,23 @@ void main() {
       expect(answer.content, contains('Evet'));
     });
 
+    test('bildirim hedef repoyu kendisi söyler (sözleşme 1.24)', () {
+      // Yol hub-göreli, ID hub başına: ikisi de hub'ı tanımlamıyor. Yanlış
+      // yere düşen bildirim ancak bu satırla teşhis edilir (L-009, L-045).
+      final done =
+          TaskDraft.waitingDone(task, repoSlug: 'afgover/goverco_takip');
+      expect(done.content, contains('- **Repo:** `afgover/goverco_takip`'));
+      expect(done.repoSlug, 'afgover/goverco_takip');
+
+      final answer = TaskDraft.waitingAnswer(task,
+          selected: const ['Evet'], repoSlug: 'afgover/goverco_takip');
+      expect(answer.content, contains('- **Repo:** `afgover/goverco_takip`'));
+
+      // Repo bilinmiyorsa satır hiç yazılmaz — boş bir alan "kimliksiz" diye
+      // bir şey uydururdu (L-040'ın aynı ilkesi).
+      expect(TaskDraft.waitingDone(task).content, isNot(contains('**Repo:**')));
+    });
+
     test('seçim yapılmadıysa bunu hub dilinde söyler', () {
       final answer = TaskDraft.waitingAnswer(
         task,

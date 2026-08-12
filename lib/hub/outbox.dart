@@ -39,9 +39,16 @@ class Outbox extends AsyncNotifier<List<TaskDraft>> {
         .toList();
   }
 
-  /// Taslağı kuyruğa alır ve **o anki aktif repoyu damgalar** (T-003).
+  /// Taslağı kuyruğa alır; **damgasızsa** o anki aktif repoyu damgalar (T-003).
   /// Damga burada basılır çünkü "hangi repoya gidecek" sorusunun cevabı,
   /// görevin yazıldığı andaki bağlamdır — gönderildiği andaki değil.
+  ///
+  /// **Damgalı taslağın damgası ezilmez.** Bekleyen-görev bildirimleri ekranda
+  /// görevin kendi reposuyla damgalanıp geliyor; burada koşulsuz yeniden
+  /// damgalamak, ağ hatasında kuyruğa giren her bildirimi aktif repoya
+  /// yönlendiriyordu — üç bildirim bu yüzden financer_takip'e düştü
+  /// (S-2026-08-12, L-045). T-003'ün damgası yanlış yönlendirmeyi önlemek
+  /// içindi; aynı alana dokunan bu ikinci yol düzeltmeyi geri alıyordu.
   Future<void> add(TaskDraft draft) async {
     // Senkron okuma bilinçli: kabuk (`app.dart`) yalnızca aktif bağlantı
     // çözüldükten sonra çiziliyor, dolayısıyla kullanıcı görev ekleyebildiği
@@ -49,7 +56,11 @@ class Outbox extends AsyncNotifier<List<TaskDraft>> {
     // bağımlılığı sokardı — yazma yolu, güvenli depo cevap vermezse
     // askıda kalmamalı.
     final active = ref.read(hubConnectionsProvider).valueOrNull?.active;
-    final stamped = active == null ? draft : draft.forRepo(active.slug);
+    final stamped = draft.repoSlug != null
+        ? draft
+        : active == null
+            ? draft
+            : draft.forRepo(active.slug);
     final current = [...(state.valueOrNull ?? const <TaskDraft>[]), stamped];
     await _persist(current);
   }

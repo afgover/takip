@@ -667,3 +667,10 @@ toplanır ve gerekiyorsa Faz 6 maddelerini (B-060…B-064) yeniden sıralar.
   sözleşmede zaten yaşıyordu: `reconstructed: true` (v1.6) tam bu boşluktan
   doğmuştu, ara kayıt boşluğu daraltıp o istisnayı ihtiyaç olmaktan çıkarmayı
   hedefliyor.
+- **Sözleşme 1.24 (2026-08-12):** Bildirim hedef hub'ını kendisi söyler
+  (`- **Repo:**` satırı) ve agent kapatmadan önce doğrular. Gerekçe yaşanmış
+  vaka: uygulamanın kuyruğu üç bildirimi yanlış hub'a düşürdü (B-126, L-045)
+  ve hub başına verilen ID'ler çakıştığı için az kalsın yanlış görevler
+  kapatılıyordu (goverco L-009). Doktrin katmanı (yabancı kayda dokunmama,
+  dosya adıyla doğrulama, §10 yükseltme yolu) hasarı önledi; yapısal boşluğu
+  bu sürüm kapattı.

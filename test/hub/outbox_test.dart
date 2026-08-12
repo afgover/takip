@@ -236,6 +236,25 @@ void main() {
       expect(queued.single.repoSlug, 'b/iki');
     });
 
+    test('damgalı taslağın damgası ezilmez (S-2026-08-12)', () async {
+      // Bekleyen-görev bildirimi ekranda görevin kendi reposuyla damgalanıp
+      // geliyor; add() koşulsuz yeniden damgalasaydı ağ hatasında kuyruğa
+      // giren her bildirim aktif repoya yönlenirdi. Üç bildirim tam bu yoldan
+      // financer_takip'e düştü — bu test o hatanın kendisi.
+      final t = await bootWithRepos(['a/bir', 'b/iki']); // aktif: b/iki
+
+      await t.container
+          .read(outboxProvider.notifier)
+          .add(draft('Bildirim').forRepo('a/bir'));
+
+      final queued = t.container.read(outboxProvider).valueOrNull!;
+      expect(queued.single.repoSlug, 'a/bir',
+          reason: 'aktif repo (b/iki) damgayı ezmemeli');
+
+      await t.container.read(outboxProvider.notifier).flush();
+      expect(t.sent.map((e) => e.slug), ['a/bir']);
+    });
+
     test('repo değişse bile taslak kendi reposuna gider', () async {
       final t = await bootWithRepos(['a/bir', 'b/iki']);
       final outbox = t.container.read(outboxProvider.notifier);

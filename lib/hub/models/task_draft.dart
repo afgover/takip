@@ -244,6 +244,7 @@ class TaskDraft {
     HubTask task, {
     String note = '',
     HubLanguage lang = HubLanguage.tr,
+    String? repoSlug,
     String? author,
     DateTime? now,
   }) {
@@ -270,10 +271,15 @@ class TaskDraft {
       // istek "beklenen iş yapıldı" olgusu, not ise kullanıcının o iş hakkında
       // söylediği şey. İkisini birleştirmek, agent'ın makinece okuduğu cümleyi
       // serbest metinle karıştırırdı (T-014).
+      // Bildirim hangi hub'a ait olduğunu **kendisi** söylüyor (sözleşme
+      // 1.24): yol hub-göreli, ID hub başına — ikisi de hub'ı tanımlamıyor.
+      // Yanlış yere düşen bildirim ancak bu satırla teşhis edilebilir; üçü
+      // gerçekten düştü (L-009 goverco, L-045).
       body: '# $title\n\n'
           '## ${lang.requestHeading}\n'
           '${lang.waitingDoneBody(task.path)}'
           '${task.isPending ? '' : ' (${task.id})'}\n\n'
+          '${repoSlug == null ? '' : '- **Repo:** `$repoSlug`\n\n'}'
           '## ${lang.notesHeading}\n'
           '${trimmedNote.isEmpty ? '' : '$trimmedNote\n'}',
     );
@@ -284,6 +290,7 @@ class TaskDraft {
       commitMessage: "task(pending): inbox'a eklendi (app)",
       title: title,
       createdAt: at,
+      repoSlug: repoSlug,
     );
   }
 
@@ -299,6 +306,7 @@ class TaskDraft {
     required List<String> selected,
     String note = '',
     HubLanguage lang = HubLanguage.tr,
+    String? repoSlug,
     String? author,
     DateTime? now,
   }) {
@@ -325,6 +333,7 @@ class TaskDraft {
           '## ${lang.requestHeading}\n'
           '${lang.waitingAnsweredBody(task.path)}'
           '${task.isPending ? '' : ' (${task.id})'}\n\n'
+          '${repoSlug == null ? '' : '- **Repo:** `$repoSlug`\n'}'
           '- **${lang.choiceField}:** '
           '${selected.isEmpty ? lang.noChoiceMade : selected.join(' · ')}\n'
           '${trimmedNote.isEmpty ? '' : '- **${lang.explanationField}:** $trimmedNote\n'}'
@@ -337,6 +346,7 @@ class TaskDraft {
       commitMessage: "task(pending): inbox'a eklendi (app)",
       title: title,
       createdAt: at,
+      repoSlug: repoSlug,
     );
   }
 

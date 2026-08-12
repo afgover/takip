@@ -692,3 +692,20 @@ Biçim: `SYSTEM.md` §5.
   **Genel kural:** sezgisel bir kontrol yazarken, sınırını yorumda değil
   **testin kendi çıktısında** görünür kıl. "Kaba ama yeterli" diye yazılmış bir
   sınır, onu yazan kişi dışında kimseye ulaşmaz ve zamanla o kişi de unutur.
+
+## L-045 — Aynı alana dokunan ikinci yol, kapsamına girmediği düzeltmeyi geri alır
+- **Tarih:** 2026-08-12
+- **Kaynak:** S-2026-08-12-bildirim-yanlis-yonlendirme
+- **Açıklama:** T-003, görevlerin yanlış repoya yazılmasını önlemek için
+  taslağa repo damgası ekledi ve doğrudan gönderim yolunda çalıştı. Ama
+  `outbox.add()` — aynı alana dokunan ikinci yol — kuyruğa alırken damgayı
+  koşulsuz basıyor ve **var olanı eziyordu**. Sonuç: düzeltmenin önlediği hata,
+  yalnız ağ hatası anında, sessizce geri geldi. Üç bildirim yanlış hub'a düştü
+  ve ID çakışması yüzünden başka projenin görevleri az kalsın yanlış
+  kapatılıyordu (goverco L-009).
+  Hata sınıfı sinsi çünkü düzeltme **test edilmişti** — ama yalnız yazıldığı
+  yolda. Kuyruk yolu o testlerin kapsamına girmedi ve `add()`ın yorumu bile
+  niyeti doğru anlatıyordu; yorum, damgalı taslağın varlığını bilmiyordu.
+  **Genel kural:** bir düzeltme bir alanı koruyorsa, o alana **yazan her yol**
+  düzeltmenin kapsamıdır. "Bu alanı kim ezebilir" diye grep'lemek, düzeltmeyi
+  yazarken beş dakika; ezildiğini üretimde fark etmek üç hub'lık bir vaka.

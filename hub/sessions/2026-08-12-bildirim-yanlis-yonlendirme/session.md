@@ -1,7 +1,7 @@
 ---
 id: S-2026-08-12-bildirim-yanlis-yonlendirme
 date: 2026-08-12
-status: open
+status: closed
 reconstructed: false
 author: afgover
 topics: [coklu-hub, outbox, bildirim, analiz]
@@ -12,7 +12,31 @@ tasks_touched: []
 # Oturum: Yanlış hub'a düşen bildirimler — kök neden analizi
 
 ## Özet
-(oturum kapanışında yazılacak)
+İki agent'ın raporu üzerine yanlış hub'a düşen bildirimler araştırıldı; kök
+neden **bu uygulamada** bulundu ve iki katmanla düzeltildi (sözleşme 1.24).
+
+**Kök neden:** `OutboxNotifier.add()` kuyruğa alırken taslağı **koşulsuz**
+aktif repoyla damgalıyordu ve `forRepo` var olan damgayı eziyordu. Bildirimler
+ekranda görevin kendi reposuyla doğru damgalanıyordu (L-031/T-003 çalışıyordu);
+ağ hatasında kuyruğa girince damga siliniyor, flush hepsini aktif repoya
+(o an financer) gönderiyordu. Üç bildirimin üç dakikada tek tip yanlış
+yönlenmesi bu imzayla birebir örtüştü. T-003'ün damgası tam da yanlış
+yönlendirmeyi önlemek içindi — aynı alana dokunan ikinci yol düzeltmeyi
+geri alıyordu (L-045).
+
+**İki katmanlı düzeltme:**
+1. `add()` damgayı yalnız damga yokken basıyor; regresyon testi hatanın
+   kendisini kuruyor (aktif b/iki iken a/bir damgalı taslak kuyruğa girip
+   a/bir'e gidiyor).
+2. Sözleşme 1.24: bildirim `- **Repo:**` satırıyla **hangi hub'a ait olduğunu
+   kendisi söylüyor** (goverco L-009'un istediği). Agent kuralı: kapatmadan
+   önce Repo satırını doğrula; değilse dokunma; satır yoksa dosya adıyla ara,
+   ID'ye güvenme. Yol hub-göreli, ID hub başına — ikisi de hub'ı tanımlamıyor.
+
+**Mekanizma değerlendirmesi:** doktrin katmanı hasarı önledi — financer
+agent'ı yabancı kayda dokunmadı, goverco agent'ı rapora güvenmeyip dosya
+adıyla doğruladı ve ID çakışmasını yakaladı, yükseltme yolu (§10) işledi.
+Yapı katmanı iki yerden aksaktı; ikisi de bu oturumda kapandı.
 
 ## Kayıt
 
@@ -57,3 +81,15 @@ Kanıt zinciri:
 
 Mekanizma değerlendirmesi ve öneriler ana rapora yazıldı; düzeltme
 uygulanmadı — kullanıcının kararı bekleniyor.
+
+### Kullanıcı
+> uygula
+
+### Agent — düzeltmeler uygulandı, sözleşme 1.24
+`outbox.add` damga koruması + regresyon testi; `waitingDone`/`waitingAnswer`
+gövdesine `- **Repo:**` satırı + testi; sözleşme 1.23 → 1.24 iki dil
+varyantında birden. Cihaza kuruldu.
+Diğer hub'lara bırakılan işler kullanıcıya raporlandı: copilot'ın iki görevi
+hâlâ waiting'te ve kullanıcının gerçek cevap metinleri yalnız financer'daki
+yanlış yerleşmiş dosyalarda; financer'daki üç dosyayı o hub'ın agent'ı
+kapatmalı.

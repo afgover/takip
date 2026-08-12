@@ -506,6 +506,16 @@ başlığına ✅ ve tarih yazılır.
       Ara kayıt (en geç 30 dk'da bir push, oturum open kalır) + aynı ritimde
       inbox kontrolü + aradan dönüşte/sıkıştırma sonrası inbox tekrarı.
       reconstructed (v1.6) istisnasının doğduğu boşluğu daraltıyor
+- [x] B-126 · (agent) Outbox damgayı ezmesin — ✅ 2026-08-12.
+      `add()` taslağı koşulsuz aktif repoyla damgalıyordu; ağ hatasında
+      kuyruğa giren her bildirim aktif repoya yönleniyordu. Üç bildirim bu
+      yoldan financer_takip'e düştü. Damga artık yalnız damgasız taslağa
+      basılıyor; regresyon testi hatanın kendisini kuruyor. → L-045
+- [x] B-127 · (agent) Bildirim hedef hub'ını kendisi söylesin — ✅ 2026-08-12 ·
+      sözleşme 1.24. `- **Repo:**` satırı + agent doğrulama kuralı (kapatmadan
+      önce Repo satırına bak; yoksa dosya adıyla ara, ID'ye güvenme).
+      Goverco L-009'un yükselttiği istek; yol hub-göreli, ID hub başına —
+      ikisi de hub'ı tanımlamıyor
 - [ ] B-110 · (agent) Çoklu kullanıcı — Katman 3+4: `assignee` yazımı ve
       paylaşılan dosya yazım kuralları. Sözleşme 1.15 alanı tanımladı ama
       uygulama/protokol tarafı **ikinci kişi geldiğinde** yapılacak;
