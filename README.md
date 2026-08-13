@@ -39,6 +39,10 @@ Görevin **durumu klasördür**: `tasks/inbox → active → waiting → done`. 
 özeldir — agent orada senden bir şey bekler ve bu telefonda görünür, sohbette
 kaybolmaz.
 
+Çok adımlı bir iş ayrıca `hub/PLAN.md`'ye **görev ağacı** olarak yazılır: hangi
+adım bitti, hangisi duruyor, hangisi neden iptal edildi. Oturum kaydı ne
+konuşulduğunu anlatır; ağaç, işin şu an nerede olduğunu tek bakışta gösterir.
+
 Uygulama hub'da yalnız iki yere yazabilir: `tasks/inbox/` (agent'ın iş kuyruğu)
 ve `notes/` (senin kendi notların). Kural runtime kontrolüne bırakılmamıştır —
 yazma kapısı yol değil dosya adı alır ve klasörü kapalı bir kümeden seçer.
@@ -115,7 +119,7 @@ Güvenlik geçmişinin tamamı: [`hub/SECURITY.md`](hub/SECURITY.md) — alınan
 
 ## Sözleşme sürümü
 
-Şu an **1.24**. Her hub kendi kopyasını taşır ve agent her oturum açılışında ana
+Şu an **1.25**. Her hub kendi kopyasını taşır ve agent her oturum açılışında ana
 kopyayla karşılaştırıp geriden geliyorsa günceller (`SYSTEM.md` §10). Sürüm eşit
 ama içerik farklıysa (ayrışma) üzerine yazılmaz — bu, yalnız numaraya bakan bir
 kontrolün göremediği ve gerçekten yaşanmış bir durumdur.

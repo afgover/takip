@@ -89,6 +89,18 @@ what*. The procedure holds whatever the session is about.
 7. When a new rule, skill or lesson emerges, add an ID'd record to the right file
    under `knowledge/`. There is no "I will write it later" — it is written the
    moment it emerges.
+7b. **When starting a job of three or more steps, write the plan into
+   [`PLAN.md`](PLAN.md)** (contract [§14](SYSTEM.en.md#14)) — *before* carrying
+   the steps out, because the tree's job is not to list what is finished but to
+   make what is unfinished visible. Each step is ticked the moment it is done; a
+   step you give up on is not deleted but struck through **with its reason**.
+   One-command work stays out of the tree. The tree replaces no other flow:
+   instead of writing the same fact a second time into the backlog or the
+   session record, **link** to it.
+7c. **When referring to another record, write it as a link** (contract
+   [§15](SYSTEM.en.md#15)): `[SEC-010](SECURITY.md#SEC-010)`. The anchor is the
+   record's ID, not the heading text. Link the **first** occurrence of an ID in
+   a document; later repeats stay plain.
 8. Handle task status changes by moving folders, with the right commit message.
 9. **If you are waiting on the user for something, open a task and put it in
    `tasks/waiting/`.** Saying it in chat is not enough: the chat ends and the

@@ -81,6 +81,17 @@ tanımlanır. Prosedür, oturumun konusu ne olursa olsun geçerlidir.
    (tarih + link). Konuşma sırasında yeni iş ortaya çıktıysa ilgili faza ekle.
 7. Yeni bir kural, skill veya ders ortaya çıktığında `knowledge/` altındaki
    ilgili dosyaya ID'li kayıt ekle. "Sonra yazarım" yok — çıktığı anda yazılır.
+7b. **Üç ya da daha fazla adımlı bir işe başlarken planı
+   [`PLAN.md`](PLAN.md)'ye yaz** (sözleşme [§14](SYSTEM.md#14)) — adımları
+   *uygulamadan önce*, çünkü ağacın işi biteni listelemek değil, yarım kalanı
+   görünür kılmak. Her adım bittiği anda işaretlenir; vazgeçilen adım silinmez,
+   üstü çizilir ve **nedeni yazılır**. Tek komutluk işler ağaca girmez.
+   Ağaç diğer akışların yerine geçmez: aynı bilgiyi backlog'a ve oturum kaydına
+   ikinci kez yazmak yerine oraya **bağlantı** verilir.
+7c. **Başka bir kayda atıf yaparken bağlantı ver** (sözleşme
+   [§15](SYSTEM.md#15)): `[SEC-010](SECURITY.md#SEC-010)`. Çapa kaydın ID'sidir,
+   başlık metni değil. Bir belgede ID'nin **ilk** geçtiği yer bağlanır, sonraki
+   tekrarları düz metin kalır.
 8. Görev durum değişikliklerini klasör taşımayla ve doğru commit mesajıyla işle.
 9. **Kullanıcıdan bir şey bekliyorsan görev aç ve `tasks/waiting/`e koy.**
    Sohbette söylemek yeterli değildir: sohbet kapanır, kullanıcı telefonunda

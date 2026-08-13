@@ -7,7 +7,7 @@ named, and what schema it follows**. Neither the agent nor the user application
 steps outside it. Contract changes are recorded in `EVOLUTION.md` and the
 version number at the top of this file is incremented.
 
-**Contract version:** 1.24
+**Contract version:** 1.25
 **Master copy:** `afgover/takip` → `hub/SYSTEM.md` (Turkish) ·
 `hub/SYSTEM.en.md` (English)
 (see §10 — every hub updates its own copy from there)
@@ -85,6 +85,7 @@ else is in the **hub language**
 | `BACKLOG.md` | The work list — single source of truth | agent |
 | `EVOLUTION.md` | The project's evolution, stage by stage | agent |
 | `SECURITY.md` | Security log — scans, measures, holes (§12) | agent |
+| `PLAN.md` | Task tree — steps and state of multi-step jobs (§14) | agent |
 
 ## 2. `sessions/` — session records
 
@@ -509,6 +510,7 @@ evolution: Stage 1 closed
 knowledge: L-003 added
 note: added / deleted (app)             # (v1.11) notes/ — the user's note
 security: SEC-005 added / SEC-002 closed  # (v1.11) SECURITY.md
+plan(P-001): plan opened / step completed / plan closed  # (v1.25) PLAN.md
 system: contract updated to 1.1
 ```
 
@@ -812,3 +814,136 @@ by the task itself, and a separate flag could drift from the files.
 > to make the answer *machine-readable*. A task you are unsure about is left as
 > it is: an invented option list forces the user into a frame the agent never
 > thought through, and records a wrong answer in a form that looks right.
+
+## 14. `PLAN.md` — the task tree (v1.25)
+
+A session record holds **what was discussed**, `BACKLOG.md` **what is to be
+done**, `tasks/` **the user-facing state of a job**. The fourth was a question
+none of them answered: *which step is a multi-step job on right now?* The answer
+was buried in the prose of the session record; reading it meant reading the
+whole session, and a step left half-done did not stand out there.
+
+`PLAN.md` does that job: the steps the agent proposed, **itemised, with state**.
+
+### Scope — what goes in, what does not
+
+Every job made of **three or more steps** goes into the tree, written down
+before the steps are carried out. What does not:
+
+| Goes in | Stays out |
+|---|---|
+| A multi-step fix, feature, migration, analysis | One-command work (read a file, fix a line) |
+| A plan presented to and approved by the user | The conversation itself — that is the session record's job |
+| Multi-step work the agent runs on its own | An idea for future work — that is `BACKLOG.md`'s job |
+
+The reason for the threshold is concrete: in a tree that lists every micro-step,
+the entry that actually needs intervention becomes invisible. The tree's value
+is in its sparseness.
+
+**It changes no other flow.** Session records are kept as before, the backlog is
+ticked as before, tasks change folders as before. `PLAN.md` replaces none of
+them; it **refers** to them. The same fact is not held in two places: if a step
+closes a backlog entry, the step links to that entry rather than copying its
+text.
+
+### Schema
+
+```markdown
+# PLAN.md — Task Tree
+
+## P-002 — <newest plan on top>
+...
+
+## P-001 — <plan title>
+- **Date:** 2026-08-13
+- **Source:** S-2026-08-13-status-summary
+- **Status:** open
+- **Related:** B-097, SEC-010
+
+- [x] P-001.1 — <step> · ✅ 2026-08-13
+- [ ] P-001.2 — <step>
+  - [x] P-001.2.1 — <sub-step> · ✅ 2026-08-13
+  - [ ] P-001.2.2 — <sub-step>
+- [ ] ~~P-001.3 — <step>~~ · ⨯ **Cancelled (2026-08-13):** <reason>
+```
+
+| Field | Required | Description |
+|---|---|---|
+| `Date` | yes | The day the plan was opened |
+| `Source` | yes | ID of the session that produced the plan |
+| `Status` | yes | `open` · `completed` · `cancelled` |
+| `Related` | no | Record IDs the plan touches (`B-`, `SEC-`, `T-`…) |
+
+Rules:
+
+1. **Numbering.** A plan is `P-<three digits>`, a step is a dotted extension
+   (`P-001.2`), a sub-step one dot further (`P-001.2.1`). The tree structure is
+   built with **indentation** (two spaces). Numbers are never reused; a
+   cancelled step's number stays vacant.
+2. **State marks.** `- [ ]` to do, `- [x]` done; a cancelled step keeps the
+   `- [ ]` box, is written **struck through**, and **carries its reason**. No
+   step is cancelled without one: a reasonless cancellation is a gap that will
+   not answer "why was this not done" six months later.
+3. **Ticked immediately.** A step is marked the moment it is finished, not saved
+   up for the end of the session (same reasoning as `BACKLOG.md`).
+4. **No deletion.** A completed plan and a cancelled step both stay in the file
+   (R-004). A closed plan stays where it is; **a new plan goes on top**, so that
+   in a plain markdown reader what is live is what you see first.
+5. **A plan's status is written, not derived from its steps.** When every step
+   is done, set `Status: completed`. The two can drift, and that is accepted
+   deliberately: a derived status cannot express "every step is done but the job
+   is not".
+6. **The file is optional.** A hub without `PLAN.md` does not violate the
+   contract; it is created with the first multi-step plan. Every tool reading it
+   treats the file's **absence** as a normal state (R-008: new fields and files
+   do not break existing hubs).
+
+## 15. Links — moving between documents (v1.25)
+
+Hub records refer to each other by ID: a session mentions `SEC-010`, a backlog
+entry rests on `L-042`. Until now those references were **plain text** — the
+reader had to find the file and search for the ID inside it.
+
+The rule: **a reference to another record is written as a link.**
+
+```markdown
+[SEC-010](SECURITY.md#SEC-010)
+[L-042](knowledge/lessons.md#L-042)
+[T-011](tasks/done/2026-08-13-make-repo-public.md)
+```
+
+- The **path** is relative to the hub root (`SECURITY.md`,
+  `knowledge/lessons.md`). From a file in a subfolder an ordinary relative path
+  works too (`../SECURITY.md`).
+- The **anchor is the record's ID** — not the heading text. Why: headings get
+  rewritten, IDs do not. A heading-based anchor dies silently every time the
+  heading is edited.
+- The anchor points at the **first line** where the ID occurs in the target
+  document. That line need not be a heading; in `BACKLOG.md` records are list
+  items.
+
+> **The limit on GitHub — accepted deliberately.** GitHub derives the anchor
+> from the **whole heading** (`#sec-010--release-builds-are-signed-…`), so
+> `#SEC-010` does not jump to the section there: the link opens the right file
+> and the page starts from the top. Scrolling to the section is
+> **app-specific**. The alternative was embedding `<a id="...">` before every
+> record: clutter that makes the markdown unreadable, not worth buying a scroll
+> in one reader out of two.
+
+### When to link
+
+The agent is **expected to use this**; the rule is: the first time a record's ID
+appears in a document it is written as a link, and repeats within the same
+document stay plain. The reasoning runs both ways — an unlinked reference sends
+the reader off to hunt for a file, while linking every repeat turns the text
+into blue noise.
+
+Where it is particularly expected:
+
+- from `PLAN.md` steps to the record they close (`B-126`, `T-011`),
+- from a session record to the records written in that session,
+- from a `BACKLOG.md` entry to the task or security record that closes it,
+- from a record's "Source" field to the source itself.
+
+Adding a link **is not mandatory** and a missing link is not a contract
+violation; links are never manufactured at the cost of what a record says.

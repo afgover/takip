@@ -5,7 +5,7 @@ ve hangi şemaya uyacağını** tanımlar. Agent ve kullanıcı uygulaması bu s
 dışına çıkmaz. Sözleşme değişiklikleri `EVOLUTION.md`'ye kaydedilir ve bu dosyanın
 başındaki sürüm numarası artırılır.
 
-**Sözleşme sürümü:** 1.24
+**Sözleşme sürümü:** 1.25
 **Ana kopya (master):** `afgover/takip` → `hub/SYSTEM.md` (tr, **kanonik**) ·
 `hub/SYSTEM.en.md` (en)
 (bkz. §10 — her hub kendi kopyasını, kendi dilindeki varyanttan günceller)
@@ -79,6 +79,7 @@ başındaki sürüm numarası artırılır.
 | `BACKLOG.md` | Yapılacak işler listesi — tek doğru kaynak | agent |
 | `EVOLUTION.md` | Projenin aşama aşama evrimi | agent |
 | `SECURITY.md` | Güvenlik logu — taramalar, önlemler, açıklar (§12) | agent |
+| `PLAN.md` | Görev ağacı — çok adımlı işlerin adımları ve durumu (§14) | agent |
 
 ## 2. `sessions/` — oturum kayıtları
 
@@ -487,6 +488,7 @@ evolution: Aşama 1 kapandı
 knowledge: L-003 eklendi
 note: eklendi / silindi (app)          # (v1.11) notes/ — kullanıcının notu
 security: SEC-005 eklendi / SEC-002 kapatıldı   # (v1.11) SECURITY.md
+plan(P-001): plan açıldı / adım tamamlandı / plan kapandı  # (v1.25) PLAN.md
 system: sözleşme 1.1'e güncellendi
 ```
 
@@ -787,3 +789,131 @@ tutulan bir bayrak dosyayla ayrışabilirdi.
 > var. Emin olunamayan bir görev olduğu gibi bırakılır: uydurulmuş bir seçenek
 > listesi, kullanıcıyı agent'ın hiç düşünmediği bir çerçeveye sıkıştırır ve
 > yanlış cevabı doğru görünen bir biçimde kaydeder.
+
+## 14. `PLAN.md` — görev ağacı (v1.25)
+
+Oturum kaydı **ne konuşulduğunu** tutar, `BACKLOG.md` **ne yapılacağını**,
+`tasks/` **kullanıcıya dönük iş durumunu**. Dördüncüsü bunların hiçbirinin
+cevaplamadığı bir soruydu: *çok adımlı bir iş şu an hangi adımında?* Cevap
+oturum kaydının düzyazısına gömülüydü; okumak için bütün oturumu okumak
+gerekiyordu ve yarım kalan bir adım orada göze çarpmıyordu.
+
+`PLAN.md` bu işi yapar: agent'ın önerdiği adımlar, **madde madde ve durumuyla**.
+
+### Kapsam — neyin girdiği, neyin girmediği
+
+Ağaca **üç ya da daha fazla adımdan oluşan her iş** girer; adımları
+uygulanmadan önce yazılır. Girmeyenler:
+
+| Girer | Girmez |
+|---|---|
+| Çok adımlı bir düzeltme, özellik, göç, analiz | Tek komutluk iş (bir dosya oku, bir satır düzelt) |
+| Kullanıcıya sunulan ve onaylanan plan | Sohbetin kendisi — o oturum kaydının işi |
+| Agent'ın kendi başına yürüttüğü çok adımlı iş | Yapılacak iş fikri — o `BACKLOG.md`'nin işi |
+
+Sınırın sebebi somut: her mikro adımı yazan bir ağaçta, gerçekten müdahale
+edilmesi gereken madde görünmez olur. Ağacın değeri seyrekliğindedir.
+
+**Diğer akışları değiştirmez.** Oturum kaydı eskisi gibi tutulur, backlog
+eskisi gibi işaretlenir, görevler eskisi gibi klasör değiştirir. `PLAN.md`
+bunların hiçbirinin yerine geçmez; onlara **atıf yapar**. Aynı bilgi iki yerde
+tutulmaz: bir adım bir backlog maddesini bitiriyorsa adım satırı o maddeye
+bağlantı verir, maddenin metnini kopyalamaz.
+
+### Şema
+
+```markdown
+# PLAN.md — Görev Ağacı
+
+## P-002 — <en yeni plan üstte>
+...
+
+## P-001 — <plan başlığı>
+- **Tarih:** 2026-08-13
+- **Kaynak:** S-2026-08-13-durum-ozeti
+- **Durum:** acik
+- **İlgili:** B-097, SEC-010
+
+- [x] P-001.1 — <adım> · ✅ 2026-08-13
+- [ ] P-001.2 — <adım>
+  - [x] P-001.2.1 — <alt adım> · ✅ 2026-08-13
+  - [ ] P-001.2.2 — <alt adım>
+- [ ] ~~P-001.3 — <adım>~~ · ⨯ **İptal (2026-08-13):** <neden>
+```
+
+| Alan | Zorunlu | Açıklama |
+|---|---|---|
+| `Tarih` | evet | Planın açıldığı gün |
+| `Kaynak` | evet | Planı doğuran oturum ID'si |
+| `Durum` | evet | `acik` · `tamamlandi` · `iptal` |
+| `İlgili` | hayır | Planın dokunduğu kayıt ID'leri (`B-`, `SEC-`, `T-`…) |
+
+Kurallar:
+
+1. **Numara.** Plan `P-<üç hane>`, adım noktalı uzantı (`P-001.2`), alt adım bir
+   nokta daha (`P-001.2.1`). Ağaç yapısı **girintiyle** kurulur (iki boşluk).
+   Numaralar yeniden kullanılmaz; iptal edilen bir adımın numarası boşta kalır.
+2. **Durum işareti.** `- [ ]` yapılacak, `- [x]` tamamlandı, iptal edilen adım
+   `- [ ]` kutusuyla **üstü çizili** yazılır ve **nedeni yazılır**. Neden
+   yazılmadan bir adım iptal edilmez: nedensiz iptal, altı ay sonra "bu neden
+   yapılmadı" sorusuna cevap vermeyen bir boşluktur.
+3. **Anında işaretlenir.** Adım bittiği anda işaretlenir, oturum sonuna
+   bırakılmaz (`BACKLOG.md` kuralıyla aynı gerekçe).
+4. **Silme yok.** Tamamlanan plan da iptal edilen adım da dosyada kalır (R-004).
+   Kapanan plan yerinde durur; **yeni plan en üste** yazılır, böylece düz bir
+   markdown okuyucuda canlı olan önce görünür.
+5. **Planın durumu adımlardan türetilmez, açıkça yazılır.** Bütün adımlar
+   bitince `Durum: tamamlandi` yapılır. İki alanın ayrışabileceği doğrudur ve
+   bilinçli kabul edilmiştir: türetilen bir durum, "adımların hepsi bitti ama
+   iş aslında bitmedi" durumunu anlatamaz.
+6. **Dosya opsiyoneldir.** `PLAN.md` bulunmayan bir hub sözleşmeye aykırı
+   değildir; ilk çok adımlı planla birlikte oluşturulur. Bunu okuyan her araç
+   dosyanın **yokluğunu** normal bir durum olarak ele alır (R-008: yeni alanlar
+   ve dosyalar eski hub'ları bozmaz).
+
+## 15. Bağlantılar — belgeler arası geçiş (v1.25)
+
+Hub'ın kayıtları birbirine ID'yle atıf yapar: bir oturum `SEC-010`'u anar, bir
+backlog maddesi `L-042`'ye dayanır. Bu atıflar bugüne kadar **düz metindi** —
+okuyan kişi ilgili dosyayı kendi bulup içinde ID'yi aramak zorundaydı.
+
+Kural: **başka bir kayda yapılan atıf bağlantı olarak yazılır.**
+
+```markdown
+[SEC-010](SECURITY.md#SEC-010)
+[L-042](knowledge/lessons.md#L-042)
+[T-011](tasks/done/2026-08-13-repoyu-public-yap.md)
+```
+
+- **Yol** hub köküne göre görelidir (`SECURITY.md`, `knowledge/lessons.md`).
+  Alt klasördeki bir dosyadan yazarken normal göreli yol da geçerlidir
+  (`../SECURITY.md`).
+- **Çapa, kaydın ID'sidir** — başlık metni değil. Sebebi: başlıklar yeniden
+  yazılır, ID'ler yazılmaz. Başlık tabanlı bir çapa, başlık her düzeltildiğinde
+  sessizce ölür.
+- Çapa hedef belgede ID'nin geçtiği **ilk satırı** işaret eder. O satırın bir
+  başlık olması gerekmez; `BACKLOG.md`'de kayıtlar liste maddesidir.
+
+> **GitHub'daki sınır — bilerek kabul edildi.** GitHub çapayı başlığın
+> **tamamından** üretir (`#sec-010--release-derlemesi-debug-anahtarıyla-…`),
+> yani `#SEC-010` GitHub'da bölüme atlamaz: bağlantı doğru dosyayı açar, sayfa
+> baştan başlar. Bölüme kaydırma **uygulamaya özgüdür**. Alternatif, her kaydın
+> başına `<a id="...">` gömmekti; markdown'ı okunmaz kılan bir kirlilik, iki
+> okuyucudan birinde kaydırma kazanmaya değmez.
+
+### Ne zaman bağlantı verilir
+
+Agent'ın bunu **kullanması beklenir**; kural şu: bir kaydın ID'si bir belgede
+**ilk kez** geçtiğinde bağlantı olarak yazılır, aynı belgedeki tekrarları düz
+metin kalır. Gerekçe iki yönlü — bağlantısız atıf okuyucuyu dosya aramaya
+gönderir, her tekrarı bağlantılı bir metin ise mavi bir gürültüye döner.
+
+Özellikle beklendiği yerler:
+
+- `PLAN.md` adımlarından bitirdikleri kayda (`B-126`, `T-011`),
+- oturum kaydından o oturumda yazılan kayıtlara,
+- `BACKLOG.md` maddesinden onu kapatan göreve ya da güvenlik kaydına,
+- bir kaydın "Kaynak" alanından kaynağın kendisine.
+
+Bağlantı **eklemek zorunlu değildir** ve eksik bağlantı sözleşme ihlali
+sayılmaz; kayıtların içeriğinden ödün verilerek bağlantı üretilmez.

@@ -41,6 +41,11 @@ A task's **status is its folder**: `tasks/inbox → active → waiting → done`
 `waiting/` is special — that is where the agent waits for something from you,
 and it shows up on your phone instead of disappearing into a chat log.
 
+A multi-step job is also written into `hub/PLAN.md` as a **task tree**: which
+step is done, which is still open, which was cancelled and why. The session
+record tells you what was discussed; the tree shows at a glance where the work
+currently stands.
+
 The app can write to only two places in the hub: `tasks/inbox/` (the agent's
 work queue) and `notes/` (your own notes). This is not left to a runtime check —
 the write gate takes a file *name*, not a path, and picks the folder from a
@@ -142,7 +147,7 @@ taken, known holes and outstanding work, all in one place.
 
 ## Contract version
 
-Currently **1.24**. Every hub carries its own copy, and at each session opening
+Currently **1.25**. Every hub carries its own copy, and at each session opening
 the agent compares it with the master and updates if it is behind
 (`SYSTEM.md` §10). If the versions match but the content differs — divergence —
 nothing is overwritten: that is a case a version-number-only check cannot see,

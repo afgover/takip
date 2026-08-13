@@ -19,6 +19,10 @@ abstract final class Hub {
   static const backlogFile = '$basePath/BACKLOG.md';
   static const evolutionFile = '$basePath/EVOLUTION.md';
 
+  /// Görev ağacı (sözleşme 1.25 §14). **Opsiyonel dosya**: bulunmayan hub
+  /// sözleşmeye aykırı değil, yalnız henüz çok adımlı plan yazmamış demektir.
+  static const planFile = '$basePath/PLAN.md';
+
   /// Güvenlik logu (sözleşme 1.10 §12): taramalar, önlemler, açıklar,
   /// yapılacaklar.
   static const securityFile = '$basePath/SECURITY.md';
@@ -41,7 +45,7 @@ abstract final class Hub {
 
   /// Sözleşmenin bu uygulamanın bildiği sürümü. Bağlantıların `hub/SYSTEM.md`
   /// sürümü bununla karşılaştırılır (§10).
-  static const contractVersion = '1.24';
+  static const contractVersion = '1.25';
   static const systemFile = '$basePath/SYSTEM.md';
 
   static const priorities = ['low', 'normal', 'high', 'urgent'];
