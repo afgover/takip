@@ -529,6 +529,22 @@ başlığına ✅ ve tarih yazılır.
       önce Repo satırına bak; yoksa dosya adıyla ara, ID'ye güvenme).
       Goverco L-009'un yükselttiği istek; yol hub-göreli, ID hub başına —
       ikisi de hub'ı tanımlamıyor
+- [x] B-128 · (agent+user) Görev ağacı — `PLAN.md` — ✅ 2026-08-13 ·
+      sözleşme 1.25 [§14](SYSTEM.md#14). Çok adımlı işlerin adımları durumuyla
+      tek dosyada; eşik 3+ adım (her mikro adımı yazan ağaçta müdahale edilecek
+      madde görünmez olur). Uygulamada kendi ekranı: açık planlar üstte ve
+      kendiliğinden açık, iptal edilen adım üstü çizili + gerekçesiyle.
+      Dosya **opsiyonel** — yokluğu hata değil, boş durum.
+      → [P-001](PLAN.md), [R-008](knowledge/rules.md#R-008)
+- [x] B-129 · (agent+user) Belgeler arası bağlantı — ✅ 2026-08-13 ·
+      sözleşme 1.25 [§15](SYSTEM.md#15). ID tabanlı çapa
+      (`[SEC-010](SECURITY.md#SEC-010)`); uygulamada dokununca hedef belge
+      açılıyor ve çapanın satırına kaydırılıyor (belge çapada ikiye bölünüp
+      aradaki işarete kaydırma). Başlık tabanlı çapa **reddedildi**: başlık
+      yeniden yazılınca sessizce ölür. GitHub'da bölüme kaydırma yok (çapayı
+      başlığın tamamından üretiyor) — sınır sözleşmeye yazıldı.
+      `onTapLink` v1.5'ten beri bağlıydı ama hiçbir ekran uygulamıyordu;
+      bağlantılar uygulamada ölü metindi
 - [ ] B-110 · (agent) Çoklu kullanıcı — Katman 3+4: `assignee` yazımı ve
       paylaşılan dosya yazım kuralları. Sözleşme 1.15 alanı tanımladı ama
       uygulama/protokol tarafı **ikinci kişi geldiğinde** yapılacak;
