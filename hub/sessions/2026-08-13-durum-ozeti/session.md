@@ -146,6 +146,21 @@ kaydırma yapılmıyor, belge baştan açılıyor.
 
 İlk plan olarak [P-001](../../PLAN.md) yazıldı: bu işin kendisi.
 
+**Süit iki gerçek hata yakaladı, ikisi de düzeltildi:** (1) SEC-013'e
+`Tür: karar` yazmıştım ama §12'nin sözlüğünde o değer yoktu — gerçek
+`SECURITY.md`'yi okuyan test bunu gördü. Dördünden birine sıkıştırmak kaydı
+yanlış etiketlerdi (repoyu public yapmak ne tarama, ne önlem, ne açık), o
+yüzden **tür sözleşmeye eklendi** (§12, iki dil + uygulama + arayüz metni).
+(2) Yeni tarayıcı kartı "Aktivite"yi test yüzeyinin dışına itmişti.
+
+**Bu oturumdan gelmeyen bir kırık:** `task_lifecycle_test`'in iki testi 10
+dakika zaman aşımına düşüyor. Ölçüldü — oturum öncesi commit (`d56798b`) ayrı
+bir worktree'ye çıkarılıp aynı dosya orada koşuldu: **aynı iki test aynı
+şekilde takılıyor.** Yani sözleşme 1.25 işiyle ilgisi yok. Kök neden kuvvetle
+muhtemel `pumpAndSettle`'ın sonsuz animasyonla buluşması (gönder düğmesindeki
+`CircularProgressIndicator`). [B-130](../../BACKLOG.md#B-130) olarak yazıldı,
+düzeltilmedi — kullanıcının işi bu değildi.
+
 Yolda çıkan ders [L-046](../../knowledge/lessons.md#L-046): `onTapLink` v1.5'te
 açılmış, yorumunda "Faz 4'te bağlanacak" yazıyordu ve hiç bağlanmadı — testi
 bile vardı (geri çağrının çağrıldığını doğruluyordu), ama kimsenin onu

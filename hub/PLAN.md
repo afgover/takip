@@ -26,5 +26,9 @@
 - [x] P-001.9 — Arayüz metinleri (`app_tr.arb`, `app_en.arb`) · ✅ 2026-08-13
 - [x] P-001.10 — Testler: ayrıştırıcı, ekran, bağlantı çözümleme · ✅ 2026-08-13;
       39 yeni test
-- [ ] P-001.11 — Sürüm tutarlılığı: `constants.dart`, iki README; `EVOLUTION.md`
-      ve oturum kaydı; commit + push
+- [x] P-001.11 — Sürüm tutarlılığı: `constants.dart`, iki README; `EVOLUTION.md`
+      ve oturum kaydı · ✅ 2026-08-13
+- [x] P-001.12 — Süitin yakaladığı iki hata düzeltildi: SEC-013'ün türü
+      sözleşmede yoktu (§12'ye `karar` eklendi), yeni kart tarayıcı testinin
+      yüzeyini taşırmıştı · ✅ 2026-08-13
+- [ ] P-001.13 — Tam süit yeşil teyidi + push
