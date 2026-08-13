@@ -717,6 +717,7 @@ Kayıt biçimi `knowledge/` ile aynı (§5), iki ek alanla:
 | | `onlem` | Alınan koruma, sertleştirme, kural |
 | | `acik` | Bilinen zafiyet ya da riskli davranış |
 | | `yapilacak` | Yapılması gereken güvenlik işi |
+| | `karar` | (v1.25) Sonuçları kabul edilmiş güvenlik kararı |
 | `Durum` | `acik` | Henüz kapanmadı — ekranda öne alınır |
 | | `kapali` | Tamamlandı ya da giderildi |
 

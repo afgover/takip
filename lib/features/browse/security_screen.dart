@@ -271,7 +271,13 @@ enum SecurityKind {
   tarama(Icons.search, ['tarama', 'scan']),
   onlem(Icons.verified_user_outlined, ['onlem', 'measure']),
   acik(Icons.report_gmailerrorred_outlined, ['acik', 'hole']),
-  yapilacak(Icons.build_outlined, ['yapilacak', 'todo']);
+  yapilacak(Icons.build_outlined, ['yapilacak', 'todo']),
+
+  /// Sonuçları kabul edilmiş güvenlik kararı (v1.25). Ne tarama, ne önlem, ne
+  /// açık: repoyu public yapmak gibi, geri alınamayan ve sonuçları bilerek
+  /// üstlenilen bir seçim. Dördünden birine sıkıştırmak kaydı yanlış
+  /// etiketler — SEC-013 tam bu yüzden tanınmıyordu.
+  karar(Icons.gavel_outlined, ['karar', 'decision']);
 
   const SecurityKind(this.icon, this.fileValues);
 
@@ -287,6 +293,7 @@ enum SecurityKind {
         onlem => l.secKindMeasure,
         acik => l.secKindHole,
         yapilacak => l.secKindTodo,
+        karar => l.secKindDecision,
       };
 }
 

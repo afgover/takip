@@ -430,6 +430,9 @@ class LTr extends L {
   String get secKindTodo => 'Yapılacak';
 
   @override
+  String get secKindDecision => 'Karar';
+
+  @override
   String get secKindScan => 'Tarama';
 
   @override

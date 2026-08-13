@@ -741,6 +741,7 @@ Record format as in `knowledge/` (§5), with two extra fields:
 | | `measure` | A protection, hardening or rule adopted |
 | | `hole` | A known vulnerability or risky behaviour |
 | | `todo` | Security work that needs doing |
+| | `decision` | (v1.25) A security decision whose consequences are accepted |
 | `Status` | `open` | Not closed yet — pushed to the top of the screen |
 | | `closed` | Finished or fixed |
 

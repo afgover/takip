@@ -31,7 +31,7 @@ void main() {
   testWidgets('kategori ekranı sözleşmedeki başlıkları gösterir (B-040)',
       (tester) async {
     // Varsayılan test ekranına kartlar sığmıyor; grid görünmeyeni çizmez.
-    await tester.binding.setSurfaceSize(const Size(800, 1400));
+    await tester.binding.setSurfaceSize(const Size(800, 1700));
     addTearDown(() => tester.binding.setSurfaceSize(null));
 
     await tester.pumpWidget(app(const BrowseScreen()));
@@ -44,6 +44,7 @@ void main() {
       'Raporlar & Planlar',
       'Bilgi tabanı',
       'Yol haritası',
+      'Görev ağacı',
       'Aktivite',
     ]) {
       expect(find.text(title), findsOneWidget, reason: title);

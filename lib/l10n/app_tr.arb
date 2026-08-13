@@ -289,6 +289,7 @@
   "all": "Tümü",
   "secKindMeasure": "Önlem",
   "secKindTodo": "Yapılacak",
+  "secKindDecision": "Karar",
   "secKindScan": "Tarama",
   "kind": "Tür",
   "edit": "Düzenle",

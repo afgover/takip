@@ -121,6 +121,7 @@
   "all": "All",
   "secKindMeasure": "Measure",
   "secKindTodo": "To do",
+  "secKindDecision": "Decision",
   "secKindScan": "Scan",
   "kind": "Kind",
   "edit": "Edit",

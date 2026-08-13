@@ -433,6 +433,9 @@ class LEn extends L {
   String get secKindTodo => 'To do';
 
   @override
+  String get secKindDecision => 'Decision';
+
+  @override
   String get secKindScan => 'Scan';
 
   @override

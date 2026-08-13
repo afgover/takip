@@ -823,6 +823,12 @@ abstract class L {
   /// **'Yapılacak'**
   String get secKindTodo;
 
+  /// No description provided for @secKindDecision.
+  ///
+  /// In tr, this message translates to:
+  /// **'Karar'**
+  String get secKindDecision;
+
   /// No description provided for @secKindScan.
   ///
   /// In tr, this message translates to:
