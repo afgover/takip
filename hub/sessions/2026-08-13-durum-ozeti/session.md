@@ -87,3 +87,67 @@ B-097 ikisini tek maddede topluyordu, gerçekleşen yalnız repo adımı; public
 repo tek başına debug anahtarlı bir APK'yı kimsenin eline vermiyor, bugün risk
 artmadı. Koşul yeniden yazıldı: SEC-010 kapanmadan **Releases'a APK konmaz**.
 SEC-010 `acik` kalıyor, tetikleyicisi T-010'da (ertelenmiş).
+
+### Kullanıcı
+> devam etmeden önce 2 tane büyük çaplı ekleme yapmak istiyorum,
+> ilki görev ağacı diye bir sayfa oluşturalım, agentın bir plan dahilinde
+> oluşturduğu, (örnek sec 007, D021, yada herhangibir numaralandırma)ile
+> oluşturduğu yada basit bir iş için önerdiği tüm adımlar bu sayfada kayıt
+> altına alınsın, (session kayıtlarında herşey kaydediliyor fakat yapılan iş
+> akışını takip etmek için bu yöntem daha ideal olur diye düşünüyorum)
+> tamamlananlar tamamlandı olarak işaretlenir, yapılcak olanlar kalı, iptal
+> edilenler nedeni ile iptal olarak işaretlenir. sistemin diğer akışını bu
+> yaptığımız değiştirmesin, amaç yapılan işleri maddeler halinde izlemek,
+> gerekirse müdahale etmek,
+> 2. eklenti is yazılar arasında çalışacak bir hyperlink mekanizması kur,
+> agent yada user texte tıklayınca istediği sayfanın istediği bölümüne geçiş
+> yaptıran hyperlinkler oluşturabilsin, agenta gerekli görülen yerlerde bu
+> mekanizmayı kullanacak şekilde teşvik edici bir not ekle yeni sözleşmeye
+
+### Agent — dört karar soruldu, sözleşme 1.25 yazıldı
+
+Uygulamaya bakıldı: `onTapLink` v1.5'ten beri `HubMarkdown`'dan yukarı
+iletiliyor ama **hiçbir ekran uygulamıyor** — yani bugüne kadar uygulamada bir
+bağlantıya dokunmak hiçbir şey yapmıyordu. İkinci madde bu yüzden kod işi.
+
+Kullanıcıya dört soru soruldu ve cevapları: tek kök dosya (`PLAN.md`), kapsam
+eşiği 3+ adım, uygulamada **ikisi de** (ağaç ekranı + tıklanabilir bağlantı),
+çapa **ID tabanlı**.
+
+**Bir düzeltme yapıldı:** çapa sorusunun seçenek metninde "GitHub'da çalışması
+için başlıkların ID ile başlaması yeter" yazılmıştı; yanlış. GitHub çapayı
+başlığın **tamamından** üretiyor, yani `#SEC-010` orada bölüme atlamıyor.
+Kullanıcıya söylendi ve sınır sözleşmeye açıkça yazıldı — ölçmeden "çalışıyor"
+dememe kuralının aynısı.
+
+**Sözleşme 1.25 (§14 + §15), iki dil varyantında.** §14 görev ağacı: şema,
+3+ adım eşiği, "diğer akışların yerine geçmez, onlara bağlantı verir" sınırı,
+nedensiz iptal yasağı, **dosyanın opsiyonel olması**. §15 bağlantılar: ID
+tabanlı çapa, GitHub sınırı, agent'ı teşvik eden "ne zaman bağlantı verilir"
+kuralı (ilk geçiş bağlanır, tekrarları düz kalır). Protokole 7b/7c maddeleri
+eklendi.
+
+Bu, [R-008](knowledge/rules.md#R-008)'in ilk sınavıydı ve ikisi de **eklemeli**
+çıktı: `PLAN.md` yoksa hub sözleşmeye aykırı değil, eksik bağlantı ihlal değil.
+Eski hub'lar dokunulmadan geçerli.
+
+**Uygulama:** `lib/hub/plan.dart` (ayrıştırıcı — girintiden ağaç, üstü çizili +
+gerekçe = iptal, alan adları iki dilde), `lib/hub/hub_link.dart` (bağlantı
+çözümleme + çapa satırı bulma), `lib/features/browse/plan_screen.dart` (açık
+planlar üstte, kendiliğinden açık, durum filtresi), `hub_link_nav.dart` ve
+`DocumentScreen`'e çapa desteği. Bağlantı dokunuşu beş ekrana bağlandı: belge,
+yol haritası, güvenlik, bilgi tabanı, görev detayı.
+
+Çapaya kaydırma için belge **çapa satırında ikiye bölünüp** aradaki işarete
+kaydırılıyor. Alternatif, çizilmiş metinde bir satırın konumunu hesaplamaktı —
+markdown'ın kendi sarma kurallarını uygulamadan tahmin etmek demekti. Bölme
+yalnız satır başındaki yapılarda yapılıyor; girintili bir çapa bulunursa
+kaydırma yapılmıyor, belge baştan açılıyor.
+
+İlk plan olarak [P-001](../../PLAN.md) yazıldı: bu işin kendisi.
+
+Yolda çıkan ders [L-046](../../knowledge/lessons.md#L-046): `onTapLink` v1.5'te
+açılmış, yorumunda "Faz 4'te bağlanacak" yazıyordu ve hiç bağlanmadı — testi
+bile vardı (geri çağrının çağrıldığını doğruluyordu), ama kimsenin onu
+geçirmediğini gösteren bir şey yoktu. Yarım bırakılan uzantı noktası kod
+okuyana "destekleniyor" der, kullanıcıya hiçbir şey demez.
