@@ -728,3 +728,29 @@ Biçim: `SYSTEM.md` §5.
   madde olarak yazılır. Kod yorumu hatırlatıcı değildir; `BACKLOG.md` odur.
   Ölçüsü de basit: "bu parametreyi kim geçiriyor" diye grep'lemek beş saniye,
   ve cevabı boşsa özellik yok demektir.
+
+## L-047 — Widget testinde sahte zamanda başlayan gerçek async iş hiç bitmez
+- **Tarih:** 2026-08-13
+- **Kaynak:** [S-2026-08-13-durum-ozeti](../sessions/2026-08-13-durum-ozeti/session.md), [B-130](../BACKLOG.md#B-130)
+- **Açıklama:** `testWidgets` gövdesi **sahte zaman** zonunda koşar; gerçek
+  async işi (ağ, `SharedPreferences`) ancak `runAsync` ilerletir. Bunu bilmek
+  yetmiyor — asıl tuzak, işin **nerede başladığı**. Ekran çizilirken bir
+  provider'ın gövdesi sahte zonda başlıyorsa, sonradan `runAsync` içinden
+  beklemek onu kurtarmaz: hesap orada asılı kalır, sonuç "sonsuza kadar
+  yükleniyor" olarak **önbelleğe yerleşir** ve `.future` o ölü completer'a
+  bağlanır. Sonraki her okuma, gerçek zonda olsa bile, aynı ölü sonucu bekler.
+  Belirti yanıltıcıydı: aynı fonksiyonlar (`pendingFromStore`, `listPending`)
+  `runAsync` içinden **tek tek çağrılınca sorunsuz** bitiyordu; yalnız
+  provider üzerinden çağrılınca bitmiyordu.
+  İkinci tuzak aynı testte: `pumpAndSettle`, ekranda animasyon kalmayana kadar
+  pompalar — yükleme göstergeleri **sonsuz** döndüğü için o koşul hiç sağlanmaz
+  ve komut kendi 10 dakikalık sınırına kadar asılır. Zaman aşımı mesajı testin
+  hangi satırda olduğunu söylemez; iki tuzak üst üste binince kırığın yeri
+  tamamen görünmez olur.
+  **Genel kural:** (1) sahte zonda başlamış bir hesabı beklemek yerine
+  **geçersiz kıl ve `runAsync` içinde yeniden başlat**; (2) beklemeyi
+  `.future` yerine **duruma** bağla; (3) yükleme göstergesi çıkabilen hiçbir
+  akışta `pumpAndSettle` kullanma, sınırlı kare pompala.
+  Ölçü: teşhis, aşama aşama `debugPrint` koyup takılmanın **hangi await'te**
+  olduğunu görerek yapıldı — 10 dakikalık zaman aşımına bakarak tahmin etmek
+  üç yanlış hipotez ürettirdi.

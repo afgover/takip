@@ -161,6 +161,42 @@ muhtemel `pumpAndSettle`'ın sonsuz animasyonla buluşması (gönder düğmesind
 `CircularProgressIndicator`). [B-130](../../BACKLOG.md#B-130) olarak yazıldı,
 düzeltilmedi — kullanıcının işi bu değildi.
 
+### Kullanıcı
+> buraya kadarki versiyonu apk uretip telefona kurarmisin
+
+### Agent — cihaza kuruldu
+`tool/install.sh` (release, `adb install -r`, kaldırma yok — L-014):
+"Success", veri korundu. APK 56.1 MB, cihaz `R5CW71GRKPB`. `git diff lib/` boş,
+yani kurulan yapı push'lanmış koddan — sözleşme 1.25'in uygulama tarafı
+(görev ağacı ekranı + bağlantı gezinmesi) cihazda. İmza hatırlatması yine
+çıktı: yapı hâlâ debug anahtarıyla imzalı (SEC-010).
+
+### Kullanıcı
+> devam et b-130 u bitir
+
+### Agent — B-130 kapandı, kök neden ilk tahminden derinmiş
+
+**İlk teşhis eksikti.** `pumpAndSettle` gerçekten asılıyor (sonsuz dönen
+gösterge varken hiç oturmuyor) ama onu düzeltmek yetmedi; test yine 10 dakika
+takıldı. Aşama aşama `debugPrint` koyarak takılmanın yeri bulundu:
+`pollAndSettle` → `allPendingTasksProvider`.
+
+**Kök neden:** provider'ın gövdesi ekran çizilirken testin **sahte zaman**
+zonunda başlıyor. Gerçek async işe (yerel kopya + ağ) dayandığı için orada hiç
+bitmiyor; sonuç "sonsuza kadar yükleniyor" olarak **önbelleğe yerleşiyor** ve
+`.future` o ölü completer'a bağlanıyor. Belirti yanıltıcıydı: aynı
+fonksiyonlar (`pendingFromStore`, `listPending`) `runAsync` içinden tek tek
+çağrılınca sorunsuz bitiyordu — yalnız provider üzerinden çağrılınca değil.
+
+**Düzeltme** (yalnız test tarafı, uygulama kodu değişmedi): `runAsync` içinde
+provider'ı geçersiz kıl ve **durumu** bekle (`.future`yi değil);
+`pumpAndSettle` yerine sınırlı `settle`. İki test 20 dakika zaman aşımı yerine
+**2 saniyede** geçiyor. Ders [L-047](../../knowledge/lessons.md#L-047).
+
+Teşhis üç yanlış hipotez ürettikten sonra ölçümle çözüldü; plan işin ortasında
+[P-002](../../PLAN.md) olarak yazıldı ve bunun geriye dönük yazıldığı kaydın
+kendisinde belirtildi.
+
 Yolda çıkan ders [L-046](../../knowledge/lessons.md#L-046): `onTapLink` v1.5'te
 açılmış, yorumunda "Faz 4'te bağlanacak" yazıyordu ve hiç bağlanmadı — testi
 bile vardı (geri çağrının çağrıldığını doğruluyordu), ama kimsenin onu

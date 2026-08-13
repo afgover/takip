@@ -3,6 +3,33 @@
 Çok adımlı işlerin adımları ve durumu. Biçim ve kapsam:
 [`SYSTEM.md` §14](SYSTEM.md#14). Yeni plan **en üste** yazılır.
 
+## P-002 — B-130: entegrasyon testlerinin zaman aşımı
+- **Tarih:** 2026-08-13
+- **Kaynak:** [S-2026-08-13-durum-ozeti](sessions/2026-08-13-durum-ozeti/session.md)
+- **Durum:** tamamlandi
+- **İlgili:** [B-130](BACKLOG.md#B-130), [L-047](knowledge/lessons.md#L-047)
+
+> Bu plan işin **ortasında** yazıldı: teşhis birkaç adım sürünce çok adımlı bir
+> işe dönüştüğü anlaşıldı (sözleşme §14 planı önce ister). Adımlar geriye dönük
+> uydurulmadı, gerçekte koşulan sırayla yazıldı.
+
+- [x] P-002.1 — Kırığın bu oturumdan gelmediğini ölç: oturum öncesi commit ayrı
+      worktree'de koşuldu, aynı iki test aynı şekilde düştü · ✅ 2026-08-13
+- [x] P-002.2 — `pumpAndSettle` teşhisi: sonsuz dönen gösterge varken hiç
+      oturmuyor; yerine sınırlı `settle` · ✅ 2026-08-13
+- [x] P-002.3 — Asıl takılmayı daralt: aşama işaretleriyle `pollAndSettle`
+      içindeki `allPendingTasksProvider` bulundu · ✅ 2026-08-13
+- [x] P-002.4 — Kök neden: provider gövdesi ekran çizilirken **sahte zaman
+      zonunda** başlıyor ve gerçek async işe dayandığı için hiç bitmiyor;
+      `.future` de o ölü completer'a bağlı kalıyor · ✅ 2026-08-13
+- [x] P-002.5 — Düzeltme: `runAsync` içinde geçersiz kıl + durumu bekle ·
+      ✅ 2026-08-13; iki test 20 dakika zaman aşımı yerine 2 saniyede geçiyor
+- [x] P-002.6 — Teşhis kalıntılarını temizle (geçici test, izleme satırları,
+      uygulama kodundaki geçici çıktılar) · ✅ 2026-08-13
+- [x] P-002.7 — Ders kaydı, backlog işareti, tam süit ve push · ✅ 2026-08-13;
+      **533 test, hepsi geçti** (26 saniye — eskiden 20+ dakika sürüp 2 kırıkla
+      bitiyordu)
+
 ## P-001 — Görev ağacı ve belgeler arası bağlantı mekanizması
 - **Tarih:** 2026-08-13
 - **Kaynak:** [S-2026-08-13-durum-ozeti](sessions/2026-08-13-durum-ozeti/session.md)

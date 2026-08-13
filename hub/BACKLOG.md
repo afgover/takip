@@ -545,8 +545,9 @@ başlığına ✅ ve tarih yazılır.
       başlığın tamamından üretiyor) — sınır sözleşmeye yazıldı.
       `onTapLink` v1.5'ten beri bağlıydı ama hiçbir ekran uygulamıyordu;
       bağlantılar uygulamada ölü metindi
-- [ ] B-130 · (agent) `task_lifecycle_test`'in iki testi 10 dakika zaman aşımına
-      düşüyor — **bu oturumda bulundu, kaynağı bu oturum değil.** Ölçüldü:
+- [x] B-130 · (agent) `task_lifecycle_test`'in iki testi 10 dakika zaman aşımına
+      düşüyordu — ✅ 2026-08-13 · → [P-002](PLAN.md), [L-047](knowledge/lessons.md#L-047).
+      **Bu oturumda bulundu, kaynağı bu oturum değildi.** Ölçüldü:
       oturum öncesi commit'te (`d56798b`) ayrı bir worktree'de aynı iki test
       aynı şekilde takılıyor, yani sözleşme 1.25 işiyle ilgisi yok.
       Kök neden kuvvetle muhtemel `pumpAndSettle`: gönder düğmesine basınca
@@ -558,8 +559,15 @@ başlığına ✅ ve tarih yazılır.
       adımında düz `pumpAndSettle` kalmış.
       Yapılacak: gönderim sonrası bekleme `runAsync` + sınırlı `pump`'a
       çevrilir; sonsuz animasyon varken `pumpAndSettle` kullanılmaz.
-      Süitin geri kalanı yeşil (529 geçti, 4 kırık: ikisi bu, ikisi bu oturumda
-      düzeltildi)
+      Kök neden ilk tahminden **daha derindi**: `pumpAndSettle` gerçekten
+      asılıyor (sonsuz dönen gösterge varken hiç oturmuyor) ama asıl takılma
+      `allPendingTasksProvider`daydı — gövdesi ekran çizilirken testin *sahte
+      zaman* zonunda başlıyor, gerçek async işe (yerel kopya + ağ) dayandığı
+      için orada hiç bitmiyor ve sonuç "sonsuza kadar yükleniyor" olarak
+      önbelleğe yerleşiyor; `.future` de o ölü completer'a bağlı kalıyor.
+      Düzeltme: `runAsync` içinde geçersiz kıl + **durumu** bekle, `pumpAndSettle`
+      yerine sınırlı `settle`. İki test 20 dakika zaman aşımı yerine 2 saniyede
+      geçiyor. Uygulama kodu değişmedi — kırık testin kendisindeydi
 - [ ] B-110 · (agent) Çoklu kullanıcı — Katman 3+4: `assignee` yazımı ve
       paylaşılan dosya yazım kuralları. Sözleşme 1.15 alanı tanımladı ama
       uygulama/protokol tarafı **ikinci kişi geldiğinde** yapılacak;
