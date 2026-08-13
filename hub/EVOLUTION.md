@@ -683,3 +683,24 @@ toplanır ve gerekiyorsa Faz 6 maddelerini (B-060…B-064) yeniden sıralar.
   kapatılıyordu (goverco L-009). Doktrin katmanı (yabancı kayda dokunmama,
   dosya adıyla doğrulama, §10 yükseltme yolu) hasarı önledi; yapısal boşluğu
   bu sürüm kapattı.
+- **Sözleşme 1.25 (2026-08-13):** İki ekleme. **`PLAN.md` — görev ağacı (§14):**
+  çok adımlı işlerin adımları, durumuyla birlikte tek dosyada. Bugüne kadar bu
+  bilgi oturum kaydının düzyazısında duruyordu; "iş şu an hangi adımında"
+  sorusu, cevabı bilen tek yerin bütününü okumayı gerektiriyordu. Eşik bilinçli
+  (3+ adım) — her mikro adımı yazan bir ağaçta müdahale edilmesi gereken madde
+  görünmez olur; ağacın değeri seyrekliğinde. Ağaç diğer akışların yerine
+  geçmiyor, onlara **bağlantı veriyor**: aynı bilgi iki yerde tutulmuyor.
+  **Bağlantılar (§15):** kayıtlar arası ID atıfları artık
+  `[SEC-010](SECURITY.md#SEC-010)` biçiminde yazılıyor ve uygulamada
+  tıklanabiliyor. Çapa **ID**, başlık metni değil: başlıklar yeniden yazılır,
+  ID'ler yazılmaz. GitHub'ın çapayı başlığın tamamından üretmesi yüzünden orada
+  bölüme kaydırma olmuyor (dosya doğru açılıyor); sınır sözleşmeye açıkça
+  yazıldı — ölçülmeden "çalışıyor" denmemesi kuralının aynısı.
+  Uygulama tarafı aynı sürümde bitti: görev ağacı ekranı (açık planlar üstte,
+  kendiliğinden açık) ve hub içi bağlantı gezinmesi (belge çapada ikiye
+  bölünüp aradaki işarete kaydırılıyor). İlk plan olarak
+  [P-001](PLAN.md) yazıldı: bu işin kendisi.
+  Bu, [R-008](knowledge/rules.md#R-008)'in ilk sınavıydı — repo public olduğu
+  için sözleşme artık kırıcı değişikliğe kapalı. İkisi de eklemeli çıktı:
+  `PLAN.md` **opsiyonel** dosya (yokluğu hata değil), bağlantı kuralı eksik
+  bağlantıyı ihlal saymıyor. Eski hub'lar dokunulmadan geçerli kalıyor.
