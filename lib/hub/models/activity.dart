@@ -15,6 +15,9 @@ enum ActivityKind {
   /// Güvenlik logu kaydı (`SECURITY.md`, sözleşme 1.10).
   security('Güvenlik'),
 
+  /// Görev ağacı (`PLAN.md`, sözleşme 1.25 §14).
+  plan('Plan'),
+
   /// §8 önekine uymayan commit. K-012'den beri kod ve hub aynı repoda
   /// olduğu için akışta uygulama commit'leri de görünür; ayırt edilebilsin
   /// diye ayrı tür.
@@ -105,6 +108,7 @@ class ActivityEntry {
     'system': ActivityKind.system,
     'note': ActivityKind.note,
     'security': ActivityKind.security,
+    'plan': ActivityKind.plan,
   };
 
   /// Sözleşmedeki kalıpları gündelik Türkçeye çevirir. Tanımadığı bir kalıpta
@@ -138,6 +142,7 @@ class ActivityEntry {
       case ActivityKind.system:
       case ActivityKind.note:
       case ActivityKind.security:
+      case ActivityKind.plan:
       case ActivityKind.code:
         return rest;
     }

@@ -93,7 +93,7 @@ void main() {
 
     for (final prefix in ['task', 'session', 'artifact', 'backlog',
                           'evolution', 'knowledge', 'note', 'security',
-                          'system']) {
+                          'plan', 'system']) {
       test('$prefix — sözleşmede var ve uygulama tanıyor', () {
         expect(prefixes, contains(prefix),
             reason: 'önek sözleşme §8\'de listelenmeli');

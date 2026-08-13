@@ -8,6 +8,7 @@ import '../../hub/models/hub_doc.dart';
 import '../../l10n/app_localizations.dart';
 import '../common/annotated_document.dart';
 import '../common/hub_error_view.dart';
+import '../common/hub_link_nav.dart';
 
 /// Güvenlik logu (sözleşme 1.10 §12): taramalar, alınan önlemler, bilinen
 /// açıklar ve yapılacak güvenlik işleri.
@@ -224,6 +225,11 @@ class _SecurityTile extends StatelessWidget {
           child: AnnotatedDocument(
             data: entry.body,
             sourcePath: Hub.securityFile,
+            onTapLink: (_, href, __) => openHubLink(
+              context,
+              href: href,
+              fromPath: Hub.securityFile,
+            ),
           ),
         ),
       ],

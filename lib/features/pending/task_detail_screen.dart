@@ -11,6 +11,7 @@ import '../../hub/task_repo.dart';
 import '../../l10n/app_localizations.dart';
 import '../common/annotated_document.dart';
 import '../common/hub_error_view.dart';
+import '../common/hub_link_nav.dart';
 import 'pending_screen.dart' show TaskStatusChip;
 
 /// Görev detayı — dosya ancak bu ekran açılınca indirilir (B-031).
@@ -116,6 +117,15 @@ class _TaskBody extends StatelessWidget {
           data: task.body,
           sourcePath: task.path,
           padding: const EdgeInsets.only(top: 8),
+          // Görev gövdesi plana, backlog maddesine ya da güvenlik kaydına
+          // bağlantı verebiliyor; hedef **görevin kendi reposunda** aranır —
+          // bekleyenler listesi birden çok hub'ı birleştiriyor (L-031).
+          onTapLink: (_, href, __) => openHubLink(
+            context,
+            href: href,
+            fromPath: task.path,
+            repoSlug: summary.repoSlug,
+          ),
         ),
       ],
     );

@@ -15,6 +15,7 @@
   "catArtifacts": "Raporlar & Planlar",
   "catKnowledge": "Bilgi tabanı",
   "catRoadmap": "Yol haritası",
+  "catPlan": "Görev ağacı",
   "catActivity": "Aktivite",
   "catContract": "Sözleşme",
   "catSourceAllRepos": "tasks/ · notes/",
@@ -526,6 +527,26 @@
       }
     }
   },
+  "planEmptyTitle": "Görev ağacı boş",
+  "planEmptySubtitle": "Agent çok adımlı bir plan yazdığında adımları burada görünür (sözleşme §14).",
+  "planFilterAll": "Tümü",
+  "planFilterEmptyTitle": "Bu durumda plan yok",
+  "planFilterEmptySubtitle": "Filtreyi kaldırıp tümünü görebilirsin.",
+  "planStatusOpen": "Açık",
+  "planStatusCompleted": "Tamamlandı",
+  "planStatusCancelled": "İptal",
+  "planProgress": "{done}/{total} adım",
+  "@planProgress": {
+    "placeholders": {
+      "done": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "linkOutsideHub": "Bu bağlantı hub dışına gidiyor; uygulama yalnız hub belgelerini açar.",
   "secFilterEmptyTitle": "Bu türde kayıt yok",
   "secFilterEmptySubtitle": "Filtreyi kaldırıp tümünü görebilirsin.",
   "secFilterAll": "Tümü",

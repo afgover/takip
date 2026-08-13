@@ -187,6 +187,12 @@ abstract class L {
   /// **'Yol haritası'**
   String get catRoadmap;
 
+  /// No description provided for @catPlan.
+  ///
+  /// In tr, this message translates to:
+  /// **'Görev ağacı'**
+  String get catPlan;
+
   /// No description provided for @catActivity.
   ///
   /// In tr, this message translates to:
@@ -1386,6 +1392,66 @@ abstract class L {
   /// In tr, this message translates to:
   /// **'{count} açık kayıt'**
   String secOpenCount(int count);
+
+  /// No description provided for @planEmptyTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Görev ağacı boş'**
+  String get planEmptyTitle;
+
+  /// No description provided for @planEmptySubtitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Agent çok adımlı bir plan yazdığında adımları burada görünür (sözleşme §14).'**
+  String get planEmptySubtitle;
+
+  /// No description provided for @planFilterAll.
+  ///
+  /// In tr, this message translates to:
+  /// **'Tümü'**
+  String get planFilterAll;
+
+  /// No description provided for @planFilterEmptyTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bu durumda plan yok'**
+  String get planFilterEmptyTitle;
+
+  /// No description provided for @planFilterEmptySubtitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Filtreyi kaldırıp tümünü görebilirsin.'**
+  String get planFilterEmptySubtitle;
+
+  /// No description provided for @planStatusOpen.
+  ///
+  /// In tr, this message translates to:
+  /// **'Açık'**
+  String get planStatusOpen;
+
+  /// No description provided for @planStatusCompleted.
+  ///
+  /// In tr, this message translates to:
+  /// **'Tamamlandı'**
+  String get planStatusCompleted;
+
+  /// No description provided for @planStatusCancelled.
+  ///
+  /// In tr, this message translates to:
+  /// **'İptal'**
+  String get planStatusCancelled;
+
+  /// No description provided for @planProgress.
+  ///
+  /// In tr, this message translates to:
+  /// **'{done}/{total} adım'**
+  String planProgress(int done, int total);
+
+  /// No description provided for @linkOutsideHub.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bu bağlantı hub dışına gidiyor; uygulama yalnız hub belgelerini açar.'**
+  String get linkOutsideHub;
 
   /// No description provided for @secFilterEmptyTitle.
   ///

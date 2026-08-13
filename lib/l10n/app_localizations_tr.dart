@@ -54,6 +54,9 @@ class LTr extends L {
   String get catRoadmap => 'Yol haritası';
 
   @override
+  String get catPlan => 'Görev ağacı';
+
+  @override
   String get catActivity => 'Aktivite';
 
   @override
@@ -761,6 +764,41 @@ class LTr extends L {
   String secOpenCount(int count) {
     return '$count açık kayıt';
   }
+
+  @override
+  String get planEmptyTitle => 'Görev ağacı boş';
+
+  @override
+  String get planEmptySubtitle =>
+      'Agent çok adımlı bir plan yazdığında adımları burada görünür (sözleşme §14).';
+
+  @override
+  String get planFilterAll => 'Tümü';
+
+  @override
+  String get planFilterEmptyTitle => 'Bu durumda plan yok';
+
+  @override
+  String get planFilterEmptySubtitle =>
+      'Filtreyi kaldırıp tümünü görebilirsin.';
+
+  @override
+  String get planStatusOpen => 'Açık';
+
+  @override
+  String get planStatusCompleted => 'Tamamlandı';
+
+  @override
+  String get planStatusCancelled => 'İptal';
+
+  @override
+  String planProgress(int done, int total) {
+    return '$done/$total adım';
+  }
+
+  @override
+  String get linkOutsideHub =>
+      'Bu bağlantı hub dışına gidiyor; uygulama yalnız hub belgelerini açar.';
 
   @override
   String get secFilterEmptyTitle => 'Bu türde kayıt yok';

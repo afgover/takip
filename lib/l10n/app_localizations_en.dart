@@ -54,6 +54,9 @@ class LEn extends L {
   String get catRoadmap => 'Roadmap';
 
   @override
+  String get catPlan => 'Task tree';
+
+  @override
   String get catActivity => 'Activity';
 
   @override
@@ -767,6 +770,40 @@ class LEn extends L {
   String secOpenCount(int count) {
     return '$count open records';
   }
+
+  @override
+  String get planEmptyTitle => 'The task tree is empty';
+
+  @override
+  String get planEmptySubtitle =>
+      'When the agent writes a multi-step plan, its steps appear here (contract §14).';
+
+  @override
+  String get planFilterAll => 'All';
+
+  @override
+  String get planFilterEmptyTitle => 'No plans in this state';
+
+  @override
+  String get planFilterEmptySubtitle => 'Clear the filter to see all of them.';
+
+  @override
+  String get planStatusOpen => 'Open';
+
+  @override
+  String get planStatusCompleted => 'Completed';
+
+  @override
+  String get planStatusCancelled => 'Cancelled';
+
+  @override
+  String planProgress(int done, int total) {
+    return '$done/$total steps';
+  }
+
+  @override
+  String get linkOutsideHub =>
+      'This link points outside the hub; the app only opens hub documents.';
 
   @override
   String get secFilterEmptyTitle => 'No records of this kind';

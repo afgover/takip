@@ -15,6 +15,7 @@
   "catArtifacts": "Reports & plans",
   "catKnowledge": "Knowledge base",
   "catRoadmap": "Roadmap",
+  "catPlan": "Task tree",
   "catActivity": "Activity",
   "catContract": "Contract",
   "catSourceAllRepos": "tasks/ · notes/",
@@ -313,6 +314,26 @@
       }
     }
   },
+  "planEmptyTitle": "The task tree is empty",
+  "planEmptySubtitle": "When the agent writes a multi-step plan, its steps appear here (contract §14).",
+  "planFilterAll": "All",
+  "planFilterEmptyTitle": "No plans in this state",
+  "planFilterEmptySubtitle": "Clear the filter to see all of them.",
+  "planStatusOpen": "Open",
+  "planStatusCompleted": "Completed",
+  "planStatusCancelled": "Cancelled",
+  "planProgress": "{done}/{total} steps",
+  "@planProgress": {
+    "placeholders": {
+      "done": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "linkOutsideHub": "This link points outside the hub; the app only opens hub documents.",
   "secFilterEmptyTitle": "No records of this kind",
   "secFilterEmptySubtitle": "Clear the filter to see everything.",
   "secFilterAll": "All",

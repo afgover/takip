@@ -5,6 +5,7 @@ import '../../hub/browse_repo.dart';
 import '../../hub/models/hub_doc.dart';
 import '../common/annotated_document.dart';
 import '../common/hub_error_view.dart';
+import '../common/hub_link_nav.dart';
 import '../../l10n/app_localizations.dart';
 
 /// Bilgi tabanı (B-043): kurallar, skiller, dersler.
@@ -108,6 +109,8 @@ class _EntryTile extends StatelessWidget {
           child: AnnotatedDocument(
             data: entry.body,
             sourcePath: sourcePath,
+            onTapLink: (_, href, __) =>
+                openHubLink(context, href: href, fromPath: sourcePath),
           ),
         ),
       ],

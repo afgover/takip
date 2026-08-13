@@ -9,6 +9,7 @@ import 'annotations_screen.dart';
 import 'doc_list_screen.dart';
 import 'document_screen.dart';
 import 'knowledge_screen.dart';
+import 'plan_screen.dart';
 import 'roadmap_screen.dart';
 import 'security_screen.dart';
 
@@ -71,6 +72,15 @@ class BrowseScreen extends StatelessWidget {
         Icons.school,
         'knowledge/',
         (_) => const KnowledgeScreen(),
+      ),
+      // Görev ağacı yol haritasının yanında: ikisi de "ne yapılacak"
+      // sorusunun cevabı, farkı zaman ölçeği — backlog aylara, ağaç bugüne
+      // bakar (sözleşme §14).
+      _Category(
+        l.catPlan,
+        Icons.account_tree_outlined,
+        'PLAN.md',
+        (_) => const PlanScreen(),
       ),
       _Category(
         l.catRoadmap,
