@@ -133,6 +133,28 @@ void main() {
         child: testApp(child),
       );
 
+  /// Ekranı oturt — **`pumpAndSettle` yerine** (B-130).
+  ///
+  /// `pumpAndSettle`, ekranda çizilmiş **hiçbir animasyon kalmayana** kadar
+  /// kare pompalar. Bu uygulamada o koşul hiç sağlanmayabiliyor: yükleme ve
+  /// gönderim göstergeleri (`CircularProgressIndicator`) **sonsuz** döner.
+  /// Böyle bir gösterge ekrandayken `pumpAndSettle` kendi 10 dakikalık
+  /// sınırına kadar döner ve test zaman aşımıyla düşer — bu dosyadaki iki test
+  /// tam olarak buradan kırılıyordu.
+  ///
+  /// Bunun yerine **sınırlı** sayıda kare pompalanıyor ve araya `runAsync`
+  /// giriyor: sahte saat ilerlesin (zamanlayıcılar ateşlensin) ve gerçek async
+  /// iş (dio, `SharedPreferences`) da ilerlesin. İkisinden biri eksik olduğunda
+  /// ekran hiç tazelenmiyor.
+  Future<void> settle(WidgetTester tester, {int frames = 12}) async {
+    for (var i = 0; i < frames; i++) {
+      await tester.runAsync(
+        () => Future<void>.delayed(const Duration(milliseconds: 5)),
+      );
+      await tester.pump(const Duration(milliseconds: 16));
+    }
+  }
+
   /// Yoklamayı koştur **ve listenin yeniden hesaplanmasını bekle**.
   ///
   /// `pumpAndSettle` yetmiyor: yalnız kare pompalar, gerçek async işi
@@ -145,9 +167,47 @@ void main() {
   Future<void> pollAndSettle(WidgetTester tester) async {
     await tester.runAsync(() async {
       await container.read(hubWatcherProvider.notifier).checkNow();
-      await container.read(allPendingTasksProvider.future);
+
+      // **Hesabı burada yeniden başlat.** Ekran çizilirken provider'ın gövdesi
+      // testin *sahte zaman* zonunda çalışmaya başlıyor; gerçek async işe
+      // (yerel kopya + ağ) dayandığı için orada hiç bitmiyor. Geçersiz kılmak
+      // o hesabı atar, `runAsync` içindeki okuma gerçek zonda yeniden başlatır.
+      container.invalidate(allPendingTasksProvider);
+
+      // Bekleme `.future` ile değil **durumla**: `.future`, sahte zonda
+      // başlayıp hiç bitmeyen ilk hesabın completer'ına bağlı kalıyor ve
+      // yeni hesap bitse bile dönmüyordu. Durum ise her yeniden hesapta
+      // güncelleniyor.
+      for (var i = 0; i < 200; i++) {
+        final state = container.read(allPendingTasksProvider);
+        if (!state.isLoading) return;
+        await Future<void>.delayed(const Duration(milliseconds: 20));
+      }
+      fail('bekleyenler listesi 4 saniyede hesaplanmadı');
     });
-    await tester.pumpAndSettle();
+    await settle(tester);
+  }
+
+  /// Gönder düğmesine bas ve gönderim **bitene kadar** bekle.
+  ///
+  /// Bekleme sabit bir süreye değil **durumun kendisine** bağlı: gönderim
+  /// sürerken düğmedeki gösterge dönüyor, kaybolduğu an iş bitmiştir. Sabit
+  /// süre beklemek testi makinenin hızına bağlar (L-045'in yarıştan çıkan
+  /// dersi).
+  Future<void> submitAndSettle(WidgetTester tester) async {
+    await tester.tap(find.byKey(AddTaskScreen.submitKey));
+    await tester.pump(); // _busy = true — gönderim başladı
+
+    for (var i = 0; i < 300; i++) {
+      await tester.runAsync(
+        () => Future<void>.delayed(const Duration(milliseconds: 10)),
+      );
+      // `pump()` **süreyle** çağrılıyor: süresiz pompalama sahte saati hiç
+      // ilerletmez ve gönderim yolundaki zamanlayıcılar hiç ateşlenmez.
+      await tester.pump(const Duration(milliseconds: 10));
+      if (find.byType(CircularProgressIndicator).evaluate().isEmpty) return;
+    }
+    fail('gönderim 3 saniyede bitmedi — gösterge hâlâ dönüyor');
   }
 
   testWidgets('görev app\'ten eklenir, agent tamamlar, app\'te görünür',
@@ -162,8 +222,7 @@ void main() {
       find.byKey(AddTaskScreen.descriptionFieldKey),
       'Süt, ekmek, yumurta.',
     );
-    await tester.tap(find.byKey(AddTaskScreen.submitKey));
-    await tester.pumpAndSettle();
+    await submitAndSettle(tester);
 
     final written = hub.files.entries
         .firstWhere((e) => e.key.endsWith('-market-listesi.md'));
@@ -257,8 +316,7 @@ void main() {
       find.byKey(AddTaskScreen.titleFieldKey),
       'Fatura ödemesi',
     );
-    await tester.tap(find.byKey(AddTaskScreen.submitKey));
-    await tester.pumpAndSettle();
+    await submitAndSettle(tester);
 
     expect(find.textContaining('kuyruğa alındı'), findsOneWidget);
     expect(hub.files.keys.where((k) => k.contains('fatura')), isEmpty);
