@@ -53,3 +53,37 @@ kapanışı. Ondan önceki iki commit aynı işin kendisi: `391ef3c` B-126 düze
   (public + store), B-103 (SEC-012 token kapsamı), B-101 (SEC-010 imza),
   B-110 (çoklu kullanıcı Katman 3+4). Faz 6 (B-060…B-064) bilinçli beklemede.
 - `EVOLUTION.md`: Aşama 4 (Günlük Kullanım) aktif.
+
+### Kullanıcı
+> repo artık public
+
+### Agent — T-011 kapandı, §10 zinciri ölçüldü
+
+**Doğrulama önce, kayıt sonra** (T-011'in kendi koşulu): iki bağımsız ölçüm —
+`api.github.com/repos/afgover/takip` → `"private": false`, ve §10'un kendi
+komutu `curl -fsSL .../main/hub/SYSTEM.md` → 200, 38323 bayt, yerel kopyayla
+**fark yok**. Aynı komut bu oturumun açılışında, dakikalar önce 404 dönüyordu;
+açılış kaydına "kontrol koşmadı" diye yazılmıştı. Diğer hub'ların sözleşmeyi
+ana kopyadan kontrol etmesi artık gerçekten çalışıyor.
+
+Yazılanlar:
+- **T-011** `waiting/` → `done/`; `result` dolduruldu, ölçüm notu eklendi.
+- **B-097** işaretlendi. Maddenin özgün metni silinmedi, `[x]` kaydın altına
+  "karar verilmeden önce yazılmıştı" etiketiyle taşındı.
+- **SEC-013** (`karar`, `kapali`): görünürlük değişikliğinin veri sonuçları —
+  hub içeriğinin tamamı görünür; 2026-08-06 öncesi 172 commit'te gerçek
+  e-posta halka açık (geçmiş bilinçli olarak yeniden yazılmadı); üç açık
+  güvenlik kaydı da yayımlandı (bilinçli, K-032); geri dönüşü yok sayılır.
+  Ayrıca bundan sonra değişen şey: public repoda yanlışlıkla commit'lenen bir
+  sır **geri alınamaz** — private'ta geçmiş temizlenebiliyordu.
+- **R-008**: sözleşmede kırıcı değişiklik yapma özgürlüğü bitti. Yeni alanlar
+  isteğe bağlı girer, zorunluluk §13 geçici maddesiyle geçilir, sürüm her
+  değişiklikte artar.
+
+**Düzeltilen bağ (SEC-010):** kayıt "B-097 kapanmadan bu kayıt kapanmalı"
+diyordu, yani repoyu public yapmayı imza anahtarına bağlıyordu. Bağ yanlış
+hedefteydi: tehlikeli olan görünürlük değil **APK'nın bu makineden çıkması**.
+B-097 ikisini tek maddede topluyordu, gerçekleşen yalnız repo adımı; public
+repo tek başına debug anahtarlı bir APK'yı kimsenin eline vermiyor, bugün risk
+artmadı. Koşul yeniden yazıldı: SEC-010 kapanmadan **Releases'a APK konmaz**.
+SEC-010 `acik` kalıyor, tetikleyicisi T-010'da (ertelenmiş).

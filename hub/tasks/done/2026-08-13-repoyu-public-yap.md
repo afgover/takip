@@ -3,13 +3,13 @@ id: T-011
 title: "takip reposunu public yap"
 created_by: agent
 created: "2026-08-06T03:00:00Z"
-updated: "2026-08-06T03:00:00Z"
+updated: "2026-08-13T00:00:00Z"
 priority: normal
 category: gorev
 tags: [dagitim, karar]
 session: S-2026-08-06-public-hazirlik
 author: afgover
-result: none
+result: "Repo public; §10 zinciri ölçülerek doğrulandı (curl 200, ana kopyayla fark yok)"
 options: ["Public yaptım", "Vazgeçtim, private kalsın", "Önce şunu konuşalım"]
 multi: false
 ---
@@ -55,3 +55,17 @@ yok.
 
 - **Sen yaptıktan sonra ben doğrularım:** `curl` ile ana kopyanın 200 döndüğünü
   ölçüp B-097'yi kapatacağım. Ölçmeden "çalışıyor" yazmayacağım.
+
+- 2026-08-13 · **Yapıldı ve ölçüldü** (S-2026-08-13-durum-ozeti). İki bağımsız
+  ölçüm: `api.github.com/repos/afgover/takip` → `"private": false`, ve asıl
+  önemlisi §10 zincirinin kendi komutu —
+  `curl -fsSL .../main/hub/SYSTEM.md` → 200, 38323 bayt, yerel kopyayla
+  **fark yok**. Aynı komut bu oturumun açılışında, birkaç dakika önce 404
+  dönüyordu; kontrol o zaman koşmamıştı ve kayda "koşmadı" diye yazılmıştı.
+  Diğer hub'ların sözleşmeyi ana kopyadan kontrol etmesi artık gerçekten
+  çalışıyor.
+
+- 2026-08-13 · **Devreye giren kısıt:** sözleşmede kırıcı değişiklik yapma
+  özgürlüğü bitti (yukarıdaki not, artık varsayım değil). Kural olarak
+  yazıldı: `knowledge/rules.md` → R-008. Görünürlük değişikliğinin veri
+  sonuçları `SECURITY.md` → SEC-013.

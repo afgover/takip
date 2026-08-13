@@ -228,6 +228,55 @@ değil. Token, parola veya anahtar bu dosyada hiçbir koşulda yer almaz.
   yutuyor (L-039). Bunun yerine `tool/install.sh` her release kurulumunda
   yazıyor ve `tool/scan.sh` üretilmiş APK'nın **sertifikasına** bakıp bulgu
   veriyor — iddiaya değil, artefaktın kendisine.
+- **2026-08-13 durumu:** B-097 kapandı (repo public) ama bu kayıt `acik`
+  kalıyor ve yukarıdaki "**B-097 kapanmadan bu kayıt kapanmalı**" cümlesi
+  **yanlış hedefe bağlanmış**tı. Ayrım şu: tehlikeli olan repo görünürlüğü
+  değil, **APK'nın bu makineden çıkması**. B-097 ikisini tek maddede
+  topluyordu (sıra: repo → yazı → Releases'ta APK); gerçekleşen yalnız
+  birincisi. Public repo tek başına debug anahtarlı bir APK'yı kimsenin
+  eline vermiyor, dolayısıyla bugün risk artmadı.
+  **Bağlayıcı koşul yeniden yazılıyor:** bu kayıt kapanmadan
+  **Releases'a APK konmaz** (B-097'nin kapanması değil, APK adımı).
+  Tetikleyici T-010'da duruyor ve kullanıcı kararıyla ertelenmiş durumda.
+
+## SEC-013 — Repo public yapıldı: hub içeriği ve commit geçmişi herkese açık
+- **Tarih:** 2026-08-13
+- **Tür:** karar
+- **Durum:** kapali
+- **Kaynak:** B-097, T-011, S-2026-08-13-durum-ozeti
+- **Açıklama:** `afgover/takip` public yapıldı (kullanıcı). Doğrulandı:
+  `api.github.com/repos/afgover/takip` → `"private": false`; §10 zincirinin
+  kendi komutu (`curl .../main/hub/SYSTEM.md`) 200 dönüyor ve yerel kopyayla
+  fark yok. Kararın bilerek kabul edilen veri sonuçları:
+  (1) **Bütün `hub/` içeriği görünür** — oturum kayıtları (kullanıcının kendi
+  mesajları dâhil), artifact'ler, notlar, kararlar ve bundan sonra yazılacak
+  her şey. B-097 bunu "sessiz bozulma" riski olarak yazmıştı: public bir hub'da
+  dürüst not almak zorlaşır. Risk teknik değil davranışsal ve ölçülemez;
+  kaydın burada durmasının sebebi, ileride not alma dilinin değiştiği fark
+  edilirse sebebinin bilinmesi.
+  (2) **Geçmiş commit'lerdeki e-posta artık halka açık.** 2026-08-06'da
+  `git config user.email` noreply'a çevrildi ama geçmiş yeniden yazılmadı
+  (kullanıcı kararı: hub'ın SHA atıfları ölmesin). O tarihe kadarki 172
+  commit'te `afgover@gmail.com` görünür — bunlar zaten GitHub'ın public commit
+  API'sinde standart olan bir veri ve geri alınamaz sayılmalı.
+  (3) **Açık güvenlik kayıtları da yayımlandı** (SEC-007, SEC-010, SEC-012).
+  Bilinçli: hiçbiri uzaktan sömürülebilir değil ve projenin değeri kendi
+  açıklarını dürüstçe listelemesinde (K-032).
+  (4) **Geri dönüşü yok sayılır.** Private'a çevirmek mümkün, ama fork'lanan,
+  klonlanan ve indekslenen içerik geri gelmez.
+- **Sır durumu:** görünürlük değişmeden önce çalışma ağacı **ve git geçmişinin
+  tamamı** token/anahtar deseni için tarandı ve temizdi (SEC-008, `tool/scan.sh`).
+  Bu tarama 2026-08-04 tarihlidir; o günden bu yana eklenen commit'ler o
+  taramanın kapsamında **değildir**. Sınır bilinçli yazıldı: "taradık" cümlesi
+  tekrarlanmazsa sessizce yanlışa döner (SEC-011).
+- **Bundan sonrası için değişen şey:** repo public olduğu için bir sırrın
+  yanlışlıkla commit'lenmesi artık **geri alınamaz** bir olaydır — private'ta
+  `git push --force` ile geçmişi temizlemek çare olabiliyordu, public'te
+  değil (klon, fork, indeks). Sır taramasının düzenli koşması bu yüzden
+  önceki günden daha kritik; tetikleyici değişmedi (30 günlük `tarama`
+  kaydı, §12) ama sonucu ağırlaştı.
+- **Kayıt neden `kapali`:** bu bir açık değil, sonuçları belgelenmiş bir
+  **karar**. Kararın kendisi uygulandı ve doğrulandı; açık kalan bir iş yok.
 
 ## SEC-011 — Tarama tekrarlanmıyor
 - **Tarih:** 2026-08-04

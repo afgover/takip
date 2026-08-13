@@ -74,3 +74,23 @@ Projede uyulacak kalıcı kurallar. Kayıtlar silinmez; geçersizleşen kural ü
   Kural kodda tek yerde duruyor (`TaskMark.canBecomeTask`) ve karar noktası
   `AnnotatedDocument._create`'tir — R-001'in yazma alanı kısıtı değişmedi,
   yalnız hangi alana gidileceği bu kuralla belirleniyor.
+
+## R-008 — Sözleşme public: kırıcı değişiklik artık serbest değil
+- **Tarih:** 2026-08-13
+- **Kaynak:** B-097, T-011, S-2026-08-13-durum-ozeti
+- **Açıklama:** `afgover/takip` 2026-08-13'te public oldu ve §10 zinciri
+  ölçülerek doğrulandı: başka hub'ların agent'ları
+  `raw.githubusercontent.com/afgover/takip/main/hub/SYSTEM.md`'yi çekip kendi
+  kopyalarını buna göre güncelliyor. Bugüne kadar sözleşme bir günde
+  1.8 → 1.11, sonra 1.11 → 1.17 gidebiliyordu; bunu mümkün kılan şey
+  kimsenin bağlı olmamasıydı ve **o şart bitti**.
+  Bundan sonra sözleşme değişikliği için: (1) mevcut kayıtları geçersiz kılan
+  bir değişiklik yapılmaz — yeni alan **isteğe bağlı** eklenir, eski biçim
+  okunmaya devam eder; (2) zorunlu hâle gelmesi gereken bir alan varsa önce
+  isteğe bağlı olarak girer, geçiş `SYSTEM.md` §13'e **geçici madde** olarak
+  yazılır (kalkma koşuluyla birlikte); (3) sürüm numarası her değişiklikte
+  artar — uzaktaki hub'ın tek karşılaştırma ölçütü o.
+  Gerekçe teknik değil sosyal: ana kopyayı çeken agent, çektiği şeyin kendi
+  hub'ını bozmayacağına güveniyor. Bu güven kırıldığında bozulan tek şey bir
+  dosya değil, §10 zincirinin kendisi olur — bir kez kötü güncelleme yiyen
+  hub'ın sahibi kontrolü kapatır.

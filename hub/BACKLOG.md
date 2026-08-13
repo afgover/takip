@@ -226,7 +226,20 @@ başlığına ✅ ve tarih yazılır.
       README baştan yazıldı (eskisi başlangıçtan kalmaydı: `project-taskr`,
       `flutter create` ile android üretme talimatı). Public'e açma kararı
       **verilmedi**, yalnız ön hazırlık. → B-097
-- [ ] B-097 · (user+agent) Repoyu public yapma kararı — ön koşullar ve bilinen
+- [x] B-097 · (user+agent) Repoyu public yapma kararı — ✅ 2026-08-13; repo
+      public yapıldı (kullanıcı), §10 zinciri ölçülerek doğrulandı: `curl`
+      ana kopyaya 200 dönüyor ve yerel kopyayla fark yok. Aynı komut aynı
+      oturumun açılışında 404 dönüyordu.
+      → [T-011](tasks/done/2026-08-13-repoyu-public-yap.md),
+      SEC-013, R-008, S-2026-08-13-durum-ozeti.
+      **Kapsam ayrımı:** bu madde *kararın* kendisiydi ve bitti. Metnindeki
+      sıranın (repo → yazı → Releases'ta APK) **APK adımı ayrı ve hâlâ
+      kapalı**: ön koşulu SEC-010'un kapanması, o da T-010'da (imza anahtarı,
+      kullanıcı kararıyla ertelendi). Repo public olmakla APK yayımlanmadı;
+      SEC-010'un "B-097 kapanmadan kapanmalı" cümlesi bu ayrım netleşmeden
+      yazılmıştı → SEC-010'a 2026-08-13 notu düşüldü
+      · *Maddenin özgün metni (karar verilmeden önce yazılmıştı, silinmiyor):*
+      ön koşullar ve bilinen
       sonuçlar: (a) `hub/` de public olur; 31 oturum kaydı, notlar ve kararlar
       görünür hâle gelir ve bundan sonra yazılacaklar da. Sistemin "her şeyi
       hub'a yaz" ilkesiyle sürtüşür — public bir hub'da dürüst not almak zorlaşır
