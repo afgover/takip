@@ -709,3 +709,22 @@ Biçim: `SYSTEM.md` §5.
   **Genel kural:** bir düzeltme bir alanı koruyorsa, o alana **yazan her yol**
   düzeltmenin kapsamıdır. "Bu alanı kim ezebilir" diye grep'lemek, düzeltmeyi
   yazarken beş dakika; ezildiğini üretimde fark etmek üç hub'lık bir vaka.
+
+## L-046 — Bağlanmış ama uygulanmamış uzantı noktası, çalışıyor görünür
+- **Tarih:** 2026-08-13
+- **Kaynak:** [S-2026-08-13-durum-ozeti](../sessions/2026-08-13-durum-ozeti/session.md), B-129
+- **Açıklama:** `HubMarkdown` v1.5'ten beri `onTapLink` alıyor ve yukarı
+  iletiyordu; yorumunda "hub içi göreli bağlantılar Faz 4'te uygulama içi
+  gezinmeye bağlanacak" yazıyordu. Faz 4 kapandı, aradan aylar geçti ve
+  **hiçbir ekran bu geri çağrıyı vermedi**. Yani uygulamadaki her hub bağlantısı
+  aylarca ölü metindi: dokunuluyor, hiçbir şey olmuyor. Testi bile vardı —
+  `hub_markdown_test` geri çağrının **çağrıldığını** doğruluyordu, ki doğruydu;
+  kimsenin onu geçirmediğini doğrulayan bir test yoktu.
+  Kalıp şu: bir uzantı noktası açmak (parametre + yukarı iletme) işin görünen
+  kısmı, onu **bağlamak** görünmeyen kısmı. Arada kalan hâl kod okuyana
+  "destekleniyor" der, kullanıcıya hiçbir şey demez ve sessizce yaşar.
+  **Genel kural:** yarım bırakılan bir uzantı noktası, yorumda "sonra
+  bağlanacak" diye durmaz — ya o oturumda bağlanır, ya da backlog'a ID'li bir
+  madde olarak yazılır. Kod yorumu hatırlatıcı değildir; `BACKLOG.md` odur.
+  Ölçüsü de basit: "bu parametreyi kim geçiriyor" diye grep'lemek beş saniye,
+  ve cevabı boşsa özellik yok demektir.
