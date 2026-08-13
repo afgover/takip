@@ -378,6 +378,22 @@ toplanır ve gerekiyorsa Faz 6 maddelerini (B-060…B-064) yeniden sıralar.
   Değerlendirme: doktrin katmanı hasarı önledi (yabancı kayda dokunmama,
   dosya adıyla doğrulama, §10 yükseltme yolu üç hub'da da işledi); yapısal
   boşluğu bu sürüm kapattı. Düzeltme cihaza kuruldu.
+- 2026-08-13: **Repo public oldu ve yöntem kendi izini tutmaya başladı.**
+  Üç iş bir arada: (1) [T-011](tasks/done/2026-08-13-repoyu-public-yap.md)
+  kapandı — repo public, §10 zinciri ölçülerek doğrulandı (aynı `curl` oturum
+  açılışında 404 dönüyordu), sonuçları [SEC-013](SECURITY.md#SEC-013)'e,
+  devreye giren kısıt [R-008](knowledge/rules.md#R-008)'e yazıldı.
+  (2) **Sözleşme 1.25:** görev ağacı ([`PLAN.md`](PLAN.md), §14) ve belgeler
+  arası bağlantı (§15) — ikisi de uygulama tarafıyla birlikte
+  ([B-128](BACKLOG.md#B-128), [B-129](BACKLOG.md#B-129)). Bu, R-008'in ilk
+  sınavıydı ve ikisi de eklemeli çıktı; eski hub'lar dokunulmadan geçerli.
+  Yol boyunca [L-046](knowledge/lessons.md#L-046): `onTapLink` aylardır
+  bağlıydı ama hiçbir ekran uygulamıyordu — yarım uzantı noktası "destekleniyor"
+  gibi görünüyor. (3) [B-130](BACKLOG.md#B-130): süitin iki entegrasyon testi
+  10 dakika zaman aşımına düşüyordu; kırığın bu oturumdan gelmediği **ölçüldü**
+  (oturum öncesi commit ayrı worktree'de koşuldu) ve kök neden
+  [L-047](knowledge/lessons.md#L-047) olarak yazıldı. 533 test, süre 20+
+  dakikadan 26 saniyeye indi. Yapı cihaza kuruldu.
 
 **Kararlar:**
 - **K-019:** Kolaylık için token'ın korumasız bir dizeye çevrilmesine izin

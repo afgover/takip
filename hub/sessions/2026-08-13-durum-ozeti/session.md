@@ -1,18 +1,53 @@
 ---
 id: S-2026-08-13-durum-ozeti
 date: 2026-08-13
-status: open
+status: closed
 reconstructed: false
 author: afgover
-topics: [durum-ozeti, acilis]
+topics: [durum-ozeti, public-repo, gorev-agaci, baglantilar, test-zaman-asimi]
 artifacts: []
-tasks_touched: []
+tasks_touched: [T-011]
 ---
 
-# Oturum: Durum özeti ile açılış
+# Oturum: Durum özeti, repo public, sözleşme 1.25
 
 ## Özet
-(oturum açık)
+Durum özetiyle açıldı, üç işle kapandı.
+
+**1. Repo public oldu** ([T-011](../../tasks/done/2026-08-13-repoyu-public-yap.md),
+B-097). §10 zinciri **ölçülerek** doğrulandı: aynı `curl` oturum açılışında 404
+dönüyordu, kullanıcı ayarı değiştirdikten sonra 200 ve ana kopyayla fark yok —
+diğer hub'lar sözleşmeyi artık gerçekten çekebiliyor. Görünürlük kararının veri
+sonuçları [SEC-013](../../SECURITY.md#SEC-013)'e, devreye giren kısıt
+[R-008](../../knowledge/rules.md#R-008)'e yazıldı: sözleşmede kırıcı değişiklik
+özgürlüğü bitti. Yolda bir bağ düzeltildi — SEC-010 "B-097 kapanmadan
+kapanmalı" diyerek imza anahtarını **repo görünürlüğüne** bağlamıştı; tehlikeli
+olan görünürlük değil APK'nın bu makineden çıkması, koşul ona bağlandı.
+
+**2. Sözleşme 1.25 — iki mekanizma** (kullanıcı isteği).
+[§14 görev ağacı](../../SYSTEM.md#14): çok adımlı işlerin adımları durumuyla
+[`PLAN.md`](../../PLAN.md)'de, eşik 3+ adım (her mikro adımı yazan ağaçta
+müdahale edilecek madde görünmez olur), nedensiz iptal yasak, dosya opsiyonel.
+[§15 bağlantılar](../../SYSTEM.md#15): ID tabanlı çapa, GitHub'ın bölüme
+kaydırmadığı açıkça yazıldı, agent'ı teşvik eden kullanım kuralı. İkisinin de
+uygulama tarafı aynı sürümde bitti ([B-128](../../BACKLOG.md#B-128),
+[B-129](../../BACKLOG.md#B-129)) ve `onTapLink`'in aylardır bağlı ama
+uygulanmamış olduğu ortaya çıktı ([L-046](../../knowledge/lessons.md#L-046)).
+Bu, R-008'in ilk sınavıydı: ikisi de eklemeli çıktı, eski hub'lar dokunulmadan
+geçerli. Yapı cihaza kuruldu.
+
+**3. [B-130](../../BACKLOG.md#B-130)** — süitin iki entegrasyon testi 10 dakika
+zaman aşımına düşüyordu. Önce **bu oturumdan gelmediği ölçüldü** (oturum öncesi
+commit ayrı bir worktree'de koşuldu, aynı iki test aynı şekilde düştü), sonra
+kök neden bulundu: provider gövdesi ekran çizilirken sahte zaman zonunda
+başlayıp hiç bitmiyor ve ölü sonuç önbelleğe yerleşiyor
+([L-047](../../knowledge/lessons.md#L-047)). Uygulama kodu değişmedi.
+**533 test yeşil**, süre 20+ dakikadan 26 saniyeye indi.
+
+Ölçüm disiplini bu oturumun üç yerinde belirleyici oldu: sözleşme kontrolü
+koşmadığında "koştu" yazılmadı, kırığın kaynağı tahmin edilmeyip baseline
+worktree'de ölçüldü, ve teşhis üç yanlış hipotezden sonra `debugPrint`'le
+hangi `await`te durduğu görülerek çözüldü.
 
 ## Kayıt
 
