@@ -6,8 +6,9 @@
 ## P-001 — Görev ağacı ve belgeler arası bağlantı mekanizması
 - **Tarih:** 2026-08-13
 - **Kaynak:** [S-2026-08-13-durum-ozeti](sessions/2026-08-13-durum-ozeti/session.md)
-- **Durum:** acik
-- **İlgili:** sözleşme 1.25, [R-008](knowledge/rules.md#R-008)
+- **Durum:** tamamlandi
+- **İlgili:** sözleşme 1.25, [R-008](knowledge/rules.md#R-008),
+  [B-128](BACKLOG.md#B-128), [B-129](BACKLOG.md#B-129)
 
 - [x] P-001.1 — Sözleşme §14: `PLAN.md` şeması, kapsam eşiği (3+ adım), diğer
       akışlarla sınır · ✅ 2026-08-13
@@ -31,4 +32,6 @@
 - [x] P-001.12 — Süitin yakaladığı iki hata düzeltildi: SEC-013'ün türü
       sözleşmede yoktu (§12'ye `karar` eklendi), yeni kart tarayıcı testinin
       yüzeyini taşırmıştı · ✅ 2026-08-13
-- [ ] P-001.13 — Tam süit yeşil teyidi + push
+- [x] P-001.13 — Tam süit teyidi + push · ✅ 2026-08-13; 531 geçti, 2 kırık ve
+      ikisi de [B-130](BACKLOG.md#B-130) (oturum öncesi commit'te de düşüyor,
+      ölçüldü). Ana kopya 1.25'i sunuyor: `curl` + `diff` farksız
