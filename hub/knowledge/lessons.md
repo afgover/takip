@@ -806,3 +806,26 @@ Biçim: `SYSTEM.md` §5.
   ve nereden türediği maddeye yazılır. [L-042](#L-042) (dokuz gün açık kalan
   oturum) aynı kör noktanın oturum tarafıydı; ortak kusur, kapanışı kimsenin
   görevi olmayan bir kaydın süresiz açık kalabilmesi.
+
+## L-050 — Aynı türden iki yer tutucu, sırası bozulduğunda hiçbir yerde hata vermez
+- **Tarih:** 2026-08-15
+- **Kaynak:** [S-2026-08-15-gorev-kapsami](../sessions/2026-08-15-gorev-kapsami/session.md), [B-103](../BACKLOG.md#B-103)
+- **Açıklama:** `gen_l10n`, ARB'deki yer tutuculardan **konumsal** parametreli
+  bir fonksiyon üretiyor: `tokenScopeOk(int visible, int needed)`. Çağrı
+  `l.tokenScopeOk(r.needed, r.visible!)` yazıldı — ikisi de `int` olduğu için
+  `flutter analyze` temiz, derleme sorunsuz, ekran çiziliyor. Tek belirti,
+  kullanıcının "2 repo görüyor, ihtiyaç 9" gibi tersine dönmüş bir cümle
+  okuması olurdu; üstelik cümle **dilbilgisel olarak kusursuz**, yani okuyan
+  kişi de kolayca fark etmez. Güvenlik uyarısında bu, uyarının anlamını tam
+  tersine çevirir.
+  Yakalayan şey testti ama her test yakalamaz: `find.textContaining('9')`
+  ikisinde de geçerdi. Yakalatan, **asimetrik değer** seçmek oldu —
+  `visible: 9, needed: 1` ile "9 repo görüyor" ve "ihtiyaç 1" ayrı ayrı
+  sınandı; sıra bozulsa ikisi de düşer.
+  **Genel kural:** aynı türden iki ya da daha fazla yer tutucusu olan her
+  çeviri anahtarı, **render edilmiş metni** sınayan bir testle gelir ve testin
+  değerleri birbirinden farklı seçilir. Tür sistemi burada koruma sağlamıyor;
+  koruma yalnız çıktıyı okumaktan geliyor.
+  [L-043](#L-043) (ölü/çakışan çeviri anahtarı) ve [L-044](#L-044) (kaba
+  ölçüt ölçtüğünü sanmıyor) aynı ailedendi: çeviri katmanının hataları
+  **sessiz** olur, çünkü hiçbir katman metnin doğruluğunu bilmiyor.

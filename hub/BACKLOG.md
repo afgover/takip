@@ -319,6 +319,18 @@ başlığına ✅ ve tarih yazılır.
       "1'den fazlaysa uyar" yanlış alarm üretir. Ayrıca hesabında az repo olan
       bir kullanıcıda "All repositories" token'ı dar token'dan ayırt edilemez —
       kontrol ancak repo sayısı arttıkça anlamlı. Karar verilmeden yazılmayacak
+      — ✅ 2026-08-15 · S-2026-08-15-gorev-kapsami, [P-003](PLAN.md).
+      **Karar:** token'ın nasıl üretildiği tespit edilmeye çalışılmadı (mümkün
+      değil); onun yerine **fazla erişim** ölçülüyor. `N` = token'ın gördüğü
+      repo, `K` = o token'la bağlı hub sayısı, `N > K` → uyarı. Eşik keyfi bir
+      sabit değil, uygulamanın kendi ihtiyacı — maddedeki iki itiraz da böylece
+      çözüldü: B-056'nın teşvik ettiği token paylaşımı yanlış alarm üretmiyor
+      (N=2, K=2 → sessiz) ve "az repolu hesapta ayırt edilemez" sorunu
+      ortadan kalkıyor, çünkü ayırt etmeye çalışmıyoruz.
+      Yorum tek yönlü kaldı (L-009): "bu token dar" cümlesi hiçbir yoldan
+      çıkmıyor, "ölçülemedi" ile "fazla erişim yok" ayrı gösteriliyor.
+      Bağlantı kurulurken + Ayarlar'da elle koşuyor. **575 test** (541 + 34).
+      → [SEC-012](SECURITY.md#SEC-012) kapandı, [L-050](knowledge/lessons.md#L-050)
 - [x] B-100 · (agent) SEC-009: Android otomatik yedeklemesi kapatılacak —
       ✅ 2026-08-05; `allowBackup="false"` **değil**, ayrımlı çözüm:
       `data_extraction_rules.xml` (API 31+) buluta hiçbir şey göndermiyor ama

@@ -6,7 +6,7 @@
 ## P-003 — B-103: token kapsam kontrolü (SEC-012)
 - **Tarih:** 2026-08-15
 - **Kaynak:** [S-2026-08-15-gorev-kapsami](sessions/2026-08-15-gorev-kapsami/session.md)
-- **Durum:** acik
+- **Durum:** tamamlandi
 - **İlgili:** [B-103](BACKLOG.md#B-103), [SEC-012](SECURITY.md#SEC-012),
   [SEC-006](SECURITY.md#SEC-006), [T-006](tasks/done/2026-08-04-token-kapsam-olcumu.md)
 
@@ -35,14 +35,23 @@
       iki çağrı yerinin (onboarding, bağlantı ekranı) aynı kuralı iki kez
       yazıp zamanla ayrışmaması için. Klasik token uyarısı varsa ölçüm hiç
       koşmuyor: klasik token zaten hesabın tamamını kapsıyor
-- [ ] P-003.4 — Ayarlar'a "token kapsamını ölç" düğmesi; sonucu (uyarı ya da
-      "fazla erişim görünmüyor") ekranda göster
-- [ ] P-003.5 — Arayüz metinleri: `app_tr.arb`, `app_en.arb`
-- [ ] P-003.6 — Testler: sayfalama başlığının ayrıştırılması, tek yönlü yorumun
-      her dalı, bağlantı akışı, Ayarlar düğmesi
-- [ ] P-003.7 — Kayıtlar: [SEC-012](SECURITY.md#SEC-012) güncellenir (kontrol
+- [x] P-003.4 — Ayarlar'a "token kapsamını ölç" düğmesi; sonucu (uyarı ya da
+      "fazla erişim görünmüyor") ekranda göster · ✅ 2026-08-15 · üç sonuç
+      **ayrı**: ölçülemedi / fazla erişim yok / uyarı. Klasik token'da istek
+      harcanmıyor, uyarı önekten okunuyor
+- [x] P-003.5 — Arayüz metinleri: `app_tr.arb`, `app_en.arb` · ✅ 2026-08-15;
+      uyarı gövdeleri `hub/token_scope.dart`'ta kalıyor — B-092'nin çizgisi,
+      çeviri kapsamı `lib/features` altını ölçüyor
+- [x] P-003.6 — Testler: sayfalama başlığının ayrıştırılması, tek yönlü yorumun
+      her dalı, bağlantı akışı, Ayarlar düğmesi · ✅ 2026-08-15 · **34 yeni
+      test**. Süit yazılırken bir hata da yakalandı: aynı türden iki yer
+      tutucunun sırası ters verilmişti ve hiçbir katman görmüyordu
+      ([L-050](knowledge/lessons.md#L-050))
+- [x] P-003.7 — Kayıtlar: [SEC-012](SECURITY.md#SEC-012) güncellenir (kontrol
       artık var; kalan sınır yazılır), B-103 işaretlenir, oturum kaydı; tam süit
-      + push
+      + push · ✅ 2026-08-15; SEC-012 `kapali` — başlığındaki iddia ("ölçülemiyor")
+      artık geçerli değil, kalan sınır kayda ayrıca yazıldı. **575 test geçti**,
+      `flutter analyze` temiz
 
 ## P-002 — B-130: entegrasyon testlerinin zaman aşımı
 - **Tarih:** 2026-08-13

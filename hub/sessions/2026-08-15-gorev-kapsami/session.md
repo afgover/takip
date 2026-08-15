@@ -151,3 +151,79 @@ değil, "tur"un hiçbir zaman başlayıp bitmemesiydi.
 Ölçmenin asıl bulgusu, maddelerin kendisinden büyük: içeriği çoktan yaşanmış
 bir maddenin arkasında **iki karar beklemede duruyordu**. →
 [L-049](../../knowledge/lessons.md#L-049)
+
+### Kullanıcı
+> 9 açık maddeyi sırala, bi bakayım sonra sırayla ele alalım · b103 yap
+
+### Agent — dokuz madde tetikleyicilerine göre sıralandı
+
+ID sırasına değil "şimdi yapılabilir mi" sırasına göre sunuldu. **Şimdi
+yapılabilir olan iki tane:** [B-103](../../BACKLOG.md#B-103) (ön koşulu
+ölçülmüş, kalan tek şey tasarım kararı) ve
+[B-101](../../BACKLOG.md#B-101)/T-010 (kullanıcının ertelemesine bağlı).
+Kalan yedisinin tetikleyicisi oluşmamış. Kullanıcı B-103'ü seçti.
+
+### Agent — B-103: sorunun yeniden çerçevelenmesi
+
+Maddedeki soru "eşik ne olacak" idi ama asıl çıkmaz başkaydı: **"All
+repositories" modunu tespit etmek imkânsız.** İki sebep, ikisi de kayıtlarda:
+T-006'nın ölçümü tek yönlü ("dar token az repo görür" kanıtlandı, tersi
+değil) ve hesabın toplam repo sayısı bu token'la okunamıyor, çünkü uç nokta
+zaten token'ın kapsamına göre süzüyor.
+
+Çıkış, soruyu değiştirmek oldu: token'ın **nasıl üretildiğini** tahmin etmek
+yerine **fazla erişimi** ölçmek.
+
+- **N** = token'ın gördüğü repo sayısı (ölçülmüş davranış)
+- **K** = bu token'la bağlı hub sayısı (uygulamanın kendi gerçeği)
+
+`N > K` kesin bir olumsuzdur: token, uygulamanın hiç ihtiyaç duymadığı
+repolara erişebiliyor. Token'ın modu hakkında hiçbir iddia taşımadığı için
+[L-009](../../knowledge/lessons.md#L-009)'un tek yönlü yorum kuralı korunuyor.
+
+Bu çerçeve maddedeki **iki itirazı da** çözdü: "1'den fazlaysa uyar" yanlış
+alarmı kalktı ([B-056](../../BACKLOG.md#B-056)'nın teşvik ettiği token
+paylaşımında N=2, K=2 → sessiz) ve "az repolu hesapta ayırt edilemez" sorunu
+ortadan kalktı, çünkü ayırt etmeye çalışmıyoruz.
+
+Kullanıcıya iki karar seçenekli soruldu; seçim: **eşik `N > K`**, **zamanlama
+bağlantı + Ayarlar'da düğme**. Plan ağacı [P-003](../../PLAN.md) *uygulamadan
+önce* yazıldı (§14) — bu oturumun başındaki sapmanın tekrarı olmadı.
+
+### Agent — uygulama
+
+**Ölçüm** (`lib/github/repo_scope_api.dart`): `GET /user/repos?per_page=1`,
+toplam `Link` başlığındaki `rel="last"` sayfa numarasından okunuyor — 200
+repoluk bir hesapta da tek istek ve tek kayıtlık gövde. Süzgeç parametresi
+(`visibility`, `affiliation`) **bilerek verilmedi**: T-006 sade istekle
+ölçüldü, süzgeç eklemek katmanı dayandığı ölçümün dışına çıkarırdı.
+Hata → `null` ("bilinmiyor"), asla `0`.
+
+**Karar** (`tokenScopeExcess`): sustuğu üç dal tek tek gerekçeli — N
+ölçülemedi, N ≤ K, K bilinmiyor. Hiçbirinden "bu token dar" çıkmıyor.
+
+**Bağlantı akışı:** K hesabı `reposNeededForToken`'da, çağrısı
+`hubAccessVerifierProvider`da — iki çağrı yerinin (onboarding, bağlantı
+ekranı) aynı kuralı iki kez yazıp zamanla ayrışmaması için. Klasik token
+uyarısı varsa ölçüm **hiç koşmuyor**: klasik token zaten hesabın tamamını
+kapsıyor, ölçüm yeni bir şey söylemez ve iki uyarı göstermek ikisini birden
+okunmaz yapardı.
+
+**Ayarlar:** "Token kapsamı" satırı, üç sonucu **ayrı** gösteriyor. Kararın
+sebebi kayıtlı: "ölçülemedi" ile "fazla erişim yok" aynı kutuya girerse
+kontrol sessizce yalan söyler ([L-035](../../knowledge/lessons.md#L-035)).
+
+**Ölçüm:** `flutter analyze` temiz, **575 test geçti** (541 + 34 yeni).
+
+**Süitin yakaladığı hata:** `l.tokenScopeOk(r.needed, r.visible!)` — üretilen
+imza `(visible, needed)` olduğu için argümanlar terstiydi. İkisi de `int`
+olduğundan analiz de derleyici de sessizdi; kullanıcı "2 repo görüyor, ihtiyaç
+9" gibi tersine dönmüş ama dilbilgisel olarak kusursuz bir güvenlik uyarısı
+okuyacaktı. Yakalatan şey testin **asimetrik değer** seçmesi oldu.
+→ [L-050](../../knowledge/lessons.md#L-050)
+
+[SEC-012](../../SECURITY.md#SEC-012) `kapali` yapıldı: başlığındaki iddia
+("ölçülemiyor") artık geçerli değil. **Kalan sınır kayda ayrıca yazıldı** —
+"All repositories" token'ı, hesapta K'dan fazla repo yokken hâlâ ayırt
+edilemiyor ve hesap büyüdükçe sessizce genişliyor; Ayarlar'daki elle tetiklenen
+ölçümün sebebi tam olarak bu.

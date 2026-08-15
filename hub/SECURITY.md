@@ -96,7 +96,7 @@ değil. Token, parola veya anahtar bu dosyada hiçbir koşulda yer almaz.
 ## SEC-012 — Fine-grained token'ın repo genişliği ölçülemiyor
 - **Tarih:** 2026-08-04
 - **Tür:** acik
-- **Durum:** acik
+- **Durum:** kapali
 - **Kaynak:** SEC-006, B-092
 - **Açıklama:** B-092'nin kontrolü klasik token'ı kesin olarak yakalıyor ama
   fine-grained bir token "Only select repositories" ile de "All repositories"
@@ -122,6 +122,28 @@ değil. Token, parola veya anahtar bu dosyada hiçbir koşulda yer almaz.
   tek yönlü olmalı (B-026'daki kural).
   **Kayıt neden hâlâ `acik`:** ölçüm mümkün olduğu anlaşıldı ama uygulamada bir
   kontrol **yok**. Kapanması B-103'e bağlı.
+- **Kapatıldı (2026-08-15, [B-103](BACKLOG.md#B-103)):** kontrol uygulamada.
+  Kaydın başlığındaki iddia — "repo genişliği ölçülemiyor" — artık geçerli
+  değil: genişlik ölçülüyor ve uygulama ölçtüğünü kullanıyor.
+  **Nasıl giderildi:** token'ın *nasıl üretildiğini* tespit etmeye çalışmaktan
+  vazgeçildi; onun yerine **fazla erişim** ölçülüyor. `N` = token'ın gördüğü
+  repo sayısı (`GET /user/repos`, sayfalama başlığından tek istekle), `K` = o
+  token'la bağlı hub sayısı. `N > K` → uyarı. Eşik keyfi bir sabit değil,
+  uygulamanın kendi ihtiyacı: B-056 aynı token'ı birden çok hub'da kullanmayı
+  teşvik ettiği için "1'den fazlaysa uyar" yanlış alarm üretirdi.
+  Yorum **tek yönlü** kaldı (B-026, L-009): kontrol yalnız `N > K` durumunda
+  konuşur ve söylediği şey token'ın modu değil, erişimin gözlenen genişliğidir.
+  "Bu token dar" cümlesi hiçbir yoldan çıkmıyor; "ölçülemedi" ile "fazla
+  erişim görünmüyor" ayrı gösteriliyor (L-035'in kuralı).
+  Koştuğu yerler: bağlantı kurulurken (onboarding + bağlantı ekranı) ve
+  Ayarlar'da elle tetiklenen "Token kapsamı" satırı.
+  **Kalan sınır — kapanmadı, etrafından dolaşıldı:** "All repositories" ile
+  üretilmiş bir token, hesapta `K`'dan fazla repo yokken dar bir token'dan
+  hâlâ ayırt edilemez (N = K → kontrol susar). Böyle bir token hesaba repo
+  eklendikçe **sessizce genişler**. Ayarlar'daki elle tetiklenen ölçümün
+  sebebi tam olarak bu: bağlantı gününde doğru olan cevap bir ay sonra yanlış
+  olabilir. Düzenli koşan bir kontrol yazılmadı — "ne zaman koştu" durumunu
+  diske yazmayı gerektirirdi ve tetikleyicisi henüz oluşmadı.
 
 ## SEC-007 — Hub içeriği cihazda şifresiz duruyor
 - **Tarih:** 2026-08-03
