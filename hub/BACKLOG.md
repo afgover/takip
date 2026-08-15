@@ -755,6 +755,16 @@ başlığına ✅ ve tarih yazılır.
       onlar hâlâ ETag önbelleğiyle (B-046) çalışıyor, yani çevrimdışı yalnız
       daha önce görülen hâli gösteriyor. Gerekirse ayrı madde açılır
 
+- [ ] B-133 · (agent) Görev ağacında sarkan adım satırı tamamlanma tarihini
+      yutuyor — `lib/hub/plan.dart`'ta devam satırı `title`'a ekleniyor ve `·`
+      ayracı bir daha aranmıyor. Ölçüldü (2026-08-15,
+      S-2026-08-15-gorev-agaci-tesviki): mevcut `PLAN.md`'de **dokuz adımda**
+      tarih ya kayıp (P-001.3, P-001.4, P-001.5, P-001.9, P-001.10, P-001.13)
+      ya da başlığın içine gömülü (P-002.5, P-002.7, P-003.5). Sessiz bir hata:
+      ekran çiziliyor, test geçiyor, yalnız tarih yok. Aynı yerde ikinci bir
+      soru: adım satırının uzunluğuna sınır yok, gerekçe sıkıştırılınca ağaç
+      telefonda duvara dönüyor
+
 ## Faz 6 — 2. Plan (şimdilik bekliyor)
 
 - [ ] B-060 · (agent) Webhook + stateless relay + push bildirimi tasarımının
