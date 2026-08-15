@@ -110,6 +110,68 @@ Serbest açıklama metni; ilk plana kadar olan kısım atlanır.
       expect(plan.steps.first.title, contains('ikinci satıra sarmış'));
     });
 
+    test('ayraç satır sonundaysa not alt satırdan toplanır (B-133)', () {
+      // Hatanın kendisi: `·` satır sonunda kalınca tarih başlığın içine
+      // gömülüyordu — ekran çiziliyor, test geçiyor, yalnız tarih yanlış yerde.
+      final step = parsePlans('''
+## P-001 — x
+- [x] P-001.1 — Düzeltme yapıldı ·
+      ✅ 2026-08-13; iki test iyileşti
+''').single.steps.single;
+
+      expect(step.title, 'Düzeltme yapıldı');
+      expect(step.note, '✅ 2026-08-13; iki test iyileşti');
+    });
+
+    test('ayraç ilk kez devam satırında geçiyorsa yakalanır (B-133)', () {
+      final step = parsePlans('''
+## P-001 — x
+- [x] P-001.1 — Uzun bir adım başlığı burada
+      bölünüyor · ✅ 2026-08-13
+''').single.steps.single;
+
+      expect(step.title, 'Uzun bir adım başlığı burada bölünüyor');
+      expect(step.note, '✅ 2026-08-13');
+    });
+
+    test('not birden çok satıra yayılabilir', () {
+      final step = parsePlans('''
+## P-001 — x
+- [x] P-001.1 — Adım · ✅ 2026-08-13;
+      ilk devam
+      ikinci devam
+''').single.steps.single;
+
+      expect(step.title, 'Adım');
+      expect(step.note, '✅ 2026-08-13; ilk devam ikinci devam');
+    });
+
+    test('ayraçsız sarkan satır hâlâ başlığa gider', () {
+      final step = parsePlans('''
+## P-001 — x
+- [ ] P-001.1 — Başlığın ilk parçası
+      ikinci parçası
+''').single.steps.single;
+
+      expect(step.title, 'Başlığın ilk parçası ikinci parçası');
+      expect(step.note, isNull);
+    });
+
+    test('gerçek PLAN.md: tarihli hiçbir adımda tarih başlıkta kalmıyor', () {
+      // Ölçüt kaba ama tam olarak bu hatayı kuruyor: ✅ işareti nota aittir,
+      // başlıkta görünüyorsa devam satırı yanlış yere eklenmiştir.
+      final plans = parsePlans(File('hub/PLAN.md').readAsStringSync());
+      for (final plan in plans) {
+        for (final step in plan.steps) {
+          expect(
+            step.title,
+            isNot(contains('✅')),
+            reason: '${step.id} — tamamlanma işareti başlığa sızmış',
+          );
+        }
+      }
+    });
+
     test('Türetilmiş alanı okunur, iki dilde de (sözleşme 1.26)', () {
       for (final line in [
         '- **Türetilmiş:** true',

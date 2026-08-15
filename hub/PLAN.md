@@ -8,13 +8,13 @@ sırasıyla girer.
 ## P-009 — B-133: sarkan adım satırı tamamlanma tarihini yutuyor
 - **Tarih:** 2026-08-15
 - **Kaynak:** [S-2026-08-15-gorev-agaci-tesviki](sessions/2026-08-15-gorev-agaci-tesviki/session.md)
-- **Durum:** acik
+- **Durum:** tamamlandi
 - **İlgili:** [B-133](BACKLOG.md#B-133), [§14](SYSTEM.md#14)
 
-- [ ] P-009.1 — Ayrıştırıcı: devam satırı `·` ayracını yeniden arasın
-- [ ] P-009.2 — Testler: ayracın satır sonunda ve devam satırında olduğu haller
-- [ ] P-009.3 — Gerçek `PLAN.md` üzerinde ölçüm: kaç adımda tarih geri geldi
-- [ ] P-009.4 — Kayıtlar ve push
+- [x] P-009.1 — Ayrıştırıcı: devam satırı `·` ayracını yeniden arasın · ✅ 2026-08-15
+- [x] P-009.2 — Testler: ayracın satır sonunda ve devam satırında olduğu haller · ✅ 2026-08-15 · 5 yeni test
+- [x] P-009.3 — Gerçek `PLAN.md` üzerinde ölçüm: kaç adımda tarih geri geldi · ✅ 2026-08-15 · 19 adım (ilk sayım 9 demişti, gözleydi)
+- [x] P-009.4 — Kayıtlar ve push · ✅ 2026-08-15 · 586 test
 
 ## P-004 — Sözleşme 1.26: geriye dönük plan ve ağacın doldurulması
 - **Tarih:** 2026-08-15

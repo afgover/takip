@@ -125,7 +125,12 @@ List<Plan> parsePlans(String source) {
   void flush() {
     final current = id;
     if (current == null) return;
-    plans.add(Plan(id: current, title: title, fields: fields, steps: steps));
+    plans.add(Plan(
+      id: current,
+      title: title,
+      fields: fields,
+      steps: steps.map(_close).toList(),
+    ));
     fields = <String, String>{};
     steps = <PlanStep>[];
   }
@@ -156,18 +161,65 @@ List<Plan> parsePlans(String source) {
     // örneklerinde uzun adımlar girintili olarak bölünüyor ve bölünen parça
     // ayrı bir adım gibi görünürse ağaç bozulur.
     if (steps.isNotEmpty && line.trim().isNotEmpty && line.startsWith(' ')) {
-      final last = steps.removeLast();
-      steps.add(PlanStep(
-        id: last.id,
-        title: '${last.title} ${line.trim()}',
-        depth: last.depth,
-        state: last.state,
-        note: last.note,
-      ));
+      steps.add(_extend(steps.removeLast(), line.trim()));
     }
   }
   flush();
   return plans;
+}
+
+/// Ayrıştırma bitince boş notu `null` yapar: dışarıya "not yok" tek bir
+/// biçimde görünür. Boş dize yalnız ayrıştırma sırasındaki bir **durum**dur
+/// (bkz. [_extend]), veri değil.
+PlanStep _close(PlanStep step) => (step.note?.isEmpty ?? false)
+    ? PlanStep(
+        id: step.id,
+        title: step.title,
+        depth: step.depth,
+        state: step.state,
+      )
+    : step;
+
+/// Sarkan satırı adıma ekler (B-133).
+///
+/// Devam satırının **nereye** gideceği, `·` ayracının o ana kadar görülüp
+/// görülmediğine bakar:
+///
+///  - Not zaten açıksa (ayraç önceki satırda geçti) satır **nota** eklenir.
+///    Ayracın satır sonunda kalıp tarihin alt satıra düştüğü hâl budur.
+///  - Not açık değilse satır başlığa eklenir, ama ayraç **yeniden aranır**:
+///    ayraç ilk kez devam satırında geçiyorsa tarih orada başlıyor demektir.
+///
+/// Eskiden devam satırı koşulsuz `title`'a ekleniyor ve ayraç bir daha
+/// aranmıyordu; sonuç sessizdi — ekran çiziliyor, test geçiyor, yalnız
+/// tamamlanma tarihi ya kayboluyor ya başlığın içine gömülüyordu. Ölçüldüğünde
+/// mevcut ağaçta dokuz adım bu durumdaydı.
+PlanStep _extend(PlanStep step, String continuation) {
+  if (step.note != null) {
+    return PlanStep(
+      id: step.id,
+      title: step.title,
+      depth: step.depth,
+      state: step.state,
+      note: '${step.note} $continuation'.trim(),
+    );
+  }
+
+  var title = '${step.title} $continuation';
+  String? note;
+  final separator = title.indexOf('·');
+  if (separator >= 0) {
+    note = title.substring(separator + 1).trim();
+    title = title.substring(0, separator).trim();
+  }
+
+  return PlanStep(
+    id: step.id,
+    title: title.trim(),
+    depth: step.depth,
+    state: step.state,
+    note: note,
+  );
 }
 
 /// `## P-001 — başlık`
@@ -216,7 +268,10 @@ PlanStep? _parseStep(String line) {
         : checked
             ? PlanStepState.done
             : PlanStepState.open,
-    note: note?.isEmpty ?? true ? null : note,
+    // Boş dize burada `null`'a çevrilmiyor: "ayraç vardı ama arkası boştu"
+    // ile "ayraç hiç yoktu" ayrı şeyler. Birincisinde not alt satırda
+    // başlıyordur ([_extend] oraya bakıyor). Normalleştirme [_close]'da.
+    note: note,
   );
 }
 

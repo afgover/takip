@@ -766,7 +766,7 @@ başlığına ✅ ve tarih yazılır.
       kart etiketi. `takip`'in geçmişinden dört plan türetildi (P-005…P-008).
       Aynı ölçümden iki ek kural: adım satırı kısadır, geriye dönük plan
       kapalıların arasına tarih sırasıyla girer. 581 test
-- [ ] B-133 · (agent) Görev ağacında sarkan adım satırı tamamlanma tarihini
+- [x] B-133 · (agent) Görev ağacında sarkan adım satırı tamamlanma tarihini
       yutuyor — `lib/hub/plan.dart`'ta devam satırı `title`'a ekleniyor ve `·`
       ayracı bir daha aranmıyor. Ölçüldü (2026-08-15,
       S-2026-08-15-gorev-agaci-tesviki): mevcut `PLAN.md`'de **dokuz adımda**
@@ -775,6 +775,15 @@ başlığına ✅ ve tarih yazılır.
       ekran çiziliyor, test geçiyor, yalnız tarih yok. Aynı yerde ikinci bir
       soru: adım satırının uzunluğuna sınır yok, gerekçe sıkıştırılınca ağaç
       telefonda duvara dönüyor
+      — ✅ 2026-08-15 · S-2026-08-15-gorev-agaci-tesviki, [P-009](PLAN.md).
+      Devam satırı artık `·` ayracını yeniden arıyor; ayraç satır sonunda
+      kaldıysa not alt satırdan toplanıyor. **Ölçüm ilk sayımı düzeltti:**
+      etkilenen adım sayısı 9 değil **19**'du — ilki gözle sayılmıştı, ikincisi
+      ayrıştırıcıyı iki sürümde koşturarak ölçüldü (tamamlanmış 60 adımın
+      19'unda not yoktu, şimdi 0). İkinci soru (adım uzunluğu) sözleşme
+      1.26 §14/7 ile kurala bağlandı; mevcut uzun adımlar **kısaltılmadı**,
+      çünkü kayıt silinmez (R-004) ve gerekçeleri oturum kayıtlarında zaten
+      bağlantılı. 586 test
 
 ## Faz 6 — 2. Plan (şimdilik bekliyor)
 

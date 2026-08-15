@@ -94,3 +94,38 @@ işi alıyor ve "ağacın değeri seyrekliğinde" diyor. Seçilenler, adımları
 kayıttan gerçekten okunabilen çok adımlı işler.
 
 **Ölçüm:** `flutter analyze` temiz, **581 test** (575 + 6).
+
+### Kullanıcı
+> push et, b133ü de yap
+
+### Agent — B-133: sarkan satır düzeltildi
+
+Plan [P-009](../../PLAN.md) önce yazıldı (dört adım, §14 eşiğinin üstünde).
+
+**Hata:** devam satırı koşulsuz `title`'a ekleniyor ve `·` ayracı bir daha
+aranmıyordu. İki ayrı hâlde tarih kayboluyordu — ayraç satır sonunda kalıp
+tarih alt satıra düştüğünde, ve ayraç ilk kez devam satırında geçtiğinde.
+
+**Düzeltme** (`_extend`): devam satırının nereye gideceği, ayracın o ana kadar
+görülüp görülmediğine bakıyor. Not zaten açıksa satır **nota** ekleniyor;
+değilse başlığa ekleniyor ama ayraç **yeniden aranıyor**. Buna bağlı olarak
+`_parseStep` artık boş notu `null`'a çevirmiyor: "ayraç vardı ama arkası boştu"
+ile "ayraç hiç yoktu" ayrı durumlar ve ayrımı devam satırı kullanıyor.
+Normalleştirme ayrıştırma bitince (`_close`) yapılıyor, yani dışarıya "not yok"
+tek biçimde görünüyor.
+
+**Ölçüm ilk sayımı düzeltti.** Backlog'a "dokuz adım" yazmıştım; o sayı gözle
+çıkarılmıştı. Ayrıştırıcı iki sürümde koşturulunca gerçek sayı **19** çıktı:
+tamamlanmış 60 adımın 19'unda not yoktu, düzeltmeden sonra 0. Ders, bugünkü
+L-044'ün tekrarı — kaba bir ölçüt (gözle bakmak) ölçtüğünü sandığı şeyi
+ölçmüyor. Sayı backlog'da düzeltildi.
+
+Regresyon testleri hatanın kendisini kuruyor; ayrıca gerçek `PLAN.md` üzerinde
+tek bir adımın başlığında `✅` kalmadığı sınanıyor — devam satırı yanlış yere
+eklenirse bu test düşer.
+
+**İkinci soru (adım uzunluğu)** sözleşme 1.26 §14/7 ile kurala bağlandı.
+Mevcut uzun adımlar **kısaltılmadı**: kayıt silinmez (R-004) ve gerekçeleri
+zaten bağlantı verilen oturum kayıtlarında duruyor. Kural bundan sonrası için.
+
+**Ölçüm:** `flutter analyze` temiz, **586 test** (581 + 5).
