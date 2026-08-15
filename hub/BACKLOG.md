@@ -568,6 +568,28 @@ başlığına ✅ ve tarih yazılır.
       Düzeltme: `runAsync` içinde geçersiz kıl + **durumu** bekle, `pumpAndSettle`
       yerine sınırlı `settle`. İki test 20 dakika zaman aşımı yerine 2 saniyede
       geçiyor. Uygulama kodu değişmedi — kırık testin kendisindeydi
+- [x] B-131 · (agent+user) Bekleyenler yalnız aktif reponun işlerini göstersin —
+      ✅ 2026-08-15 · → [S-2026-08-15-gorev-kapsami](sessions/2026-08-15-gorev-kapsami/session.md),
+      [L-048](knowledge/lessons.md#L-048). **[B-067](#B-067)'nin kararı geri
+      alındı.** Birleşik liste "hangi projedeyim" sorusunu görünmez kılıyordu:
+      ekranda üç projenin işi bir aradayken eklenen görev sessizce aktif repoya
+      gidiyor, kullanıcı da bütün görevlerin tek bir agent'ın kuyruğunda
+      toplandığını görüyordu. Kapsam artık repo şeridinde yazan repo —
+      gösterilen yer ile yazılan yer aynı. Filtrenin **repo boyutu kalktı**:
+      tek repolu listede o menü çizilmiyor, kalsaydı diskteki eski bir seçim
+      görünmez bir filtre olarak listeyi boşaltabilirdi (eski kayıttaki
+      `repos` alanı okunmuyor). Satırlardaki repo etiketi de kalktı; her satıra
+      aynı adı basmak öncelik ve kategoriyi sağa itiyordu
+- [x] B-132 · (agent+user) Görev eklerken hedef repo görünür ve seçilebilir —
+      ✅ 2026-08-15 · → [S-2026-08-15-gorev-kapsami](sessions/2026-08-15-gorev-kapsami/session.md).
+      Hedef, başka bir ekranın durumundan (repo şeridi) türüyordu ve Ekle
+      ekranında hiçbir yerde yazmıyordu. Artık iki ya da daha fazla bağlantı
+      varken alan çiziliyor (tek bağlantıda gereksiz), varsayılan aktif repo ve
+      kullanıcı seçerse seçim korunuyor. Üç şey hedefle birlikte gidiyor:
+      istek `taskRepoForSlugProvider` ile o repoya, `author` ve hub dili o
+      bağlantıdan (sözleşme 1.15), damga ise taslak **üretilirken** basılıyor —
+      kuyruğa girerken basılsaydı ağ hatasında hedef yine "o anki aktif repo"
+      olurdu ([L-045](knowledge/lessons.md#L-045) aynı hattın önceki durağı)
 - [ ] B-110 · (agent) Çoklu kullanıcı — Katman 3+4: `assignee` yazımı ve
       paylaşılan dosya yazım kuralları. Sözleşme 1.15 alanı tanımladı ama
       uygulama/protokol tarafı **ikinci kişi geldiğinde** yapılacak;

@@ -754,3 +754,29 @@ Biçim: `SYSTEM.md` §5.
   Ölçü: teşhis, aşama aşama `debugPrint` koyup takılmanın **hangi await'te**
   olduğunu görerek yapıldı — 10 dakikalık zaman aşımına bakarak tahmin etmek
   üç yanlış hipotez ürettirdi.
+
+## L-048 — Gösterilen kapsam ile yazılan kapsam ayrıştığında yanlış yönlenme görünmez olur
+- **Tarih:** 2026-08-15
+- **Kaynak:** [S-2026-08-15-gorev-kapsami](../sessions/2026-08-15-gorev-kapsami/session.md), [B-131](../BACKLOG.md#B-131), [B-132](../BACKLOG.md#B-132)
+- **Açıklama:** Bekleyenler bütün repoların işlerini birleştiriyordu ([B-067](../BACKLOG.md#B-067)),
+  görev ekleme ise hedefini **başka bir ekranın durumundan** (repo şeridi)
+  alıyordu ve o hedefi kendi ekranında hiç yazmıyordu. İkisi tek tek doğruydu;
+  yan yana gelince okuma kapsamı ile yazma kapsamı ayrıldı. Kullanıcının
+  gördüğü sonuç "bütün görevler süzgeçsiz olarak tek bir agent'a ulaşıyor"
+  oldu — oysa hiçbir agent başka reponun inbox'ını göremez; görevler fiilen
+  tek bir inbox'a yığılıyordu.
+  Ayrımın sinsiliği, **hata üretmemesi**: yazma başarılı, dosya sözleşmeye
+  uygun, test yeşil. Yanlışlığı ancak o projenin agent'ı yabancı bir iş
+  görünce anlaşılıyor. [L-019](#L-019) (token isteğin yolundan seçilmeli),
+  [L-031](#L-031) (görev kendi reposundan okunmalı) ve [L-045](#L-045)
+  (kuyruk damgayı ezmemeli) aynı hattın önceki duraklarıydı; hepsinde kusur
+  "hedefi o an aktif olandan türetmek"ti.
+  **Genel kural:** bir yazma akışında hedef, kullanıcının **o ekranda
+  gördüğü** şeyden türemeli; başka bir ekranın durumundan türüyorsa ya ekrana
+  yazılır ya da seçilebilir yapılır. Bir liste birden çok kaynağı
+  birleştiriyorsa, o listeden başlayan yazma da hedefini sormak zorundadır —
+  yoksa birleştirme, kullanıcının kapsam duygusunu sessizce siler.
+  Ölçü: "hedef hangi sağlayıcıdan geliyor" diye tek tek bakmak yetmedi;
+  yazma yollarının **hepsini** listeleyip (`taskRepoProvider`,
+  `taskRepoForSlugProvider`, `draftSenderProvider`) damgasız olanı aramak
+  gerekti — damgasız tek yol Ekle ekranıydı.
