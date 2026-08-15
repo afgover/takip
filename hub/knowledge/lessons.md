@@ -780,3 +780,29 @@ Biçim: `SYSTEM.md` §5.
   yazma yollarının **hepsini** listeleyip (`taskRepoProvider`,
   `taskRepoForSlugProvider`, `draftSenderProvider`) damgasız olanı aramak
   gerekti — damgasız tek yol Ekle ekranıydı.
+
+## L-049 — Gövdesi süreç tarif eden madde, kapanma koşulu taşımaz
+- **Tarih:** 2026-08-15
+- **Kaynak:** [S-2026-08-15-gorev-kapsami](../sessions/2026-08-15-gorev-kapsami/session.md), [B-052](../BACKLOG.md#B-052), [B-053](../BACKLOG.md#B-053)
+- **Açıklama:** İki madde bir teslimat değil bir **süreç** tarif ediyordu:
+  "bir hafta gerçek kullanım" ve "kullanım geri bildirimlerine göre revizyon
+  turu". İkisinin de içeriği fiilen yaşandı — kullanım 15 gün sürdü, sürtünme
+  noktaları inbox'a düştü, revizyonlar yapıldı ([B-054](../BACKLOG.md#B-054),
+  [B-099](../BACKLOG.md#B-099), [B-120](../BACKLOG.md#B-120)…B-124,
+  [B-126](../BACKLOG.md#B-126)/B-127) — ama ikisi de açık kaldı.
+  Sebep, işin eksikliği değil: **hiç kimse "bitti" diyemedi, çünkü bitiş
+  koşulu yazılmamıştı.** Bir teslimat maddesi kendi kapanışını taşır (dosya
+  yazıldı mı, test geçti mi); süreç maddesi taşımaz — bittiğini ancak biri
+  geriye dönüp *ölçerse* anlaşılır ve kimse kendiliğinden ölçmez.
+  Bedeli görünmezdi ama gerçekti: [B-063](../BACKLOG.md#B-063) ve
+  [B-064](../BACKLOG.md#B-064) ön koşul olarak B-052'yi gösteriyordu, yani
+  içeriği çoktan yaşanmış bir maddenin arkasında iki karar beklemede duruyordu.
+  Bayat bir madde yalnız kendi satırını değil, kendine bağlananları da dondurur.
+  **Genel kural:** gövdesi süreç tarif eden bir madde yazılırken **ölçülebilir
+  bitiş koşulu** da yazılır ("yedi gün cihazdan kullanım + inbox'a en az bir
+  görev"). Koşul yazılamıyorsa madde iş değil, niyettir; backlog'a değil
+  [EVOLUTION.md](../EVOLUTION.md)'ye aittir. Bayat bulunan madde ise *yeniden
+  yapılarak* değil **ölçülerek** kapatılır: kanıt kaydın kendisinden türetilir
+  ve nereden türediği maddeye yazılır. [L-042](#L-042) (dokuz gün açık kalan
+  oturum) aynı kör noktanın oturum tarafıydı; ortak kusur, kapanışı kimsenin
+  görevi olmayan bir kaydın süresiz açık kalabilmesi.

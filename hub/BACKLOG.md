@@ -200,9 +200,23 @@ başlığına ✅ ve tarih yazılır.
       B-022'deki kuralı sürdürüyor (doğrulanmadan kaydetme yok), token boş
       bırakılırsa yalnız repo değişiyor; önbellek temizleme ve onaylı
       sıfırlama (kuyrukta bekleyen görev varsa uyarıyla)
-- [ ] B-052 · (user) Bir hafta gerçek kullanım; sürtünme noktalarını görev olarak
+- [x] B-052 · (user) Bir hafta gerçek kullanım; sürtünme noktalarını görev olarak
       inbox'a at — B-015, B-020 ve B-034'ün cihaz ayağı tamamlandıktan sonra
-- [ ] B-053 · (agent) Kullanım geri bildirimlerine göre revizyon turu
+      — ✅ 2026-08-15 · S-2026-08-15-gorev-kapsami. **Yapılarak değil, ölçülerek
+      kapandı:** tarif ettiği iş çoktan yaşanmış, madde açık kalmıştı. Kullanım
+      2026-08-01'de (cihaz bağlandığı gün) başladı, 15 gün sürdü — istenen bir
+      haftanın iki katı. Sürtünme noktaları gerçekten inbox'a görev olarak
+      düştü: 2026-08-04'te 2 (görev aksiyon, bookmark ekleme), 2026-08-10'da 4
+      ve 2026-08-11'de 1 (T-012…T-016), hepsi telefondan. Maddenin ürettiği
+      revizyonlar B-053'te. → [L-049](knowledge/lessons.md#L-049)
+- [x] B-053 · (agent) Kullanım geri bildirimlerine göre revizyon turu
+      — ✅ 2026-08-15 · S-2026-08-15-gorev-kapsami. Revizyon **bir tur olarak
+      değil, sürekli** koştu; madde bu yüzden açık kaldı, iş eksik olduğu için
+      değil. Kullanımdan doğan düzeltmeler: ilk gün B-054/B-055/B-056 (kurulum
+      veriyi siliyordu, yedek yoktu, token yeniden kullanılamıyordu), B-099
+      (notsuz işaret gürültü çıktı), T-012…T-016 → B-120…B-124 (çevrimdışı
+      okuma, sıralama, metin cevabı, §13, filtre menüleri), B-126/B-127
+      (çoklu hub'da yanlış yönlenme), B-131/B-132 (kapsam). → [L-049](knowledge/lessons.md#L-049)
 - [x] B-083 · (agent) Yorum kendi rengini alsın — ✅ 2026-08-03; sözleşme 1.8,
       `mark: comment` (yeşil). Sarı ile yorum ayırt edilemiyordu
 - [x] B-088 · (agent) "Yorum ekle" → "Not ekle"; not görev olmaktan çıktı —
@@ -740,9 +754,22 @@ başlığına ✅ ve tarih yazılır.
       T-003'te uygulandı (K-018). Bu madde tek repoda çoklu proje seçeneği
       olarak açık kalıyor; ön koşulu, ayrı repo modelinin gerçek kullanımda
       (B-052) yetersiz kaldığının görülmesi
+      · ℹ **2026-08-15: ön koşul ölçüldü, karşılanmadı.** [B-052](#B-052)
+      kapandı, yani "gerçek kullanım" verisi artık var. Çoklu hub fiilen
+      yaşandı (2026-08-12 ve 2026-08-15) ama çıkan sürtünme **repo modelinde
+      değil, uygulamanın kapsam gösteriminde**ydi: [B-126](#B-126)/[B-127](#B-127)
+      damgalama, [B-131](#B-131)/[B-132](#B-132) liste ve hedef kapsamı. Ayrı
+      repo modeli bu vakaların hiçbirinde yetersiz kalmadı. Madde açık kalıyor
+      ama tetikleyicisi hâlâ oluşmadı
 - [ ] B-064 · (agent+user) "Pro versiyon" değerlendirmesinin yeniden açılması —
       K-017 ile ertelendi. **Ön koşul:** B-052 (bir haftalık gerçek kullanım).
       Kararı yeniden açacak kanıtlar: GitHub hesabı olmayan kullanıcılar,
       düzenli medya eki, saniyeler mertebesinde bildirim ihtiyacı, repo dışı
       entegrasyon. Bunlar çıkmazsa yol "tek ürün + opsiyonel bileşen"
       (B-060/B-061/B-063) olarak sürer
+      · ℹ **2026-08-15: ön koşul karşılandı, kanıtlar aranıp bulunamadı.**
+      [B-052](#B-052) kapandı. Dört tetikleyicinin hiçbiri 15 günlük kullanımda
+      çıkmadı: kullanıcı tek ve GitHub hesabı var, medya eki hiç istenmedi,
+      yoklama aralığı (30 sn…5 dk, [B-051](#B-051)) yeterli geldi, repo dışı
+      entegrasyon talebi yok. Yol "tek ürün + opsiyonel bileşen" olarak sürüyor;
+      madde kapanmıyor — kanıt sonradan da çıkabilir
