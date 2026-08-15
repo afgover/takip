@@ -310,7 +310,7 @@ başlığına ✅ ve tarih yazılır.
       reddetmek uygulamayı kullanılamaz hâle getirirdi, karar kullanıcının.
       Yorum tek yönlü — kontrol yanlış alarm veremez. 365 test, analyze temiz.
       → SK-011, SEC-012 (kapanmayan kısım)
-- [ ] B-103 · (agent+user) SEC-012: fine-grained token'ın kapsadığı repo sayısı
+- [x] B-103 · (agent+user) SEC-012: fine-grained token'ın kapsadığı repo sayısı
       uygulamada okunup değerlendirilecek — ✅ **ön koşul ölçüldü** (T-006,
       2026-08-06): `GET /user/repos` fine-grained token'la kapsamı yansıtıyor,
       yani sayı okunabilir. Kalan iş kontrolün **kendisi** ve asıl soru tasarım:

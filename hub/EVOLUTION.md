@@ -394,6 +394,31 @@ toplanır ve gerekiyorsa Faz 6 maddelerini (B-060…B-064) yeniden sıralar.
   (oturum öncesi commit ayrı worktree'de koşuldu) ve kök neden
   [L-047](knowledge/lessons.md#L-047) olarak yazıldı. 533 test, süre 20+
   dakikadan 26 saniyeye indi. Yapı cihaza kuruldu.
+- 2026-08-15: **Kapsam iki kez daraltıldı, sonra aşamanın kendi hedefi
+  karşılandı.** (1) Görev kapsamı: Bekleyenler bütün repoları birleştiriyor,
+  Ekle ekranı hedefini başka bir ekranın durumundan alıyordu; ikisi tek tek
+  doğruydu ama yan yana gelince okuma kapsamı ile yazma kapsamı ayrıldı
+  ([B-131](BACKLOG.md#B-131), [B-132](BACKLOG.md#B-132),
+  [L-048](knowledge/lessons.md#L-048)). (2) **Token kapsamı**
+  ([B-103](BACKLOG.md#B-103)): [SEC-012](SECURITY.md#SEC-012) 11 gün açık
+  kalmıştı çünkü sorusunun cevabı yoktu — "All repositories" modu ölçülemez.
+  Soru değiştirilerek çözüldü: token'ın *nasıl üretildiği* değil, **fazla
+  erişimi** ölçülüyor (N = gördüğü repo, K = bağlı hub; `N > K` → uyarı).
+  Eşiğin uygulamanın kendi ihtiyacından türemesi, maddedeki iki itirazı da
+  ortadan kaldırdı. Kalan sınır kapatılmadı ama **yazıldı**.
+  (3) [B-052](BACKLOG.md#B-052) ve [B-053](BACKLOG.md#B-053) **ölçülerek**
+  kapandı: içerikleri çoktan yaşanmıştı, açık kalmalarının sebebi bitiş
+  koşulunun hiç yazılmamış olmasıydı — ve arkalarında iki karar (B-063, B-064)
+  beklemede duruyordu ([L-049](knowledge/lessons.md#L-049)). İkisi de ölçüldü,
+  tetikleyicileri oluşmadığı için kapanmadı. 575 test.
+
+> **Bu aşamanın hedefi karşılandı.** Yukarıdaki (3) ile B-052 → B-053 zinciri
+> kapandı, yani aşamanın kendi tanımladığı iş bitti. Aşama yine de
+> **kapatılmadı**: yeni aşamanın hedefini agent kendiliğinden uyduramaz, o bir
+> yön kararıdır ve kapanma koşulu olmayan bir hedef yazmak L-049'un hatasını
+> aşama seviyesinde tekrarlamak olurdu. Karar
+> [T-017](tasks/waiting/2026-08-15-asama-4-kapanisi.md) olarak `waiting/`e
+> kondu.
 
 **Kararlar:**
 - **K-019:** Kolaylık için token'ın korumasız bir dizeye çevrilmesine izin

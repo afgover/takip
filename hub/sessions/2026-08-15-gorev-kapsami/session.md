@@ -1,18 +1,64 @@
 ---
 id: S-2026-08-15-gorev-kapsami
 date: 2026-08-15
-status: open
+status: closed
 reconstructed: false
 author: afgover
-topics: [coklu-hub, bekleyenler, gorev-ekleme, kapsam, backlog, bayat-madde]
+topics: [coklu-hub, bekleyenler, gorev-ekleme, kapsam, backlog, bayat-madde, token-kapsami]
 artifacts: []
-tasks_touched: []
+tasks_touched: [T-017]
 ---
 
 # Oturum: Görev kapsamı — liste aktif repoya daraldı, hedef repo seçilebilir oldu
 
 ## Özet
-(oturum açık)
+
+Oturum **kapsam** üzerine açıldı ve kapsam üzerine kapandı; arada iş üç ayrı
+katmana yayıldı.
+
+**1. Görev kapsamı (B-131, B-132).** Kullanıcının sorusu "bütün görevler
+süzgeçsiz bir ajana mı ulaşıyor" idi. Ölçüm başka bir şey söyledi: hiçbir agent
+başka reponun inbox'ını göremez, ama Bekleyenler bütün repoları tek listede
+birleştiriyor ve Ekle ekranı hedefini **başka bir ekranın durumundan** alıyordu.
+İkisi tek tek doğruydu; yan yana gelince okuma kapsamı ile yazma kapsamı ayrıldı
+ve görevler fiilen tek inbox'a yığıldı ([L-048](../../knowledge/lessons.md#L-048)).
+Liste aktif repoya daraltıldı, Ekle ekranına hedef repo seçici kondu.
+**Sapma:** iş üç adımı geçtiği hâlde [§14](../../SYSTEM.md#14)'ün istediği plan
+ağacı yazılmadı; geriye dönük ağaç uydurmak yerine sapma kayda geçirildi.
+
+**2. Bayat iki madde ölçülerek kapandı (B-052, B-053).** İkisi de bir teslimat
+değil **süreç** tarif ediyordu ("bir hafta kullanım", "revizyon turu"). İkisinin
+de içeriği yaşanmıştı — kullanım 15 gün sürdü, sürtünme noktaları inbox'a düştü,
+revizyonlar yapıldı — ama hiçbiri "bitti" diyemedi, çünkü **bitiş koşulu
+yazılmamıştı**. Bedeli görünmezdi ama gerçekti: arkalarında iki karar (B-063,
+B-064) ön koşul bekliyordu. İkisi de ölçüldü; tetikleyicileri oluşmadığı için
+kapanmadı, nedenleri maddelere yazıldı.
+→ [L-049](../../knowledge/lessons.md#L-049)
+
+**3. Token kapsam kontrolü (B-103, [P-003](../../PLAN.md)).**
+[SEC-012](../../SECURITY.md#SEC-012) 11 gündür açıktı çünkü sorusunun cevabı
+yoktu: "All repositories" modu ölçülemez ve hesabın toplam repo sayısı o
+token'la zaten okunamaz. Çözüm soruyu değiştirmek oldu — token'ın *nasıl
+üretildiği* değil, **fazla erişimi** ölçülüyor: `N` (gördüğü repo) > `K` (bağlı
+hub) → uyarı. Eşiğin uygulamanın kendi ihtiyacından türemesi, maddede yazılı
+iki itirazı da ortadan kaldırdı. Yorum tek yönlü kaldı; "ölçülemedi" ile "fazla
+erişim yok" ayrı gösteriliyor. Kalan sınır kapatılmadı ama kayda **yazıldı**.
+Süit yazılırken sessiz bir hata da yakalandı: aynı türden iki yer tutucunun
+sırası ters verilmişti ve hiçbir katman görmüyordu
+([L-050](../../knowledge/lessons.md#L-050)).
+
+**Ölçüm:** `flutter analyze` temiz, **575 test** (oturum başında 541).
+
+**Kapanışta çıkan bulgu:** [`EVOLUTION.md`](../../EVOLUTION.md) Aşama 4'ün kendi
+hedefi (B-052 → B-053) bugün karşılandı, yani aşama tamamlandı. Aşama yine de
+kapatılmadı — yeni aşamanın hedefi bir yön kararı ve agent onu uyduramaz;
+uydursaydı L-049'un hatası aşama seviyesinde tekrarlanırdı. Karar
+[T-017](../../tasks/waiting/2026-08-15-asama-4-kapanisi.md) olarak `waiting/`e
+kondu.
+
+Tutarlılık kontrolünün yakaladığı bir kusur: B-103'ün sonucu backlog'a yazılmış
+ama kutusu `[ ]` kalmıştı — kapanış kontrolü tam bu yüzden "kendi adımlarını
+değil, hub'ın durumunu" soruyor.
 
 ## Kayıt
 
@@ -227,3 +273,22 @@ okuyacaktı. Yakalatan şey testin **asimetrik değer** seçmesi oldu.
 "All repositories" token'ı, hesapta K'dan fazla repo yokken hâlâ ayırt
 edilemiyor ve hesap büyüdükçe sessizce genişliyor; Ayarlar'daki elle tetiklenen
 ölçümün sebebi tam olarak bu.
+
+### Kullanıcı
+> oturumu kapat
+
+### Agent — kapanış
+
+Prosedür koştu (`AGENT_PROTOCOL.md` madde 9–12):
+
+- Özet yazıldı, `status: closed`.
+- [`EVOLUTION.md`](../../EVOLUTION.md) Aşama 4 durumu güncellendi. Aşamanın
+  **hedefi karşılandı** ama aşama kapatılmadı; gerekçe ve karar
+  [T-017](../../tasks/waiting/2026-08-15-asama-4-kapanisi.md)'de.
+- Tutarlılık kontrolü **bir kusur yakaladı**: B-103'ün sonucu backlog'a
+  yazılmıştı ama satırın kutusu `[ ]` kalmıştı. Yani "biten iş işaretli mi"
+  sorusu düzyazıya bakarak cevaplanamıyor — kutunun kendisine bakmak gerekti.
+  Düzeltildi.
+- `sessions/` altında `status: open` kalan başka oturum yok; `tasks/inbox/`
+  boş; `tasks/active/` boş.
+- Süit son hâliyle koşuldu: **575 test geçti**, `flutter analyze` temiz.
