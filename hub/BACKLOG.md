@@ -755,12 +755,17 @@ başlığına ✅ ve tarih yazılır.
       onlar hâlâ ETag önbelleğiyle (B-046) çalışıyor, yani çevrimdışı yalnız
       daha önce görülen hâli gösteriyor. Gerekirse ayrı madde açılır
 
-- [ ] B-134 · (agent+user) Sözleşme 1.26: geriye dönük plan — ağaç boş kalıyor
+- [x] B-134 · (agent+user) Sözleşme 1.26: geriye dönük plan — ağaç boş kalıyor
       çünkü §14 adımları "uygulanmadan önce" istiyor ve geç fark edilen iş için
       hiçbir yol bırakmıyor (uydur = yasak, atla = olan). Uydurma ile türetme
       ayrılıyor: geriye dönük plan `reconstructed: true` ile serbest.
       Ayrıca `takip`'in geçmiş çok adımlı işleri ağaca türetilecek —
       diğer repoların agent'ları dolu bir örnek görsün. → [P-004](PLAN.md)
+      — ✅ 2026-08-15 · S-2026-08-15-gorev-agaci-tesviki. Sözleşme 1.26 iki
+      belgede, protokol maddesi 7b iki dilde, uygulamada `Türetilmiş` alanı ve
+      kart etiketi. `takip`'in geçmişinden dört plan türetildi (P-005…P-008).
+      Aynı ölçümden iki ek kural: adım satırı kısadır, geriye dönük plan
+      kapalıların arasına tarih sırasıyla girer. 581 test
 - [ ] B-133 · (agent) Görev ağacında sarkan adım satırı tamamlanma tarihini
       yutuyor — `lib/hub/plan.dart`'ta devam satırı `title`'a ekleniyor ve `·`
       ayracı bir daha aranmıyor. Ölçüldü (2026-08-15,
