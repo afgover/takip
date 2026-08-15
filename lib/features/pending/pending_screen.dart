@@ -11,12 +11,16 @@ import '../common/hub_error_view.dart';
 import 'task_detail_screen.dart';
 import '../../l10n/app_localizations.dart';
 
-/// Bekleyen görevler — **bütün repolardan** (`inbox` + `active` + `waiting`).
+/// Bekleyen görevler — **aktif repodan** (`inbox` + `active` + `waiting`).
+///
+/// Kapsam, üstteki repo şeridinde yazan repo: görevin gösterildiği yer ile
+/// eklendiğinde gideceği yer aynı olsun diye. Başka projenin işleri kaybolmuş
+/// değil, şeritten repo değiştirilince görünür.
 ///
 /// Liste cihazdaki kopyadan çizilir (B-057), bu yüzden her satır önceliğini ve
 /// kategorisini de gösterebiliyor; klasör listelemesiyle çizilseydi bu alanlar
-/// dosya indirilmeden bilinemezdi (B-031). Yerel kopya henüz yoksa aktif
-/// reponun listesi ağdan çizilir.
+/// dosya indirilmeden bilinemezdi (B-031). Yerel kopya henüz yoksa liste
+/// ağdan çizilir.
 ///
 /// Henüz gönderilememiş görevler (B-032) listenin en üstünde ayrı gösterilir.
 class PendingScreen extends ConsumerWidget {
@@ -26,9 +30,9 @@ class PendingScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final tasks = ref.watch(allPendingTasksProvider);
+    final tasks = ref.watch(activeRepoPendingTasksProvider);
     final status = ref.watch(hubWatcherProvider);
-    final queued = ref.watch(outboxProvider).valueOrNull ?? const [];
+    final queued = ref.watch(queuedForActiveRepoProvider);
     final filter = ref.watch(taskFilterProvider);
     final order = ref.watch(taskOrderProvider);
     final l = L.of(context);
@@ -37,8 +41,8 @@ class PendingScreen extends ConsumerWidget {
       await ref.read(hubWatcherProvider.notifier).checkNow();
       await ref.read(outboxProvider.notifier).flush();
       await ref.read(hubSyncProvider.notifier).syncNow();
-      ref.invalidate(allPendingTasksProvider);
-      await ref.read(allPendingTasksProvider.future);
+      ref.invalidate(activeRepoPendingTasksProvider);
+      await ref.read(activeRepoPendingTasksProvider.future);
     }
 
     return Scaffold(
@@ -121,7 +125,7 @@ class PendingScreen extends ConsumerWidget {
       AsyncError(:final error) => _Scrollable(
           child: HubErrorView(
             error: error,
-            onRetry: () => ref.invalidate(allPendingTasksProvider),
+            onRetry: () => ref.invalidate(activeRepoPendingTasksProvider),
           ),
         ),
       _ => const Center(child: CircularProgressIndicator()),
@@ -268,16 +272,15 @@ class TaskStatusChip extends StatelessWidget {
   }
 }
 
-/// Bekleyenler listesinin filtre çubuğu: repo, öncelik, kategori.
+/// Görev satırının etiketleri: öncelik ve kategori.
 ///
-/// Seçenekler sabit değil, **listede gerçekten geçen** değerlerden türer —
-/// hiç kullanılmayan bir kategoriyi filtre olarak sunmak, boş sonuç vaat
-/// etmek olurdu. Tek repo varken repo satırı hiç görünmez.
+/// Repo etiketi **yok**: liste tek repoya ait olduğu için her satıra aynı adı
+/// basmak, öncelik ve kategoriyi sağa iten bir tekrar olurdu. "Hangi repo"
+/// sorusunun cevabı listenin üstündeki şeritte, satır başına bir kez değil.
 class TaskTagRow extends StatelessWidget {
-  const TaskTagRow({super.key, required this.task, this.showRepo = true});
+  const TaskTagRow({super.key, required this.task});
 
   final TaskSummary task;
-  final bool showRepo;
 
   @override
   Widget build(BuildContext context) {
@@ -285,8 +288,6 @@ class TaskTagRow extends StatelessWidget {
     final colors = theme.colorScheme;
 
     final tags = <(String, Color)>[
-      if (showRepo && task.repoName.isNotEmpty)
-        (task.repoName, colors.surfaceContainerHighest),
       if (task.priority != null)
         (task.priority!, _priorityColor(task.priority!, colors)),
       if (task.category != null) (task.category!, colors.surfaceContainerHighest),
@@ -365,15 +366,9 @@ class TaskToolbar extends ConsumerWidget {
               scrollDirection: Axis.horizontal,
               child: Row(
                 children: [
-                  _FilterMenu(
-                    kind: 'repo',
-                    label: l.filterRepo,
-                    icon: Icons.folder_outlined,
-                    // slug → görünen ad; menüde ad, kayıtta slug.
-                    values: facets.repos,
-                    selected: filter.repos,
-                    onToggle: (v) => notifier.toggle(repo: v),
-                  ),
+                  // Repo menüsü yok: liste zaten tek repo (aktif olan) ve
+                  // hangisi olduğu üstteki şeritte yazıyor. Tek değerli bir
+                  // filtre, seçilince hiçbir şeyi süzmeyen bir menüdür.
                   _FilterMenu(
                     kind: 'category',
                     label: l.filterCategory,

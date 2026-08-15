@@ -27,10 +27,13 @@ void main() {
     expect(const TaskFilter().isEmpty, isTrue);
   });
 
-  test('repo filtresi yalnız seçili repoyu geçirir', () {
-    const f = TaskFilter(repos: {'a/bir'});
-    expect(f.allows(task(repo: 'a/bir')), isTrue);
-    expect(f.allows(task(repo: 'b/iki')), isFalse);
+  test('filtrenin repo boyutu yok — liste zaten tek repo', () {
+    // Repo süzgeci, liste bütün repoları birleştirirken vardı. Liste aktif
+    // repoya daralınca menüsü de kalkmıştı; kalan bir seçim, kullanıcının
+    // açamayacağı görünmez bir filtre olarak listeyi boşaltabilirdi.
+    const f = TaskFilter(priorities: {'high'});
+    expect(f.allows(task(repo: 'a/bir', priority: 'high')), isTrue);
+    expect(f.allows(task(repo: 'b/iki', priority: 'high')), isTrue);
   });
 
   test('öncelik ve kategori birlikte daraltır', () {
@@ -49,16 +52,16 @@ void main() {
 
   test('toggle aynı değeri ekler ve çıkarır', () {
     const empty = TaskFilter();
-    final withRepo = empty.toggled(repo: 'a/bir');
-    expect(withRepo.repos, {'a/bir'});
-    expect(withRepo.toggled(repo: 'a/bir').repos, isEmpty);
+    final withCategory = empty.toggled(category: 'hata');
+    expect(withCategory.categories, {'hata'});
+    expect(withCategory.toggled(category: 'hata').categories, isEmpty);
   });
 
   test('activeCount kaç boyutun daraltıldığını sayar', () {
     expect(const TaskFilter().activeCount, 0);
-    expect(const TaskFilter(repos: {'a/bir'}).activeCount, 1);
+    expect(const TaskFilter(categories: {'hata'}).activeCount, 1);
     expect(
-      const TaskFilter(repos: {'a/bir'}, priorities: {'high'}).activeCount,
+      const TaskFilter(categories: {'hata'}, priorities: {'high'}).activeCount,
       2,
     );
   });

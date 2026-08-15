@@ -31,7 +31,7 @@ void main() {
     // isteği açıyor ve testin sonunda askıda zamanlayıcı kalıyor.
     final container = ProviderContainer(
       overrides: [
-        allPendingTasksProvider.overrideWith((ref) async => const <TaskSummary>[]),
+        activeRepoPendingTasksProvider.overrideWith((ref) async => const <TaskSummary>[]),
       ],
     );
     addTearDown(container.dispose);

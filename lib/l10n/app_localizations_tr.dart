@@ -605,6 +605,9 @@ class LTr extends L {
   String get addFieldCategory => 'Kategori';
 
   @override
+  String get addFieldTargetRepo => 'Hedef repo';
+
+  @override
   String get addNewCategory => 'Yeni kategori…';
 
   @override
@@ -948,9 +951,6 @@ class LTr extends L {
   @override
   String get detailDoneNoteHint =>
       'Nasıl yaptığın, çıkan bir aksaklık, agent’ın bilmesi gereken bir şey';
-
-  @override
-  String get filterRepo => 'Repo';
 
   @override
   String get filterCategory => 'Kategori';

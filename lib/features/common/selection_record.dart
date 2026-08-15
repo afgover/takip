@@ -339,7 +339,7 @@ void createSelectionRecord({
         SnackBar(content: Text(l.selUnexpected('$e'))),
       );
     }
-    container.invalidate(allPendingTasksProvider);
+    container.invalidate(activeRepoPendingTasksProvider);
   }());
 }
 
@@ -621,7 +621,7 @@ Future<bool> openAnnotationCard(
     message = e.message;
   }
 
-  container.invalidate(allPendingTasksProvider);
+  container.invalidate(activeRepoPendingTasksProvider);
   messenger.showSnackBar(SnackBar(content: Text(message)));
   return true;
 }

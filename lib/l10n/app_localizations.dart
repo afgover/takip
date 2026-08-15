@@ -1123,6 +1123,12 @@ abstract class L {
   /// **'Kategori'**
   String get addFieldCategory;
 
+  /// No description provided for @addFieldTargetRepo.
+  ///
+  /// In tr, this message translates to:
+  /// **'Hedef repo'**
+  String get addFieldTargetRepo;
+
   /// No description provided for @addNewCategory.
   ///
   /// In tr, this message translates to:
@@ -1734,12 +1740,6 @@ abstract class L {
   /// In tr, this message translates to:
   /// **'Nasıl yaptığın, çıkan bir aksaklık, agent’ın bilmesi gereken bir şey'**
   String get detailDoneNoteHint;
-
-  /// No description provided for @filterRepo.
-  ///
-  /// In tr, this message translates to:
-  /// **'Repo'**
-  String get filterRepo;
 
   /// No description provided for @filterCategory.
   ///

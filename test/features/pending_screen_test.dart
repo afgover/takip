@@ -48,7 +48,7 @@ void main() {
 
   testWidgets('yüklenirken göstergeyi çizer', (tester) async {
     await tester.pumpWidget(buildApp(
-      tasksOverride: allPendingTasksProvider.overrideWith(
+      tasksOverride: activeRepoPendingTasksProvider.overrideWith(
         (ref) => Future<List<TaskSummary>>.delayed(
           const Duration(seconds: 1),
           () => const [],
@@ -63,7 +63,7 @@ void main() {
 
   testWidgets('görev yoksa açıklayıcı boş durum gösterir', (tester) async {
     await tester.pumpWidget(buildApp(
-      tasksOverride: allPendingTasksProvider.overrideWith((ref) async => const []),
+      tasksOverride: activeRepoPendingTasksProvider.overrideWith((ref) async => const []),
     ));
     await tester.pumpAndSettle();
 
@@ -73,7 +73,7 @@ void main() {
 
   testWidgets('görevleri durum rozetiyle listeler', (tester) async {
     await tester.pumpWidget(buildApp(
-      tasksOverride: allPendingTasksProvider.overrideWith((ref) async => [
+      tasksOverride: activeRepoPendingTasksProvider.overrideWith((ref) async => [
             summary('2026-07-30-market-listesi.md', TaskStatus.active),
             summary('2026-07-28-fatura-odemesi.md', TaskStatus.inbox),
           ]),
@@ -102,7 +102,7 @@ void main() {
     });
 
     await tester.pumpWidget(buildApp(
-      tasksOverride: allPendingTasksProvider.overrideWith((ref) async => [
+      tasksOverride: activeRepoPendingTasksProvider.overrideWith((ref) async => [
             summary('2026-07-30-market-listesi.md', TaskStatus.inbox),
           ]),
     ));
@@ -133,7 +133,7 @@ void main() {
     });
 
     await tester.pumpWidget(buildApp(
-      tasksOverride: allPendingTasksProvider.overrideWith((ref) async => const []),
+      tasksOverride: activeRepoPendingTasksProvider.overrideWith((ref) async => const []),
     ));
     await tester.pumpAndSettle();
 
@@ -144,7 +144,7 @@ void main() {
   testWidgets('hata durumunda sebep ve yeniden dene çıkar', (tester) async {
     var calls = 0;
     await tester.pumpWidget(buildApp(
-      tasksOverride: allPendingTasksProvider.overrideWith((ref) async {
+      tasksOverride: activeRepoPendingTasksProvider.overrideWith((ref) async {
         calls++;
         if (calls == 1) throw const HubNetworkError('Ağ bağlantısı yok.');
         return const [];
@@ -169,7 +169,7 @@ void main() {
     var detailFetches = 0;
 
     await tester.pumpWidget(buildApp(
-      tasksOverride: allPendingTasksProvider.overrideWith((ref) async => [item]),
+      tasksOverride: activeRepoPendingTasksProvider.overrideWith((ref) async => [item]),
       extra: [
         taskDetailProvider.overrideWith((ref, arg) async {
           detailFetches++;
@@ -201,7 +201,7 @@ void main() {
     final item = summary('2026-07-30-yeni-gorev.md', TaskStatus.inbox);
 
     await tester.pumpWidget(buildApp(
-      tasksOverride: allPendingTasksProvider.overrideWith((ref) async => [item]),
+      tasksOverride: activeRepoPendingTasksProvider.overrideWith((ref) async => [item]),
       extra: [
         taskDetailProvider.overrideWith((ref, arg) async => HubTask.parse(
               path: arg.path,

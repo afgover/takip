@@ -11,31 +11,32 @@ import 'hub_connections.dart';
 import 'hub_sync.dart';
 import 'hub_watcher.dart';
 import 'models/task.dart';
+import 'models/task_draft.dart';
 import 'offline_store.dart';
+import 'outbox.dart';
 import 'task_repo.dart';
 
 /// Bekleyenler listesinin filtresi. Boş küme = "hepsi".
+///
+/// Repo boyutu **yok**: liste yalnız aktif reponun işlerini gösteriyor
+/// ([activeRepoPendingTasksProvider]), yani süzecek ikinci bir repo kalmadı.
+/// Bırakılsaydı görünmeyen bir seçim (tek repolu listede repo menüsü
+/// çizilmez) listeyi sessizce boşaltabilirdi.
 class TaskFilter {
   const TaskFilter({
-    this.repos = const {},
     this.priorities = const {},
     this.categories = const {},
   });
 
-  final Set<String> repos;
   final Set<String> priorities;
   final Set<String> categories;
 
-  bool get isEmpty =>
-      repos.isEmpty && priorities.isEmpty && categories.isEmpty;
+  bool get isEmpty => priorities.isEmpty && categories.isEmpty;
 
   int get activeCount =>
-      (repos.isEmpty ? 0 : 1) +
-      (priorities.isEmpty ? 0 : 1) +
-      (categories.isEmpty ? 0 : 1);
+      (priorities.isEmpty ? 0 : 1) + (categories.isEmpty ? 0 : 1);
 
   bool allows(TaskSummary task) {
-    if (repos.isNotEmpty && !repos.contains(task.repoSlug)) return false;
     // Etiketi bilinmeyen görev (yerel kopya henüz inmemiş) filtreye takılmaz:
     // "önceliği high olanlar" derken, önceliği okunamamış bir görevi gizlemek
     // onu kaybetmek olurdu.
@@ -52,7 +53,7 @@ class TaskFilter {
     return true;
   }
 
-  TaskFilter toggled({String? repo, String? priority, String? category}) {
+  TaskFilter toggled({String? priority, String? category}) {
     Set<String> flip(Set<String> current, String? value) {
       if (value == null) return current;
       final next = {...current};
@@ -61,13 +62,10 @@ class TaskFilter {
     }
 
     return TaskFilter(
-      repos: flip(repos, repo),
       priorities: flip(priorities, priority),
       categories: flip(categories, category),
     );
   }
-
-  TaskFilter get cleared => const TaskFilter();
 }
 
 final taskFilterProvider =
@@ -234,8 +232,11 @@ class TaskFilterNotifier extends Notifier<TaskFilter> {
       final json = jsonDecode(raw) as Map<String, dynamic>;
       Set<String> read(String k) =>
           ((json[k] as List?)?.cast<String>() ?? const <String>[]).toSet();
+      // Eski kayıttaki `repos` **okunmuyor**: repo boyutu kalkınca o seçim
+      // hem menüsüz hem görünmez kalırdı ve başka bir repo aktifken listeyi
+      // sessizce boşaltırdı. Yok saymak, kullanıcının bir daha açamayacağı
+      // bir filtreyi diriltmekten iyidir.
       state = TaskFilter(
-        repos: read('repos'),
         priorities: read('priorities'),
         categories: read('categories'),
       );
@@ -252,7 +253,6 @@ class TaskFilterNotifier extends Notifier<TaskFilter> {
       await prefs.setString(
         _key,
         jsonEncode({
-          'repos': state.repos.toList(),
           'priorities': state.priorities.toList(),
           'categories': state.categories.toList(),
         }),
@@ -262,8 +262,8 @@ class TaskFilterNotifier extends Notifier<TaskFilter> {
     }
   }
 
-  void toggle({String? repo, String? priority, String? category}) {
-    state = state.toggled(repo: repo, priority: priority, category: category);
+  void toggle({String? priority, String? category}) {
+    state = state.toggled(priority: priority, category: category);
     unawaited(_persist());
   }
 
@@ -341,12 +341,20 @@ Future<List<TaskSummary>> pendingFromStore(HubConfig connection) async {
   return tasks;
 }
 
-/// **Bütün repolardaki** bekleyen işler, tek listede.
+/// **Aktif repodaki** bekleyen işler.
 ///
-/// Aktif repo kavramı burada yok: kullanıcı hangi repoda olursa olsun açık
-/// işlerinin tamamını görür. Sıralama görev deposundakiyle aynı ilkeye uyar —
-/// önce kullanıcıyı bekleyenler, sonra yeniden eskiye.
-final allPendingTasksProvider = FutureProvider<List<TaskSummary>>((ref) async {
+/// Liste bir dönem bütün bağlı repoları tek listede birleştiriyordu (B-067).
+/// Pratikte bunun bedeli, kullanıcının "şu an hangi projedeyim" sorusunu
+/// kaybetmesi oldu: ekranda üç projenin işi bir aradayken eklenen görev
+/// sessizce **aktif** repoya gidiyor ve hepsi tek bir agent'ın kuyruğunda
+/// toplanıyordu. Kapsam artık üstteki repo şeridinde yazan repo — gösterilen
+/// yer ile yazılan yer aynı. Diğer projeler repo şeridinden bir dokunuş
+/// uzakta; hiçbir iş kaybolmuyor, yalnız karışmıyor.
+///
+/// Sıralama görev deposundakiyle aynı ilkeye uyar — önce kullanıcıyı
+/// bekleyenler, sonra yeniden eskiye.
+final activeRepoPendingTasksProvider =
+    FutureProvider<List<TaskSummary>>((ref) async {
   ref.watch(hubWatcherProvider.select((s) => s.headSha));
   ref.watch(hubSyncProvider.select((s) => s.version));
 
@@ -355,30 +363,20 @@ final allPendingTasksProvider = FutureProvider<List<TaskSummary>>((ref) async {
   // Liste boşsa aktif bağlantıya düşülür: bağlantı listesi henüz yüklenmemiş
   // olabilir ve o anda elde tek doğru bilgi `hubConfigProvider`dır.
   final active = state.active ?? ref.watch(hubConfigProvider).value;
-  final connections =
-      state.connections.isNotEmpty
-          ? state.connections
-          : (active == null ? const <HubConfig>[] : [active]);
-  if (connections.isEmpty) return const [];
+  if (active == null) return const [];
 
-  final all = <TaskSummary>[];
-  var anyFromStore = false;
-  for (final connection in connections) {
-    final fromStore = await pendingFromStore(connection);
-    if (fromStore.isNotEmpty) anyFromStore = true;
-    all.addAll(fromStore);
-  }
+  // Kopya: `pendingFromStore` kopya yokken **sabit** liste döndürüyor ve
+  // aşağıdaki ağ yedeği ona ekleme yapıyor.
+  final all = [...await pendingFromStore(active)];
 
-  // İlk senkron bitmeden yerel kopya boş olur; o durumda en azından aktif
-  // reponun listesi ağdan çizilsin, kullanıcı boş ekran görmesin.
-  if (!anyFromStore) {
-    if (active != null) {
-      final live = await ref.read(taskRepoProvider).listPending();
-      all.addAll(live.map((t) => t.withContext(
-            repoSlug: active.slug,
-            repoLabel: active.displayName,
-          )));
-    }
+  // İlk senkron bitmeden yerel kopya boş olur; o durumda liste ağdan çizilsin,
+  // kullanıcı boş ekran görmesin.
+  if (all.isEmpty) {
+    final live = await ref.read(taskRepoProvider).listPending();
+    all.addAll(live.map((t) => t.withContext(
+          repoSlug: active.slug,
+          repoLabel: active.displayName,
+        )));
   }
 
   all.sort((a, b) {
@@ -394,19 +392,33 @@ final allPendingTasksProvider = FutureProvider<List<TaskSummary>>((ref) async {
   return all;
 });
 
+/// Kuyrukta bekleyen taslaklardan **aktif repoya ait** olanlar.
+///
+/// Liste aktif repoya daralınca kuyruk da daralmak zorunda: başka projeye
+/// yazılmayı bekleyen bir taslağı bu reponun listesinin tepesinde göstermek,
+/// düzeltilen karışıklığın kuyruk tarafından geri getirilmesi olurdu.
+///
+/// Damgasız taslak (T-003 öncesi kuyruğa girmiş) aktif repoya ait sayılıyor —
+/// repo şeridindeki sayaçla aynı kural, iki yer aynı şeyi saymalı.
+final queuedForActiveRepoProvider = Provider<List<TaskDraft>>((ref) {
+  final state =
+      ref.watch(hubConnectionsProvider).valueOrNull ?? const HubConnectionsState();
+  final activeSlug =
+      (state.active ?? ref.watch(hubConfigProvider).value)?.slug;
+  final queued = ref.watch(outboxProvider).valueOrNull ?? const <TaskDraft>[];
+  return queued.where((d) => (d.repoSlug ?? activeSlug) == activeSlug).toList();
+});
+
 /// Filtre çubuğunun sunacağı seçenekler — listede gerçekten geçen değerler.
 final taskFacetsProvider = Provider<TaskFacets>((ref) {
-  final tasks = ref.watch(allPendingTasksProvider).valueOrNull ?? const [];
-  final repos = <String, String>{};
+  final tasks = ref.watch(activeRepoPendingTasksProvider).valueOrNull ?? const [];
   final priorities = <String>{};
   final categories = <String>{};
   for (final t in tasks) {
-    if (t.repoSlug != null) repos[t.repoSlug!] = t.repoName;
     if (t.priority != null) priorities.add(t.priority!);
     if (t.category != null) categories.add(t.category!);
   }
   return TaskFacets(
-    repos: repos,
     // Öncelikler sözleşmedeki sırayla; kalanlar (serbest değer) sona.
     priorities: [
       ...Hub.priorities.where(priorities.contains),
@@ -418,16 +430,12 @@ final taskFacetsProvider = Provider<TaskFacets>((ref) {
 
 class TaskFacets {
   const TaskFacets({
-    required this.repos,
     required this.priorities,
     required this.categories,
   });
 
-  /// slug → görünen ad
-  final Map<String, String> repos;
   final List<String> priorities;
   final List<String> categories;
 
-  bool get hasAnything =>
-      repos.length > 1 || priorities.isNotEmpty || categories.isNotEmpty;
+  bool get hasAnything => priorities.isNotEmpty || categories.isNotEmpty;
 }

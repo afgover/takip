@@ -158,7 +158,7 @@ void main() {
   /// Yoklamayı koştur **ve listenin yeniden hesaplanmasını bekle**.
   ///
   /// `pumpAndSettle` yetmiyor: yalnız kare pompalar, gerçek async işi
-  /// sürmez. `allPendingTasksProvider` ise cihazdaki kopyayı okuyor, yani
+  /// sürmez. `activeRepoPendingTasksProvider` ise cihazdaki kopyayı okuyor, yani
   /// `SharedPreferences` üzerinden bir platform kanalına gidiyor. Beklemeden
   /// doğrulama yapmak testi **yarışa** sokuyordu: 10 koşumda 2'si kırılıyordu
   /// ve kırılan koşum "liste tazelenmedi" diye bir hata gösteriyordu — oysa
@@ -172,14 +172,14 @@ void main() {
       // testin *sahte zaman* zonunda çalışmaya başlıyor; gerçek async işe
       // (yerel kopya + ağ) dayandığı için orada hiç bitmiyor. Geçersiz kılmak
       // o hesabı atar, `runAsync` içindeki okuma gerçek zonda yeniden başlatır.
-      container.invalidate(allPendingTasksProvider);
+      container.invalidate(activeRepoPendingTasksProvider);
 
       // Bekleme `.future` ile değil **durumla**: `.future`, sahte zonda
       // başlayıp hiç bitmeyen ilk hesabın completer'ına bağlı kalıyor ve
       // yeni hesap bitse bile dönmüyordu. Durum ise her yeniden hesapta
       // güncelleniyor.
       for (var i = 0; i < 200; i++) {
-        final state = container.read(allPendingTasksProvider);
+        final state = container.read(activeRepoPendingTasksProvider);
         if (!state.isLoading) return;
         await Future<void>.delayed(const Duration(milliseconds: 20));
       }

@@ -610,6 +610,9 @@ class LEn extends L {
   String get addFieldCategory => 'Category';
 
   @override
+  String get addFieldTargetRepo => 'Target repo';
+
+  @override
   String get addNewCategory => 'New category…';
 
   @override
@@ -953,9 +956,6 @@ class LEn extends L {
   @override
   String get detailDoneNoteHint =>
       'How you did it, something that came up, anything the agent should know';
-
-  @override
-  String get filterRepo => 'Repo';
 
   @override
   String get filterCategory => 'Category';

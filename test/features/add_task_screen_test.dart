@@ -3,11 +3,14 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:takip/features/add_task/add_task_screen.dart';
 import 'package:takip/hub/frontmatter.dart';
+import 'package:takip/hub/hub_connections.dart';
 import 'package:takip/hub/task_repo.dart';
+import 'package:takip/github/client.dart';
 import 'package:takip/github/contents_api.dart';
 
 import '../github/contents_api_test.dart' show FakeAdapter, jsonResponse;
@@ -36,6 +39,49 @@ import '../helpers/test_app.dart';
   );
 }
 
+/// İki bağlantılı kurulum: hedef repo seçicisi ancak burada anlamlı.
+///
+/// `taskRepoProvider` **bilerek** sabitlenmiyor; ekran hedefi kendi seçtiği
+/// için asıl ölçülen şey isteğin hangi repoya gittiği. Sahte depo konsaydı
+/// test, hedefin doğru seçildiğini değil yalnızca bir istek atıldığını
+/// ölçerdi.
+({Widget widget, FakeAdapter adapter}) buildMultiRepoScreen({
+  ResponseBody Function(RequestOptions options, String? body)? handler,
+}) {
+  FlutterSecureStorage.setMockInitialValues({
+    HubConnectionsStore.listKey: jsonEncode([
+      {'owner': 'a', 'repo': 'bir', 'token': 't1'},
+      {'owner': 'b', 'repo': 'iki', 'token': 't2'},
+    ]),
+    HubConnectionsStore.activeKey: 'a/bir',
+  });
+
+  final adapter = FakeAdapter(
+    handler ??
+        (_, __) => jsonResponse({
+              'content': {'sha': 'yeni-sha'}
+            }),
+  );
+  final dio = buildGithubDio((_) => 't')..httpClientAdapter = adapter;
+
+  return (
+    widget: ProviderScope(
+      overrides: [githubDioProvider.overrideWithValue(dio)],
+      child: testApp(AddTaskScreen()),
+    ),
+    adapter: adapter,
+  );
+}
+
+Future<void> chooseTarget(WidgetTester tester, String displayName) async {
+  await tester.tap(find.byKey(AddTaskScreen.targetRepoFieldKey));
+  await tester.pumpAndSettle();
+  // `.last`: seçili değer düğmenin kendisinde de yazıyor; açılan listedeki
+  // kopya sonuncusu.
+  await tester.tap(find.text(displayName).last);
+  await tester.pumpAndSettle();
+}
+
 Future<void> fillAndSubmit(
   WidgetTester tester, {
   String title = 'Market listesi',
@@ -49,7 +95,14 @@ Future<void> fillAndSubmit(
 }
 
 void main() {
-  setUp(() => SharedPreferences.setMockInitialValues({}));
+  setUp(() {
+    SharedPreferences.setMockInitialValues({});
+    // Güvenli depo da sıfırlanıyor: sahte değerler statik ve testler arasında
+    // kalıcı. Sıfırlanmazsa "tek bağlantı" varsayan bir test, kendinden önce
+    // koşan çok bağlantılı bir testin kurduğu düzeni görür ve sıraya bağlı
+    // olarak kırılır.
+    FlutterSecureStorage.setMockInitialValues({});
+  });
 
   testWidgets('başlık boşken istek atılmaz', (tester) async {
     final built = buildScreen();
@@ -213,5 +266,76 @@ void main() {
 
     expect(find.text('Kategori adı gerekli'), findsOneWidget);
     expect(built.adapter.requests, isEmpty);
+  });
+
+  /// Görevin **hangi hub'a** gittiği ekranda görünür ve seçilebilir olmalı.
+  ///
+  /// Önceki hâlde hedef, başka bir ekranın durumundan (repo şeridi) türüyordu
+  /// ve bu ekranda hiçbir yerde yazmıyordu. Yanlış projeye düşen görev sessiz
+  /// bir hatadır: kullanıcı görmez, yalnız o projenin agent'ı yabancı bir iş
+  /// bulur (L-045'in aynı ailesinden).
+  group('hedef repo', () {
+    testWidgets('tek bağlantı varken seçici çizilmez', (tester) async {
+      // Seçeneksiz bir seçici, karar veriliyormuş izlenimi verir; hedefi
+      // zaten üstteki repo şeridi söylüyor.
+      final built = buildScreen();
+      await tester.pumpWidget(built.widget);
+      await tester.pumpAndSettle();
+
+      expect(find.byKey(AddTaskScreen.targetRepoFieldKey), findsNothing);
+    });
+
+    testWidgets('iki bağlantı varken seçici aktif repoyla gelir',
+        (tester) async {
+      final built = buildMultiRepoScreen();
+      await tester.pumpWidget(built.widget);
+      await tester.pumpAndSettle();
+
+      final dropdown = tester.widget<DropdownButton<String>>(
+        find.byKey(AddTaskScreen.targetRepoFieldKey),
+      );
+      expect(dropdown.value, 'a/bir');
+    });
+
+    testWidgets('seçilen repoya yazılır, aktif repoya değil', (tester) async {
+      final built = buildMultiRepoScreen();
+      await tester.pumpWidget(built.widget);
+      await tester.pumpAndSettle();
+
+      await chooseTarget(tester, 'b/iki');
+      await fillAndSubmit(tester);
+
+      final request = built.adapter.requests.single;
+      expect(request.method, 'PUT');
+      expect(
+        request.path,
+        startsWith('/repos/b/iki/contents/hub/tasks/inbox/'),
+        reason: 'aktif repo a/bir; görev seçilen repoya gitmeli',
+      );
+    });
+
+    testWidgets('ağ yokken kuyruğa giren taslak seçilen repoyu taşır',
+        (tester) async {
+      // Damga taslak **üretilirken** basılıyor. Kuyruğa girerken basılsaydı
+      // (T-003'ün ilk hâli) hedef "kuyruğa alındığı andaki aktif repo" olurdu
+      // ve kullanıcının seçtiği repo yolda kaybolurdu.
+      final built = buildMultiRepoScreen(
+        handler: (options, _) => throw DioException.connectionError(
+          requestOptions: options,
+          reason: 'ağ yok',
+        ),
+      );
+      await tester.pumpWidget(built.widget);
+      await tester.pumpAndSettle();
+
+      await chooseTarget(tester, 'b/iki');
+      await fillAndSubmit(tester);
+
+      expect(find.textContaining('kuyruğa alındı'), findsOneWidget);
+
+      final prefs = await SharedPreferences.getInstance();
+      final queued = prefs.getStringList('outbox')!;
+      expect(jsonDecode(queued.single)['repoSlug'], 'b/iki');
+    });
   });
 }

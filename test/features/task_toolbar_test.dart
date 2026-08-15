@@ -34,20 +34,17 @@ TaskSummary task({
       category: category,
     );
 
+// Hepsi aynı repodan: liste artık aktif reponun işlerini gösteriyor.
 final _tasks = [
   task(name: 'bir.md', priority: 'high', category: 'gorev'),
   task(name: 'iki.md', priority: 'low', category: 'hata'),
-  task(
-      name: 'uc.md',
-      repo: 'afgover/financer_takip',
-      priority: 'high',
-      category: 'fikir'),
+  task(name: 'uc.md', priority: 'high', category: 'fikir'),
 ];
 
 Widget buildApp() => ProviderScope(
       overrides: [
         hubConfigProvider.overrideWith(FakeHubConfigNotifier.new),
-        allPendingTasksProvider.overrideWith((ref) async => _tasks),
+        activeRepoPendingTasksProvider.overrideWith((ref) async => _tasks),
       ],
       child: testApp(PendingScreen()),
     );
@@ -61,14 +58,15 @@ void main() {
     await tester.pumpAndSettle();
   }
 
-  testWidgets('üç filtre menüsü ve sıralama yan yana', (tester) async {
+  testWidgets('iki filtre menüsü ve sıralama yan yana', (tester) async {
     await tester.pumpWidget(buildApp());
     await tester.pumpAndSettle();
 
-    expect(find.byKey(TaskToolbar.menuKey('repo')), findsOneWidget);
     expect(find.byKey(TaskToolbar.menuKey('category')), findsOneWidget);
     expect(find.byKey(TaskToolbar.menuKey('priority')), findsOneWidget);
     expect(find.byKey(TaskSortButton.buttonKey), findsOneWidget);
+    // Repo menüsü yok: liste aktif repoya ait, süzülecek ikinci repo yok.
+    expect(find.byKey(TaskToolbar.menuKey('repo')), findsNothing);
   });
 
   testWidgets('menü açılınca o boyutun seçenekleri listelenir',
@@ -183,9 +181,14 @@ void main() {
       expect(prefs.getString('task_sort'), 'priority');
     });
 
-    testWidgets('yeniden açılışta geri gelir', (tester) async {
+    testWidgets('yeniden açılışta geri gelir, eski repo seçimi yok sayılır',
+        (tester) async {
+      // Kayıt **repo boyutu kalkmadan önceki** biçimde: içinde bir repo
+      // seçimi var. Diriltilseydi, başka bir repo aktifken listeyi
+      // boşaltırdı ve kullanıcı onu kapatacak menüyü bulamazdı.
       SharedPreferences.setMockInitialValues({
-        'task_filter': '{"repos":[],"priorities":["high"],"categories":[]}',
+        'task_filter':
+            '{"repos":["afgover/eski"],"priorities":["high"],"categories":[]}',
         'task_sort': 'date',
         'task_sort_ascending': true,
       });
