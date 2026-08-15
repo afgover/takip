@@ -1,7 +1,7 @@
 ---
 id: S-2026-08-14-backlog-gozden-gecirme
 date: 2026-08-14
-status: open
+status: closed
 reconstructed: false
 author: afgover
 topics: [backlog, gozden-gecirme, acilis]
@@ -12,7 +12,22 @@ tasks_touched: []
 # Oturum: Backlog'un açık maddelerini gözden geçirme
 
 ## Özet
-(oturum açık)
+*Bu özet, oturumun kendi kaydından **türetildi** (sözleşme 1.20, §11): oturum
+kapatılmadan bırakılmıştı ve ertesi gün yeni bir oturum açılırken kapatıldı.
+Aşağıda oturumda yazılmamış hiçbir bulgu yok.*
+
+Backlog'un açık maddeleri sayıldı ve sınıflandırıldı. `- [ ]` işaretli 12
+satırdan **biri gerçek madde değil** (`B-001`, dosya başındaki biçim örneğinin
+içinde); gerçek sayı 11. Kalan 11 madde üç gruba ayrıldı: **bayat** (B-052 —
+tarif ettiği "bir hafta gerçek kullanım" fiilen yaşanmış, kapanması B-053'ü ve
+dolaylı olarak B-063/B-064'ü çözer), **kullanıcıya bağlı** (B-101/T-010 imza
+anahtarı — repo public olduğundan Releases'ın önündeki tek kapı; B-103 token
+kapsam eşiği bir tasarım kararı bekliyor) ve **bilinçli beklemede** (B-098,
+B-110, Faz 6'nın tamamı).
+
+Açılış kontrollerinin hepsi koştu: sözleşme ana kopyayla aynı, son tarama
+eşiğin altında, §13 geçici maddesi idempotent. **Madde durumu değiştirilmedi** —
+oturum gözden geçirmeydi, karar kullanıcıya bırakıldı.
 
 ## Kayıt
 
