@@ -829,6 +829,9 @@ class LEn extends L {
   String get planStatusCancelled => 'Cancelled';
 
   @override
+  String get planDerived => 'derived';
+
+  @override
   String planProgress(int done, int total) {
     return '$done/$total steps';
   }

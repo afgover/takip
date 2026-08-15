@@ -564,6 +564,7 @@
   "planStatusOpen": "Açık",
   "planStatusCompleted": "Tamamlandı",
   "planStatusCancelled": "İptal",
+  "planDerived": "türetilmiş",
   "planProgress": "{done}/{total} adım",
   "@planProgress": {
     "placeholders": {

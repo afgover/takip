@@ -87,7 +87,16 @@ tanımlanır. Prosedür, oturumun konusu ne olursa olsun geçerlidir.
    görünür kılmak. Her adım bittiği anda işaretlenir; vazgeçilen adım silinmez,
    üstü çizilir ve **nedeni yazılır**. Tek komutluk işler ağaca girmez.
    Ağaç diğer akışların yerine geçmez: aynı bilgiyi backlog'a ve oturum kaydına
-   ikinci kez yazmak yerine oraya **bağlantı** verilir.
+   ikinci kez yazmak yerine oraya **bağlantı** verilir. Adım satırı **kısadır**:
+   ne yapıldığını söyler, nedeni bağlantı verilen kayda gider (v1.26).
+
+   **Geç fark ettiysen atlamak yok (v1.26).** İşin çok adımlı olduğunu ancak
+   bittiğinde anladıysan planı *o zaman* yaz ve `Türetilmiş: true` koy. Adımlar
+   kayıttan (oturum, commit, backlog) **türetilir**; hatırlanmayan adım
+   yazılmaz. Bu madde ölçülmüş bir davranıştan doğdu: 1.25'te geç fark eden
+   agent'ın önünde yalnız "uydur" ve "atla" vardı, hepsi atladı ve ağaçlar boş
+   kaldı. Eksik bir ağaç yanlış bir ağaçtan iyidir, ama **boş** ağaç ikisinden
+   de kötüdür.
 7c. **Başka bir kayda atıf yaparken bağlantı ver** (sözleşme
    [§15](SYSTEM.md#15)): `[SEC-010](SECURITY.md#SEC-010)`. Çapa kaydın ID'sidir,
    başlık metni değil. Bir belgede ID'nin **ilk** geçtiği yer bağlanır, sonraki

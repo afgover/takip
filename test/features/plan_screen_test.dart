@@ -113,6 +113,33 @@ void main() {
     expect(find.text('1/2 adım'), findsOneWidget);
   });
 
+  testWidgets('türetilmiş plan ayrı etiketle işaretleniyor (1.26)',
+      (tester) async {
+    // Önceden yazılmış plan bir karardır, türetilmiş olan bir kayıt; ikisini
+    // aynı göstermek hub'ın geçmişini olduğundan planlı gösterirdi.
+    const derived = '''
+## P-010 — Türetilmiş plan
+- **Durum:** tamamlandi
+- **Türetilmiş:** true
+
+- [x] P-010.1 — adım · ✅ 2026-08-15
+''';
+
+    await tester.pumpWidget(wrap(parsePlans(derived)));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const Key('plan-filter-all')));
+    await tester.pumpAndSettle();
+
+    expect(find.text('türetilmiş'), findsOneWidget);
+  });
+  testWidgets('önceden yazılmış planda etiket çıkmıyor', (tester) async {
+    await tester.pumpWidget(wrap(parsePlans(twoPlans)));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const Key('plan-filter-all')));
+    await tester.pumpAndSettle();
+
+    expect(find.text('türetilmiş'), findsNothing);
+  });
   testWidgets('PLAN.md yoksa boş durum — hata değil (§14/6)', (tester) async {
     await tester.pumpWidget(wrap(const []));
     await tester.pumpAndSettle();

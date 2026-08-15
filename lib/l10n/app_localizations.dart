@@ -1495,6 +1495,12 @@ abstract class L {
   /// **'İptal'**
   String get planStatusCancelled;
 
+  /// No description provided for @planDerived.
+  ///
+  /// In tr, this message translates to:
+  /// **'türetilmiş'**
+  String get planDerived;
+
   /// No description provided for @planProgress.
   ///
   /// In tr, this message translates to:

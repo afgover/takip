@@ -5,7 +5,7 @@ ve hangi şemaya uyacağını** tanımlar. Agent ve kullanıcı uygulaması bu s
 dışına çıkmaz. Sözleşme değişiklikleri `EVOLUTION.md`'ye kaydedilir ve bu dosyanın
 başındaki sürüm numarası artırılır.
 
-**Sözleşme sürümü:** 1.25
+**Sözleşme sürümü:** 1.26
 **Ana kopya (master):** `afgover/takip` → `hub/SYSTEM.md` (tr, **kanonik**) ·
 `hub/SYSTEM.en.md` (en)
 (bkz. §10 — her hub kendi kopyasını, kendi dilindeki varyanttan günceller)
@@ -791,7 +791,7 @@ tutulan bir bayrak dosyayla ayrışabilirdi.
 > listesi, kullanıcıyı agent'ın hiç düşünmediği bir çerçeveye sıkıştırır ve
 > yanlış cevabı doğru görünen bir biçimde kaydeder.
 
-## 14. `PLAN.md` — görev ağacı (v1.25)
+## 14. `PLAN.md` — görev ağacı (v1.25, geriye dönük plan v1.26)
 
 Oturum kaydı **ne konuşulduğunu** tutar, `BACKLOG.md` **ne yapılacağını**,
 `tasks/` **kullanıcıya dönük iş durumunu**. Dördüncüsü bunların hiçbirinin
@@ -804,7 +804,8 @@ gerekiyordu ve yarım kalan bir adım orada göze çarpmıyordu.
 ### Kapsam — neyin girdiği, neyin girmediği
 
 Ağaca **üç ya da daha fazla adımdan oluşan her iş** girer; adımları
-uygulanmadan önce yazılır. Girmeyenler:
+uygulanmadan önce yazılır — bu mümkün olmadığında bkz. *Geriye dönük plan*.
+Girmeyenler:
 
 | Girer | Girmez |
 |---|---|
@@ -848,6 +849,7 @@ bağlantı verir, maddenin metnini kopyalamaz.
 | `Kaynak` | evet | Planı doğuran oturum ID'si |
 | `Durum` | evet | `acik` · `tamamlandi` · `iptal` |
 | `İlgili` | hayır | Planın dokunduğu kayıt ID'leri (`B-`, `SEC-`, `T-`…) |
+| `Türetilmiş` | hayır | (v1.26) `true` → plan iş bittikten sonra kayıttan türetildi |
 
 Kurallar:
 
@@ -871,6 +873,47 @@ Kurallar:
    değildir; ilk çok adımlı planla birlikte oluşturulur. Bunu okuyan her araç
    dosyanın **yokluğunu** normal bir durum olarak ele alır (R-008: yeni alanlar
    ve dosyalar eski hub'ları bozmaz).
+7. **Adım satırı kısadır.** Bir satır *ne yapıldığını* söyler; **neden**
+   yapıldığı bağlantı verilen kayda (oturum, backlog, knowledge) gider. Gerekçe
+   adım satırına sıkıştırılırsa ağaç telefonda okunmaz bir duvara döner ve
+   ağacın tek işi olan "hangi adımdayız" sorusu yine cevapsız kalır.
+
+### Geriye dönük plan (v1.26)
+
+Çok adımlı olduğu **iş bittikten sonra** anlaşılan bir iş de ağaca girer;
+planı o zaman yazılır ve `Türetilmiş: true` taşır.
+
+Bu madde ölçülmüş bir boşluğu kapatıyor. 1.25'te kural yalnız "adımlar
+uygulanmadan önce yazılır" diyordu ve geç fark eden agent'a iki seçenek
+bırakıyordu: **uydurmak** (yasak) ya da **atlamak**. Sonuç ikincisi oldu —
+ağaçlar boş kaldı, üstelik sözleşmeyi yazan hub'ın kendisinde de
+(S-2026-08-15-gorev-kapsami, sapma kaydı).
+
+Ayrım nettir ve tersi yapılmaz:
+
+| Ne yapıldı | Ağaca girer mi |
+|---|---|
+| Adımlar bir **kayıttan türetildi** (oturum, commit, backlog) | ✅ `Türetilmiş: true` |
+| Adımlar **hatırlanmıyor**, akla yatkın olduğu için yazıldı | ✗ yazılmaz |
+
+Yani serbest olan **türetme**, uydurma değil. `Kaynak:` alanı bu yüzden geriye
+dönük planda daha da önemli: adımların nereden çıkarıldığını gösteren tek yer
+orası. Türetilemeyen bir adım yazılmaz — eksik bir ağaç, yanlış bir ağaçtan
+iyidir.
+
+Aynı ayrım hub'da zaten yaşıyor: oturum kayıtlarında `reconstructed: true`
+(v1.6) ve sonradan yazılan özetlerin "bu özet kendi kaydından türetildi"
+notu. Yeni bir kavram değil, var olan kalıbın ağaca taşınması.
+
+> **Geriye dönük plan kapalı doğar.** Adımları zaten bitmiş bir işi anlatır,
+> yani `Durum: tamamlandi` (ya da `iptal`) ile yazılır. Açık bir plan geriye
+> dönük olamaz: yarım kalan işin adımları hâlâ önceden yazılabilir.
+
+**Yerleşim.** "Yeni plan en üste" kuralı (4) *canlı* iş içindir; geriye dönük
+plan kapalı doğduğu için üste değil, **kapalı planların arasına tarih sırasıyla**
+yazılır. Aksi hâlde altı ay önceki bir iş, bugün yarım kalan işin üstünü örterdi
+— kuralın önlemek istediği şeyin ta kendisi. Numara yine sıradan devam eder:
+numara ne zaman **yazıldığını** söyler, tarih ne zaman **yapıldığını**.
 
 ## 15. Bağlantılar — belgeler arası geçiş (v1.25)
 

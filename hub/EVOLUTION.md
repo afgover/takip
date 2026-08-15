@@ -745,3 +745,22 @@ toplanır ve gerekiyorsa Faz 6 maddelerini (B-060…B-064) yeniden sıralar.
   için sözleşme artık kırıcı değişikliğe kapalı. İkisi de eklemeli çıktı:
   `PLAN.md` **opsiyonel** dosya (yokluğu hata değil), bağlantı kuralı eksik
   bağlantıyı ihlal saymıyor. Eski hub'lar dokunulmadan geçerli kalıyor.
+- **Sözleşme 1.26 (2026-08-15):** Geriye dönük plan. 1.25 ağacı getirdi ama
+  adımları yalnız "uygulanmadan önce" yazılabiliyordu; iş geç fark edildiğinde
+  agent'ın önünde **uydur** (yasak) ya da **atla** vardı. Hepsi atladı: ağaçlar
+  boş kaldı, üstelik sözleşmeyi yazan hub'ın kendisinde de
+  ([S-2026-08-15-gorev-kapsami](sessions/2026-08-15-gorev-kapsami/session.md)'deki
+  sapma kaydı). Boşluğu kullanıcı fark etti — "hiçbir repo ağacı doldurmamış".
+  Çözüm **uydurma** ile **türetme**yi ayırmak oldu: geriye dönük plan serbest
+  ama `Türetilmiş: true` taşıyor ve `Kaynak:` adımların nereden okunduğunu
+  gösteriyor; türetilemeyen adım yazılmıyor. Kalıp yeni değil — oturumlarda
+  `reconstructed: true` (v1.6) ve sonradan yazılan özetlerin türetilme notu
+  aynı ayrımı zaten taşıyordu; bu sürüm onu ağaca taşıdı.
+  İki ek kural aynı ölçümden çıktı: **adım satırı kısadır** (gerekçe bağlantı
+  verilen kayda gider — ölçüm, P-003'ün adımlarının telefonda duvara dönmesi)
+  ve **geriye dönük plan kapalıların arasına tarih sırasıyla girer**, üste
+  değil; yoksa altı ay önceki bir iş bugün yarım kalanın üstünü örterdi.
+  R-008 yine korundu: yeni alan opsiyonel, yokluğu "önceden yazılmış" demek.
+  Sözleşme yazıldıktan sonra `takip`'in geçmişi de dolduruldu — dört plan
+  (P-005…P-008) oturum kayıtlarından türetildi, böylece diğer repoların
+  agent'ları boş değil **dolu** bir örnek görüyor. 581 test.

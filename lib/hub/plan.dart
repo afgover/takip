@@ -43,6 +43,24 @@ class Plan {
     return PlanStatus.acik;
   }
 
+  /// Plan iş bittikten sonra kayıttan **türetildi** mi (sözleşme 1.26 §14)?
+  ///
+  /// Ekranda ayrı gösteriliyor çünkü ikisi aynı şey değil: önceden yazılmış bir
+  /// plan işin nasıl yürütüleceğine dair bir **karar**, türetilmiş bir plan ise
+  /// nasıl yürüdüğüne dair bir **kayıt**. İkincisini birincisi gibi göstermek,
+  /// hub'ın kendi geçmişini olduğundan planlı gösterirdi.
+  ///
+  /// Alan yoksa `false`: 1.26 öncesi yazılmış planların hepsi önceden yazılmıştı
+  /// (R-008 — yeni alan eski kayıtları bozmaz).
+  bool get reconstructed {
+    for (final name in _derivedFields) {
+      final raw = field(name)?.toLowerCase();
+      if (raw == null) continue;
+      return raw == 'true' || raw == 'evet' || raw == 'yes';
+    }
+    return false;
+  }
+
   int get doneCount => steps.where((s) => s.state == PlanStepState.done).length;
 
   /// İptal edilen adım paydadan düşer: "6/8" derken iki adımın bilerek
@@ -50,6 +68,10 @@ class Plan {
   int get plannedCount =>
       steps.where((s) => s.state != PlanStepState.cancelled).length;
 }
+
+/// `Türetilmiş:` / `Derived:` — alan adları hub diline göre değişiyor, ikisi de
+/// deneniyor (`Durum`/`Status` ile aynı gerekçe).
+const _derivedFields = ['türetilmiş', 'turetilmis', 'derived'];
 
 /// Ağacın bir adımı. Derinlik girintiden gelir (iki boşluk = bir seviye).
 class PlanStep {

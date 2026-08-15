@@ -7,7 +7,7 @@ named, and what schema it follows**. Neither the agent nor the user application
 steps outside it. Contract changes are recorded in `EVOLUTION.md` and the
 version number at the top of this file is incremented.
 
-**Contract version:** 1.25
+**Contract version:** 1.26
 **Master copy:** `afgover/takip` → `hub/SYSTEM.md` (Turkish) ·
 `hub/SYSTEM.en.md` (English)
 (see §10 — every hub updates its own copy from there)
@@ -816,7 +816,7 @@ by the task itself, and a separate flag could drift from the files.
 > it is: an invented option list forces the user into a frame the agent never
 > thought through, and records a wrong answer in a form that looks right.
 
-## 14. `PLAN.md` — the task tree (v1.25)
+## 14. `PLAN.md` — the task tree (v1.25, retroactive plans v1.26)
 
 A session record holds **what was discussed**, `BACKLOG.md` **what is to be
 done**, `tasks/` **the user-facing state of a job**. The fourth was a question
@@ -829,7 +829,8 @@ whole session, and a step left half-done did not stand out there.
 ### Scope — what goes in, what does not
 
 Every job made of **three or more steps** goes into the tree, written down
-before the steps are carried out. What does not:
+before the steps are carried out — when that is not possible, see *Retroactive
+plans*. What does not:
 
 | Goes in | Stays out |
 |---|---|
@@ -874,6 +875,7 @@ text.
 | `Source` | yes | ID of the session that produced the plan |
 | `Status` | yes | `open` · `completed` · `cancelled` |
 | `Related` | no | Record IDs the plan touches (`B-`, `SEC-`, `T-`…) |
+| `Derived` | no | (v1.26) `true` → the plan was derived from the record after the job ended |
 
 Rules:
 
@@ -898,6 +900,51 @@ Rules:
    contract; it is created with the first multi-step plan. Every tool reading it
    treats the file's **absence** as a normal state (R-008: new fields and files
    do not break existing hubs).
+7. **A step line is short.** A line says *what was done*; **why** it was done
+   goes to the record it links to (session, backlog, knowledge). Cramming the
+   reasoning into the step line turns the tree into a wall of text on a phone,
+   and the one question the tree exists to answer — "which step are we on" —
+   goes unanswered again.
+
+### Retroactive plans (v1.26)
+
+A job whose multi-step nature became clear only **after it ended** also goes
+into the tree; its plan is written then and carries `Derived: true`.
+
+This clause closes a measured gap. In 1.25 the rule only said "steps are written
+before they are carried out", which left an agent that noticed late with two
+options: **make them up** (forbidden) or **skip** (what happened). The result
+was the second — trees stayed empty, including in the very hub that wrote the
+contract (S-2026-08-15-gorev-kapsami, deviation note).
+
+The distinction is sharp and does not work in reverse:
+
+| What happened | Does it go in the tree |
+|---|---|
+| Steps were **derived from a record** (session, commit, backlog) | ✅ `Derived: true` |
+| Steps are **not remembered**, written because they sound plausible | ✗ not written |
+
+So what is permitted is **derivation**, not invention. That is why `Source`
+matters even more in a retroactive plan: it is the only place showing where the
+steps were read off. A step that cannot be derived is not written — an
+incomplete tree beats a false one.
+
+The same distinction already lives in the hub: `reconstructed: true` on session
+records (v1.6), and the "this summary was derived from its own record" note on
+summaries written later. Not a new concept — an existing pattern moved to the
+tree.
+
+> **A retroactive plan is born closed.** It describes a job whose steps are
+> already finished, so it is written with `Status: completed` (or `cancelled`).
+> An open plan cannot be retroactive: the steps of unfinished work can still be
+> written in advance.
+
+**Placement.** The "new plan on top" rule (4) is for *live* work; a retroactive
+plan is born closed, so it is written **among the closed plans, in date order**,
+not on top. Otherwise a job from six months ago would bury the work left half
+done today — exactly what the rule exists to prevent. Numbering still runs in
+sequence: the number says when it was **written**, the date says when it was
+**done**.
 
 ## 15. Links — moving between documents (v1.25)
 

@@ -824,6 +824,9 @@ class LTr extends L {
   String get planStatusCancelled => 'İptal';
 
   @override
+  String get planDerived => 'türetilmiş';
+
+  @override
   String planProgress(int done, int total) {
     return '$done/$total adım';
   }

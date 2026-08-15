@@ -184,6 +184,9 @@ class _PlanTile extends StatelessWidget {
         children: [
           _Tag(plan.id, color: theme.colorScheme.primary),
           _Tag(plan.status.labelIn(l), color: open ? theme.colorScheme.primary : muted),
+          // Türetilmiş plan ayrı işaretleniyor: önceden yazılmış bir plan
+          // karardır, türetilmiş olan kayıttır (sözleşme 1.26 §14).
+          if (plan.reconstructed) _Tag(l.planDerived, color: muted),
           if (plan.plannedCount > 0)
             _Tag(
               l.planProgress(plan.doneCount, plan.plannedCount),

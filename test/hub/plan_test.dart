@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:takip/hub/plan.dart';
 
@@ -107,6 +108,51 @@ Serbest açıklama metni; ilk plana kadar olan kısım atlanır.
 ''').single;
       expect(plan.steps.length, 2);
       expect(plan.steps.first.title, contains('ikinci satıra sarmış'));
+    });
+
+    test('Türetilmiş alanı okunur, iki dilde de (sözleşme 1.26)', () {
+      for (final line in [
+        '- **Türetilmiş:** true',
+        '- **Turetilmis:** true',
+        '- **Derived:** true',
+        '- **Türetilmiş:** evet',
+      ]) {
+        final plan = parsePlans('## P-001 — x\n$line\n').single;
+        expect(plan.reconstructed, isTrue, reason: line);
+      }
+    });
+
+    test('alanı olmayan plan türetilmiş sayılmaz (R-008)', () {
+      // 1.26 öncesi yazılmış planların hepsi önceden yazılmıştı; yeni alanın
+      // yokluğu "bilinmiyor" değil, "hayır" demek.
+      final plan = parsePlans('## P-001 — x\n- **Durum:** tamamlandi\n').single;
+      expect(plan.reconstructed, isFalse);
+    });
+
+    test('Türetilmiş: false türetilmiş saymaz', () {
+      final plan = parsePlans('## P-001 — x\n- **Türetilmiş:** false\n').single;
+      expect(plan.reconstructed, isFalse);
+    });
+
+    test('gerçek PLAN.md: türetilmiş planlar kapalı doğmuş', () {
+      // Sözleşme §14: geriye dönük plan `Durum: tamamlandi` (ya da `iptal`)
+      // ile yazılır — açık bir plan geriye dönük olamaz.
+      final plans = parsePlans(File('hub/PLAN.md').readAsStringSync());
+      final derived = plans.where((p) => p.reconstructed).toList();
+
+      expect(derived, isNotEmpty, reason: 'ağaçta türetilmiş plan bulunmalı');
+      for (final plan in derived) {
+        expect(
+          plan.status,
+          isNot(PlanStatus.acik),
+          reason: '${plan.id} türetilmiş ama açık görünüyor',
+        );
+        expect(
+          plan.field('kaynak') ?? plan.field('source'),
+          isNotNull,
+          reason: '${plan.id} türetilmiş ama Kaynak alanı yok',
+        );
+      }
     });
 
     test('boş dosya boş liste verir', () {

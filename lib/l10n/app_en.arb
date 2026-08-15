@@ -351,6 +351,7 @@
   "planStatusOpen": "Open",
   "planStatusCompleted": "Completed",
   "planStatusCancelled": "Cancelled",
+  "planDerived": "derived",
   "planProgress": "{done}/{total} steps",
   "@planProgress": {
     "placeholders": {

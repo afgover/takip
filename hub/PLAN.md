@@ -1,34 +1,96 @@
 # PLAN.md — Görev Ağacı
 
 Çok adımlı işlerin adımları ve durumu. Biçim ve kapsam:
-[`SYSTEM.md` §14](SYSTEM.md#14). Yeni plan **en üste** yazılır.
+[`SYSTEM.md` §14](SYSTEM.md#14). Yeni plan **en üste** yazılır; geriye dönük
+plan (`Türetilmiş: true`) kapalı doğduğu için kapalıların arasına tarih
+sırasıyla girer.
 
 ## P-004 — Sözleşme 1.26: geriye dönük plan ve ağacın doldurulması
 - **Tarih:** 2026-08-15
 - **Kaynak:** [S-2026-08-15-gorev-agaci-tesviki](sessions/2026-08-15-gorev-agaci-tesviki/session.md)
-- **Durum:** acik
+- **Durum:** tamamlandi
 - **İlgili:** [B-134](BACKLOG.md#B-134), [§14](SYSTEM.md#14), [R-008](knowledge/rules.md#R-008)
 
 > **Karar (2026-08-15, kullanıcı).** Ağaçların boş kalmasının sebebi agent'ların
 > ihmali değil, kuralın yapısal boşluğu: §14 adımları "uygulanmadan önce" ister
 > ve iş geç fark edildiğinde **hiçbir yol bırakmaz** — uydur (yasak) ya da atla.
 > Bu repoda bugün tam olarak bu yaşandı. Çözüm, **uydurma** ile **türetme**yi
-> ayırmak: geriye dönük plan serbest, ama `reconstructed: true` ile işaretli ve
+> ayırmak: geriye dönük plan serbest, ama `Türetilmiş: true` ile işaretli ve
 > `Kaynak:` adımların nereden türetildiğini gösteriyor. Hub'da bu kalıp zaten
 > var (oturumlarda v1.6).
 >
 > Adım satırları bilerek **kısa** yazıldı: gerekçe buraya değil, bağlantı
 > verilen kayda gider ([B-133](BACKLOG.md#B-133) ölçümü).
 
-- [ ] P-004.1 — `SYSTEM.md` §14: geriye dönük plan kuralı + sürüm 1.26
-- [ ] P-004.2 — `SYSTEM.en.md` aynı değişiklik
-- [ ] P-004.3 — `AGENT_PROTOCOL.md` ve `.en`: madde 7b'ye geç fark edilen iş yolu
-- [ ] P-004.4 — Uygulama: `Plan.reconstructed` + kartta etiket
-- [ ] P-004.5 — Arayüz metinleri (`app_tr.arb`, `app_en.arb`)
-- [ ] P-004.6 — Sürüm tutarlılığı: `constants.dart`, iki README
-- [ ] P-004.7 — `takip`'in geçmişi: çok adımlı işler oturum kayıtlarından türetilir
-- [ ] P-004.8 — Testler: ayrıştırıcı, ekran etiketi, sürüm tutarlılığı
-- [ ] P-004.9 — `EVOLUTION.md` 1.26 kaydı, oturum kaydı, tam süit + push
+- [x] P-004.1 — `SYSTEM.md` §14: geriye dönük plan kuralı + sürüm 1.26 · ✅ 2026-08-15
+- [x] P-004.2 — `SYSTEM.en.md` aynı değişiklik · ✅ 2026-08-15
+- [x] P-004.3 — `AGENT_PROTOCOL.md` ve `.en`: madde 7b'ye geç fark edilen iş yolu · ✅ 2026-08-15
+- [x] P-004.4 — Uygulama: `Plan.reconstructed` + kartta etiket · ✅ 2026-08-15
+- [x] P-004.5 — Arayüz metinleri (`app_tr.arb`, `app_en.arb`) · ✅ 2026-08-15
+- [x] P-004.6 — Sürüm tutarlılığı: `constants.dart`, iki README · ✅ 2026-08-15
+- [x] P-004.7 — `takip`'in geçmişi: çok adımlı işler oturum kayıtlarından türetilir · ✅ 2026-08-15 · dört plan: P-005…P-008
+- [x] P-004.8 — Testler: ayrıştırıcı, ekran etiketi, sürüm tutarlılığı · ✅ 2026-08-15 · 581 test
+- [x] P-004.9 — `EVOLUTION.md` 1.26 kaydı, oturum kaydı, tam süit + push · ✅ 2026-08-15
+
+## P-005 — Görev kapsamı: liste ve hedef aktif repoya bağlandı
+- **Tarih:** 2026-08-15
+- **Kaynak:** [S-2026-08-15-gorev-kapsami](sessions/2026-08-15-gorev-kapsami/session.md)
+- **Durum:** tamamlandi
+- **Türetilmiş:** true
+- **İlgili:** [B-131](BACKLOG.md#B-131), [B-132](BACKLOG.md#B-132), [L-048](knowledge/lessons.md#L-048)
+
+> Planı **iş bittikten sonra** yazıldı (sözleşme 1.26). Bu, kuralı doğuran
+> vakanın kendisi: çok adımlı olduğu anlaşıldığında adımlar bitmişti ve o
+> oturumda ağaç atlanmıştı. Adımlar oturum kaydından türetildi.
+
+- [x] P-005.1 — Mekanizma ölçüldü: görev nereye gidiyor, agent ne görüyor · ✅ 2026-08-15
+- [x] P-005.2 — Yanlış yönlenme araştırıldı: inbox geçmişi + bütün yazma yolları · ✅ 2026-08-15
+- [x] P-005.3 — Bekleyenler aktif repoya daraltıldı · ✅ 2026-08-15 · [B-131](BACKLOG.md#B-131)
+- [x] P-005.4 — Ekle ekranına hedef repo seçici kondu · ✅ 2026-08-15 · [B-132](BACKLOG.md#B-132)
+- [x] P-005.5 — Testler ve tam süit · ✅ 2026-08-15 · 540 test
+- [x] P-005.6 — Ders ve backlog kayıtları · ✅ 2026-08-15 · [L-048](knowledge/lessons.md#L-048)
+
+## P-006 — Çoklu hub'da bildirimin yanlış repoya düşmesi
+- **Tarih:** 2026-08-12
+- **Kaynak:** [S-2026-08-12-bildirim-yanlis-yonlendirme](sessions/2026-08-12-bildirim-yanlis-yonlendirme/session.md)
+- **Durum:** tamamlandi
+- **Türetilmiş:** true
+- **İlgili:** [B-126](BACKLOG.md#B-126), [B-127](BACKLOG.md#B-127), [L-045](knowledge/lessons.md#L-045)
+
+- [x] P-006.1 — İki agent'ın raporu incelendi, kök neden bu uygulamada arandı · ✅ 2026-08-12
+- [x] P-006.2 — Kök neden bulundu: `add()` taslağı koşulsuz aktif repoyla damgalıyordu · ✅ 2026-08-12
+- [x] P-006.3 — Kuyruk damgayı korur hâle getirildi + regresyon testi · ✅ 2026-08-12 · [B-126](BACKLOG.md#B-126)
+- [x] P-006.4 — Sözleşme 1.24: bildirim hedef hub'ını kendisi söyler · ✅ 2026-08-12 · [B-127](BACKLOG.md#B-127)
+- [x] P-006.5 — Mekanizma değerlendirmesi: doktrin katmanı hasarı önlemişti · ✅ 2026-08-12
+
+## P-007 — i18n: 337 metnin taşınması ve sözleşmenin İngilizcesi
+- **Tarih:** 2026-08-08
+- **Kaynak:** [S-2026-08-08-i18n-tamamlama](sessions/2026-08-08-i18n-tamamlama/session.md)
+- **Durum:** tamamlandi
+- **Türetilmiş:** true
+- **İlgili:** [B-115](BACKLOG.md#B-115), [B-116](BACKLOG.md#B-116), [L-043](knowledge/lessons.md#L-043)
+
+- [x] P-007.1 — Kalan 6 ekranın metinleri ARB'ye taşındı · ✅ 2026-08-08
+- [x] P-007.2 — Arayüz dili ile kayıt dili ayrıldı: biri okuyanı, biri hedef repoyu izliyor · ✅ 2026-08-08
+- [x] P-007.3 — Ayrımın ortaya çıkardığı kusur giderildi: bildirim gövdeleri hub diline bakmıyordu · ✅ 2026-08-08
+- [x] P-007.4 — Sözleşme 1.21: dil varyantı, düz adla saklama kuralı · ✅ 2026-08-08 · [B-116](BACKLOG.md#B-116)
+- [x] P-007.5 — Çevrilmeyecek sınır yazıldı: kategori ve tür değerleri veridir · ✅ 2026-08-08
+- [x] P-007.6 — İki yeni ölçüm: kayıt dili testi + ölü ARB anahtarı kontrolü · ✅ 2026-08-08 · [L-043](knowledge/lessons.md#L-043)
+- [x] P-007.7 — Tam süit · ✅ 2026-08-08 · 460 test
+
+## P-008 — Güvenlik katmanı: ilk tarama ve kapsam denetimi
+- **Tarih:** 2026-08-04
+- **Kaynak:** [S-2026-08-04-guvenlik-taramasi](sessions/2026-08-04-guvenlik-taramasi/session.md)
+- **Durum:** tamamlandi
+- **Türetilmiş:** true
+- **İlgili:** [SEC-008](SECURITY.md#SEC-008), [SEC-012](SECURITY.md#SEC-012), [L-035](knowledge/lessons.md#L-035)
+
+- [x] P-008.1 — 68 paket OSV'ye soruldu · ✅ 2026-08-04
+- [x] P-008.2 — Boş sonuç kontrol grubuyla doğrulandı · ✅ 2026-08-04 · [L-035](knowledge/lessons.md#L-035)
+- [x] P-008.3 — Sır taraması: çalışma ağacı ve git geçmişinin tamamı · ✅ 2026-08-04
+- [x] P-008.4 — Android yapılandırması incelendi; iki bulgu çıktı · ✅ 2026-08-04 · SEC-009, SEC-010
+- [x] P-008.5 — Token kapsam denetimi eklendi, fazladan istek yapmadan · ✅ 2026-08-04
+- [x] P-008.6 — Kapanamayan kısım ayrı kayıt oldu, ölçümü kullanıcıya soruldu · ✅ 2026-08-04 · [SEC-012](SECURITY.md#SEC-012), T-006
 
 ## P-003 — B-103: token kapsam kontrolü (SEC-012)
 - **Tarih:** 2026-08-15

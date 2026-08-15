@@ -96,7 +96,16 @@ what*. The procedure holds whatever the session is about.
    step you give up on is not deleted but struck through **with its reason**.
    One-command work stays out of the tree. The tree replaces no other flow:
    instead of writing the same fact a second time into the backlog or the
-   session record, **link** to it.
+   session record, **link** to it. A step line is **short**: it says what was
+   done; the reason goes to the record it links to (v1.26).
+
+   **Noticing late is not a licence to skip (v1.26).** If you only realise a job
+   was multi-step once it has ended, write the plan *then* and set
+   `Derived: true`. Steps are **derived** from the record (session, commit,
+   backlog); a step you do not remember is not written. This clause came out of
+   measured behaviour: in 1.25 an agent that noticed late had only "make it up"
+   and "skip" available, everyone skipped, and the trees stayed empty. An
+   incomplete tree beats a false one — but an **empty** tree is worse than both.
 7c. **When referring to another record, write it as a link** (contract
    [§15](SYSTEM.en.md#15)): `[SEC-010](SECURITY.md#SEC-010)`. The anchor is the
    record's ID, not the heading text. Link the **first** occurrence of an ID in
