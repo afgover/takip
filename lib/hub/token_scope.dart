@@ -24,10 +24,18 @@
 /// etkisiz bir yazma denemesiydi, buradaki cevap da aynı ruhta — GitHub'ın
 /// kendiliğinden söylediği şeye bakmak.
 ///
-/// **Yakalayamadığı durum:** "All repositories" seçilerek üretilmiş bir
-/// fine-grained token. O da hesabın tamamını kapsar ama uygulamaya bunu
-/// söyleyen belgelenmiş bir sinyal yok — kapsamı ölçmenin yolu araştırılmadan
-/// buraya bir tahmin konmadı (SEC-012).
+/// **Yakalayamadığı durum (2026-08-15'e kadar):** "All repositories" seçilerek
+/// üretilmiş bir fine-grained token. O da hesabın tamamını kapsar ama
+/// uygulamaya bunu söyleyen belgelenmiş bir sinyal yok — kapsamı ölçmenin yolu
+/// araştırılmadan buraya bir tahmin konmadı (SEC-012).
+///
+///  3. **Fazla erişim** (B-103, 2026-08-15). Yukarıdaki boşluk kapatılmadı ama
+///     **etrafından dolaşıldı**: token'ın hangi modda üretildiği hâlâ
+///     bilinmiyor ve bilinemez — hesabın toplam repo sayısı bu token'la
+///     okunamaz, çünkü uç nokta zaten token'ın kapsamına göre süzüyor (T-006).
+///     Sorulabilen soru başkası: token **kaç repo görüyor** (N) ve uygulamanın
+///     **kaç repoya ihtiyacı var** (K)? `N > K` ise fazla erişim vardır ve bu
+///     bir çıkarım değil, gözlemdir. [tokenScopeExcess]'e bakın.
 library;
 
 /// Kapsamı gereğinden geniş bir token bulunduğunda üretilen uyarı.
@@ -90,6 +98,54 @@ TokenScopeWarning? inspectTokenScope({
     title: 'Bu token gereğinden geniş',
     scopes: scopes,
     body: buffer.toString(),
+  );
+}
+
+/// Token'ın gördüğü repo sayısı (`N`), uygulamanın ihtiyacından (`K`) fazlaysa
+/// uyarı üretir; değilse **null** (B-103).
+///
+/// Eşik keyfi bir sabit değil, uygulamanın kendi ihtiyacı: `K`, bu token'la
+/// bağlı hub sayısıdır. "1'den fazlaysa uyar" kuralı bilerek seçilmedi, çünkü
+/// B-056 aynı token'ı birden çok hub'da yeniden kullanmayı **teşvik ediyor** —
+/// iki hub'a bağlı bir kullanıcıya "token'ın 2 repo görüyor" demek yanlış
+/// alarm olurdu.
+///
+/// **Yorum yine tek yönlü** (L-009, B-026). Bu fonksiyon yalnız `N > K`
+/// durumunda konuşur; söylediği şey de token'ın *nasıl üretildiği* değil,
+/// erişimin gözlenen genişliğidir. Susduğu üç durum ve neden hiçbiri "bu token
+/// dar" demek değil:
+///
+///  - `N` null → ölçüm yapılamadı (ağ, yetki, beklenmedik gövde). Bilinmiyor.
+///  - `N <= K` → bugün fazla erişim **görünmüyor**. Token yine de "All
+///    repositories" olabilir: hesapta K'dan fazla repo yoksa iki tür token
+///    dışarıdan aynı görünür. Hesap büyüdüğünde fark açılır; kontrolün
+///    Ayarlar'dan elle tekrar koşturulabilmesinin sebebi bu.
+///  - `K < 1` → çağıran ihtiyacı bilmiyor; karşılaştıracak bir şey yok.
+///
+/// [slug] uyarıyı somutlaştırmak için: `owner/repo`.
+TokenScopeWarning? tokenScopeExcess({
+  required int? visibleRepos,
+  required int neededRepos,
+  required String slug,
+}) {
+  if (visibleRepos == null || neededRepos < 1) return null;
+  if (visibleRepos <= neededRepos) return null;
+
+  final extra = visibleRepos - neededRepos;
+  final need = neededRepos == 1
+      ? 'yalnız $slug reposuna'
+      : 'bağlı $neededRepos hub reposuna';
+
+  return TokenScopeWarning(
+    title: 'Bu token gereğinden fazla repo görüyor',
+    body: 'Token $visibleRepos repoya erişebiliyor; bu uygulamanın ihtiyacı '
+        '$need. Aradaki $extra repo, uygulamanın hiç dokunmadığı ama token '
+        'ele geçerse açılacak olan repolar.\n\n'
+        'Bu, token\'ın "All repositories" ile üretildiği anlamına gelmeyebilir '
+        '— yalnızca eriştiği alanın ihtiyaçtan geniş olduğu ölçüldü. '
+        'Daraltmak için GitHub\'da token ayarlarından Repository access → '
+        'Only select repositories seç ve yalnız kullandığın hub repolarını '
+        'bırak.',
   );
 }
 

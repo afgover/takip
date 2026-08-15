@@ -547,6 +547,48 @@ abstract class L {
   /// **'{name} · {count} repo kayıtlı'**
   String reposSubtitle(String name, int count);
 
+  /// No description provided for @tokenScopeTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Token kapsamı'**
+  String get tokenScopeTitle;
+
+  /// No description provided for @tokenScopeSubtitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Token\'ın kaç repo gördüğünü ölç'**
+  String get tokenScopeSubtitle;
+
+  /// No description provided for @tokenScopeMeasuring.
+  ///
+  /// In tr, this message translates to:
+  /// **'Ölçülüyor…'**
+  String get tokenScopeMeasuring;
+
+  /// No description provided for @tokenScopeUnknown.
+  ///
+  /// In tr, this message translates to:
+  /// **'Ölçülemedi. Ağ ya da izin sorunu olabilir; sonucun ne olduğu bilinmiyor.'**
+  String get tokenScopeUnknown;
+
+  /// No description provided for @tokenScopeOk.
+  ///
+  /// In tr, this message translates to:
+  /// **'{visible} repo görüyor, ihtiyaç {needed}. Fazla erişim görünmüyor.'**
+  String tokenScopeOk(int visible, int needed);
+
+  /// No description provided for @tokenScopeExcessFound.
+  ///
+  /// In tr, this message translates to:
+  /// **'{visible} repo görüyor, ihtiyaç {needed}. Ayrıntı için dokun.'**
+  String tokenScopeExcessFound(int visible, int needed);
+
+  /// No description provided for @close.
+  ///
+  /// In tr, this message translates to:
+  /// **'Kapat'**
+  String get close;
+
   /// No description provided for @pollIntervalTitle.
   ///
   /// In tr, this message translates to:

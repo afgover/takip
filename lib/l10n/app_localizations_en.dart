@@ -256,6 +256,32 @@ class LEn extends L {
   }
 
   @override
+  String get tokenScopeTitle => 'Token scope';
+
+  @override
+  String get tokenScopeSubtitle => 'Measure how many repos the token can see';
+
+  @override
+  String get tokenScopeMeasuring => 'Measuring…';
+
+  @override
+  String get tokenScopeUnknown =>
+      'Could not measure. Network or permission issue; the result is unknown.';
+
+  @override
+  String tokenScopeOk(int visible, int needed) {
+    return 'Sees $visible repos, needs $needed. No excess access visible.';
+  }
+
+  @override
+  String tokenScopeExcessFound(int visible, int needed) {
+    return 'Sees $visible repos, needs $needed. Tap for details.';
+  }
+
+  @override
+  String get close => 'Close';
+
+  @override
   String get pollIntervalTitle => 'Check interval';
 
   @override

@@ -123,6 +123,33 @@
       }
     }
   },
+  "tokenScopeTitle": "Token kapsamı",
+  "tokenScopeSubtitle": "Token'ın kaç repo gördüğünü ölç",
+  "tokenScopeMeasuring": "Ölçülüyor…",
+  "tokenScopeUnknown": "Ölçülemedi. Ağ ya da izin sorunu olabilir; sonucun ne olduğu bilinmiyor.",
+  "tokenScopeOk": "{visible} repo görüyor, ihtiyaç {needed}. Fazla erişim görünmüyor.",
+  "@tokenScopeOk": {
+    "placeholders": {
+      "visible": {
+        "type": "int"
+      },
+      "needed": {
+        "type": "int"
+      }
+    }
+  },
+  "tokenScopeExcessFound": "{visible} repo görüyor, ihtiyaç {needed}. Ayrıntı için dokun.",
+  "@tokenScopeExcessFound": {
+    "placeholders": {
+      "visible": {
+        "type": "int"
+      },
+      "needed": {
+        "type": "int"
+      }
+    }
+  },
+  "close": "Kapat",
   "pollIntervalTitle": "Kontrol aralığı",
   "pollIntervalHelp": "Değişiklik yokken kontroller GitHub istek limitinden düşmez, bu yüzden sık yoklamanın maliyeti yalnız batarya.",
   "backup": "Yedekleme",

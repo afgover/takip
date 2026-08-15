@@ -22,6 +22,23 @@ const candidate = HubConfig(owner: 'afgover', repo: 'takip', token: 'gizli');
   );
 }
 
+
+/// Fine-grained token: klasik uyarı üretmez, yani fazla erişim kontrolüne
+/// kadar yol açık kalır.
+const _fineGrained =
+    HubConfig(owner: 'afgover', repo: 'takip', token: 'github_pat_x');
+
+/// Erişim kontrolünün ikisini de geçtiği (okuma + yazma) sahte API.
+({ContentsApi api, FakeAdapter adapter}) _okApi() => buildApi((options, __) {
+      if (options.method == 'GET') {
+        return jsonResponse([
+          {'name': 'SYSTEM.md', 'path': 'hub/SYSTEM.md', 'sha': 'a',
+            'type': 'file'},
+        ]);
+      }
+      return jsonResponse({'message': 'no content'}, status: 422);
+    });
+
 void main() {
   group('checkHubAccess', () {
     test('hub kökü okunur, ardından yazma izni yoklanır', () async {
@@ -101,6 +118,92 @@ void main() {
         ),
         isNull,
       );
+    });
+
+    test('fazla erişim ölçülür ve uyarıya dönüşür (B-103)', () async {
+      final built = _okApi();
+      var measured = 0;
+
+      final warning = await checkHubAccess(
+        built.api,
+        _fineGrained,
+        neededRepos: 2,
+        countRepos: () async {
+          measured++;
+          return 9;
+        },
+      );
+
+      expect(warning, isNotNull);
+      expect(warning!.body, contains('9'));
+      expect(measured, 1);
+    });
+
+    test('N <= K ise ölçüm koşar ama uyarı çıkmaz', () async {
+      final built = _okApi();
+
+      expect(
+        await checkHubAccess(
+          built.api,
+          _fineGrained,
+          neededRepos: 2,
+          countRepos: () async => 2,
+        ),
+        isNull,
+      );
+    });
+
+    test('ölçüm başarısızsa uyarı yok — bilinmeyen temiz sayılmaz', () async {
+      final built = _okApi();
+
+      expect(
+        await checkHubAccess(
+          built.api,
+          _fineGrained,
+          neededRepos: 1,
+          countRepos: () async => null,
+        ),
+        isNull,
+      );
+    });
+
+    test('klasik token uyarısı varsa ölçüm hiç koşmaz', () async {
+      // Klasik token zaten hesabın tamamını kapsıyor: ölçüm yeni bir şey
+      // söylemez, uyarıyı ikiye bölmek de ikisini birden okunmaz yapardı.
+      final built = buildApi((options, __) {
+        if (options.method == 'GET') {
+          return jsonResponse(
+            [
+              {'name': 'SYSTEM.md', 'path': 'hub/SYSTEM.md', 'sha': 'a',
+                'type': 'file'},
+            ],
+            headers: {
+              'x-oauth-scopes': ['repo'],
+            },
+          );
+        }
+        return jsonResponse({'message': 'no content'}, status: 422);
+      });
+      var measured = 0;
+
+      final warning = await checkHubAccess(
+        built.api,
+        candidate,
+        neededRepos: 1,
+        countRepos: () async {
+          measured++;
+          return 50;
+        },
+      );
+
+      expect(warning!.scopes, ['repo'], reason: 'klasik uyarı dönmeli');
+      expect(measured, 0, reason: 'ölçüm için istek harcanmamalı');
+    });
+
+    test('countRepos verilmezse kontrol hiç koşmaz (eski davranış)', () async {
+      final built = _okApi();
+
+      expect(await checkHubAccess(built.api, _fineGrained), isNull);
     });
 
     test('404 → repo/token/klasör olasılıklarını birlikte söyler', () async {

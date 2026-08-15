@@ -17,17 +17,24 @@
 > `N > K` → uyarı. Eşik keyfi bir sabit değil, uygulamanın kendi ihtiyacı.
 > Zamanlama: bağlantı kurulurken + Ayarlar'da elle tetiklenen düğme.
 
-- [ ] P-003.1 — Repo sayısını ölçen katman: `GET /user/repos?per_page=1`,
+- [x] P-003.1 — Repo sayısını ölçen katman: `GET /user/repos?per_page=1`,
       `Link` başlığındaki `rel="last"` sayfa numarası = toplam. **En iyi çaba**
       ([readLogin](../lib/hub/hub_access.dart) çizgisi): hata/başlıksız yanıt →
-      `null` = "bilinmiyor", asla 0 sayılmaz
-- [ ] P-003.2 — Karar mantığı `token_scope.dart`'a: N ve K'dan uyarı üret.
+      `null` = "bilinmiyor", asla 0 sayılmaz · ✅ 2026-08-15 ·
+      `lib/github/repo_scope_api.dart`; süzgeç parametresi bilerek verilmedi —
+      ölçülen istek sadeydi, `per_page` kapsamı değil sayfalanışı değiştirir
+- [x] P-003.2 — Karar mantığı `token_scope.dart`'a: N ve K'dan uyarı üret.
       **Tek yönlü** ([L-009](knowledge/lessons.md#L-009)): yalnız `N > K`
       konuşur; N bilinmiyorsa, N ≤ K ise ve K bilinmiyorsa **susar** — "bu token
-      dar" cümlesi hiçbir yolda kurulmaz
-- [ ] P-003.3 — Bağlantı kurulurken koş: `checkHubAccess`'e ekle, mevcut
+      dar" cümlesi hiçbir yolda kurulmaz · ✅ 2026-08-15 · `tokenScopeExcess`;
+      susduğu üç dal (N null, N ≤ K, K < 1) dosyada tek tek gerekçeli
+- [x] P-003.3 — Bağlantı kurulurken koş: `checkHubAccess`'e ekle, mevcut
       klasik-token uyarısıyla tek uyarıda birleşsin. K = aynı token'la bağlı
-      hub sayısı + kurulmakta olan bağlantı
+      hub sayısı + kurulmakta olan bağlantı · ✅ 2026-08-15 · K hesabı
+      `reposNeededForToken`'da ve `hubAccessVerifierProvider`da çağrılıyor —
+      iki çağrı yerinin (onboarding, bağlantı ekranı) aynı kuralı iki kez
+      yazıp zamanla ayrışmaması için. Klasik token uyarısı varsa ölçüm hiç
+      koşmuyor: klasik token zaten hesabın tamamını kapsıyor
 - [ ] P-003.4 — Ayarlar'a "token kapsamını ölç" düğmesi; sonucu (uyarı ya da
       "fazla erişim görünmüyor") ekranda göster
 - [ ] P-003.5 — Arayüz metinleri: `app_tr.arb`, `app_en.arb`

@@ -75,6 +75,33 @@
   "secData": "Data",
   "repos": "Repositories",
   "reposSubtitle": "{name} · {count} repositories",
+  "tokenScopeTitle": "Token scope",
+  "tokenScopeSubtitle": "Measure how many repos the token can see",
+  "tokenScopeMeasuring": "Measuring…",
+  "tokenScopeUnknown": "Could not measure. Network or permission issue; the result is unknown.",
+  "tokenScopeOk": "Sees {visible} repos, needs {needed}. No excess access visible.",
+  "@tokenScopeOk": {
+    "placeholders": {
+      "visible": {
+        "type": "int"
+      },
+      "needed": {
+        "type": "int"
+      }
+    }
+  },
+  "tokenScopeExcessFound": "Sees {visible} repos, needs {needed}. Tap for details.",
+  "@tokenScopeExcessFound": {
+    "placeholders": {
+      "visible": {
+        "type": "int"
+      },
+      "needed": {
+        "type": "int"
+      }
+    }
+  },
+  "close": "Close",
   "pollIntervalTitle": "Check interval",
   "pollIntervalHelp": "When nothing changed, checks do not count against the GitHub rate limit, so frequent polling only costs battery.",
   "backup": "Backup",

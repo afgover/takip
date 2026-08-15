@@ -255,6 +255,32 @@ class LTr extends L {
   }
 
   @override
+  String get tokenScopeTitle => 'Token kapsamı';
+
+  @override
+  String get tokenScopeSubtitle => 'Token\'ın kaç repo gördüğünü ölç';
+
+  @override
+  String get tokenScopeMeasuring => 'Ölçülüyor…';
+
+  @override
+  String get tokenScopeUnknown =>
+      'Ölçülemedi. Ağ ya da izin sorunu olabilir; sonucun ne olduğu bilinmiyor.';
+
+  @override
+  String tokenScopeOk(int visible, int needed) {
+    return '$visible repo görüyor, ihtiyaç $needed. Fazla erişim görünmüyor.';
+  }
+
+  @override
+  String tokenScopeExcessFound(int visible, int needed) {
+    return '$visible repo görüyor, ihtiyaç $needed. Ayrıntı için dokun.';
+  }
+
+  @override
+  String get close => 'Kapat';
+
+  @override
   String get pollIntervalTitle => 'Kontrol aralığı';
 
   @override

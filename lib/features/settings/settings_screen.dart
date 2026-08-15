@@ -4,9 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../github/client.dart';
+import '../../hub/hub_access.dart';
 import '../../hub/hub_config.dart';
 import '../../hub/hub_language.dart';
 import '../../hub/hub_connections.dart';
+import '../../hub/token_scope.dart';
 import '../../hub/hub_sync.dart';
 import '../../hub/hub_watcher.dart';
 import '../../hub/outbox.dart';
@@ -63,6 +65,7 @@ class SettingsScreen extends ConsumerWidget {
               ),
             ),
           ),
+          const _TokenScopeTile(),
           ListTile(
             leading: Icon(
               status.error == null
@@ -308,6 +311,128 @@ class _LanguageTile extends ConsumerWidget {
         },
         style: Theme.of(context).textTheme.labelLarge,
       ),
+    );
+  }
+}
+
+/// Token kapsam ölçümü (B-103) — kullanıcı isteyince koşar.
+///
+/// **Neden elle:** kontrol bağlantı kurulurken de koşuyor ama orada tek bir ana
+/// bakar. "All repositories" ile üretilmiş bir token, hesaba yeni repo
+/// eklendikçe **sessizce genişler**; bağlantı kurulduğu gün K'dan fazla repo
+/// görmüyor olabilir ve o gün doğru olan cevap bir ay sonra yanlış olur.
+/// Düzenli koşan bir kontrol de yazılabilirdi; bu ilk adım, çünkü "ne zaman
+/// koştu" durumunu diske yazmayı gerektirmiyor ve soruyu soran kullanıcının
+/// kendisi.
+///
+/// Üç sonucu **ayrı** gösteriyor ve "ölçülemedi" ile "fazla erişim yok" asla
+/// aynı kutuya girmiyor: bilinmeyeni temiz saymak, bu kontrolün önlemek için
+/// yazıldığı hatanın ta kendisi (L-035, L-009).
+class _TokenScopeTile extends ConsumerStatefulWidget {
+  const _TokenScopeTile();
+
+  static const tileKey = Key('settings-token-scope');
+
+  @override
+  ConsumerState<_TokenScopeTile> createState() => _TokenScopeTileState();
+}
+
+class _TokenScopeTileState extends ConsumerState<_TokenScopeTile> {
+  bool _measuring = false;
+
+  /// Ölçüm koştu mu, koştuysa ne çıktı. `null` = henüz koşmadı.
+  ({int? visible, int needed, TokenScopeWarning? warning})? _result;
+
+  Future<void> _measure(HubConfig config) async {
+    setState(() => _measuring = true);
+
+    // Klasik token'da ölçmeye gerek yok: kapsamı zaten hesabın tamamı ve
+    // uyarısı önekten okunuyor (B-092) — bir istek harcamıyoruz.
+    final classic = inspectTokenScope(
+      token: config.token,
+      oauthScopes: null,
+      slug: config.slug,
+    );
+
+    final connections =
+        ref.read(hubConnectionsProvider).valueOrNull?.connections ?? const [];
+    final needed = reposNeededForToken(connections, config);
+
+    final visible = classic != null
+        ? null
+        : await ref.read(tokenScopeMeasureProvider)(config);
+
+    if (!mounted) return;
+    setState(() {
+      _measuring = false;
+      _result = (
+        visible: visible,
+        needed: needed,
+        warning: classic ??
+            tokenScopeExcess(
+              visibleRepos: visible,
+              neededRepos: needed,
+              slug: config.slug,
+            ),
+      );
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l = L.of(context);
+    final config = ref.watch(hubConfigProvider).value;
+    final result = _result;
+
+    final (String subtitle, Color? color) = switch ((_measuring, result)) {
+      (true, _) => (l.tokenScopeMeasuring, null),
+      (_, null) => (l.tokenScopeSubtitle, null),
+      (_, final r?) when r.warning != null => (
+          r.visible == null
+              ? r.warning!.title
+              : l.tokenScopeExcessFound(r.visible!, r.needed),
+          Theme.of(context).colorScheme.error,
+        ),
+      (_, final r?) when r.visible == null => (l.tokenScopeUnknown, null),
+      (_, final r?) => (l.tokenScopeOk(r.visible!, r.needed), null),
+    };
+
+    return ListTile(
+      key: _TokenScopeTile.tileKey,
+      leading: const Icon(Icons.key_outlined),
+      title: Text(l.tokenScopeTitle),
+      subtitle: Text(subtitle, style: TextStyle(color: color)),
+      isThreeLine: true,
+      trailing: _measuring
+          ? const SizedBox(
+              width: 20,
+              height: 20,
+              child: CircularProgressIndicator(strokeWidth: 2),
+            )
+          : const Icon(Icons.chevron_right),
+      onTap: config == null || _measuring
+          ? null
+          : () {
+              final warning = result?.warning;
+              if (warning != null) {
+                showDialog<void>(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    icon: const Icon(Icons.gpp_maybe_outlined),
+                    title: Text(warning.title),
+                    content: SingleChildScrollView(child: Text(warning.body)),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.of(context).pop(),
+                        child: Text(l.close),
+                      ),
+                    ],
+                  ),
+                );
+              } else {
+                unawaited(_measure(config));
+              }
+            },
     );
   }
 }
