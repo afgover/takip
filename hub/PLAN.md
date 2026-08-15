@@ -3,6 +3,33 @@
 Çok adımlı işlerin adımları ve durumu. Biçim ve kapsam:
 [`SYSTEM.md` §14](SYSTEM.md#14). Yeni plan **en üste** yazılır.
 
+## P-004 — Sözleşme 1.26: geriye dönük plan ve ağacın doldurulması
+- **Tarih:** 2026-08-15
+- **Kaynak:** [S-2026-08-15-gorev-agaci-tesviki](sessions/2026-08-15-gorev-agaci-tesviki/session.md)
+- **Durum:** acik
+- **İlgili:** [B-134](BACKLOG.md#B-134), [§14](SYSTEM.md#14), [R-008](knowledge/rules.md#R-008)
+
+> **Karar (2026-08-15, kullanıcı).** Ağaçların boş kalmasının sebebi agent'ların
+> ihmali değil, kuralın yapısal boşluğu: §14 adımları "uygulanmadan önce" ister
+> ve iş geç fark edildiğinde **hiçbir yol bırakmaz** — uydur (yasak) ya da atla.
+> Bu repoda bugün tam olarak bu yaşandı. Çözüm, **uydurma** ile **türetme**yi
+> ayırmak: geriye dönük plan serbest, ama `reconstructed: true` ile işaretli ve
+> `Kaynak:` adımların nereden türetildiğini gösteriyor. Hub'da bu kalıp zaten
+> var (oturumlarda v1.6).
+>
+> Adım satırları bilerek **kısa** yazıldı: gerekçe buraya değil, bağlantı
+> verilen kayda gider ([B-133](BACKLOG.md#B-133) ölçümü).
+
+- [ ] P-004.1 — `SYSTEM.md` §14: geriye dönük plan kuralı + sürüm 1.26
+- [ ] P-004.2 — `SYSTEM.en.md` aynı değişiklik
+- [ ] P-004.3 — `AGENT_PROTOCOL.md` ve `.en`: madde 7b'ye geç fark edilen iş yolu
+- [ ] P-004.4 — Uygulama: `Plan.reconstructed` + kartta etiket
+- [ ] P-004.5 — Arayüz metinleri (`app_tr.arb`, `app_en.arb`)
+- [ ] P-004.6 — Sürüm tutarlılığı: `constants.dart`, iki README
+- [ ] P-004.7 — `takip`'in geçmişi: çok adımlı işler oturum kayıtlarından türetilir
+- [ ] P-004.8 — Testler: ayrıştırıcı, ekran etiketi, sürüm tutarlılığı
+- [ ] P-004.9 — `EVOLUTION.md` 1.26 kaydı, oturum kaydı, tam süit + push
+
 ## P-003 — B-103: token kapsam kontrolü (SEC-012)
 - **Tarih:** 2026-08-15
 - **Kaynak:** [S-2026-08-15-gorev-kapsami](sessions/2026-08-15-gorev-kapsami/session.md)

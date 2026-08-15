@@ -755,6 +755,12 @@ başlığına ✅ ve tarih yazılır.
       onlar hâlâ ETag önbelleğiyle (B-046) çalışıyor, yani çevrimdışı yalnız
       daha önce görülen hâli gösteriyor. Gerekirse ayrı madde açılır
 
+- [ ] B-134 · (agent+user) Sözleşme 1.26: geriye dönük plan — ağaç boş kalıyor
+      çünkü §14 adımları "uygulanmadan önce" istiyor ve geç fark edilen iş için
+      hiçbir yol bırakmıyor (uydur = yasak, atla = olan). Uydurma ile türetme
+      ayrılıyor: geriye dönük plan `reconstructed: true` ile serbest.
+      Ayrıca `takip`'in geçmiş çok adımlı işleri ağaca türetilecek —
+      diğer repoların agent'ları dolu bir örnek görsün. → [P-004](PLAN.md)
 - [ ] B-133 · (agent) Görev ağacında sarkan adım satırı tamamlanma tarihini
       yutuyor — `lib/hub/plan.dart`'ta devam satırı `title`'a ekleniyor ve `·`
       ayracı bir daha aranmıyor. Ölçüldü (2026-08-15,
