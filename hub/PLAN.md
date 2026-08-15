@@ -3,6 +3,40 @@
 Çok adımlı işlerin adımları ve durumu. Biçim ve kapsam:
 [`SYSTEM.md` §14](SYSTEM.md#14). Yeni plan **en üste** yazılır.
 
+## P-003 — B-103: token kapsam kontrolü (SEC-012)
+- **Tarih:** 2026-08-15
+- **Kaynak:** [S-2026-08-15-gorev-kapsami](sessions/2026-08-15-gorev-kapsami/session.md)
+- **Durum:** acik
+- **İlgili:** [B-103](BACKLOG.md#B-103), [SEC-012](SECURITY.md#SEC-012),
+  [SEC-006](SECURITY.md#SEC-006), [T-006](tasks/done/2026-08-04-token-kapsam-olcumu.md)
+
+> **Karar (2026-08-15, kullanıcı):** kontrol token'ın *nasıl üretildiğini*
+> tahmin etmeye çalışmaz — "All repositories" modu ölçülemez ve hesabın toplam
+> repo sayısı bu token'la zaten okunamaz. Bunun yerine **fazla erişim** ölçülür:
+> **N** = token'ın gördüğü repo sayısı, **K** = bu token'la bağlı hub sayısı.
+> `N > K` → uyarı. Eşik keyfi bir sabit değil, uygulamanın kendi ihtiyacı.
+> Zamanlama: bağlantı kurulurken + Ayarlar'da elle tetiklenen düğme.
+
+- [ ] P-003.1 — Repo sayısını ölçen katman: `GET /user/repos?per_page=1`,
+      `Link` başlığındaki `rel="last"` sayfa numarası = toplam. **En iyi çaba**
+      ([readLogin](../lib/hub/hub_access.dart) çizgisi): hata/başlıksız yanıt →
+      `null` = "bilinmiyor", asla 0 sayılmaz
+- [ ] P-003.2 — Karar mantığı `token_scope.dart`'a: N ve K'dan uyarı üret.
+      **Tek yönlü** ([L-009](knowledge/lessons.md#L-009)): yalnız `N > K`
+      konuşur; N bilinmiyorsa, N ≤ K ise ve K bilinmiyorsa **susar** — "bu token
+      dar" cümlesi hiçbir yolda kurulmaz
+- [ ] P-003.3 — Bağlantı kurulurken koş: `checkHubAccess`'e ekle, mevcut
+      klasik-token uyarısıyla tek uyarıda birleşsin. K = aynı token'la bağlı
+      hub sayısı + kurulmakta olan bağlantı
+- [ ] P-003.4 — Ayarlar'a "token kapsamını ölç" düğmesi; sonucu (uyarı ya da
+      "fazla erişim görünmüyor") ekranda göster
+- [ ] P-003.5 — Arayüz metinleri: `app_tr.arb`, `app_en.arb`
+- [ ] P-003.6 — Testler: sayfalama başlığının ayrıştırılması, tek yönlü yorumun
+      her dalı, bağlantı akışı, Ayarlar düğmesi
+- [ ] P-003.7 — Kayıtlar: [SEC-012](SECURITY.md#SEC-012) güncellenir (kontrol
+      artık var; kalan sınır yazılır), B-103 işaretlenir, oturum kaydı; tam süit
+      + push
+
 ## P-002 — B-130: entegrasyon testlerinin zaman aşımı
 - **Tarih:** 2026-08-13
 - **Kaynak:** [S-2026-08-13-durum-ozeti](sessions/2026-08-13-durum-ozeti/session.md)
