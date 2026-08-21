@@ -5,6 +5,25 @@
 plan (`Türetilmiş: true`) kapalı doğduğu için kapalıların arasına tarih
 sırasıyla girer.
 
+## P-011 — B-139: görevde "hangi hub" ayrımı iki tarafta da görünsün
+- **Tarih:** 2026-08-21
+- **Kaynak:** [S-2026-08-21-hub-ayrimi](sessions/2026-08-21-hub-ayrimi/session.md)
+- **Durum:** acik
+- **İlgili:** [B-139](BACKLOG.md#B-139), [L-045](knowledge/lessons.md#L-045), [§4](SYSTEM.md#4)
+
+> Doğrulama iki boşluk buldu ve ikisi de **aynı ilkenin** eksik uygulanması:
+> sözleşme 1.24 "bildirim hedef hub'ını kendisi söyler" diyor, ama (a) normal
+> görev bunu söylemiyor, (b) kullanıcı görev **detayındayken** hangi hub'da
+> olduğunu göremiyor — üstelik yazma düğmeleri tam orada.
+
+- [x] P-011.1 — Doğrulama: iki tarafın bütün yüzeyleri tek tek ölçülsün · ✅ 2026-08-21 · iki boşluk + bir bitişik bulgu ([B-140](BACKLOG.md#B-140))
+- [x] P-011.2 — Agent tarafı: normal görev de `Repo` satırını taşısın · ✅ 2026-08-21
+- [x] P-011.3 — Kullanıcı tarafı: detay ekranına repo rozeti · ✅ 2026-08-21
+- [x] P-011.4 — Tamamlananlar da repo damgası taşısın (rozet orada da çalışsın) · ✅ 2026-08-21
+- [x] P-011.5 — Testler · ✅ 2026-08-21 · 8 yeni test (612)
+- [ ] P-011.6 — Kayıtlar, tam süit + push
+- [ ] P-011.7 — APK derle ve telefona kur
+
 ## P-010 — B-135: bildirilmiş bekleme yeniden bildirilebiliyor
 - **Tarih:** 2026-08-21
 - **Kaynak:** [S-2026-08-21-offline-mukerrer-kuyruk](sessions/2026-08-21-offline-mukerrer-kuyruk/session.md)

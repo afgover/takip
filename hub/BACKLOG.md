@@ -801,6 +801,36 @@ başlığına ✅ ve tarih yazılır.
       rozeti "Bildirildi" oluyor (kullanıcı kararı: gizlemek, agent işlemezse
       sessiz kayıp demek — K-022). 604 test (586 + 18) → [L-051](knowledge/lessons.md#L-051)
 
+- [x] B-139 · (agent) Görevde "hangi hub" ayrımı iki tarafta da görünsün —
+      doğrulama (2026-08-21) iki boşluk buldu, ikisi de sözleşme 1.24'ün
+      ilkesinin eksik uygulanması. **(a) Agent tarafı:** bildirim, seçim kaydı
+      ve not gövdelerinde `- **Repo:**` satırı var ama **normal görevde yok**
+      (`TaskDraft.create` bu parametreyi hiç almıyor). Yanlış hub'a düşen bir
+      görev, L-045'teki bildirimlerle tam olarak aynı sebepten teşhis edilemez.
+      **(b) Kullanıcı tarafı:** `RepoSwitcher` kabukta duruyor, ama görev
+      **detay ekranı** `push` ile açıldığı için şeridi örtüyor ve meta
+      rozetlerinde de repo yok — yani "Yaptım/Cevapla" düğmelerinin bulunduğu
+      ekranda **yazmanın hedefi görünmüyor**. Ayrıca `doneTasksProvider`
+      özetleri repo damgası taşımıyor. → [P-011](PLAN.md)
+      — ✅ 2026-08-21 · S-2026-08-21-hub-ayrimi. (a) `TaskDraft.create` artık
+      `repoSlug` alıyor; gövdedeki `Repo` satırı ile kuyruk damgası **aynı
+      kaynaktan** basılıyor, yoksa zamanla ayrışıp gövde bir hub'ı kuyruk
+      başkasını gösterebilirdi. Satır kullanıcının metninden boş satırla
+      ayrılıyor — `## İstek` kullanıcınındır. (b) Detay ekranına repo rozeti
+      kondu (okunabilir ad varsa o, yoksa slug; damga yoksa rozet hiç
+      çizilmiyor — boş rozet "reposuz" diye bir şey uydururdu). (c)
+      `doneTasksProvider` damga basıyor. 612 test (604 + 8)
+
+- [ ] B-140 · (agent) Bağlantısı kaldırılmış repoya ait kuyruk taslağı
+      **görünmez** oluyor — B-139 doğrulaması sırasında çıktı, ayrı kusur.
+      `queuedForActiveRepoProvider` taslağı yalnız kendi reposu **aktifken**
+      gösteriyor; bağlantı silinince o repo hiç aktif olamayacağı için taslak
+      listede bir daha görünmüyor. `Outbox.flush` onu bilinçli olarak
+      **saklıyor** ("kullanıcının yazdığı iş kaybolmamalı") ama kullanıcı
+      sakladığını göremiyor — yani kayıp sessiz. İki uç: ya taslak görünür bir
+      yerde gösterilir (ör. Ayarlar → kuyruk), ya da bağlantı silinirken
+      kullanıcıya sorulur. Karar gerektiriyor
+
 ## Faz 6 — 2. Plan (şimdilik bekliyor)
 
 - [ ] B-060 · (agent) Webhook + stateless relay + push bildirimi tasarımının

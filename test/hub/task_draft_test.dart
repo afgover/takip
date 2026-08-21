@@ -84,4 +84,49 @@ void main() {
     expect(renamed.fileName, '2026-07-30-market-listesi-2.md');
     expect(renamed.content, draft.content);
   });
+
+  group('görev hedef hub\'ını kendisi söyler (B-139)', () {
+    // Sözleşme 1.24 bunu bildirimler için kuralmıştı; gerekçesi türe bağlı
+    // değil. Yol hub-göreli, ID hub başına — ikisi de hub'ı tanımlamıyor ve
+    // yanlış hub'a düşen bir görev bildirimlerle **aynı sebepten** teşhis
+    // edilemiyordu (L-045).
+    TaskDraft withRepo(String? slug) => withClock(
+          Clock.fixed(DateTime.utc(2026, 8, 21, 9)),
+          () => TaskDraft.create(
+            title: 'Deneme',
+            description: 'kısa açıklama',
+            repoSlug: slug,
+          ),
+        );
+
+    test('repo verilince gövdede Repo satırı olur', () {
+      expect(withRepo('afgover/takip').content,
+          contains('- **Repo:** `afgover/takip`'));
+    });
+
+    test('satır kullanıcının metnine karışmaz', () {
+      final body = withRepo('afgover/takip').content;
+      // Açıklama ile Repo satırı arasında boş satır var: `## İstek`
+      // kullanıcının yazdığı şeydir, makine okunur olgu onun içine
+      // yapışmamalı (T-014'ün ayrımı).
+      expect(body, contains('kısa açıklama\n\n- **Repo:**'));
+      // Not başlığı yerinde ve Repo satırından sonra.
+      expect(body.indexOf('- **Repo:**'),
+          lessThan(body.indexOf('## Notlar')));
+    });
+
+    test('repo yoksa satır hiç yazılmaz, boş satır da bırakmaz', () {
+      final body = withRepo(null).content;
+      expect(body, isNot(contains('Repo')));
+      expect(body, contains('kısa açıklama\n\n## Notlar'));
+    });
+
+    test('gövdedeki satır ile kuyruk damgası aynı kaynaktan gelir', () {
+      // İkisi ayrı yerden bassaydı zamanla ayrışır, gövde bir hub'ı kuyruk
+      // başka bir hub'ı gösterebilirdi.
+      final d = withRepo('afgover/financer_takip');
+      expect(d.repoSlug, 'afgover/financer_takip');
+      expect(d.content, contains('- **Repo:** `afgover/financer_takip`'));
+    });
+  });
 }

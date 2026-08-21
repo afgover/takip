@@ -7,10 +7,12 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:takip/core/constants.dart';
 import 'package:takip/github/trees_api.dart';
 import 'package:takip/hub/all_tasks.dart';
+import 'package:takip/hub/hub_config.dart';
 import 'package:takip/hub/hub_connections.dart';
 import 'package:takip/hub/models/task_draft.dart';
 import 'package:takip/hub/offline_store.dart';
 import 'package:takip/hub/outbox.dart';
+import 'package:takip/hub/task_repo.dart';
 
 /// Bekleyenler listesinin **kapsamı**: aktif repo, hepsi değil.
 ///
@@ -141,5 +143,30 @@ void main() {
     final facets = container.read(taskFacetsProvider);
     expect(facets.priorities, ['high']);
     expect(facets.categories, ['gorev']);
+  });
+
+  test('tamamlananlar da repo damgası taşır (B-139)', () async {
+    // Damga olmadan görev detayı hangi hub'ı gösterdiğini söyleyemiyordu:
+    // detay `push` ile açılıyor ve kabuktaki repo şeridini örtüyor.
+    final path = '${Hub.doneDir}/2026-08-15-biten-is.md';
+    final store = OfflineStore('a/bir');
+    await store.writeTree([
+      TreeEntry(path: path, sha: 'sha-done', isFile: true, size: 10),
+    ]);
+    await store.writeDoc(
+      path,
+      const StoredDoc(sha: 'sha-done', content: '---\nid: T-001\n---\n'),
+    );
+    connectBoth(active: 'a/bir');
+
+    final container = await boot();
+    // `doneTasksProvider` paylaşılan depodan geçiyor; o da türetilmiş aktif
+    // yapılandırmayı bekliyor. Bekleyenler listesi yerel kopyadan çizildiği
+    // için bu adıma ihtiyaç duymuyordu.
+    await container.read(hubConfigProvider.future);
+    final done = await container.read(doneTasksProvider.future);
+
+    expect(done.single.repoSlug, 'a/bir');
+    expect(done.single.repoLabel, isNotNull);
   });
 }

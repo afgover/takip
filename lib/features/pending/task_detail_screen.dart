@@ -66,6 +66,16 @@ class _TaskBody extends StatelessWidget {
           crossAxisAlignment: WrapCrossAlignment.center,
           children: [
             TaskStatusChip(status: task.status),
+            // **Hangi hub** — rozetlerin başında (B-139). Kabuktaki repo
+            // şeridi bu ekranda görünmüyor: detay `push` ile açılıyor ve
+            // kendi `Scaffold`'unu getiriyor. Oysa yazma düğmeleri ("Yaptım",
+            // "Cevabı gönder") tam burada; hedefin görünmediği bir yerde
+            // yazmak, L-045'in kullanıcı tarafındaki karşılığı olurdu.
+            if (summary.repoLabel != null || summary.repoSlug != null)
+              _MetaChip(
+                icon: Icons.folder_outlined,
+                text: summary.repoLabel ?? summary.repoSlug!,
+              ),
             _MetaChip(icon: Icons.label_outline, text: task.category),
             _MetaChip(icon: Icons.flag_outlined, text: task.priority),
             // Agent henüz ID atamadıysa görev hub'a yeni düşmüş demektir.

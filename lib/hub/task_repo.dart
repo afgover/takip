@@ -379,9 +379,20 @@ final pendingTasksProvider = FutureProvider<List<TaskSummary>>((ref) {
   return ref.watch(taskRepoProvider).listPending();
 });
 
-final doneTasksProvider = FutureProvider<List<TaskSummary>>((ref) {
+final doneTasksProvider = FutureProvider<List<TaskSummary>>((ref) async {
   ref.watch(hubWatcherProvider.select((s) => s.headSha));
-  return ref.watch(taskRepoProvider).listDone();
+  final done = await ref.watch(taskRepoProvider).listDone();
+
+  // Damga bekleyenler listesindekiyle aynı sebeple basılıyor (B-139): görev
+  // detayı `push` ile açılıyor ve kabuktaki repo şeridini örtüyor. Damga
+  // olmadan detay ekranı hangi hub'ı gösterdiğini söyleyemezdi.
+  final active = ref.watch(hubConnectionsProvider).valueOrNull?.active ??
+      ref.watch(hubConfigProvider).value;
+  if (active == null) return done;
+  return [
+    for (final t in done)
+      t.withContext(repoSlug: active.slug, repoLabel: active.displayName),
+  ];
 });
 
 /// Tek görevin içeriği (detay ekranı).

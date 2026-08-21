@@ -106,6 +106,10 @@ class _AddTaskScreenState extends ConsumerState<AddTaskScreen> {
       // yazılan kayda B bağlantısının sahibini yazmak (sözleşme 1.15) ya da
       // İngilizce bir hub'a Türkçe gövde göndermek aynı hatanın iki yüzü.
       author: ref.read(loginForRepoProvider(slug)),
+      // Görev de hedef hub'ını **kendisi** söylüyor (B-139): yanlış hub'a
+      // düşerse ancak bu satırla teşhis edilir — bildirimlerdeki gerekçenin
+      // aynısı (sözleşme 1.24, L-045).
+      repoSlug: slug,
       lang: ref.read(languageForRepoProvider(slug)).valueOrNull ??
           HubLanguage.tr,
     );

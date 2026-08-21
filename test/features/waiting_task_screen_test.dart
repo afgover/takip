@@ -76,6 +76,7 @@ final _multiQuestionFile =
   String path, {
   String? file,
   bool offline = false,
+  TaskSummary? summary,
 }) {
   final adapter = FakeAdapter((options, _) {
     if (options.method == 'GET') {
@@ -112,7 +113,7 @@ final _multiQuestionFile =
   return (
     widget: UncontrolledProviderScope(
       container: container,
-      child: testApp(TaskDetailScreen(summary: summaryFor(path))),
+      child: testApp(TaskDetailScreen(summary: summary ?? summaryFor(path))),
     ),
     adapter: adapter,
     container: container,
@@ -261,6 +262,52 @@ void main() {
 
     expect(built.adapter.requests.where((r) => r.method == 'PUT'), hasLength(1),
         reason: 'ikinci dokunuş yeni istek atmamalı');
+  });
+
+  group('görevin hangi hub\'a ait olduğu detayda görünür (B-139)', () {
+    // Kabuktaki repo şeridi bu ekranda yok: detay `push` ile açılıyor ve
+    // kendi Scaffold'unu getiriyor. Yazma düğmeleri tam burada olduğu için
+    // hedefin görünmemesi, L-045'in kullanıcı tarafındaki karşılığı olurdu.
+
+    testWidgets('damgalı görevde repo rozeti çıkar', (tester) async {
+      final built = buildScreen(
+        waitingPath,
+        summary: summaryFor(waitingPath).withContext(
+          repoSlug: 'afgover/financer_takip',
+          repoLabel: 'financer',
+        ),
+      );
+      addTearDown(built.container.dispose);
+      await tester.pumpWidget(built.widget);
+      await tester.pumpAndSettle();
+
+      // Okunabilir ad varsa o gösterilir — slug değil.
+      expect(find.text('financer'), findsOneWidget);
+    });
+
+    testWidgets('okunabilir ad yoksa slug gösterilir', (tester) async {
+      final built = buildScreen(
+        waitingPath,
+        summary:
+            summaryFor(waitingPath).withContext(repoSlug: 'afgover/takip'),
+      );
+      addTearDown(built.container.dispose);
+      await tester.pumpWidget(built.widget);
+      await tester.pumpAndSettle();
+
+      expect(find.text('afgover/takip'), findsOneWidget);
+    });
+
+    testWidgets('damga yoksa rozet hiç çizilmez', (tester) async {
+      // Boş bir rozet "reposuz" diye bir şey uydururdu — kimlik alanının
+      // (sözleşme 1.15) izlediği çizginin aynısı.
+      final built = buildScreen(waitingPath);
+      addTearDown(built.container.dispose);
+      await tester.pumpWidget(built.widget);
+      await tester.pumpAndSettle();
+
+      expect(find.byIcon(Icons.folder_outlined), findsNothing);
+    });
   });
 
   group('bildirim ekranı kapanınca da hatırlanır (B-135, T-018)', () {

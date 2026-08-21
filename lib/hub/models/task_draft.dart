@@ -67,6 +67,7 @@ class TaskDraft {
     String category = 'gorev',
     List<String> tags = const [],
     String? author,
+    String? repoSlug,
     HubLanguage lang = HubLanguage.tr,
     DateTime? now,
   }) {
@@ -87,7 +88,7 @@ class TaskDraft {
       status: TaskStatus.inbox,
       path: '',
       author: author,
-      body: _body(lang, trimmed, description.trim()),
+      body: _body(lang, trimmed, description.trim(), repoSlug),
     );
 
     return TaskDraft(
@@ -96,6 +97,10 @@ class TaskDraft {
       commitMessage: "task(pending): inbox'a eklendi (app)",
       title: trimmed,
       createdAt: at,
+      // Damga gövdedeki satırla **aynı kaynaktan** basılıyor: ikisi ayrı
+      // yerden gelseydi zamanla ayrışırlardı ve gövde bir hub'ı, kuyruk
+      // başka bir hub'ı gösterebilirdi.
+      repoSlug: repoSlug,
     );
   }
 
@@ -427,9 +432,24 @@ class TaskDraft {
         authorLogin: authorLogin,
       );
 
-  static String _body(HubLanguage lang, String title, String description) =>
+  /// Gövde. `Repo` satırı **normal görevde de** yazılıyor (B-139): sözleşme
+  /// 1.24 bunu bildirimler için kuralmış, ama gerekçesi türe bağlı değil —
+  /// yol hub-göreli, ID hub başına, ikisi de hub'ı tanımlamıyor. Yanlış hub'a
+  /// düşen bir görev, bildirimlerle **tam olarak aynı sebepten** teşhis
+  /// edilemiyordu (L-045).
+  ///
+  /// Satır kullanıcının metninden **boş satırla ayrılıyor** ve ondan sonra
+  /// geliyor: `## İstek` kullanıcının yazdığı şeydir, makine okunur olgu
+  /// onun içine karışmamalı (T-014'ün ayrımı).
+  static String _body(
+    HubLanguage lang,
+    String title,
+    String description,
+    String? repoSlug,
+  ) =>
       '# $title\n\n'
       '## ${lang.requestHeading}\n'
-      '${description.isEmpty ? lang.noDescriptionGiven : description}\n\n'
-      '## ${lang.notesHeading}\n';
+      '${description.isEmpty ? lang.noDescriptionGiven : description}\n'
+      '${repoSlug == null ? '' : '\n- **Repo:** `$repoSlug`\n'}'
+      '\n## ${lang.notesHeading}\n';
 }
