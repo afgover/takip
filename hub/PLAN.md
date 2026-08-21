@@ -21,8 +21,8 @@ sırasıyla girer.
 - [x] P-011.3 — Kullanıcı tarafı: detay ekranına repo rozeti · ✅ 2026-08-21
 - [x] P-011.4 — Tamamlananlar da repo damgası taşısın (rozet orada da çalışsın) · ✅ 2026-08-21
 - [x] P-011.5 — Testler · ✅ 2026-08-21 · 8 yeni test (612)
-- [ ] P-011.6 — Kayıtlar, tam süit + push
-- [ ] P-011.7 — APK derle ve telefona kur
+- [x] P-011.6 — Kayıtlar, tam süit + push · ✅ 2026-08-21 · 612 test
+- [ ] P-011.7 — APK derle ve telefona kur · derleme ✅ 2026-08-21 19:45; **kurulum bekliyor** — cihaz bağlı değil
 
 ## P-010 — B-135: bildirilmiş bekleme yeniden bildirilebiliyor
 - **Tarih:** 2026-08-21
