@@ -831,3 +831,40 @@ başlığına ✅ ve tarih yazılır.
       yoklama aralığı (30 sn…5 dk, [B-051](#B-051)) yeterli geldi, repo dışı
       entegrasyon talebi yok. Yol "tek ürün + opsiyonel bileşen" olarak sürüyor;
       madde kapanmıyor — kanıt sonradan da çıkabilir
+
+## Faz 7 — Bakım ve Sağlamlaştırma (Aşama 5)
+
+- [x] B-136 · (agent) Kırıcı olmayan sürüm yükseltmeleri — `markdown` 7.3.0 →
+      7.3.1, `shared_preferences` 2.5.3 → 2.5.5, `flutter_lints` 5.0.0 → 6.0.0.
+      Ölçüt yükseltmenin kendisi değil, **süitin yükseltmeden sonra da temiz
+      koşması**: yeni lint kuralları çıkarsa ya düzeltilir ya susturma
+      gerekçesiyle yazılır
+      — ✅ 2026-08-21 · S-2026-08-21-asama-4-kapanisi. 15 paket yükseldi
+      (`flutter pub upgrade`), `flutter_lints` 6'ya çıkarıldı. **Yeni lint
+      kuralı hiçbir yeri kırmadı**: `flutter analyze` temiz, 604 test geçti —
+      susturma gerekmedi.
+      · **`intl` yükseltilmedi ve gerekçesi bu:** 0.20.2 → 0.20.3 mümkün değil,
+      çünkü SDK'nın `flutter_localizations` paketi `intl`i **tam eşitlikle**
+      sabitliyor (`intl: 0.20.2`, kısıt kaynakta doğrulandı). Tetikleyicisi
+      Flutter SDK yükseltmesi; bu depoda ayrıca yapılacak bir şey yok
+- [x] B-137 · (agent) Kapanmış işe işaret eden ölü işaretçi —
+      `lib/github/commits_api.dart` içindeki `TODO(B-045)`, B-045
+      2026-07-30'da kapandığı hâlde duruyor (ayrıştırma `activity.dart`'a
+      yazılmıştı). Kapanmış bir işi açıkmış gibi gösteren kayıt, okuyanı
+      yanıltır — ✅ 2026-08-21 · S-2026-08-21-asama-4-kapanisi. İşaretçi
+      silinmedi, **doğrusuyla değiştirildi**: yorum artık ayrıştırmanın
+      `activity.dart`'ta olduğunu ve bu sınıfın ham veriyi taşıdığını söylüyor.
+      Boş bırakmak "burada bir şey yok" derdi; asıl bilgi katman ayrımıydı.
+      Kodda kalan başka `TODO`/`FIXME` yok (ölçüldü)
+- [ ] B-138 · (agent+user) Major sürüm geçişleri — `flutter_riverpod` 2.6.1 →
+      3.x ve `flutter_secure_storage` 9.2.4 → 11.x. **Kullanıcı kararıyla
+      ertelendi (2026-08-21):** Riverpod sağlayıcı API'sini değiştiriyor ve
+      uygulamanın omurgası o — geçiş 604 testin büyük kısmına dokunur.
+      Bekleyen bir kusur ya da güvenlik açığı yok, yani şimdi yapmanın
+      azalttığı bir maliyet yok.
+      **Tetikleyici (üçünden biri):** (a) mevcut sürümde bir güvenlik
+      danışmanlığı çıkması, (b) ihtiyaç duyulan bir yeteneğin yalnız yeni
+      major'da bulunması, (c) Flutter SDK yükseltmesinin mevcut sürümü
+      kırması. Bunlar olmadan geçiş yapılmaz — ertelemenin **gerekçesi ve
+      çıkışı** yazılı olduğu sürece borç sessiz değildir (Aşama 5 kapanma
+      koşulu 1)

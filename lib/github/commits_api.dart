@@ -6,11 +6,12 @@ import '../hub/hub_config.dart';
 import '../hub/hub_connections.dart';
 import 'client.dart';
 
-/// Commit geçmişi — yoklamanın değişiklik sinyali (B-024) ve ileride aktivite
-/// akışının veri kaynağı (B-045).
+/// Commit geçmişi — yoklamanın değişiklik sinyali (B-024) ve aktivite akışının
+/// veri kaynağı (B-045).
 ///
-/// TODO(B-045): mesajları SYSTEM.md §8 öneklerine göre ayrıştırıp insan diline
-/// çevir ("task(T-003): active → done" → "Agent T-003'ü tamamladı").
+/// Mesajların `SYSTEM.md` §8 öneklerine göre insan diline çevrilmesi burada
+/// **değil**, [`hub/activity.dart`](../hub/activity.dart)'ta yapılıyor: bu
+/// sınıf GitHub'ın döndürdüğünü olduğu gibi taşıyor, yorum ayrı katmanın işi.
 class CommitsApi {
   CommitsApi(this._dio, {required this.owner, required this.repo});
 

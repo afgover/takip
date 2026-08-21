@@ -243,7 +243,7 @@ görüntülenmesi. (Backlog Faz 4.)
   işaretler; ama sunucudan gelen hata (401/500) önbellekle gizlenmez —
   sorunu saklamak, bayat veri göstermekten daha kötüdür.
 
-## Aşama 4 — Günlük Kullanım (aktif)
+## Aşama 4 — Günlük Kullanım ✅ (2026-08-21)
 
 **Hedef:** Sistemi bir hafta gerçek işle kullanmak ve sürtünme noktalarını
 uygulamanın kendi kanalından (inbox) toplamak. (Backlog: B-052 → B-053.)
@@ -412,13 +412,22 @@ toplanır ve gerekiyorsa Faz 6 maddelerini (B-060…B-064) yeniden sıralar.
   beklemede duruyordu ([L-049](knowledge/lessons.md#L-049)). İkisi de ölçüldü,
   tetikleyicileri oluşmadığı için kapanmadı. 575 test.
 
-> **Bu aşamanın hedefi karşılandı.** Yukarıdaki (3) ile B-052 → B-053 zinciri
-> kapandı, yani aşamanın kendi tanımladığı iş bitti. Aşama yine de
-> **kapatılmadı**: yeni aşamanın hedefini agent kendiliğinden uyduramaz, o bir
-> yön kararıdır ve kapanma koşulu olmayan bir hedef yazmak L-049'un hatasını
-> aşama seviyesinde tekrarlamak olurdu. Karar
-> [T-017](tasks/waiting/2026-08-15-asama-4-kapanisi.md) olarak `waiting/`e
-> kondu.
+- 2026-08-21: **Aşama kapandı** (kullanıcı kararı,
+  [T-017](tasks/done/2026-08-15-asama-4-kapanisi.md)). Kapanmadan önceki altı
+  gün, aşamanın kendi mekanizmasının hâlâ çalıştığını gösterdi: üç madde doğup
+  kapandı ([B-133](BACKLOG.md#B-133), [B-134](BACKLOG.md#B-134),
+  [B-135](BACKLOG.md#B-135)) ve **B-135 uygulamanın kendi inbox'ından geldi** —
+  yani "sürtünmeyi uygulamanın kanalından topla" hedefi, hedefin karşılandığı
+  ilan edildikten sonra bile iş üretiyordu. Aşamanın kapanma gerekçesi bu
+  yüzden "kullanım bitti" değil: **kullanım artık aşama değil, zemin**. Sürtünme
+  akmaya devam ediyor ve bundan sonra Aşama 5'in işi olarak kapanıyor.
+
+> **Aşama, hedefi karşılandıktan 6 gün sonra kapatıldı.** Gecikme kasıtlıydı:
+> yeni aşamanın hedefini agent kendiliğinden uyduramaz, o bir yön kararıdır ve
+> kapanma koşulu olmayan bir hedef yazmak [L-049](knowledge/lessons.md#L-049)'un
+> hatasını aşama seviyesinde tekrarlamak olurdu. Karar
+> [T-017](tasks/done/2026-08-15-asama-4-kapanisi.md) olarak `waiting/`e kondu ve
+> orada bekledi.
 
 **Kararlar:**
 - **K-019:** Kolaylık için token'ın korumasız bir dizeye çevrilmesine izin
@@ -764,3 +773,43 @@ toplanır ve gerekiyorsa Faz 6 maddelerini (B-060…B-064) yeniden sıralar.
   Sözleşme yazıldıktan sonra `takip`'in geçmişi de dolduruldu — dört plan
   (P-005…P-008) oturum kayıtlarından türetildi, böylece diğer repoların
   agent'ları boş değil **dolu** bir örnek görüyor. 581 test.
+
+## Aşama 5 — Bakım ve Sağlamlaştırma (aktif)
+
+**Hedef:** Kullanımdan gelen sürtünmeyi kapatmaya devam ederken, **biriken
+bakım borcunu ölçülebilir biçimde görünür kılmak ve kapatmak.** Aşama 4'ten
+farkı yön: orada iş *keşfediliyordu*, burada zaten ölçülmüş bir liste
+kapatılıyor.
+
+**Kapanma koşulu** (üçü birden — koşulsuz hedef yazmamak L-049'un dersi):
+
+1. **Doğrudan bağımlılıklarda geride kalan her satır** ya güncellenmiş ya da
+   **gerekçesi ve tetikleyicisi kayda yazılmış**. "Güncel" demek "en son sürüm"
+   demek değil; demek ki *bilinçli* — sessiz borç kalmıyor.
+2. **Kapanmış işe işaret eden işaretçi kalmamış.** Kodda duran bir `TODO(B-045)`
+   gibi kayıtlar, kapanmış bir işi açıkmış gibi gösterir ve okuyanı yanıltır.
+3. **30 günlük `tarama` kaydı süresi içinde koşulmuş** ve sonucu yazılmış
+   (`AGENT_PROTOCOL.md` madde 4; sıradaki eşik ~2026-09-03).
+
+Kullanımdan gelen sürtünme bu koşulun parçası **değil**: o aşamanın sürekli
+işi, bitiş çizgisi değil. Bitiş çizgisi olsaydı aşama hiç kapanmazdı — B-052'yi
+15 gün açık tutan hatanın aynısı.
+
+**Durum:**
+- 2026-08-21: Aşama açıldı. Açılış ölçümü:
+  [B-136](BACKLOG.md#B-136) (kırıcı olmayan sürüm yükseltmeleri),
+  [B-137](BACKLOG.md#B-137) (ölü işaretçi), [B-138](BACKLOG.md#B-138)
+  (major geçişler — **bilinçli ertelendi**, tetikleyicisi yazıldı).
+  Test kapsamı ölçüldü ve aşama hedefi yapılmadı: 604 test, doğrudan testi
+  olmayan tek dosya `lib/hub/categories.dart`.
+- 2026-08-21: **Kapanma koşulunun 1 ve 2'si aynı gün karşılandı.**
+  [B-136](BACKLOG.md#B-136): 15 paket yükseldi, `flutter_lints` 6'ya çıktı ve
+  yeni kural hiçbir yeri kırmadı. `intl` yükseltilemedi ama **sessiz kalmadı** —
+  SDK'nın `flutter_localizations` paketi onu tam eşitlikle sabitliyor, gerekçe
+  ve tetikleyici (SDK yükseltmesi) kayda yazıldı. Kalan iki major
+  ([B-138](BACKLOG.md#B-138)) bilinçli ertelendi ve üç tetikleyicisi yazıldı.
+  [B-137](BACKLOG.md#B-137): tek ölü işaretçi doğrusuyla değiştirildi; kodda
+  başka `TODO`/`FIXME` kalmadı. 604 test.
+  **Aşamanın kısa olacağı baştan görünüyor ve bu şişirilmedi:** geriye yalnız
+  koşul 3 (tarama, ~2026-09-03) kaldı. Ölçülmüş borç gerçekten küçüktü; aşamayı
+  uydurma maddelerle uzatmak, kapanma koşulunu yazmanın amacını bozardı.
