@@ -5,6 +5,28 @@
 plan (`Türetilmiş: true`) kapalı doğduğu için kapalıların arasına tarih
 sırasıyla girer.
 
+## P-012 — B-140: hedefi kalmayan kuyruk taslağı görünür olsun
+- **Tarih:** 2026-08-21
+- **Kaynak:** [S-2026-08-21-gorunmez-kuyruk](sessions/2026-08-21-gorunmez-kuyruk/session.md)
+- **Durum:** tamamlandi
+- **İlgili:** [B-140](BACKLOG.md#B-140), [B-032](BACKLOG.md#B-032)
+
+> **Ölçüm teşhisi düzeltti.** Taslak "görünmez" değil: Ayarlar kuyruğun
+> **tamamını** sayıyor. Asıl kusur, uygulamanın tutamayacağı bir söz vermesi —
+> o satırın alt yazısı "Bağlantı gelince gönderilecek" diyor, oysa hedefi
+> kalmayan taslak bir daha hiç gönderilmeyecek ve "Şimdi göndermeyi dene"
+> onun için sessizce hiçbir şey yapmıyor.
+>
+> **Karar (2026-08-21, kullanıcı):** Ayarlar'da ayrı gösterilsin, söz
+> düzeltilsin. Silme kullanıcı kararı kalır — kuyruk kendiliğinden atmaz.
+
+- [x] P-012.1 — Kuyruğu **tek geçişte** ikiye ayıran sağlayıcı · ✅ 2026-08-21 · `QueueSplit`
+- [x] P-012.2 — Ayarlar: iki ayrı satır; söz yalnız doğru olduğu yerde · ✅ 2026-08-21
+- [x] P-012.3 — Öksüzleri silme yolu — onaylı, kendiliğinden değil · ✅ 2026-08-21 · `discardForRepos`
+- [x] P-012.4 — Arayüz metinleri (`app_tr.arb`, `app_en.arb`) · ✅ 2026-08-21
+- [x] P-012.5 — Testler · ✅ 2026-08-21 · 10 yeni test (622)
+- [x] P-012.6 — Kayıtlar, tam süit + push · ✅ 2026-08-21 · 622 test, `flutter analyze` temiz
+
 ## P-011 — B-139: görevde "hangi hub" ayrımı iki tarafta da görünsün
 - **Tarih:** 2026-08-21
 - **Kaynak:** [S-2026-08-21-hub-ayrimi](sessions/2026-08-21-hub-ayrimi/session.md)

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../github/client.dart';
+import '../../hub/all_tasks.dart';
 import '../../hub/hub_access.dart';
 import '../../hub/hub_config.dart';
 import '../../hub/hub_language.dart';
@@ -11,6 +12,7 @@ import '../../hub/hub_connections.dart';
 import '../../hub/token_scope.dart';
 import '../../hub/hub_sync.dart';
 import '../../hub/hub_watcher.dart';
+import '../../hub/models/task_draft.dart';
 import '../../hub/outbox.dart';
 import '../../hub/settings.dart';
 import '../../l10n/app_localizations.dart';
@@ -35,7 +37,12 @@ class SettingsScreen extends ConsumerWidget {
     final config = ref.watch(hubConfigProvider).value;
     final status = ref.watch(hubWatcherProvider);
     final interval = ref.watch(appSettingsProvider).pollInterval;
-    final queued = ref.watch(outboxProvider).valueOrNull ?? const [];
+    // Kuyruk **ikiye ayrılmış** okunuyor (B-140): "bağlantı gelince
+    // gönderilecek" sözü yalnız gidebilecekler için doğru. Tek sayıda
+    // toplandığında kullanıcı, hiç gitmeyecek bir taslağı da bekleyen
+    // sanıyordu.
+    final queue = ref.watch(queueSplitProvider);
+    final queued = queue.deliverable;
     final connectionCount =
         ref.watch(hubConnectionsProvider).valueOrNull?.length ?? 1;
     final sync = ref.watch(hubSyncProvider);
@@ -156,6 +163,13 @@ class SettingsScreen extends ConsumerWidget {
                 child: Text(l.trySendNow),
               ),
             ),
+          // Hedefi kalmayan taslaklar **ayrı** satırda: "şimdi göndermeyi
+          // dene" onlar için sessizce hiçbir şey yapmıyordu ve alt yazı
+          // tutulamayacak bir söz veriyordu. Satır hangi repoyu beklediğini
+          // söylüyor — kullanıcı ya repoyu geri ekler (taslak kendiliğinden
+          // gider) ya siler.
+          if (queue.orphaned.isNotEmpty)
+            _StuckQueueTile(orphaned: queue.orphaned),
           ListTile(
             key: clearCacheKey,
             leading: const Icon(Icons.cleaning_services_outlined),
@@ -452,4 +466,71 @@ class _SectionTitle extends StatelessWidget {
               ),
         ),
       );
+}
+
+/// Hedef reposu kaldırılmış kuyruk taslakları (B-140).
+///
+/// Silme onaylı: kullanıcının yazdığı ve **hiç gönderilmemiş** bir iş
+/// siliniyor, geri getirilemiyor. Kuyruğun kendisi hiçbir şeyi kendiliğinden
+/// atmıyor — o karar `Outbox.flush`'ta bilerek verilmemişti.
+class _StuckQueueTile extends ConsumerWidget {
+  const _StuckQueueTile({required this.orphaned});
+
+  static const tileKey = Key('settings-stuck-queue');
+  static const discardKey = Key('settings-stuck-discard');
+
+  final List<TaskDraft> orphaned;
+
+  Set<String> get _slugs => {
+        for (final d in orphaned)
+          if (d.repoSlug != null) d.repoSlug!,
+      };
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l = L.of(context);
+    final colors = Theme.of(context).colorScheme;
+
+    return ListTile(
+      key: tileKey,
+      leading: Icon(Icons.cloud_off_outlined, color: colors.error),
+      title: Text(l.outboxStuckTitle(orphaned.length)),
+      subtitle: Text(l.outboxStuckSubtitle(_slugs.join(', '))),
+      isThreeLine: true,
+      trailing: TextButton(
+        key: discardKey,
+        onPressed: () => _confirmDiscard(context, ref),
+        child: Text(l.outboxStuckDiscard),
+      ),
+    );
+  }
+
+  Future<void> _confirmDiscard(BuildContext context, WidgetRef ref) async {
+    final l = L.of(context);
+    final messenger = ScaffoldMessenger.of(context);
+    // Metin diyalog açılmadan hazırlanıyor (L-029'un kalıbı).
+    final doneText = l.outboxStuckDiscarded;
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: Text(L.of(dialogContext).outboxStuckConfirmTitle(orphaned.length)),
+        content: Text(L.of(dialogContext).outboxStuckConfirmBody),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(false),
+            child: Text(L.of(dialogContext).cancel),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.of(dialogContext).pop(true),
+            child: Text(L.of(dialogContext).outboxStuckDiscard),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed ?? false) {
+      await ref.read(outboxProvider.notifier).discardForRepos(_slugs);
+      messenger.showSnackBar(SnackBar(content: Text(doneText)));
+    }
+  }
 }

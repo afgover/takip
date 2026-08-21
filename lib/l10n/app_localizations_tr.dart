@@ -111,6 +111,31 @@ class LTr extends L {
   String get outboxQueuedSubtitle => 'Bağlantı gelince gönderilecek';
 
   @override
+  String outboxStuckTitle(int count) {
+    return '$count görev gönderilemiyor';
+  }
+
+  @override
+  String outboxStuckSubtitle(String repos) {
+    return 'Hedef repo bağlı değil: $repos. Repoyu geri eklersen kendiliğinden gider.';
+  }
+
+  @override
+  String get outboxStuckDiscard => 'Sil';
+
+  @override
+  String outboxStuckConfirmTitle(int count) {
+    return '$count görev silinsin mi?';
+  }
+
+  @override
+  String get outboxStuckConfirmBody =>
+      'Bu görevler hiç gönderilmedi. Silinince geri getirilemezler.';
+
+  @override
+  String get outboxStuckDiscarded => 'Gönderilemeyen görevler silindi.';
+
+  @override
   String get outboxQueuedBadge => 'Gönderilecek';
 
   @override

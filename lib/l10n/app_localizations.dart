@@ -289,6 +289,42 @@ abstract class L {
   /// **'Bağlantı gelince gönderilecek'**
   String get outboxQueuedSubtitle;
 
+  /// No description provided for @outboxStuckTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'{count} görev gönderilemiyor'**
+  String outboxStuckTitle(int count);
+
+  /// No description provided for @outboxStuckSubtitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Hedef repo bağlı değil: {repos}. Repoyu geri eklersen kendiliğinden gider.'**
+  String outboxStuckSubtitle(String repos);
+
+  /// No description provided for @outboxStuckDiscard.
+  ///
+  /// In tr, this message translates to:
+  /// **'Sil'**
+  String get outboxStuckDiscard;
+
+  /// No description provided for @outboxStuckConfirmTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'{count} görev silinsin mi?'**
+  String outboxStuckConfirmTitle(int count);
+
+  /// No description provided for @outboxStuckConfirmBody.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bu görevler hiç gönderilmedi. Silinince geri getirilemezler.'**
+  String get outboxStuckConfirmBody;
+
+  /// No description provided for @outboxStuckDiscarded.
+  ///
+  /// In tr, this message translates to:
+  /// **'Gönderilemeyen görevler silindi.'**
+  String get outboxStuckDiscarded;
+
   /// No description provided for @outboxQueuedBadge.
   ///
   /// In tr, this message translates to:

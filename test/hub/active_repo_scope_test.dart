@@ -169,4 +169,89 @@ void main() {
     expect(done.single.repoSlug, 'a/bir');
     expect(done.single.repoLabel, isNotNull);
   });
+
+  group('hedefi kalmayan taslak ayrı sayılır (B-140)', () {
+    // Ölçüm (2026-08-21): bağlantı silinince taslak kuyrukta **kalıyor**
+    // (`flush` bilerek atmıyor) ama bekleyenler listesinde hiç görünmüyor ve
+    // Ayarlar onu gidebileceklerle **aynı sayıda** topluyordu. Yani ekranda
+    // "bağlantı gelince gönderilecek" yazıyordu, oysa o taslak bir daha hiç
+    // gönderilmeyecekti — tutulamayan bir söz.
+    Future<ProviderContainer> bootWithQueue() async {
+      SharedPreferences.setMockInitialValues({
+        'outbox': [
+          jsonEncode(TaskDraft.create(title: 'A isi').forRepo('a/bir').toJson()),
+          jsonEncode(TaskDraft.create(title: 'B isi').forRepo('b/iki').toJson()),
+          jsonEncode(TaskDraft.create(title: 'Damgasiz').toJson()),
+        ],
+      });
+      connectBoth(active: 'a/bir');
+      final container = await boot();
+      await container.read(outboxProvider.future);
+      return container;
+    }
+
+    test('bağlantı dururken hiçbiri öksüz değil', () async {
+      final c = await bootWithQueue();
+      final split = c.read(queueSplitProvider);
+
+      expect(split.orphaned, isEmpty);
+      expect(split.deliverable, hasLength(3));
+    });
+
+    test('bağlantı silinince taslak öksüze geçer, kuyruktan düşmez', () async {
+      final c = await bootWithQueue();
+      await c.read(hubConnectionsProvider.notifier).remove('b/iki');
+
+      final split = c.read(queueSplitProvider);
+      expect(split.orphaned.map((d) => d.title), ['B isi']);
+      // Kuyrukta duruyor: kullanıcının yazdığı iş kendiliğinden atılmaz.
+      expect(c.read(outboxProvider).valueOrNull, hasLength(3));
+      // İki yarının toplamı her zaman kuyruğun tamamı — tek geçişin garantisi.
+      expect(split.deliverable.length + split.orphaned.length, 3);
+    });
+
+    test('damgasız taslak öksüz sayılmaz', () async {
+      // T-003 öncesi kayıtlar damgasız ve hedefleri "aktif repo" diye
+      // yorumlanıyor; öksüz saymak gidebilecek bir işi "gönderilemez"
+      // göstermek olurdu.
+      final c = await bootWithQueue();
+      await c.read(hubConnectionsProvider.notifier).remove('b/iki');
+
+      expect(
+        c.read(queueSplitProvider).deliverable.map((d) => d.title),
+        containsAll(['A isi', 'Damgasiz']),
+      );
+    });
+
+    test('repo geri eklenince taslak kendiliğinden gidebilir hâle gelir',
+        () async {
+      final c = await bootWithQueue();
+      await c.read(hubConnectionsProvider.notifier).remove('b/iki');
+      expect(c.read(queueSplitProvider).orphaned, hasLength(1));
+
+      await c.read(hubConnectionsProvider.notifier).upsertAndActivate(
+            const HubConfig(owner: 'b', repo: 'iki', token: 't2'),
+          );
+
+      expect(c.read(queueSplitProvider).orphaned, isEmpty);
+      expect(c.read(queueSplitProvider).deliverable, hasLength(3));
+    });
+
+    test('silme yalnız verilen repoların taslaklarını düşürür', () async {
+      final c = await bootWithQueue();
+      await c.read(hubConnectionsProvider.notifier).remove('b/iki');
+
+      await c.read(outboxProvider.notifier).discardForRepos({'b/iki'});
+
+      final left = c.read(outboxProvider).valueOrNull ?? const <TaskDraft>[];
+      expect(left.map((d) => d.title), ['A isi', 'Damgasiz']);
+      expect(c.read(queueSplitProvider).orphaned, isEmpty);
+    });
+
+    test('boş küme hiçbir şeyi silmez', () async {
+      final c = await bootWithQueue();
+      await c.read(outboxProvider.notifier).discardForRepos(const {});
+      expect(c.read(outboxProvider).valueOrNull, hasLength(3));
+    });
+  });
 }

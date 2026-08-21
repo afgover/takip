@@ -65,6 +65,25 @@ class Outbox extends AsyncNotifier<List<TaskDraft>> {
     await _persist(current);
   }
 
+  /// Hedef reposu kaldırılmış taslakları kuyruktan düşürür (B-140).
+  ///
+  /// **Yalnız kullanıcı çağırır.** `flush` hedefi bulamadığında taslağı
+  /// kuyrukta bırakıyor ve bu bilinçli: kullanıcının yazdığı iş kendiliğinden
+  /// atılmaz. Ama sonsuza kadar saklamak da bir cevap değildi — saklandığını
+  /// gösteremeyen bir koruma, sessiz kayıptır. Karar artık kullanıcının ve
+  /// **görünür** bir yerden veriliyor (Ayarlar → Veri).
+  ///
+  /// Silme repo bazında: kullanıcının ekranda gördüğü şey "şu repoya ait N
+  /// görev". Taslak kimliğiyle silmek, listeyi gördüğü an ile düğmeye bastığı
+  /// an arasında kuyruk değişirse yanlış kaydı silebilirdi.
+  Future<void> discardForRepos(Set<String> slugs) async {
+    if (slugs.isEmpty) return;
+    final current = (state.valueOrNull ?? const <TaskDraft>[])
+        .where((d) => d.repoSlug == null || !slugs.contains(d.repoSlug))
+        .toList();
+    await _persist(current);
+  }
+
   Future<void> remove(String fileName) async {
     final current = (state.valueOrNull ?? const <TaskDraft>[])
         .where((d) => d.fileName != fileName)

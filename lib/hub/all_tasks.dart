@@ -409,6 +409,49 @@ final queuedForActiveRepoProvider = Provider<List<TaskDraft>>((ref) {
   return queued.where((d) => (d.repoSlug ?? activeSlug) == activeSlug).toList();
 });
 
+/// Kuyruğun iki yarısı (B-140): gidebilecekler ve **hedefi kalmayanlar**.
+///
+/// Tek bir sınıf olmalarının sebebi somut: iki ayrı sağlayıcı olsalardı ikisi
+/// de aynı kuyruğu ayrı ayrı süzerdi ve süzgeçler zamanla ayrışabilirdi —
+/// aynı taslak hem "gönderilecek" hem "gönderilemez" sayılırdı. Tek geçiş,
+/// toplamın her zaman kuyruğun tamamına eşit olmasını garanti ediyor.
+class QueueSplit {
+  const QueueSplit({required this.deliverable, required this.orphaned});
+
+  /// Hedefi hâlâ bağlı olan taslaklar — "bağlantı gelince gönderilecek" sözü
+  /// **yalnız bunlar** için doğru.
+  final List<TaskDraft> deliverable;
+
+  /// Hedef reposunun bağlantısı kaldırılmış taslaklar. Kuyrukta kalıyorlar
+  /// (`Outbox.flush` bilerek atmıyor: kullanıcının yazdığı iş kaybolmamalı)
+  /// ama gönderilemiyorlar. Bu ayrım olmadan Ayarlar ikisini tek sayıda
+  /// topluyordu: kullanıcı "2 görev kuyrukta" görüp yalnız birini bulabiliyor,
+  /// diğerinin neden takıldığını hiçbir yerden okuyamıyordu.
+  final List<TaskDraft> orphaned;
+}
+
+final queueSplitProvider = Provider<QueueSplit>((ref) {
+  final state = ref.watch(hubConnectionsProvider).valueOrNull ??
+      const HubConnectionsState();
+  final queued = ref.watch(outboxProvider).valueOrNull ?? const <TaskDraft>[];
+
+  final deliverable = <TaskDraft>[];
+  final orphaned = <TaskDraft>[];
+  for (final draft in queued) {
+    final slug = draft.repoSlug;
+    // **Damgasız taslak öksüz sayılmaz.** T-003 öncesi kuyruğa girmiş kayıtlar
+    // damgasızdır ve hedefleri "aktif repo" diye yorumlanıyor (`flush` onları
+    // paylaşılan depoya veriyor). Öksüz saymak, gidebilecek bir işi
+    // "gönderilemez" diye göstermek olurdu.
+    if (slug != null && state.bySlug(slug) == null) {
+      orphaned.add(draft);
+    } else {
+      deliverable.add(draft);
+    }
+  }
+  return QueueSplit(deliverable: deliverable, orphaned: orphaned);
+});
+
 /// Filtre çubuğunun sunacağı seçenekler — listede gerçekten geçen değerler.
 final taskFacetsProvider = Provider<TaskFacets>((ref) {
   final tasks = ref.watch(activeRepoPendingTasksProvider).valueOrNull ?? const [];

@@ -821,7 +821,7 @@ başlığına ✅ ve tarih yazılır.
       çizilmiyor — boş rozet "reposuz" diye bir şey uydururdu). (c)
       `doneTasksProvider` damga basıyor. 612 test (604 + 8)
 
-- [ ] B-140 · (agent) Bağlantısı kaldırılmış repoya ait kuyruk taslağı
+- [x] B-140 · (agent) Bağlantısı kaldırılmış repoya ait kuyruk taslağı
       **görünmez** oluyor — B-139 doğrulaması sırasında çıktı, ayrı kusur.
       `queuedForActiveRepoProvider` taslağı yalnız kendi reposu **aktifken**
       gösteriyor; bağlantı silinince o repo hiç aktif olamayacağı için taslak
@@ -830,6 +830,18 @@ başlığına ✅ ve tarih yazılır.
       sakladığını göremiyor — yani kayıp sessiz. İki uç: ya taslak görünür bir
       yerde gösterilir (ör. Ayarlar → kuyruk), ya da bağlantı silinirken
       kullanıcıya sorulur. Karar gerektiriyor
+      — ✅ 2026-08-21 · S-2026-08-21-gorunmez-kuyruk. **Ölçüm teşhisi
+      düzeltti:** taslak tamamen görünmez değildi — Ayarlar kuyruğun
+      *tamamını* sayıyordu. Asıl kusur, uygulamanın tutamayacağı bir söz
+      vermesiydi: o satırın alt yazısı "Bağlantı gelince gönderilecek" diyor,
+      oysa hedefi kalmayan taslak bir daha hiç gönderilmeyecek ve "Şimdi
+      göndermeyi dene" onun için sessizce hiçbir şey yapmıyordu. Kuyruk artık
+      **tek geçişte** ikiye ayrılıyor (`QueueSplit` — iki ayrı süzgeç zamanla
+      ayrışabilirdi); söz yalnız gidebileceklerin satırında çıkıyor; öksüz
+      satırı hangi repoyu beklediğini söylüyor. Silme **kullanıcı kararı**
+      kaldı ve onaya bağlandı: `flush`'ın kendiliğinden atmama kararı
+      korunuyor. Damgasız taslak öksüz sayılmıyor (T-003 öncesi kayıtlar).
+      622 test (612 + 10)
 
 ## Faz 6 — 2. Plan (şimdilik bekliyor)
 

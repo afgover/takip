@@ -111,6 +111,32 @@ class LEn extends L {
   String get outboxQueuedSubtitle => 'Will be sent when back online';
 
   @override
+  String outboxStuckTitle(int count) {
+    return '$count tasks cannot be sent';
+  }
+
+  @override
+  String outboxStuckSubtitle(String repos) {
+    return 'Target repository is not connected: $repos. Add it back and they will go on their own.';
+  }
+
+  @override
+  String get outboxStuckDiscard => 'Delete';
+
+  @override
+  String outboxStuckConfirmTitle(int count) {
+    return 'Delete $count tasks?';
+  }
+
+  @override
+  String get outboxStuckConfirmBody =>
+      'These tasks were never sent. Deleting them cannot be undone.';
+
+  @override
+  String get outboxStuckDiscarded =>
+      'Tasks that could not be sent were deleted.';
+
+  @override
   String get outboxQueuedBadge => 'Queued';
 
   @override

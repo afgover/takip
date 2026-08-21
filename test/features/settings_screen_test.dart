@@ -6,8 +6,10 @@ import 'package:takip/core/errors.dart';
 import 'package:takip/features/settings/connection_screen.dart';
 import 'package:takip/features/settings/settings_screen.dart';
 import 'package:takip/github/client.dart';
+import 'package:takip/hub/all_tasks.dart';
 import 'package:takip/hub/hub_access.dart';
 import 'package:takip/hub/hub_config.dart';
+import 'package:takip/hub/models/task_draft.dart';
 import 'package:takip/hub/hub_watcher.dart';
 import 'package:takip/hub/settings.dart';
 
@@ -246,5 +248,92 @@ void main() {
 
     expect(cache.length, 0);
     expect(find.text('Temizlendi, yeniden indiriliyor.'), findsOneWidget);
+  });
+
+  group('gönderilemeyen kuyruk ayrı gösterilir (B-140)', () {
+    // Ölçüm: bağlantı silinince taslak kuyrukta kalıyor ama Ayarlar onu
+    // gidebileceklerle aynı sayıda topluyordu — ekranda "bağlantı gelince
+    // gönderilecek" yazarken o taslak bir daha hiç gönderilmeyecekti.
+    TaskDraft d(String title, String? slug) {
+      final draft = TaskDraft.create(title: title);
+      return slug == null ? draft : draft.forRepo(slug);
+    }
+
+    /// Veri bölümü listenin dibinde ve tembel liste onu kendiliğinden
+    /// oluşturmuyor; `ensureVisible` de işe yaramıyor çünkü widget hiç
+    /// kurulmamış oluyor (bu dosyadaki diğer testlerin kalıbı).
+    Future<void> scrollToData(WidgetTester tester) => tester.scrollUntilVisible(
+          find.byKey(SettingsScreen.clearCacheKey),
+          200,
+        );
+
+    Widget appWith(QueueSplit split) => ProviderScope(
+          overrides: [
+            hubConfigProvider.overrideWith(FakeHubConfigNotifier.new),
+            hubWatcherProvider.overrideWith(QuietWatcher.new),
+            queueSplitProvider.overrideWithValue(split),
+          ],
+          child: testApp(const SettingsScreen()),
+        );
+
+    testWidgets('öksüz yokken ayrı satır çizilmez', (tester) async {
+      await tester.pumpWidget(appWith(QueueSplit(
+        deliverable: [d('A isi', 'a/bir')],
+        orphaned: const [],
+      )));
+      await tester.pumpAndSettle();
+      await scrollToData(tester);
+
+      expect(find.text('1 görev kuyrukta'), findsOneWidget);
+      expect(find.byKey(const Key('settings-stuck-queue')), findsNothing);
+    });
+
+    testWidgets('öksüz varsa ayrı satırda ve hedef repoyu söyler',
+        (tester) async {
+      await tester.pumpWidget(appWith(QueueSplit(
+        deliverable: [d('A isi', 'a/bir')],
+        orphaned: [d('B isi', 'b/iki')],
+      )));
+      await tester.pumpAndSettle();
+      await scrollToData(tester);
+
+      expect(find.byKey(const Key('settings-stuck-queue')), findsOneWidget);
+      expect(find.text('1 görev gönderilemiyor'), findsOneWidget);
+      // Hangi repoyu beklediği yazılı: kullanıcı repoyu geri ekleyebilsin.
+      expect(find.textContaining('b/iki'), findsOneWidget);
+    });
+
+    testWidgets('söz yalnız gidebilecekler için verilir', (tester) async {
+      await tester.pumpWidget(appWith(QueueSplit(
+        deliverable: const [],
+        orphaned: [d('B isi', 'b/iki')],
+      )));
+      await tester.pumpAndSettle();
+      await scrollToData(tester);
+
+      // Gidebilecek yokken "bağlantı gelince gönderilecek" hiç çıkmamalı —
+      // düzeltilen kusur tam olarak bu cümlenin yanlış yerde durmasıydı.
+      expect(find.text('Bağlantı gelince gönderilecek'), findsNothing);
+      expect(find.text('1 görev gönderilemiyor'), findsOneWidget);
+    });
+
+    testWidgets('silme onay ister, iptal edilince hiçbir şey silinmez',
+        (tester) async {
+      await tester.pumpWidget(appWith(QueueSplit(
+        deliverable: const [],
+        orphaned: [d('B isi', 'b/iki')],
+      )));
+      await tester.pumpAndSettle();
+      await scrollToData(tester);
+
+      await tester.tap(find.byKey(const Key('settings-stuck-discard')));
+      await tester.pumpAndSettle();
+
+      // Hiç gönderilmemiş bir iş siliniyor: geri dönüşü yok, onay şart.
+      expect(find.text('1 görev silinsin mi?'), findsOneWidget);
+      await tester.tap(find.text('Vazgeç'));
+      await tester.pumpAndSettle();
+      expect(find.byKey(const Key('settings-stuck-queue')), findsOneWidget);
+    });
   });
 }
