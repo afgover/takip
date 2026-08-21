@@ -339,3 +339,35 @@ değil. Token, parola veya anahtar bu dosyada hiçbir koşulda yer almaz.
   kendini geçersiz ilan edip `2` ile çıkıyor ve "temiz" demiyor. Ağa
   ulaşılamadığında da aynı: koşmamak, temiz olmak değildir. Bu davranış bozuk
   bir ekosistem adıyla sınandı.
+
+## SEC-014 — Tarama: bağımlılık, sır ve Android yapılandırması (2. koşum)
+- **Tarih:** 2026-08-21
+- **Tür:** tarama
+- **Durum:** kapali
+- **Kaynak:** SEC-011, [Aşama 5](EVOLUTION.md), S-2026-08-21-guvenlik-taramasi
+- **Açıklama:** `tool/scan.sh`'in ilk **otomatik** koşumu (SEC-008 elle
+  koşulmuştu). Tam çıktı:
+  [`artifacts/S-2026-08-21-guvenlik-taramasi/guvenlik-taramasi.md`](artifacts/S-2026-08-21-guvenlik-taramasi/guvenlik-taramasi.md).
+  Özet:
+  (1) `pubspec.lock`'taki **70 paket** OSV'ye soruldu → **bilinen zafiyet yok**.
+  Boş sonuç, bilinen açıkları olan sürümlerden kurulu kontrol grubuyla
+  doğrulandı: **3/3** beklenen bulgu geldi (L-035). Paket sayısı 68 → 70; fark
+  aynı gün yapılan yükseltmeden ([B-136](BACKLOG.md#B-136)) geliyor, yani
+  yükseltme yeni bir zafiyet getirmedi.
+  (2) Sır taraması: çalışma ağacı **ve git geçmişinin tamamı** temiz.
+  (3) Android: yedekleme kuralları yerinde (SEC-009'da **gerileme yok**),
+  izin listesi hâlâ tek — `INTERNET`.
+  (4) Sürüm güncelliği (bulgu değil, bilgi): geride kalan üç doğrudan
+  bağımlılığın üçünün de gerekçesi yazılı — iki major
+  [B-138](BACKLOG.md#B-138)'de tetikleyicisiyle ertelendi, `intl` SDK'nın
+  `flutter_localizations` paketi tarafından tam eşitlikle sabitli.
+  **İki bulgu çıktı, ikisi de yeni değil** — ikisi de SEC-010 → B-101 → T-010
+  zincirinin görünümü: (a) imza anahtarı üretilmediği için release derlemesi
+  debug anahtarıyla imzalanıyor, (b) 2026-08-13'te üretilmiş release APK bu
+  makinede o imzayla duruyor. (b) `build/` altında ve `.gitignore`'da, yani
+  repoya hiç girmedi; riski yalnız "paylaşılırsa".
+  **Tetikleyici takvim değildi:** 30 günlük eşik (~2026-09-03) dolmadan,
+  Aşama 5'in üçüncü kapanma koşulu olarak koşuldu.
+  **Sınır (değişmedi):** tarama koştuğu **anın** veritabanına göredir (SEC-011);
+  Flutter SDK 3.35.4 ~11 aylık ve TLS yığını motorun içinde olduğu için paket
+  taraması o yüzeyi görmüyor.

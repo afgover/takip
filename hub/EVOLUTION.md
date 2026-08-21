@@ -813,3 +813,15 @@ işi, bitiş çizgisi değil. Bitiş çizgisi olsaydı aşama hiç kapanmazdı �
   **Aşamanın kısa olacağı baştan görünüyor ve bu şişirilmedi:** geriye yalnız
   koşul 3 (tarama, ~2026-09-03) kaldı. Ölçülmüş borç gerçekten küçüktü; aşamayı
   uydurma maddelerle uzatmak, kapanma koşulunu yazmanın amacını bozardı.
+- 2026-08-21: **Koşul 3 de karşılandı** — tarama kullanıcı isteğiyle, 30 günlük
+  eşik dolmadan koşuldu ([SEC-014](SECURITY.md#SEC-014)). `tool/scan.sh`'in
+  ilk otomatik koşumu: 70 pakette bilinen zafiyet yok (kontrol grubu 3/3
+  doğrulandı), sır taraması çalışma ağacında ve git geçmişinin tamamında temiz,
+  SEC-009'da gerileme yok. İki bulgu çıktı ve **ikisi de yeni değil** —
+  SEC-010 → [B-101](BACKLOG.md#B-101) → T-010 zincirinin görünümü.
+
+> **Üç koşulun üçü de karşılandı; aşama yine de kendiliğinden kapatılmadı.**
+> Aynı gerekçe T-017'dekiyle bir: sıradaki aşamanın hedefi bir **yön kararıdır**
+> ve agent onu uyduramaz. Ayrıca burada sorulacak ikinci bir soru var — aşama
+> bir günde kapandığına göre kapanma koşulu **dar mı yazıldı**? Cevap "evet"se
+> düzeltilecek yer bir sonraki aşamanın koşulu, geçmişe dönük bir rötuş değil.
