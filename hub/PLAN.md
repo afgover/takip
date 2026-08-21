@@ -8,7 +8,7 @@ sırasıyla girer.
 ## P-011 — B-139: görevde "hangi hub" ayrımı iki tarafta da görünsün
 - **Tarih:** 2026-08-21
 - **Kaynak:** [S-2026-08-21-hub-ayrimi](sessions/2026-08-21-hub-ayrimi/session.md)
-- **Durum:** acik
+- **Durum:** tamamlandi
 - **İlgili:** [B-139](BACKLOG.md#B-139), [L-045](knowledge/lessons.md#L-045), [§4](SYSTEM.md#4)
 
 > Doğrulama iki boşluk buldu ve ikisi de **aynı ilkenin** eksik uygulanması:
@@ -22,7 +22,7 @@ sırasıyla girer.
 - [x] P-011.4 — Tamamlananlar da repo damgası taşısın (rozet orada da çalışsın) · ✅ 2026-08-21
 - [x] P-011.5 — Testler · ✅ 2026-08-21 · 8 yeni test (612)
 - [x] P-011.6 — Kayıtlar, tam süit + push · ✅ 2026-08-21 · 612 test
-- [ ] P-011.7 — APK derle ve telefona kur · derleme ✅ 2026-08-21 19:45; **kurulum bekliyor** — cihaz bağlı değil
+- [x] P-011.7 — APK derle ve telefona kur · ✅ 2026-08-21 21:00 · yerinde güncelleme, veri korundu
 
 ## P-010 — B-135: bildirilmiş bekleme yeniden bildirilebiliyor
 - **Tarih:** 2026-08-21

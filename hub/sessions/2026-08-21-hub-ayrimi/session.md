@@ -1,7 +1,7 @@
 ---
 id: S-2026-08-21-hub-ayrimi
 date: 2026-08-21
-status: open
+status: closed
 reconstructed: false
 author: afgover
 topics: [coklu-hub, gorev, kimlik, kurulum]
@@ -42,7 +42,15 @@ taslağı **görünmez** oluyor — `flush` onu bilinçli saklıyor ama
 repo bir daha aktif olamıyor. Sakladığını gösteremeyen bir koruma, sessiz
 kayıptır. Ayrı kusur, ayrı karar.
 
-**Ölçüm:** `flutter analyze` temiz, **612 test** (604 + 8).
+**Kurulum yapıldı.** Telefondaki uygulama 13 Ağustos'tan kalmıştı; aradaki
+dört işlevsel değişiklik (B-131/B-132, B-103, B-133, B-135) cihazda yoktu —
+yani kullanıcının bugün bildirdiği hatanın düzeltmesi de repoda durup
+telefonda çalışmıyordu. `tool/install.sh --no-build` ile **yerinde**
+güncellendi.
+
+**Ölçüm:** `flutter analyze` temiz, **612 test** (604 + 8); kurulum sonrası
+`firstInstallTime` **değişmedi** (2026-08-01), yani kaldırma olmadı ve veri
+korundu; uygulama açıldı, süreç ayakta, çökme izi yok.
 
 ## Kayıt
 
@@ -80,3 +88,22 @@ Rozet, damga yoksa **hiç çizilmiyor**. Boş bir rozet "reposuz" diye bir şey
 uydururdu — kimlik alanının (sözleşme 1.15) izlediği çizginin aynısı.
 
 **Ölçüm:** `flutter analyze` temiz, **612 test**.
+
+### Kullanıcı
+> telefona kur
+
+### Agent — kuruldu ve doğrulandı
+
+İlk denemede `adb devices` boş döndü (cihaz düşmüştü); derleme yine de
+yapıldı, böylece kurulum tek adım kaldı. Cihaz geri gelince
+`tool/install.sh --no-build`.
+
+Kurulumun **veriyi koruduğu iddiaya değil ölçüme** dayanıyor:
+`firstInstallTime` 2026-08-01'de kaldı (kaldırma olsaydı sıfırlanırdı),
+`lastUpdateTime` 2026-08-21 21:00 oldu. Uygulama açıldı, süreç ayakta,
+logcat'te çökme izi yok.
+
+**Not:** `versionCode` hâlâ 1 — 1 Ağustos'tan beri artmamış. "Hangi build
+kurulu" sorusunun cevabı yalnız kurulum zaman damgasında duruyor; bugünkü
+ölçümü onunla yapabildim ama kırılgan bir dayanak. Aşama 5'e uygun küçük bir
+madde olabilir, kullanıcıya söylendi.
