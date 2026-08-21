@@ -7,6 +7,7 @@ import '../../hub/hub_watcher.dart';
 import '../../hub/models/task.dart';
 import '../../hub/models/task_draft.dart';
 import '../../hub/outbox.dart';
+import '../../hub/reported_waiting.dart';
 import '../common/hub_error_view.dart';
 import 'task_detail_screen.dart';
 import '../../l10n/app_localizations.dart';
@@ -35,6 +36,9 @@ class PendingScreen extends ConsumerWidget {
     final queued = ref.watch(queuedForActiveRepoProvider);
     final filter = ref.watch(taskFilterProvider);
     final order = ref.watch(taskOrderProvider);
+    final reported =
+        ref.watch(reportedWaitingProvider).valueOrNull?.keys.toSet() ??
+            const <String>{};
     final l = L.of(context);
 
     Future<void> refresh() async {
@@ -74,7 +78,7 @@ class PendingScreen extends ConsumerWidget {
           Expanded(
             child: RefreshIndicator(
               onRefresh: refresh,
-              child: _list(context, ref, tasks, queued, filter, order),
+              child: _list(context, ref, tasks, queued, filter, order, reported),
             ),
           ),
         ],
@@ -89,6 +93,7 @@ class PendingScreen extends ConsumerWidget {
     List<TaskDraft> queued,
     TaskFilter filter,
     TaskOrder order,
+    Set<String> reported,
   ) {
     return switch (tasks) {
       AsyncData(:final value) when value.isEmpty && queued.isEmpty =>
@@ -118,7 +123,20 @@ class PendingScreen extends ConsumerWidget {
               separatorBuilder: (_, __) => const Divider(height: 1),
               itemBuilder: (context, i) => i < queued.length
                   ? _QueuedTile(draft: queued[i])
-                  : _TaskTile(task: shown[i - queued.length]),
+                  : _TaskTile(
+                      task: shown[i - queued.length],
+                      // Bildirilmiş bekleme listede **kalır** (B-135): app
+                      // dosyayı `waiting/`ten taşıyamıyor (R-001) ve gizlemek,
+                      // agent işlemezse sessiz kayıp demek olurdu (K-022).
+                      // Görünür kalıyor ama artık "senden bir şey isteniyor"
+                      // demiyor.
+                      reported: reported.contains(
+                        ReportedWaiting.keyFor(
+                          shown[i - queued.length].repoSlug,
+                          shown[i - queued.length].path,
+                        ),
+                      ),
+                    ),
             );
           },
         ),
@@ -153,12 +171,20 @@ class _Scrollable extends StatelessWidget {
 }
 
 class _TaskTile extends StatelessWidget {
-  const _TaskTile({required this.task});
+  const _TaskTile({required this.task, this.reported = false});
 
   final TaskSummary task;
 
+  /// Bildirimi gönderilmiş bekleme (B-135). Yalnız `waiting/` için anlamlı:
+  /// diğer durumlarda kullanıcıdan bir şey istenmiyor, dolayısıyla
+  /// bildirilecek bir şey de yok.
+  final bool reported;
+
+  bool get _showsReported => reported && task.status.needsUser;
+
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
     return ListTile(
       leading: Icon(
         switch (task.status) {
@@ -166,24 +192,59 @@ class _TaskTile extends StatelessWidget {
           TaskStatus.active => Icons.play_circle_outline,
           _ => Icons.fiber_new_outlined,
         },
-        color: task.status.needsUser
-            ? Theme.of(context).colorScheme.tertiary
-            : null,
+        // Bildirilmiş bekleme dikkat çekmeyi bırakır: vurgu rengi "senden bir
+        // şey isteniyor" demek ve artık istenmiyor — sıra agent'ta.
+        color: task.status.needsUser && !reported ? colors.tertiary : null,
       ),
       title: Text(task.title),
       subtitle: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(formatTaskDate(task.date) ?? task.fileName),
+          Text(_showsReported
+              ? L.of(context).pendingReportedSubtitle
+              : formatTaskDate(task.date) ?? task.fileName),
           TaskTagRow(task: task),
         ],
       ),
       isThreeLine: true,
-      trailing: TaskStatusChip(status: task.status),
+      // Durum rozetinin **yerine** geçiyor, yanına değil: satırda tek bir
+      // "bu iş nerede" cevabı olsun. "Bekliyor" ile "Bildirildi" yan yana
+      // dursaydı hangisinin geçerli olduğu okunmazdı.
+      trailing: _showsReported
+          ? const _ReportedBadge()
+          : TaskStatusChip(status: task.status),
       onTap: () => Navigator.of(context).push(
         MaterialPageRoute<void>(
           builder: (_) => TaskDetailScreen(summary: task),
         ),
+      ),
+    );
+  }
+}
+
+/// "Bildirildi" rozeti — kuyruk rozetiyle aynı sessiz tonda, çünkü ikisi de
+/// aynı şeyi söylüyor: iş kullanıcıdan çıktı, sıra başkasında.
+class _ReportedBadge extends StatelessWidget {
+  const _ReportedBadge();
+
+  static const key_ = Key('pending-reported-badge');
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+    return Container(
+      key: key_,
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      decoration: BoxDecoration(
+        color: colors.surfaceContainerHighest,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Text(
+        L.of(context).pendingReportedBadge,
+        style: Theme.of(context)
+            .textTheme
+            .labelSmall
+            ?.copyWith(color: colors.onSurfaceVariant),
       ),
     );
   }

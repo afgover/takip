@@ -114,6 +114,12 @@ class LTr extends L {
   String get outboxQueuedBadge => 'Gönderilecek';
 
   @override
+  String get pendingReportedBadge => 'Bildirildi';
+
+  @override
+  String get pendingReportedSubtitle => 'Agent işleyene kadar listede kalır';
+
+  @override
   String get onboardingIntro =>
       'Hub reposuna bağlan. Yalnızca bu repoya scope\'lanmış bir fine-grained token kullan.';
 

@@ -12,6 +12,7 @@ import 'hub_config.dart';
 import 'hub_connections.dart';
 import 'hub_watcher.dart';
 import 'offline_store.dart';
+import 'reported_waiting.dart';
 
 /// Senkronun o anki durumu.
 class SyncStatus {
@@ -172,6 +173,16 @@ class HubSync extends Notifier<SyncStatus> {
       for (final stale in (await store.storedPaths()).difference(wantedPaths)) {
         await store.removeDoc(stale);
       }
+
+      // "Bildirildi" kaydı da hub'ı izler (B-135): görev `waiting/`ten
+      // çıktıysa agent bildirimi işlemiştir ve kayıt anlamını yitirir.
+      // Silinmiş belge temizliğiyle **aynı yerde** duruyor çünkü ikisi de tek
+      // bir ölçüme dayanıyor: "bu dosya hub'da artık yok". Ayrı bir tetikleyici
+      // (takvim, uygulama açılışı) uydurmak, kaydın hub ile ayrışmasına
+      // açık kapı bırakırdı.
+      await ref
+          .read(reportedWaitingProvider.notifier)
+          .pruneMissing(connection.slug, wantedPaths);
 
       // SHA'sı değişmemiş dosya indirilmez.
       final stale = <TreeEntry>[];

@@ -829,3 +829,25 @@ Biçim: `SYSTEM.md` §5.
   [L-043](#L-043) (ölü/çakışan çeviri anahtarı) ve [L-044](#L-044) (kaba
   ölçüt ölçtüğünü sanmıyor) aynı ailedendi: çeviri katmanının hataları
   **sessiz** olur, çünkü hiçbir katman metnin doğruluğunu bilmiyor.
+
+## L-051 — Kullanıcının gördüğü koşul, kusurun sınırı değildir
+- **Tarih:** 2026-08-21
+- **Kaynak:** [S-2026-08-21-offline-mukerrer-kuyruk](../sessions/2026-08-21-offline-mukerrer-kuyruk/session.md), [B-135](../BACKLOG.md#B-135), T-018
+- **Açıklama:** Bildirim "bekleyen görevler **offline** tamamlanınca mükerrer
+  kuyruğa giriyor" diye geldi ve doğruydu. Ama kök neden çevrimdışılıkla ilgili
+  değildi: "bu bekleme bildirildi" bilgisi detay ekranının widget durumunda
+  (`_reported`) tutuluyordu ve ekran kapanınca ölüyordu. Aynı kusur
+  **çevrimiçi de** vardı — orada da görev `waiting/`ten ancak agent işleyince
+  çıkıyor, ekrana dönen kullanıcı ikinci bir bildirim gönderebiliyordu. Fark
+  yalnız görünürlüktü: çevrimdışında iki taslak kuyrukta yan yana duruyor ve
+  gözle görülüyor; çevrimiçinde iki dosya agent'ın inbox'ında birikiyor ve
+  kimse saymıyor.
+  Kapsam çevrimdışıyla sınırlansaydı düzeltme "geçti" görünecek, aynı hata
+  başka bir kılıkta duracaktı. **Genel kural:** bildirimdeki koşul (offline,
+  şu cihaz, şu ekran) kusurun **belirtisidir**, tanımı değil. Düzeltmeden önce
+  şu sorulur: bu koşul kaldırılırsa hata gerçekten kalkıyor mu? Cevap "hayır"sa
+  kapsam kullanıcının gördüğü yer değil, bilginin durduğu katmandır.
+  Bu vakada bilgi hiçbir yerde kalıcı değildi; çözüm de tek bir kalıcı kayıt
+  oldu — iki gönderim yolu için iki ayrı çözüm değil.
+  [L-048](#L-048) ile aynı aile: iki şey tek tek doğruyken yan yana geldiğinde
+  kapsam ayrışıyor.

@@ -7,6 +7,7 @@ import '../../hub/hub_language.dart';
 import '../../hub/models/task.dart';
 import '../../hub/models/task_draft.dart';
 import '../../hub/outbox.dart';
+import '../../hub/reported_waiting.dart';
 import '../../hub/task_repo.dart';
 import '../../l10n/app_localizations.dart';
 import '../common/annotated_document.dart';
@@ -152,7 +153,6 @@ class _WaitingBannerState extends ConsumerState<_WaitingBanner> {
 
   bool _busy = false;
   String? _error;
-  bool _reported = false;
 
   /// Seçenekli soruda işaretlenenler (sözleşme 1.12). `multi: false` ise
   /// içinde en fazla bir öğe bulunur.
@@ -164,6 +164,21 @@ class _WaitingBannerState extends ConsumerState<_WaitingBanner> {
     _noteCtrl.dispose();
     super.dispose();
   }
+
+  /// Bildirim gönderilmiş mi — cevap **cihazdaki kayıttan** gelir (B-135).
+  ReportedState get _reportedState => reportedStateOf(
+        ref.watch(reportedWaitingProvider),
+        widget.summary.repoSlug,
+        widget.summary.path,
+      );
+
+  /// Etiket ve simge yalnız kesin "evet"te değişir; "bilmiyorum" hâlinde
+  /// "Bildirildi" yazmak, henüz okunmamış bir kaydı olgu gibi sunardı.
+  bool get _reported => _reportedState == ReportedState.yes;
+
+  /// Düğme ise "bilmiyorum" hâlinde de kapalı: kayıt yüklenirken açık bırakmak,
+  /// tam olarak önlenmek istenen mükerrer bildirimi davet ederdi.
+  bool get _locked => _busy || _reportedState != ReportedState.no;
 
   void _toggle(String option) {
     setState(() {
@@ -185,7 +200,7 @@ class _WaitingBannerState extends ConsumerState<_WaitingBanner> {
   /// Seçenekli soruya cevap (sözleşme 1.12).
   Future<void> _answer() async {
     final l = L.of(context);
-    if (_busy || _selected.isEmpty) return;
+    if (_locked || _selected.isEmpty) return;
     // Seçim sırası listedeki sırayı izlesin; küme sırası dokunma sırasıdır ve
     // agent'ın okuduğu kayıtta rastgele görünürdü.
     final ordered =
@@ -205,7 +220,7 @@ class _WaitingBannerState extends ConsumerState<_WaitingBanner> {
 
   Future<void> _report() async {
     final l = L.of(context);
-    if (_busy) return;
+    if (_locked) return;
     await _send(
       TaskDraft.waitingDone(
         widget.task,
@@ -238,10 +253,15 @@ class _WaitingBannerState extends ConsumerState<_WaitingBanner> {
     final draft = slug == null ? base : base.forRepo(slug);
     try {
       await ref.read(taskRepoForSlugProvider(slug)).send(draft);
+      await _markReported();
       _finish(successMessage);
     } on HubNetworkError {
       // Ağ yokken bildirim kaybolmasın: normal görevlerle aynı kuyruk (B-032).
       await ref.read(outboxProvider.notifier).add(draft);
+      // Kuyruğa alınan bildirim de **bildirilmiştir**: kullanıcı işini
+      // söylemiş, gönderim cihazın işi. İşaretlenmezse ekrandan çıkıp
+      // dönen kullanıcı ikinci bir taslak üretirdi (B-135).
+      await _markReported();
       _finish(l.detailQueued);
     } on HubError catch (e) {
       if (mounted) setState(() => _error = e.message);
@@ -252,10 +272,16 @@ class _WaitingBannerState extends ConsumerState<_WaitingBanner> {
     }
   }
 
+  /// Bildirimin gönderildiğini cihaza yazar (B-135). Düğmenin kilidi artık
+  /// **bu kayıttan** okunuyor; widget durumunda tutulduğu sürece ekrandan
+  /// çıkmak bilgiyi siliyor ve aynı bekleme ikinci kez bildirilebiliyordu.
+  Future<void> _markReported() => ref
+      .read(reportedWaitingProvider.notifier)
+      .mark(widget.summary.repoSlug, widget.summary.path);
+
   void _finish(String message) {
     ref.invalidate(pendingTasksProvider);
     if (!mounted) return;
-    setState(() => _reported = true);
     ScaffoldMessenger.of(context)
         .showSnackBar(SnackBar(content: Text(message)));
   }
@@ -291,7 +317,7 @@ class _WaitingBannerState extends ConsumerState<_WaitingBanner> {
   /// Metin `## Notlar`a gidiyor, `## İstek`e değil: istek "beklenen iş
   /// yapıldı" olgusudur, not kullanıcının o iş hakkında söylediği şey.
   List<Widget> _doneSection(L l) {
-    final locked = _busy || _reported;
+    final locked = _locked;
     return [
       TextField(
         key: answerNoteKey,
@@ -330,7 +356,7 @@ class _WaitingBannerState extends ConsumerState<_WaitingBanner> {
   List<Widget> _answerSection(ThemeData theme, ColorScheme colors) {
     final l = L.of(context);
     final options = widget.task.options;
-    final locked = _busy || _reported;
+    final locked = _locked;
 
     return [
       for (var i = 0; i < options.length; i++)

@@ -1,7 +1,7 @@
 ---
 id: S-2026-08-15-gorev-agaci-tesviki
 date: 2026-08-15
-status: open
+status: closed
 reconstructed: false
 author: afgover
 topics: [plan-agaci, sozlesme, tesvik, coklu-hub]
@@ -12,7 +12,37 @@ tasks_touched: []
 # Oturum: Görev ağacı neden boş — agent'ı teşvik etme
 
 ## Özet
-(oturum açık)
+
+Oturum tek bir gözlemle açıldı — "görev ağacını hiç bir repo doldurmamış" — ve
+üç ayrı katmanda iş çıkardı.
+
+**1. Ölçüm, teşhisi değiştirdi.** `takip`'te ağaç doluydu (3 plan, 27 adım);
+sorun veri yokluğu değildi. İki başka şey vardı: planların hepsi kapalıydı,
+yani ekranda görünür yarım iş yoktu; ve adım satırlarına gerekçe sıkıştırıldığı
+için telefonda ağaç değil duvar görünüyordu.
+
+**2. Kuralın yapısal boşluğu (sözleşme 1.26, B-134).** Diğer repoların ağacı
+agent'ların ihmalinden değil, §14'ün geç fark edilen işe **hiçbir yol
+bırakmamasından** boştu: uydur (yasak) ya da atla. Hepsi atladı. Çözüm uydurma
+ile türetmeyi ayırmak oldu — geriye dönük plan serbest ama `Türetilmiş: true`
+ile işaretli. Kalıp yeni değil: oturumlarda `reconstructed` aynı ayrımı zaten
+taşıyordu. Aynı ölçümden iki ek kural çıktı (adım satırı kısadır; geriye dönük
+plan kapalıların arasına tarih sırasıyla girer) ve `takip`'in geçmişinden dört
+plan türetildi ([P-005](../../PLAN.md)…[P-008](../../PLAN.md)).
+
+**3. Gerçek bir ayrıştırıcı hatası ([B-133](../../BACKLOG.md#B-133)).** Sarkan
+adım satırı `·` ayracını yutuyor, tamamlanma tarihi kayboluyordu. Düzeltildi;
+**ölçüm ilk sayımı da düzeltti**: etkilenen adım 9 değil 19'du — ilki gözle
+sayılmıştı. Ders bugünkü L-044'ün tekrarı: kaba bir ölçüt, ölçtüğünü sandığı
+şeyi ölçmüyor.
+
+**Kapanış ölçümü:** `flutter analyze` temiz, 586 test geçti, push edildi.
+Mevcut uzun adım satırları **kısaltılmadı** — kayıt silinmez (R-004) ve
+gerekçeleri bağlantı verilen oturum kayıtlarında duruyor; kural bundan
+sonrası için.
+
+*(Özet 2026-08-21'de yazıldı: oturum o gün `open` bırakılmıştı ve süitin
+"en fazla bir oturum açık" ölçümü bunu yakaladı.)*
 
 ## Kayıt
 

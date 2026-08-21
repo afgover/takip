@@ -40,6 +40,8 @@
   },
   "outboxQueuedSubtitle": "Bağlantı gelince gönderilecek",
   "outboxQueuedBadge": "Gönderilecek",
+  "pendingReportedBadge": "Bildirildi",
+  "pendingReportedSubtitle": "Agent işleyene kadar listede kalır",
   "onboardingIntro": "Hub reposuna bağlan. Yalnızca bu repoya scope'lanmış bir fine-grained token kullan.",
   "repoFieldInvalid": "owner/ad biçiminde girin",
   "show": "Göster",

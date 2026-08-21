@@ -295,6 +295,18 @@ abstract class L {
   /// **'Gönderilecek'**
   String get outboxQueuedBadge;
 
+  /// No description provided for @pendingReportedBadge.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bildirildi'**
+  String get pendingReportedBadge;
+
+  /// No description provided for @pendingReportedSubtitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Agent işleyene kadar listede kalır'**
+  String get pendingReportedSubtitle;
+
   /// No description provided for @onboardingIntro.
   ///
   /// In tr, this message translates to:

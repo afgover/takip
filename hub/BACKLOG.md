@@ -785,6 +785,22 @@ başlığına ✅ ve tarih yazılır.
       çünkü kayıt silinmez (R-004) ve gerekçeleri oturum kayıtlarında zaten
       bağlantılı. 586 test
 
+- [x] B-135 · (agent) Bildirilmiş bekleme yeniden bildirilebiliyor — "bu bekleme
+      bildirildi" bilgisi yalnız detay ekranının widget durumunda (`_reported`)
+      yaşıyor, ekrandan çıkılınca ölüyor. Görev `waiting/`ten ancak agent
+      işleyince çıktığı için liste onu göstermeye devam ediyor ve ikinci
+      "Yaptım" ikinci bir bildirim üretiyor. Çevrimdışı belirgin (kuyrukta iki
+      taslak; `flush` ikisini de yazıyor, ikincisi `-2.md` olarak) ama
+      **çevrimiçi de aynı** — kayıt katmanı farklı, kusur aynı. Sözleşme zaten
+      "app aynı görev için ikinci bir cevap göndermez" diyor (§4, 1.12);
+      uygulama bunu yalnız ekran açıkken tutuyordu. → T-018, [P-010](PLAN.md)
+      — ✅ 2026-08-21 · S-2026-08-21-offline-mukerrer-kuyruk. Bilgi cihazda
+      kalıcı bir kayda taşındı (`lib/hub/reported_waiting.dart`); iki gönderim
+      yolu da onu yazıyor, kayıt görev `waiting/`ten çıkınca senkronun silinmiş
+      belge temizliğiyle **aynı yerde** düşüyor. Liste satırı kalıyor ama
+      rozeti "Bildirildi" oluyor (kullanıcı kararı: gizlemek, agent işlemezse
+      sessiz kayıp demek — K-022). 604 test (586 + 18) → [L-051](knowledge/lessons.md#L-051)
+
 ## Faz 6 — 2. Plan (şimdilik bekliyor)
 
 - [ ] B-060 · (agent) Webhook + stateless relay + push bildirimi tasarımının

@@ -5,6 +5,27 @@
 plan (`Türetilmiş: true`) kapalı doğduğu için kapalıların arasına tarih
 sırasıyla girer.
 
+## P-010 — B-135: bildirilmiş bekleme yeniden bildirilebiliyor
+- **Tarih:** 2026-08-21
+- **Kaynak:** [S-2026-08-21-offline-mukerrer-kuyruk](sessions/2026-08-21-offline-mukerrer-kuyruk/session.md)
+- **Durum:** tamamlandi
+- **İlgili:** [B-135](BACKLOG.md#B-135), [T-018](tasks/active/2026-08-21-bekleyen-gorevlerin-offline-da-tamamlanmasi.md)
+
+> **Karar (2026-08-21, kullanıcı).** Bildirilmiş görev listede **kalır**,
+> "bildirildi" işaretiyle. App dosyayı `waiting/`ten taşıyamıyor (R-001);
+> gizlemek, agent işlemezse sessiz kayıp demek olurdu — K-022'nin çözdüğü
+> sorunun aynısı. Kapsam çevrimdışıyla sınırlı değil: kusur tek (bilgi kalıcı
+> değil), kayıt katmanı iki.
+
+- [x] P-010.1 — Cihazda "bildirildi" kaydı: repo + görev yolu → zaman · ✅ 2026-08-21 · `lib/hub/reported_waiting.dart`
+- [x] P-010.2 — İki gönderim yolu da kaydı yazsın: gönderildi ve kuyruğa alındı · ✅ 2026-08-21
+- [x] P-010.3 — Detay ekranı düğme durumunu kayıttan okusun, widget'tan değil · ✅ 2026-08-21 · `_reported` alanı kalktı
+- [x] P-010.4 — Bekleyenler listesinde "bildirildi" rozeti · ✅ 2026-08-21 · durum rozetinin yerine geçiyor
+- [x] P-010.5 — Kayıt, görev `waiting/`ten çıkınca temizlensin · ✅ 2026-08-21 · senkronun silinmiş belge temizliğiyle aynı yerde
+- [x] P-010.6 — Arayüz metinleri (`app_tr.arb`, `app_en.arb`) · ✅ 2026-08-21
+- [x] P-010.7 — Testler: mükerrer gönderimi kuran regresyon + temizleme · ✅ 2026-08-21 · 18 yeni test
+- [x] P-010.8 — Kayıtlar, tam süit + push · ✅ 2026-08-21 · 604 test, `flutter analyze` temiz
+
 ## P-009 — B-133: sarkan adım satırı tamamlanma tarihini yutuyor
 - **Tarih:** 2026-08-15
 - **Kaynak:** [S-2026-08-15-gorev-agaci-tesviki](sessions/2026-08-15-gorev-agaci-tesviki/session.md)

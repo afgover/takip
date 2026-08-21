@@ -33,6 +33,8 @@
   "pendingFilterEmptySubtitle": "There are {count} tasks but none match your filter.",
   "outboxQueuedSubtitle": "Will be sent when back online",
   "outboxQueuedBadge": "Queued",
+  "pendingReportedBadge": "Told",
+  "pendingReportedSubtitle": "Stays in the list until the agent handles it",
   "onboardingIntro": "Connect to your hub repository. Use a fine-grained token scoped to this repository only.",
   "repoFieldInvalid": "Enter it as owner/name",
   "show": "Show",

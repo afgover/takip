@@ -11,6 +11,7 @@ import 'package:takip/hub/hub_config.dart';
 import 'package:takip/hub/hub_connections.dart';
 import 'package:takip/hub/hub_sync.dart';
 import 'package:takip/hub/offline_store.dart';
+import 'package:takip/hub/reported_waiting.dart';
 
 import '../github/contents_api_test.dart' show FakeAdapter, jsonResponse;
 
@@ -167,6 +168,26 @@ void main() {
     expect(await store.readDoc('hub/SYSTEM.md'), isNull,
         reason: 'hub\'da olmayan belge listede kalmamalı');
     expect(t.container.read(hubSyncProvider).docCount, 2);
+  });
+
+  test('agent bildirimi işleyince "bildirildi" kaydı da düşer (B-135)',
+      () async {
+    const waiting = 'hub/tasks/waiting/2026-08-06-imza.md';
+    final t = await boot({...hub, waiting: '# Bekleyen'});
+    final notifier = t.container.read(hubSyncProvider.notifier);
+    await notifier.syncNow();
+
+    await t.container.read(reportedWaitingProvider.future);
+    await t.container
+        .read(reportedWaitingProvider.notifier)
+        .mark('afgover/takip', waiting);
+
+    // Agent bildirimi işledi: dosya `waiting/`ten çıktı. Kayıt da anlamını
+    // yitirir; tetikleyici takvim değil, senkronun ölçtüğü ağaç.
+    t.remote.files = {...hub};
+    await notifier.syncNow();
+
+    expect(t.container.read(reportedWaitingProvider).requireValue, isEmpty);
   });
 
   test('ağ yokken var olan kopya bozulmaz', () async {

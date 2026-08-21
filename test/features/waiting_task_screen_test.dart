@@ -71,9 +71,11 @@ Beklenen: karar.
 final _multiQuestionFile =
     _questionFile.replaceFirst('result: none', 'result: none\nmulti: "true"');
 
-({Widget widget, FakeAdapter adapter}) buildScreen(
+({Widget widget, FakeAdapter adapter, ProviderContainer container})
+    buildScreen(
   String path, {
   String? file,
+  bool offline = false,
 }) {
   final adapter = FakeAdapter((options, _) {
     if (options.method == 'GET') {
@@ -84,6 +86,14 @@ final _multiQuestionFile =
         'encoding': 'base64',
       });
     }
+    // Ağ yokken bildirim kuyruğa düşer (B-032); mükerrer kuyruk kaydı bu
+    // yoldan çıkmıştı (B-135).
+    if (offline) {
+      throw DioException.connectionError(
+        requestOptions: options,
+        reason: 'ağ yok',
+      );
+    }
     return jsonResponse({
       'content': {'sha': 'yeni'}
     });
@@ -91,17 +101,42 @@ final _multiQuestionFile =
   final dio = Dio(BaseOptions(baseUrl: 'https://api.github.com'))
     ..httpClientAdapter = adapter;
 
+  final container = ProviderContainer(
+    overrides: [
+      taskRepoProvider.overrideWithValue(
+        TaskRepo(ContentsApi(dio, owner: 'afgover', repo: 'takip')),
+      ),
+    ],
+  );
+
   return (
-    widget: ProviderScope(
-      overrides: [
-        taskRepoProvider.overrideWithValue(
-          TaskRepo(ContentsApi(dio, owner: 'afgover', repo: 'takip')),
-        ),
-      ],
+    widget: UncontrolledProviderScope(
+      container: container,
       child: testApp(TaskDetailScreen(summary: summaryFor(path))),
     ),
     adapter: adapter,
+    container: container,
   );
+}
+
+/// Cihazdaki kuyruk kaydı (B-032) — mükerrer taslak burada birikiyordu.
+Future<List<String>> queuedDrafts() async =>
+    (await SharedPreferences.getInstance()).getStringList('outbox') ??
+    const <String>[];
+
+/// Ekrandan çıkıp geri gelmeyi kurar.
+///
+/// Eski ağaç sökülür, `autoDispose` sağlayıcılarının dispose görevi koşsun
+/// diye bir kare daha çevrilir, sonra container kapatılır. Kapatılmazsa
+/// Riverpod'un zamanlayıcısı testin sonunda "pending timer" olarak patlar —
+/// hatanın kendisiyle ilgisiz bir kırık.
+Future<void> leaveScreen(
+  WidgetTester tester,
+  ProviderContainer container,
+) async {
+  await tester.pumpWidget(const SizedBox.shrink());
+  await tester.pump();
+  container.dispose();
 }
 
 Finder get doneButton => find.byKey(const Key('waiting-done-button'));
@@ -226,6 +261,110 @@ void main() {
 
     expect(built.adapter.requests.where((r) => r.method == 'PUT'), hasLength(1),
         reason: 'ikinci dokunuş yeni istek atmamalı');
+  });
+
+  group('bildirim ekranı kapanınca da hatırlanır (B-135, T-018)', () {
+    // Kusur: "bu bekleme bildirildi" bilgisi yalnız `_WaitingBannerState`
+    // içinde yaşıyordu. Ekrandan çıkınca ölüyor; görev `waiting/`ten ancak
+    // agent işleyince çıktığı için listede duruyor ve ikinci "Yaptım" ikinci
+    // bir bildirim üretiyordu. Aşağıdakiler hatanın **kendisini** kuruyor:
+    // aynı ekranda ikinci dokunuş değil, ekranın yeniden açılması.
+
+    testWidgets('ekran yeniden açıldığında düğme kapalı gelir', (tester) async {
+      final first = buildScreen(waitingPath);
+      await tester.pumpWidget(first.widget);
+      await tester.pumpAndSettle();
+      await tester.tap(doneButton);
+      await tester.pumpAndSettle();
+      expect(
+          first.adapter.requests.where((r) => r.method == 'PUT'), hasLength(1));
+      await leaveScreen(tester, first.container);
+
+      final second = buildScreen(waitingPath);
+      addTearDown(second.container.dispose);
+      await tester.pumpWidget(second.widget);
+      await tester.pumpAndSettle();
+
+      expect(find.text('Bildirildi'), findsOneWidget);
+      await tester.tap(doneButton);
+      await tester.pumpAndSettle();
+      expect(
+        second.adapter.requests.where((r) => r.method == 'PUT'),
+        isEmpty,
+        reason: 'aynı bekleme ikinci kez bildirilmemeli (sözleşme §4, 1.12)',
+      );
+    });
+
+    testWidgets('çevrimdışı: ikinci kez kuyruğa alınmaz', (tester) async {
+      final first = buildScreen(waitingPath, offline: true);
+      await tester.pumpWidget(first.widget);
+      await tester.pumpAndSettle();
+      await tester.tap(doneButton);
+      await tester.pumpAndSettle();
+      expect(await queuedDrafts(), hasLength(1),
+          reason: 'ağ yokken bildirim kuyruğa düşer (B-032)');
+      await leaveScreen(tester, first.container);
+
+      final second = buildScreen(waitingPath, offline: true);
+      addTearDown(second.container.dispose);
+      await tester.pumpWidget(second.widget);
+      await tester.pumpAndSettle();
+      await tester.tap(doneButton);
+      await tester.pumpAndSettle();
+
+      // Ölçüm **diskten** okunuyor: mükerrer kayıt orada oluşuyordu ve
+      // sağlayıcının o anki yükleme durumundan bağımsız.
+      expect(
+        await queuedDrafts(),
+        hasLength(1),
+        reason: 'bildirilen iş için ikinci taslak üretilmemeli (T-018)',
+      );
+    });
+
+    testWidgets('seçenekli soruda da cevap hatırlanır', (tester) async {
+      final first = buildScreen(waitingPath, file: _questionFile);
+      await tester.pumpWidget(first.widget);
+      await tester.pumpAndSettle();
+      await tester.tap(option(0));
+      await tester.pump();
+      await tester.tap(answerButton);
+      await tester.pumpAndSettle();
+      await leaveScreen(tester, first.container);
+
+      final second = buildScreen(waitingPath, file: _questionFile);
+      addTearDown(second.container.dispose);
+      await tester.pumpWidget(second.widget);
+      await tester.pumpAndSettle();
+
+      expect(find.text('Cevaplandı'), findsOneWidget);
+      await tester.tap(option(1));
+      await tester.pump();
+      await tester.tap(answerButton);
+      await tester.pumpAndSettle();
+      expect(second.adapter.requests.where((r) => r.method == 'PUT'), isEmpty,
+          reason: 'bir görev = bir soru');
+    });
+
+    testWidgets('başka bekleme etkilenmez', (tester) async {
+      const otherPath = '${Hub.waitingDir}/2026-08-02-baska-bekleme.md';
+      final first = buildScreen(waitingPath);
+      await tester.pumpWidget(first.widget);
+      await tester.pumpAndSettle();
+      await tester.tap(doneButton);
+      await tester.pumpAndSettle();
+      await leaveScreen(tester, first.container);
+
+      final other = buildScreen(otherPath);
+      addTearDown(other.container.dispose);
+      await tester.pumpWidget(other.widget);
+      await tester.pumpAndSettle();
+
+      expect(find.text('Bildirildi'), findsNothing);
+      await tester.tap(doneButton);
+      await tester.pumpAndSettle();
+      expect(
+          other.adapter.requests.where((r) => r.method == 'PUT'), hasLength(1));
+    });
   });
 
   group('seçenekli bekleme (sözleşme 1.12, T-007)', () {

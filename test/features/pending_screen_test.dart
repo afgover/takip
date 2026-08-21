@@ -12,6 +12,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:takip/hub/models/task.dart';
 import 'package:takip/hub/models/task_draft.dart';
 import 'package:takip/hub/all_tasks.dart';
+import 'package:takip/hub/reported_waiting.dart';
 import 'package:takip/hub/task_repo.dart';
 
 import '../helpers/test_app.dart';
@@ -215,5 +216,64 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('agent henüz ele almadı'), findsOneWidget);
+  });
+
+  group('bildirilmiş bekleme listede kalır ama işaretlenir (B-135)', () {
+    // Karar (2026-08-21, kullanıcı): satır gizlenmiyor. App dosyayı
+    // `waiting/`ten taşıyamıyor (R-001) ve gizlemek, agent işlemezse sessiz
+    // kayıp demek olurdu — K-022'nin çözdüğü sorunun aynısı.
+    final waiting = summary('2026-08-01-token-uret.md', TaskStatus.waiting);
+
+    Widget appWithWaiting() => buildApp(
+          tasksOverride: activeRepoPendingTasksProvider
+              .overrideWith((ref) async => [waiting]),
+        );
+
+    testWidgets('bildirilmemişken "Seni bekliyor" rozeti durur',
+        (tester) async {
+      await tester.pumpWidget(appWithWaiting());
+      await tester.pumpAndSettle();
+
+      expect(find.text('Seni bekliyor'), findsOneWidget);
+      expect(find.text('Bildirildi'), findsNothing);
+    });
+
+    testWidgets('bildirildiğinde satır kalır, rozet "Bildirildi" olur',
+        (tester) async {
+      SharedPreferences.setMockInitialValues({
+        'reported-waiting': jsonEncode({
+          ReportedWaiting.keyFor(null, waiting.path): '2026-08-21T09:00:00Z',
+        }),
+      });
+
+      await tester.pumpWidget(appWithWaiting());
+      await tester.pumpAndSettle();
+
+      // Satır **duruyor** — kullanıcı işin nerede olduğunu görebilmeli.
+      expect(find.text(waiting.title), findsOneWidget);
+      expect(find.text('Bildirildi'), findsOneWidget);
+      // Ama artık "senden bir şey isteniyor" demiyor: rozetin yerine geçti.
+      expect(find.text('Seni bekliyor'), findsNothing);
+      expect(find.text('Agent işleyene kadar listede kalır'), findsOneWidget);
+    });
+
+    testWidgets('bekleme dışındaki görev işaretten etkilenmez', (tester) async {
+      final active = summary('2026-08-01-baska-is.md', TaskStatus.active);
+      SharedPreferences.setMockInitialValues({
+        'reported-waiting': jsonEncode({
+          ReportedWaiting.keyFor(null, active.path): '2026-08-21T09:00:00Z',
+        }),
+      });
+
+      await tester.pumpWidget(buildApp(
+        tasksOverride:
+            activeRepoPendingTasksProvider.overrideWith((ref) async => [active]),
+      ));
+      await tester.pumpAndSettle();
+
+      // Kullanıcıdan bir şey istenmiyor; bildirilecek bir şey de yok.
+      expect(find.text('Ele alınıyor'), findsOneWidget);
+      expect(find.text('Bildirildi'), findsNothing);
+    });
   });
 }

@@ -114,6 +114,13 @@ class LEn extends L {
   String get outboxQueuedBadge => 'Queued';
 
   @override
+  String get pendingReportedBadge => 'Told';
+
+  @override
+  String get pendingReportedSubtitle =>
+      'Stays in the list until the agent handles it';
+
+  @override
   String get onboardingIntro =>
       'Connect to your hub repository. Use a fine-grained token scoped to this repository only.';
 
