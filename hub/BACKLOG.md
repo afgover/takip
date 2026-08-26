@@ -358,6 +358,12 @@ başlığına ✅ ve tarih yazılır.
       engellediği için bilerek gevşetildi; hatırlatıcı `tool/install.sh` ve
       `tool/scan.sh`'a taşındı (Gradle uyarısını `flutter build` yutuyor —
       L-039)
+      · 2026-08-26: **erteleme tetikleyicisi gerçekleşti ama karar
+      korundu** — APK debug imzasıyla Drive'a yüklendi, yani makineden çıktı
+      ([SEC-015](SECURITY.md#SEC-015)). Kullanıcı, imza değişiminin cihazdaki
+      token ve ayarları sildirmesi nedeniyle şimdilik debug imzasını seçti.
+      Yeni eşik daha dar yazıldı: **üçüncü kişiye ya da halka açık bir yere
+      verilme** (Releases, store, paylaşım bağlantısı). T-010 `waiting/`te
 - [x] B-104 · (agent) Seçenekli bekleme: agent `waiting/` görevinde soru
       sorabilsin — ✅ 2026-08-04 · sözleşme 1.12, T-007. Kullanıcının tek
       cevabı "Yaptım"dı; bir soruya karşılığı yoktu ve karar sohbette kalıyordu.

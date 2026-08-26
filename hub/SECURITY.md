@@ -371,3 +371,30 @@ değil. Token, parola veya anahtar bu dosyada hiçbir koşulda yer almaz.
   **Sınır (değişmedi):** tarama koştuğu **anın** veritabanına göredir (SEC-011);
   Flutter SDK 3.35.4 ~11 aylık ve TLS yığını motorun içinde olduğu için paket
   taraması o yüzeyi görmüyor.
+
+## SEC-015 — Release APK debug imzasıyla makineden çıktı (Drive)
+- **Tarih:** 2026-08-26
+- **Tür:** karar
+- **Durum:** kapali
+- **Kaynak:** [SEC-010](#SEC-010), [SEC-014](#SEC-014),
+  [B-101](BACKLOG.md#B-101), T-010, S-2026-08-26-apk-drive
+- **Açıklama:** `5f3b6db`ten derlenen release APK, kullanıcının Google Drive
+  hesabına (`Drive'ım/Takip APK/takip-2026-08-26-5f3b6db.apk`) yüklendi.
+  İmza hâlâ Android SDK'nın **debug** anahtarı (`CN=Android Debug`, SHA-1
+  `f4994730…`) — SEC-010 açık, T-010 bekliyor.
+  **Bu, SEC-014'ün (b) bulgusundaki "riski yalnız paylaşılırsa" koşulunun
+  gerçekleşmesidir** ve T-010'un erteleme gerekçesindeki tetikleyicinin
+  kendisidir ("APK'nın bu makineden çıkacağı gün"). Karar bilerek verildi:
+  - **Kabul edilen risk:** anahtar herkeste aynı olduğu için, dosyaya erişebilen
+    biri aynı anahtarla imzalanmış sahte bir "güncelleme" üretip kurulu sürümün
+    üstüne — veri kaybı olmadan — kurdurabilir. Kapsam bugün dar: dosya
+    kullanıcının kendi Drive'ında, paylaşım bağlantısı verilmedi.
+  - **Neden şimdi düzeltilmedi:** anahtar değişimi kurulu sürümün kaldırılıp
+    yeniden kurulmasını şart koşar; o gün cihazdaki repo bağlantıları ve
+    token'lar gider (L-014'ün ölçtüğü kayıp). Bedel bilinçli olarak
+    ertelendi.
+  - **Tetikleyici güncellendi:** bir sonraki eşik "makineden çıkma" değil,
+    **üçüncü bir kişiye ya da halka açık bir yere verilme** (Releases, store,
+    paylaşım bağlantısı). O adımdan önce T-010 kapanmalı.
+  Yüklenen dosyanın SHA-256'sı kaynak APK'nınkiyle doğrulandı
+  (`10bad8cb…`); yanına `OKU.txt` konuldu ve imza uyarısı orada da yazılı.

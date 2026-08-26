@@ -5,6 +5,25 @@
 plan (`Türetilmiş: true`) kapalı doğduğu için kapalıların arasına tarih
 sırasıyla girer.
 
+## P-013 — APK'nın Drive'a yüklenmesi (makineden ilk çıkış)
+- **Tarih:** 2026-08-26
+- **Kaynak:** [S-2026-08-26-apk-drive](sessions/2026-08-26-apk-drive/session.md)
+- **Durum:** tamamlandi
+- **İlgili:** [SEC-015](SECURITY.md#SEC-015), [SEC-010](SECURITY.md#SEC-010),
+  [B-101](BACKLOG.md#B-101), T-010
+
+> **Karar (2026-08-26, kullanıcı):** debug imzasıyla yüklensin, yeni klasör
+> `Drive'ım/Takip APK`, APK yeniden derlensin. İmzayı bugün değiştirmenin
+> bedeli soruldu ve kabul edilmedi: kurulu sürüm kaldırılmadan güncellenemezdi,
+> token ve ayarlar giderdi. Gerekçe ve yeni tetikleyici
+> [SEC-015](SECURITY.md#SEC-015)'te.
+
+- [x] P-013.1 — Ölçüm: mevcut APK'nın tarihi, imzası, Drive'ın bağlı olduğu · ✅ 2026-08-26 · imza `CN=Android Debug`
+- [x] P-013.2 — Üç karar noktası kullanıcıya soruldu (imza, klasör, derleme) · ✅ 2026-08-26
+- [x] P-013.3 — HEAD'den yeniden derleme · ✅ 2026-08-26 · `5f3b6db`, temiz ağaç
+- [x] P-013.4 — Kopyalama + `OKU.txt`; kopyanın SHA-256'sı kaynakla doğrulandı · ✅ 2026-08-26 · `10bad8cb…`
+- [x] P-013.5 — Kayıtlar: [SEC-015](SECURITY.md#SEC-015), B-101 notu, oturum, push · ✅ 2026-08-26
+
 ## P-012 — B-140: hedefi kalmayan kuyruk taslağı görünür olsun
 - **Tarih:** 2026-08-21
 - **Kaynak:** [S-2026-08-21-gorunmez-kuyruk](sessions/2026-08-21-gorunmez-kuyruk/session.md)

@@ -820,6 +820,16 @@ işi, bitiş çizgisi değil. Bitiş çizgisi olsaydı aşama hiç kapanmazdı �
   SEC-009'da gerileme yok. İki bulgu çıktı ve **ikisi de yeni değil** —
   SEC-010 → [B-101](BACKLOG.md#B-101) → T-010 zincirinin görünümü.
 
+- 2026-08-26: APK **ilk kez makineden çıktı** — `5f3b6db` derlemesi kullanıcının
+  Drive'ına yüklendi ([SEC-015](SECURITY.md#SEC-015),
+  [P-013](PLAN.md#P-013)). Aşamanın hedefine yeni bir borç eklemiyor ama
+  duran bir borcun **maliyetini değiştiriyor**: [B-101](BACKLOG.md#B-101)/T-010
+  ertelenirken yazılan tetikleyici ("APK'nın bu makineden çıkacağı gün") bugün
+  gerçekleşti ve karar yeniden soruldu. Kullanıcı debug imzasını seçti; gerekçe
+  ve **daralmış** yeni eşik (üçüncü kişiye/halka verilme) kayda geçti.
+  Bu, aşamanın 1. kapanma koşulunun uygulanışıdır — borç kapanmadı ama
+  sessiz de kalmadı.
+
 > **Üç koşulun üçü de karşılandı; aşama yine de kendiliğinden kapatılmadı.**
 > Aynı gerekçe T-017'dekiyle bir: sıradaki aşamanın hedefi bir **yön kararıdır**
 > ve agent onu uyduramaz. Ayrıca burada sorulacak ikinci bir soru var — aşama
