@@ -209,3 +209,61 @@ Denek de benimle aynı model. Bu, **geçmeyi** açıklayamaz (geçişler sözle�
 metnine karşı mekanik olarak doğrulandı) ama ortak bir yanlış okumayı
 gizleyebilirdi. Ayrıca senaryolar tek alışverişlik: uzun oturumun ve bağlam
 sıkıştırmasının etkisi ölçülmedi — ki yukarıdaki sonuca göre asıl değişken o.
+
+---
+
+# G — Sıkıştırma ve 30 dakika ritmi: ölçüm
+
+F'nin sonunda "uzun oturumun ve bağlam sıkıştırmasının etkisi ölçülmedi"
+yazmıştı. Kullanıcı bunun üzerine bir kural önerdi: *sıkıştırmadan önce hub
+kaydını yaz.* Önce ölçüldü.
+
+| hub | iş commit'i | kayıt 30 dk içinde güncellenmemiş | oturum | `reconstructed` |
+|---|---|---|---|---|
+| takip | 185 | 9% | 60 | 0% |
+| money_takip | 18 | 11% | 26 | 0% |
+| goverco_takip | 45 | 9% | 16 | 50% |
+| vault_takip | 93 | 10% | 34 | 21% |
+| taskr_takip | 37 | 11% | 13 | 62% |
+| power_takip | 15 | 33% | 9 | 67% |
+| Copilot_takip | 114 | 58% | 33 | 48% |
+| financer_takip | 106 | 64% | 17 | 29% |
+| din_takip | 108 | 65% | 93 | 22% |
+| datasources_takip | 138 | 74% | 17 | 59% |
+| **TOPLAM** | **859** | **40%** | **318** | **25%** |
+
+İki sonuç:
+
+**1. Ritim fiilen işlemiyor.** İş commit'lerinin %40'ında oturum kaydı 30
+dakika içinde güncellenmemiş. v1.23 bu kuralı yazarken hedefini de yazmıştı:
+"`reconstructed` istisnası ihtiyaç olmaktan çıksın." Çıkmamış — 318 oturumun
+**80'i** (%25) geriye dönük yazılmış.
+
+**2. Kuralın önerilen yeri yanlış, ama sezgi doğru.** "Sıkıştırmadan önce
+kaydı yaz" bir sözleşme maddesi olarak yazılamaz: ajan sıkıştırmanın geldiğini
+**göremez**. Bu, [P-015](../../PLAN.md#P-015)'te düzeltilen kusurun aynısı —
+tetikleyicisini gözleyemeyen aktöre yazılmış kural. Kanıt da elde: sözleşmede
+zaten bu iş için bir kural var (v1.23) ve %40 ihlal ediliyor. Aynı göremediği
+ana ikinci bir cümle eklemek birinciyi işler kılmaz.
+
+**Çözüm harness katmanında.** Belgelenmiş davranış:
+`PreCompact` sıkıştırmayı **engelleyebiliyor** (çıkış 2) ama ajana bağlam
+enjekte **edemiyor**; `SessionStart` (`matcher: "compact"`) ise
+`additionalContext` ile enjekte **edebiliyor**. İkisi birlikte istenen sırayı
+kuruyor: bekçi kaydı geride bulursa sıkıştırmayı durdurur (ajan bağlamı hâlâ
+tamken yazar), sıkıştırma yine de olduysa sonrasında "git geçmişinden türet,
+uydurma" bağlamı düşer.
+
+[`tool/hub-guard.sh`](../../../tool/hub-guard.sh) üç bağımsız işarete bakıyor:
+commit'lenmemiş hub değişikliği, push'lanmamış hub commit'i, ve son iş
+commit'inin kayıttan 30 dakikadan fazla yeni olması. **Bir kez engelliyor** —
+otomatik sıkıştırma bağlam dolduğu için tetiklenir ve ısrarla engellemek
+oturumu kilitlerdi.
+
+**Doğrulanan ve doğrulanmayan:** script'in üç modu da (temiz → geç, geride →
+çıkış 2, ikinci kez → geç) ve `SessionStart` JSON çıktısı elle koşularak
+ölçüldü; `.claude/settings.json` şeması `jq` ile doğrulandı. **Hook'un
+harness tarafından gerçekten tetiklendiği ölçülmedi** — bunun için gerçek bir
+sıkıştırma gerekiyor. Yeni oluşturulan `.claude/` dizinini ayar izleyicisi
+oturum ortasında görmeyebilir; ilk koşum yeni bir oturumda beklenmeli.
+

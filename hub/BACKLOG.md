@@ -916,3 +916,12 @@ başlığına ✅ ve tarih yazılır.
       kırması. Bunlar olmadan geçiş yapılmaz — ertelemenin **gerekçesi ve
       çıkışı** yazılı olduğu sürece borç sessiz değildir (Aşama 5 kapanma
       koşulu 1)
+
+- [ ] B-141 · (agent) **Hub bekçisini diğer repolara dağıt.** `tool/hub-guard.sh`
+      ve `.claude/settings.json` şimdilik yalnız `takip`te. Diğer hub repoları
+      `tool/` taşımıyor, yani script'in kopyalanması gerekiyor — ve iki
+      bağlayıcı kopya zamanla ayrışır (L-022). Dağıtımdan önce karar: kopya mı,
+      yoksa hub'ların `takip`i klonlayıp `--hub` ile koşması mı.
+      **Ön koşul:** [P-017.5](PLAN.md#P-017) — hook'un gerçek bir sıkıştırmada
+      tetiklendiği henüz ölçülmedi. Ölçülmeden dağıtmak, çalıştığı
+      doğrulanmamış bir şeyi dokuz repoya yaymak olur.

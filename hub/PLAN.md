@@ -5,6 +5,26 @@
 plan (`Türetilmiş: true`) kapalı doğduğu için kapalıların arasına tarih
 sırasıyla girer.
 
+## P-017 — 30 dakika ritmini harness'e taşıyan bekçi
+- **Tarih:** 2026-08-28
+- **Kaynak:** [S-2026-08-28-apk-drive](sessions/2026-08-28-apk-drive/session.md)
+- **Durum:** acik
+- **İlgili:** [A-2026-08-28-001](artifacts/S-2026-08-28-apk-drive/hub-denetimi.md) §G,
+  [P-015](PLAN.md#P-015), [B-141](BACKLOG.md#B-141)
+
+> **Kullanıcının önerisi ölçümle düzeltildi.** "Sıkıştırmadan önce kaydı yaz"
+> doğru şeyi istiyor ama sözleşmeye yazılamaz: ajan sıkıştırmayı göremez —
+> P-015'te düzeltilen kusurun aynısı. Ölçüm de gösterdi ki bu iş için zaten
+> bir kural var (v1.23) ve **%40** ihlal ediliyor; oturumların **%25**'i
+> `reconstructed`. Kural harness'e taşındı, çünkü sıkıştırmayı gören taraf o.
+
+- [x] P-017.1 — Ölçüm: ritim ihlali ve `reconstructed` oranı, 10 hub · ✅ 2026-08-28 · %40 / %25
+- [x] P-017.2 — Mekanizma doğrulandı: `PreCompact` engeller ama bağlam enjekte edemez; `SessionStart(compact)` edebilir · ✅ 2026-08-28
+- [x] P-017.3 — `tool/hub-guard.sh`: üç işaret, tek seferlik engelleme · ✅ 2026-08-28 · üç mod elle koşuldu
+- [x] P-017.4 — `.claude/settings.json`: iki hook, şema `jq` ile doğrulandı · ✅ 2026-08-28
+- [ ] P-017.5 — Gerçek bir sıkıştırmada tetiklendiğinin ölçülmesi — bu oturumda yapılamaz
+- [ ] P-017.6 — İşlediği doğrulanırsa diğer hub repolarına dağıtım · [B-141](BACKLOG.md#B-141)
+
 ## P-016 — Denetim bulgularının üç hub'da temizliği
 - **Tarih:** 2026-08-28
 - **Kaynak:** [S-2026-08-28-apk-drive](sessions/2026-08-28-apk-drive/session.md)
