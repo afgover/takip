@@ -851,3 +851,25 @@ Biçim: `SYSTEM.md` §5.
   oldu — iki gönderim yolu için iki ayrı çözüm değil.
   [L-048](#L-048) ile aynı aile: iki şey tek tek doğruyken yan yana geldiğinde
   kapsam ayrışıyor.
+
+## L-052 — Makinenin saati bir kayıt kaynağıdır ve doğrulanmadan kullanılmaz
+- **Tarih:** 2026-08-28
+- **Kaynak:** S-2026-08-28-apk-drive
+- **Ders:** Hub'ın **tamamı** tarihe bağlı: oturum ID'si, görev tarihleri,
+  `PLAN.md` adım damgaları, ve en önemlisi `tarama` kaydının 30 günlük
+  tetikleyicisi (§12). Bunların hepsinin tek kaynağı `date` komutu — yani
+  makinenin saati. Bu oturumda saat ~1 gün 19 saat geride çıktı (uyku sonrası,
+  NTP eşitlemesinden önce) ve bütün kayıtlar 2026-08-26 diye yazıldı; doğrusu
+  2026-08-28'di.
+  **Kusurun cinsi sessiz olmasıdır:** yanlış tarih hiçbir yerde hata vermez,
+  kendi içinde tutarlı görünür ve *ileri* tarafta zarar verir — geride kalan
+  bir saat, 30 günlük tarama eşiğini de geriye iter, yani güvenlik
+  hatırlatıcısı sessizce gecikir. Aynı gerekçe `curl` ile sözleşme kontrolünde
+  yazılıydı: "istek başarısız olursa kontrol koşmamıştır" — saat için de aynısı
+  gerekiyordu ama yazılmamıştı.
+  **Kural:** oturum açılışında tarih **iki bağımsız kaynaktan** doğrulanır.
+  Ucuz bir ölçüm yeter:
+  `date -u` ile `curl -sI https://github.com | grep -i ^date` aynı günü
+  göstermiyorsa kayıt yazılmadan önce durulur ve kullanıcıya söylenir.
+  Zaten her oturumda ana kopya için bir ağ isteği yapılıyor; bu, o isteğin
+  yanına iliştirilebilecek kadar ucuz.

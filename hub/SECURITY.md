@@ -373,13 +373,13 @@ değil. Token, parola veya anahtar bu dosyada hiçbir koşulda yer almaz.
   taraması o yüzeyi görmüyor.
 
 ## SEC-015 — Release APK debug imzasıyla makineden çıktı (Drive)
-- **Tarih:** 2026-08-26
+- **Tarih:** 2026-08-28
 - **Tür:** karar
 - **Durum:** kapali
 - **Kaynak:** [SEC-010](#SEC-010), [SEC-014](#SEC-014),
-  [B-101](BACKLOG.md#B-101), T-010, S-2026-08-26-apk-drive
+  [B-101](BACKLOG.md#B-101), T-010, S-2026-08-28-apk-drive
 - **Açıklama:** `5f3b6db`ten derlenen release APK, kullanıcının Google Drive
-  hesabına (`Drive'ım/Takip APK/takip-2026-08-26-5f3b6db.apk`) yüklendi.
+  hesabına (`Drive'ım/Takip APK/takip-2026-08-28-5f3b6db.apk`) yüklendi.
   İmza hâlâ Android SDK'nın **debug** anahtarı (`CN=Android Debug`, SHA-1
   `f4994730…`) — SEC-010 açık, T-010 bekliyor.
   **Bu, SEC-014'ün (b) bulgusundaki "riski yalnız paylaşılırsa" koşulunun

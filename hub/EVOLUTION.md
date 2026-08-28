@@ -820,7 +820,7 @@ işi, bitiş çizgisi değil. Bitiş çizgisi olsaydı aşama hiç kapanmazdı �
   SEC-009'da gerileme yok. İki bulgu çıktı ve **ikisi de yeni değil** —
   SEC-010 → [B-101](BACKLOG.md#B-101) → T-010 zincirinin görünümü.
 
-- 2026-08-26: APK **ilk kez makineden çıktı** — `5f3b6db` derlemesi kullanıcının
+- 2026-08-28: APK **ilk kez makineden çıktı** — `5f3b6db` derlemesi kullanıcının
   Drive'ına yüklendi ([SEC-015](SECURITY.md#SEC-015),
   [P-013](PLAN.md#P-013)). Aşamanın hedefine yeni bir borç eklemiyor ama
   duran bir borcun **maliyetini değiştiriyor**: [B-101](BACKLOG.md#B-101)/T-010

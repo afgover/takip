@@ -1,6 +1,6 @@
 ---
-id: S-2026-08-26-apk-drive
-date: 2026-08-26
+id: S-2026-08-28-apk-drive
+date: 2026-08-28
 status: open
 reconstructed: false
 author: afgover
@@ -16,11 +16,11 @@ tasks_touched: [T-010]
 
 ## Kayıt
 
-### [17:47] Kullanıcı
+### [12:40] Kullanıcı
 > takip reposu için oturum aç. Başlangıç olarak son durumu özetle: git durumu
 > (branch, bekleyen değişiklikler, son commitler) ve yarım kalan iş var mı.
 
-### [17:47] Agent
+### [12:40] Agent
 Açılış kontrolleri koşuldu (`AGENT_PROTOCOL.md` madde 0–5):
 
 - **Hub dili** `tr`; kullanıcının dili de Türkçe — çelişki yok.
@@ -42,10 +42,10 @@ Açılış kontrolleri koşuldu (`AGENT_PROTOCOL.md` madde 0–5):
   Bu bekleme için `waiting/` görevi **yok**; prosedür madde 9 böyle bir bekleme
   için görev ister.
 
-### [17:52] Kullanıcı
+### [12:47] Kullanıcı
 > application apk sını drive klasörüne yüklermisin
 
-### [17:55] Agent
+### [12:50] Agent
 Ölçüm ve üç karar noktası kullanıcıya soruldu:
 
 - Mevcut APK 2026-08-21 21:12, HEAD commit'inden (21:11) bir dakika sonra —
@@ -63,7 +63,7 @@ Açılış kontrolleri koşuldu (`AGENT_PROTOCOL.md` madde 0–5):
 `Drive'ım/Takip APK`, (3) APK yeniden derlensin. Plan
 [P-013](../../PLAN.md#P-013) yazıldı.
 
-### [17:58] Agent
+### [12:58] Agent
 Plan [P-013](../../PLAN.md#P-013) uygulandı:
 
 - **Derleme:** `flutter build apk --release`, HEAD `5f3b6db`, çalışma ağacı
@@ -71,7 +71,7 @@ Plan [P-013](../../PLAN.md#P-013) uygulandı:
 - **Doğrulama:** `apksigner` — imza `CN=Android Debug` (SHA-1 `f4994730…`),
   telefondaki kurulu sürümle **aynı anahtar**, yani yerinde güncelleme çalışır
   ve veri korunur.
-- **Yükleme:** `Drive'ım/Takip APK/takip-2026-08-26-5f3b6db.apk`. Kopyanın
+- **Yükleme:** `Drive'ım/Takip APK/takip-2026-08-28-5f3b6db.apk`. Kopyanın
   SHA-256'sı kaynakla karşılaştırıldı ve **eşit** (`10bad8cb…`) — "kopyaladım"
   cümlesi ölçüldü, varsayılmadı.
 - **`OKU.txt`:** `Financer APK` klasörünün kalıbı izlendi (dosya/commit/hash/
@@ -86,3 +86,25 @@ karşılandı, aşama hâlâ açık ve bu bekleme için `tasks/waiting/` altınd
 **yok** — prosedür madde 9 böyle bir bekleme için görev ister (T-017'nin
 Aşama 4 için yaptığı gibi). Görev açılsın mı diye soruldu; kullanıcı kararı
 beklendiği için kendiliğinden açılmadı.
+
+### [13:05] Agent — düzeltme: oturumun tarihi yanlış yazılmıştı
+Bu oturum ilk açıldığında bütün kayıtlar **2026-08-26** tarihiyle yazıldı.
+Doğrusu **2026-08-28**. Sebep: makinenin saati ~1 gün 19 saat geride
+duruyordu (uyku sonrası NTP ile eşitlenmeden önce) ve tarih `date` komutundan
+alındı; komut sorulduğunda `2026-08-26 17:47` dedi, dosya damgaları da o saati
+aldı. Sonra ölçüldü: `curl -sI https://github.com` → `Fri, 28 Aug 2026 10:02
+GMT`, yerel `date -u` → aynı dakika. Yani saat kendini düzeltmiş, kayıtlar
+düzelmemişti.
+
+Düzeltilenler: oturum klasörü ve `id` (`S-2026-08-28-apk-drive`),
+[P-013](../../PLAN.md#P-013), [SEC-015](../../SECURITY.md#SEC-015),
+[B-101](../../BACKLOG.md#B-101) notu, [EVOLUTION.md](../../EVOLUTION.md)
+satırı, yukarıdaki saat damgaları ve Drive'daki dosya adı
+(`takip-2026-08-28-5f3b6db.apk`) ile `OKU.txt`.
+
+**Düzeltilemeyen:** `cbea7a7` ve `c3f0f87` commit'lerinin zaman damgaları
+2026-08-26 17:53 olarak duruyor. İçerikleri doğru, damgaları yanlış; geçmişi
+yeniden yazmak için `--force-with-lease` gerekiyor ve repo public — karar
+kullanıcıya bırakıldı.
+
+Ders: [L-052](../../knowledge/lessons.md#L-052).

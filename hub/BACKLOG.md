@@ -358,7 +358,7 @@ başlığına ✅ ve tarih yazılır.
       engellediği için bilerek gevşetildi; hatırlatıcı `tool/install.sh` ve
       `tool/scan.sh`'a taşındı (Gradle uyarısını `flutter build` yutuyor —
       L-039)
-      · 2026-08-26: **erteleme tetikleyicisi gerçekleşti ama karar
+      · 2026-08-28: **erteleme tetikleyicisi gerçekleşti ama karar
       korundu** — APK debug imzasıyla Drive'a yüklendi, yani makineden çıktı
       ([SEC-015](SECURITY.md#SEC-015)). Kullanıcı, imza değişiminin cihazdaki
       token ve ayarları sildirmesi nedeniyle şimdilik debug imzasını seçti.
