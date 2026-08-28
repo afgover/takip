@@ -830,6 +830,21 @@ işi, bitiş çizgisi değil. Bitiş çizgisi olsaydı aşama hiç kapanmazdı �
   Bu, aşamanın 1. kapanma koşulunun uygulanışıdır — borç kapanmadı ama
   sessiz de kalmadı.
 
+- 2026-08-28: **Sistemin A'dan Z'ye denetimi ve sözleşme 1.27.** 10 hub mekanik
+  olarak denetlendi ([A-2026-08-28-001](artifacts/S-2026-08-28-apk-drive/hub-denetimi.md),
+  [P-014](PLAN.md#P-014)) ve yedi senaryoluk kontrollü bir simülasyon koşuldu.
+  **Sonuç aşamanın hedefiyle doğrudan ilgili:** biriken borç kod tarafında
+  değil, *prosedürün tetiklenmeyen yarısında* çıktı. Simülasyon 7/7 verdi —
+  yani sözleşme anlaşılıyor; gerçek hub'lardaki atlamaların tamamı
+  **kapanış** adımlarında ve hepsinin ortak özelliği ajanın "bir sıra daha"
+  almasına bağlı olmaları. Kural kendini kilitliyordu: açık oturumları
+  temizleyen madde bir kapanış maddesiydi.
+  Sözleşme [1.27](SYSTEM.md)'ye çıktı ([P-015](PLAN.md#P-015)): kontrol
+  açılışa taşındı (§2 zaten orayı istiyordu), hub denetimi taramanın kardeşi
+  olarak prosedüre girdi (madde 4b, `tool/audit.sh`), ve saat madde 3'ün zaten
+  yaptığı ağ isteğiyle doğrulanır oldu ([L-052](knowledge/lessons.md#L-052)).
+  Üçü de **ölçülmüş** vakalardan doğdu, tahminden değil.
+
 > **Üç koşulun üçü de karşılandı; aşama yine de kendiliğinden kapatılmadı.**
 > Aynı gerekçe T-017'dekiyle bir: sıradaki aşamanın hedefi bir **yön kararıdır**
 > ve agent onu uyduramaz. Ayrıca burada sorulacak ikinci bir soru var — aşama

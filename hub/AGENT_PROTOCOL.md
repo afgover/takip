@@ -14,7 +14,20 @@ tanımlanır. Prosedür, oturumun konusu ne olursa olsun geçerlidir.
    knowledge kayıtları, görev gövdeleri. Alan yoksa `tr`. Hub'ın dili ile
    kullanıcının sana yazdığı dil farklıysa **kullanıcıya sor** — birini
    diğerine kendiliğinden tercih etme.
-1. `sessions/<tarih>-<slug>/session.md` dosyasını `status: open` ile oluştur.
+1. **Önce `sessions/` altında `status: open` kalan başka oturum var mı bak
+   (v1.27).** Varsa yeni oturumu açmadan **onu kapat**: özetini kendi
+   kaydından türet ve türetildiğini dosyada belirt. Sözleşme §2 (v1.20) aynı
+   anda yalnız bir oturumun açık olmasına izin veriyor.
+   **Bu yeni bir kural değil, prosedürün sözleşmeye hizalanması.** §2 zaten
+   1.20'den beri "yeni bir oturum açarken daha eski bir oturum `open`
+   duruyorsa önce o kapatılır" diyor; bu prosedür ise aynı kontrolü yalnız
+   **kapanışta** (madde 11) listeliyordu ve orada yapısal olarak işlemiyor:
+   kapanış adımlarını ancak kapanan bir oturum koşturur, oysa temizlenmesi
+   gereken şey tam da **kapanmamış** oturum. Kilitlendiği ölçüldü — bir hub'da
+   üç oturum aynı anda açık kaldı ve o gün açılan dördüncü oturum ikisini de
+   görmedi ([A-2026-08-28-001](artifacts/S-2026-08-28-apk-drive/hub-denetimi.md)).
+   Garantili tek tetikleyici bir sonraki oturumun **açılışı**dır.
+   `sessions/<tarih>-<slug>/session.md` dosyasını `status: open` ile oluştur.
    **`author:` alanını da yaz** (v1.15) — oturumu kimin yürüttüğü. Bilmiyorsan
    kullanıcıya sor; hub çok kullanıcılıysa "kim yaptı" sorusunun cevabı burada
    başlar. `knowledge/` ve `SECURITY.md` kayıtları ayrı bir kimlik alanı
@@ -32,6 +45,19 @@ tanımlanır. Prosedür, oturumun konusu ne olursa olsun geçerlidir.
    -o /tmp/SYSTEM.master.md && diff /tmp/SYSTEM.master.md hub/SYSTEM.md`.
    İstek başarısız olursa kontrol **koşmamıştır**; "güncelim" diye yorumlama ve
    kayda "kontrol edildi" yazma.
+
+   **Aynı istekle saati de doğrula (v1.27).** Yanıtın `Date:` başlığı ile
+   makinenin tarihi aynı günü göstermiyorsa **kayıt yazmadan önce dur** ve
+   kullanıcıya söyle:
+   `curl -sI https://github.com | grep -i '^date:'` ile `date -u`.
+   Gerekçe ölçüldü ([L-052](knowledge/lessons.md#L-052)): hub'ın **tamamı**
+   tarihe bağlı — oturum ID'si, görev tarihleri, plan damgaları ve §12'nin
+   30 günlük tarama tetikleyicisi. Hepsinin tek kaynağı makinenin saati ve o
+   saat sessizce yanlış olabiliyor (uyku sonrası, NTP eşitlemesinden önce).
+   Yanlış tarih hiçbir yerde hata vermez, kendi içinde tutarlı görünür ve
+   geride kalan bir saat güvenlik hatırlatıcısını da geriye iter.
+   **Hub'ın içine bakarak görülemez** — bunun için dışarıdan bir referans
+   şart; zaten yapılan bir istek olduğu için maliyeti sıfır.
 4. **`SECURITY.md`'deki son `tarama` kaydının tarihine bak (§12).** 30 günden
    eskiyse — ya da hiç yoksa — projeye uygun bağımlılık/zafiyet taramasını koş
    ve sonucu `tarama` kaydı olarak yaz. Tarama tek seferlik bir onay değildir:
@@ -42,6 +68,20 @@ tanımlanır. Prosedür, oturumun konusu ne olursa olsun geçerlidir.
    *(`takip` projesinde koşum: `tool/scan.sh`. Diğer projelerde karşılığı o
    projenin paket yöneticisidir; sonucun **doğrulanmış** olması şarttır —
    bilinen açığı olan bir sürüm de sorulmadan "temiz" yazılmaz, L-035.)*
+
+4b. **Hub denetimini koş (v1.27).** Tarama koda bakar; bu, **hub'ın kendisine**
+   bakar. Ölçtüğü şeyler tek tek gerçek vakalardan geldi: tekrarlanan ID
+   (aynı `T-` numarası üç ayrı işte), `inbox` dışında kalmış `id: pending`,
+   `## Özet`i boş kapanmış oturum, `result`ı boş kapanmış görev, açık kalmış
+   oturum, bayatlamış `tarama`, ve kaydın kendi commit'inden ileri tarihli
+   olması. Hiçbiri düzyazıya bakmaz; hepsi git grafiğinden ve dosya
+   durumundan okunur — çünkü kaydı yazan taraf denetlenen tarafın kendisidir
+   ve "yapıldı" cümlesi bir ölçüm değildir.
+
+   Koşum: `afgover/takip` reposundaki [`tool/audit.sh`](../tool/audit.sh),
+   `--hub <yol>` ile **herhangi bir hub'a** koşulur. Script'e erişemiyorsan
+   kontrolleri elle yap ve hangilerini yapamadığını kayda yaz — madde 3'ün
+   `curl`'ü ile aynı kural: koşmayan kontrol "koştu" diye yazılmaz.
 
 5. **Geçici maddelere bak (`SYSTEM.md` §13).** Bölüm boşsa geçilir. Her
    maddenin "kimi ilgilendiriyor" satırı hub'ına uyuyorsa uygula ve
@@ -133,10 +173,11 @@ tanımlanır. Prosedür, oturumun konusu ne olursa olsun geçerlidir.
 11. Son bir tutarlılık kontrolü — **kendi adımlarını değil, hub'ın durumunu**
     sor: bu oturumda üretilen her dosya session.md'den linkli mi, biten her iş
     BACKLOG'da işaretli mi, taşınması gereken görev kaldı mı, ve
-    **`sessions/` altında `status: open` kalan başka oturum var mı?** Varsa
-    kapat: özetini kendi kaydından türet ve türetildiğini dosyada belirt.
-    Bu madde bir oturumun dokuz gün açık kalmasından sonra eklendi (L-042):
-    "bu oturumu kapat" diye sorulunca kimse bütüne bakmıyor.
+    ~~**`sessions/` altında `status: open` kalan başka oturum var mı?**~~
+    **(v1.27) bu kontrol madde 1'e taşındı** — kapanış adımlarını yalnız
+    kapanan bir oturum koşturuyordu, oysa temizlenmesi gereken şey kapanmayan
+    oturumdu. Madde, bir oturumun dokuz gün açık kalmasından sonra eklenmişti
+    (L-042); ölçüm, doğru yerinin **açılış** olduğunu gösterdi.
 12. Tüm değişiklikleri anlamlı commit'ler halinde push'la. Hub'a push'lanmamış
     kayıt, yapılmamış kayıttır.
 

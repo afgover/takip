@@ -5,7 +5,7 @@ ve hangi şemaya uyacağını** tanımlar. Agent ve kullanıcı uygulaması bu s
 dışına çıkmaz. Sözleşme değişiklikleri `EVOLUTION.md`'ye kaydedilir ve bu dosyanın
 başındaki sürüm numarası artırılır.
 
-**Sözleşme sürümü:** 1.26
+**Sözleşme sürümü:** 1.27
 **Ana kopya (master):** `afgover/takip` → `hub/SYSTEM.md` (tr, **kanonik**) ·
 `hub/SYSTEM.en.md` (en)
 (bkz. §10 — her hub kendi kopyasını, kendi dilindeki varyanttan günceller)
@@ -158,6 +158,16 @@ Kurallar:
   olmayan oturum arayan için yok demektir — sonraki agent oturumları tarar,
   özete bakar, "burada bir şey yok" der. O oturum projenin kurucu kararlarını
   taşıyordu.
+
+- **(v1.27) Denetim, taramanın kardeşidir.** §12'nin `tarama` kaydı **koda**
+  bakar; hub'ın kendisine bakan kontrol ayrıdır ve `AGENT_PROTOCOL.md`
+  madde 4b'de tanımlıdır: tekrarlanan ID, `inbox` dışında kalmış
+  `id: pending`, özeti boş kapanmış oturum, `result`ı boş kapanmış görev,
+  açık kalmış oturum, kaydın kendi commit'inden ileri tarihli olması.
+  Hiçbiri düzyazıya bakmaz — kaydı yazan taraf denetlenen tarafın kendisidir.
+  Ayrıca **saat**, madde 3'ün zaten yaptığı ağ isteğiyle doğrulanır
+  (v1.27, L-052): hub'ın tamamı tarihe bağlı ve yanlış bir saat hub'ın
+  içinden görülemez.
 
 ## 3. `artifacts/` — üretilen dosyalar
 

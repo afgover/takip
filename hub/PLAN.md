@@ -5,10 +5,32 @@
 plan (`Türetilmiş: true`) kapalı doğduğu için kapalıların arasına tarih
 sırasıyla girer.
 
+## P-015 — Sözleşme 1.27: denetim, açık oturum ve saat
+- **Tarih:** 2026-08-28
+- **Kaynak:** [S-2026-08-28-apk-drive](sessions/2026-08-28-apk-drive/session.md)
+- **Durum:** tamamlandi
+- **İlgili:** [P-014](PLAN.md#P-014), [A-2026-08-28-001](artifacts/S-2026-08-28-apk-drive/hub-denetimi.md),
+  [L-052](knowledge/lessons.md#L-052), [R-008](knowledge/rules.md#R-008)
+
+> **Karar (2026-08-28, kullanıcı):** üç öneri de yazılsın. Üçü de aynı
+> ölçümden çıktı — sözleşme *anlaşılıyor*, ama kapanış adımlarını tetikleyen
+> bir olay yok ve yanlış bir saat hub'ın içinden görülemiyor.
+>
+> **Ö2 yeni kural değil:** §2 zaten 1.20'den beri açılışta istiyordu; prosedür
+> aynı kontrolü yalnız kapanışta listeliyordu ve orada yapısal olarak
+> işlemiyor. Değişiklik, prosedürü sözleşmeye hizalamak.
+
+- [x] P-015.1 — `AGENT_PROTOCOL.md`: madde 1 (açık oturum), madde 3 (saat), madde 4b (denetim), madde 11 (taşındı) · ✅ 2026-08-28
+- [x] P-015.2 — `AGENT_PROTOCOL.en.md` aynı dört değişiklik · ✅ 2026-08-28
+- [x] P-015.3 — `SYSTEM.md` + `.en`: sürüm 1.27 ve §2'ye denetim notu · ✅ 2026-08-28 · not §2'ye kondu ki diğer hub'lar `diff`'te görsün — prosedür-only değişiklik onlara görünmez olurdu
+- [x] P-015.4 — Sürüm tutarlılığı: `constants.dart`, iki README · ✅ 2026-08-28
+- [x] P-015.5 — Tam süit + `flutter analyze` · ✅ 2026-08-28 · 622 test, temiz; süit `P-014.A` harflemesini yakaladı, numaraya çevrildi
+- [x] P-015.6 — `EVOLUTION.md`, oturum kaydı, push · ✅ 2026-08-28
+
 ## P-014 — Sistemin A'dan Z'ye denetimi: sözleşme, oturum, görev akışı, veri akışı
 - **Tarih:** 2026-08-28
 - **Kaynak:** [S-2026-08-28-apk-drive](sessions/2026-08-28-apk-drive/session.md)
-- **Durum:** acik
+- **Durum:** tamamlandi
 - **İlgili:** [L-052](knowledge/lessons.md#L-052), [L-035](knowledge/lessons.md#L-035),
   [L-042](knowledge/lessons.md#L-042), [SEC-011](SECURITY.md#SEC-011)
 
@@ -31,13 +53,13 @@ sırasıyla girer.
 > söyler. Önce simülasyon kurmak, hangi hatanın gerçekte olduğunu bilmeden
 > senaryo uydurmak olurdu.
 
-- [x] P-014.A — Zemin: 10 hub salt-okunur klonlandı, envanter çıkarıldı · ✅ 2026-08-28 · `fastpdfreader_takip` boş; `tool/audit.sh`
-- [x] P-014.B — Sözleşme uyumu: izi olan §-bazlı kontroller · ✅ 2026-08-28 · denetçinin kendi 4 hatası önce ayıklandı
-- [x] P-014.C — Oturum prosedürü: kapanış disiplini, açık kalanlar, anlık kayıt · ✅ 2026-08-28 · [A-2026-08-28-001](artifacts/S-2026-08-28-apk-drive/hub-denetimi.md) §4, §7
-- [x] P-014.D — Görev akışı: zincir, ID çakışması, `pending`, yanlış hub · ✅ 2026-08-28 · §1, §2, §3
-- [x] P-014.E — App ↔ GitHub: gecikme **iki** sayıya ayrıldı (push / pick) · ✅ 2026-08-28 · §8
-- [ ] P-014.F — Simülasyon: sentetik hub, tohumlanmış senaryolar, mekanik puanlama
-- [ ] P-014.G — Bulgular kayda; sözleşme boşluğu çıkarsa **öneri** olarak kullanıcıya
+- [x] P-014.1 — Zemin: 10 hub salt-okunur klonlandı, envanter çıkarıldı · ✅ 2026-08-28 · `fastpdfreader_takip` boş; `tool/audit.sh`
+- [x] P-014.2 — Sözleşme uyumu: izi olan §-bazlı kontroller · ✅ 2026-08-28 · denetçinin kendi 4 hatası önce ayıklandı
+- [x] P-014.3 — Oturum prosedürü: kapanış disiplini, açık kalanlar, anlık kayıt · ✅ 2026-08-28 · [A-2026-08-28-001](artifacts/S-2026-08-28-apk-drive/hub-denetimi.md) §4, §7
+- [x] P-014.4 — Görev akışı: zincir, ID çakışması, `pending`, yanlış hub · ✅ 2026-08-28 · §1, §2, §3
+- [x] P-014.5 — App ↔ GitHub: gecikme **iki** sayıya ayrıldı (push / pick) · ✅ 2026-08-28 · §8
+- [x] P-014.6 — Simülasyon: 7 senaryo, temiz ajan, mekanik puanlama · ✅ 2026-08-28 · **7/7**; tek keşif S7'de ve ajan onu da yakaladı
+- [x] P-014.7 — Bulgular kayda; üç öneri kullanıcıya sunuldu ve **onaylandı** · ✅ 2026-08-28 · [P-015](PLAN.md#P-015)
 
 ## P-013 — APK'nın Drive'a yüklenmesi (makineden ilk çıkış)
 - **Tarih:** 2026-08-28

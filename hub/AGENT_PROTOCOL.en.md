@@ -15,7 +15,21 @@ what*. The procedure holds whatever the session is about.
    field is missing, `tr`. If the hub's language differs from the language the
    user writes to you in, **ask the user** — do not silently prefer one over the
    other.
-1. Create `sessions/<date>-<slug>/session.md` with `status: open`.
+1. **First check whether another session under `sessions/` is still at
+   `status: open` (v1.27).** If so, close it **before** opening the new one:
+   derive its summary from its own record and say in the file that it was
+   derived. Contract §2 (v1.20) allows only one session open at a time.
+   **This is not a new rule but the procedure catching up with the contract.**
+   §2 has said since 1.20 that "if an older session is still `open` when you
+   open a new one, close it first"; this procedure listed the same check only
+   under **closing** (item 11), where it structurally cannot work: closing
+   steps only run for a session that closes, yet the thing needing cleanup is
+   precisely a session that never closed. The lock was measured — one hub held
+   three sessions open at once and the fourth session, opened that same day,
+   saw neither
+   ([A-2026-08-28-001](artifacts/S-2026-08-28-apk-drive/hub-denetimi.md)).
+   The only guaranteed trigger is the **opening** of the next session.
+   Create `sessions/<date>-<slug>/session.md` with `status: open`.
    **Write the `author:` field too** (v1.15) — who is running the session. If you
    do not know, ask the user; in a multi-user hub the answer to "who did this"
    starts here. `knowledge/` and `SECURITY.md` records carry no separate
@@ -47,6 +61,34 @@ what*. The procedure holds whatever the session is about.
    equivalent is that project's package manager; the result must be
    **verified** — a version with a known hole is never written up as "clean"
    without asking, L-035.)*
+
+   **Verify the clock with the same request (v1.27).** If the response's
+   `Date:` header and the machine's date do not show the same day, **stop
+   before writing any record** and tell the user:
+   `curl -sI https://github.com | grep -i '^date:'` against `date -u`.
+   The reason was measured ([L-052](knowledge/lessons.md#L-052)): the **whole**
+   hub hangs on dates — session ids, task dates, plan stamps, and §12's 30-day
+   scan trigger. All of them come from the machine's clock, and that clock can
+   be silently wrong (after sleep, before NTP resyncs). A wrong date raises no
+   error anywhere, looks internally consistent, and a clock running behind
+   pushes the security reminder back with it. **It cannot be seen from inside
+   the hub** — that needs an outside reference, and since the request is made
+   anyway, it costs nothing.
+
+4b. **Run the hub audit (v1.27).** The scan looks at the code; this looks at
+   **the hub itself**. Every check came from a real case: a repeated ID (the
+   same `T-` number on three different jobs), an `id: pending` that escaped
+   `inbox`, a session closed with an empty `## Özet`, a task closed with an
+   empty `result`, a session left open, a stale `scan`, and a record dated
+   ahead of its own commit. None of them reads prose; all of them read the git
+   graph and the file state — because the party writing the record is the
+   party being audited, and "done" is not a measurement.
+
+   Runner: [`tool/audit.sh`](../tool/audit.sh) in `afgover/takip`, which runs
+   against **any hub** via `--hub <path>`. If you cannot reach the script, do
+   the checks by hand and write down which ones you could not do — same rule
+   as item 3's `curl`: a check that did not run is never written up as one
+   that did.
 
 5. **Check the transitional rules (`SYSTEM.md` §13).** If the section is empty,
    skip it. If an entry's "who it concerns" line matches your hub, apply it and
@@ -146,11 +188,11 @@ what*. The procedure holds whatever the session is about.
 11. One final consistency check — ask about **the state of the hub, not your own
     steps**: is every file produced in this session linked from session.md, is
     every finished item checked off in BACKLOG, is there a task left to move,
-    and **is there another session under `sessions/` still at `status: open`?**
-    If so, close it: derive its summary from its own record and say in the file
-    that it was derived.
-    This item was added after a session stayed open for nine days (L-042): when
-    the question is "close this session", nobody looks at the whole.
+    ~~and **is there another session under `sessions/` still at
+    `status: open`?**~~ **(v1.27) this check moved to item 1** — only a closing
+    session ran the closing steps, yet the session needing cleanup was the one
+    that never closed. The item had been added after a session stayed open for
+    nine days (L-042); measurement showed its right place is the **opening**.
 12. Push all changes as meaningful commits. A record not pushed to the hub is a
     record that was never made.
 

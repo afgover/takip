@@ -7,7 +7,7 @@ named, and what schema it follows**. Neither the agent nor the user application
 steps outside it. Contract changes are recorded in `EVOLUTION.md` and the
 version number at the top of this file is incremented.
 
-**Contract version:** 1.26
+**Contract version:** 1.27
 **Master copy:** `afgover/takip` → `hub/SYSTEM.md` (Turkish) ·
 `hub/SYSTEM.en.md` (English)
 (see §10 — every hub updates its own copy from there)
@@ -165,6 +165,16 @@ Rules:
   session with no summary does not exist for whoever is looking — the next agent
   scans the sessions, reads the summaries, and concludes "there is nothing
   here". That session carried the project's founding decisions.
+
+- **(v1.27) The audit is the scan's sibling.** §12's `scan` record looks at
+  the **code**; the check that looks at the hub itself is separate and is
+  defined in `AGENT_PROTOCOL.en.md` item 4b: repeated IDs, an `id: pending`
+  that escaped `inbox`, a session closed with an empty summary, a task closed
+  with an empty `result`, a session left open, a record dated ahead of its own
+  commit. None of them reads prose — the party writing the record is the party
+  being audited. The **clock** is also verified using the network request item
+  3 already makes (v1.27, L-052): the whole hub hangs on dates, and a wrong
+  clock cannot be seen from inside the hub.
 
 ## 3. `artifacts/` — produced files
 

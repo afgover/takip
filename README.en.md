@@ -147,7 +147,7 @@ taken, known holes and outstanding work, all in one place.
 
 ## Contract version
 
-Currently **1.26**. Every hub carries its own copy, and at each session opening
+Currently **1.27**. Every hub carries its own copy, and at each session opening
 the agent compares it with the master and updates if it is behind
 (`SYSTEM.md` §10). If the versions match but the content differs — divergence —
 nothing is overwritten: that is a case a version-number-only check cannot see,

@@ -151,3 +151,23 @@ altı görevde kapanışa kadar yaşamış, yanlış hub'a düşmüş beş bildi
 kapanan 11 oturum, `result` boş 11 görev, `din_takip`'te 92 oturum boyunca hiç
 tarama yok, ve saat anomalisi bu oturuma özgü değil (`din_takip` 2026-08-16).
 `money_takip` sıfır bulguyla temiz çıktı.
+
+### [14:30] Agent
+**Simülasyon 7/7.** Prosedüle hiç işaret etmeyen mesajlarda bile ajan
+`AGENT_PROTOCOL.md`'yi kendi buldu; ID'yi dosyadan türetti, yanlış hub
+bildirimine dokunmadı, 9 günlük açık oturumu §2 gereği kapattı, ileri tarihli
+commit'i yakalayıp seçenekli görev açtı, koşamadığı kontrolü "koştu" diye
+yazmadı. Rapora yazdığım "S7'yi kimse fark etmedi" iddiası **yanlıştı** ve
+düzeltildi: bulguyu oturum kaydında değil artifact'te aramam gerekiyormuş.
+
+Çelişkinin çözümü: ayıran değişken anlama değil, **oturumun nasıl bittiği**.
+Açılış adımları ajanın ilk hamlesine bağlı (uyum yüksek); kapanış adımları bir
+sıra daha almasına bağlı (en zayıf halka) ve o sıra kullanıcı cevap vermeyi
+bıraktığında hiç gelmiyor.
+
+**Kullanıcı üç öneriyi de onayladı** → [P-015](../../PLAN.md#P-015), sözleşme
+1.27. Ö2'nin yeni kural olmadığı ölçüldü: §2 zaten 1.20'den beri açılışta
+istiyordu, prosedür yalnız kapanışta listeliyordu.
+
+Süit bir format ihlalimi yakaladı: `PLAN.md` adımlarını `P-014.A` diye
+harflemiştim, sözleşme numara istiyor — düzeltildi.
