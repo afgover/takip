@@ -171,3 +171,27 @@ istiyordu, prosedür yalnız kapanışta listeliyordu.
 
 Süit bir format ihlalimi yakaladı: `PLAN.md` adımlarını `P-014.A` diye
 harflemiştim, sözleşme numara istiyor — düzeltildi.
+
+### [15:10] Agent — temizlik: iki hub tamam, biri beklemede
+Denetim bulgularının temizliği sırasında **denetimin kendisinden daha ağır bir
+bulgu** çıktı. `financer_takip`'te sıkışan beş bildirimin hedefi tek tek
+arandı: beşi de kullanıcının **cevabını** taşıyor ve üçünün asıl görevi hâlâ
+kendi hub'ında `waiting/`te bekliyordu. Yani kullanıcı 2026-08-11'de cevap
+verdi, cevap hiçbir yere ulaşmadı, üç ajan 17 gündür beklediğini sanıyor.
+
+Bu, B-126'nın (L-045) kapanmasından **bir gün önce** düşmüş bildirimlerin
+kalıntısı. Kusur kapandı ama geriye dönük hiçbir mekanizma onları aramadı —
+denetimin bulduğu şey de tam olarak bu boşluk.
+
+- **`financer_takip`** — beş bildirim `done/`a alındı, her birinin `result`ına
+  kullanıcının cevabı ve hedef hub yazıldı; sözleşme 1.25 → 1.27. Push'landı.
+- **`datasources_takip`** — T-004'ün cevabı teslim edildi (`waiting → active`,
+  1. seçenek: belgeler dondurulur, `afgover/agents` emekliye ayrılır); 6
+  gündür açık kalan `S-2026-08-22-guvenlik-denetimi` özeti kendi kaydından
+  türetilerek kapatıldı; sözleşme 1.26 → 1.27. Push'landı.
+- **`Copilot_takip`** — **dokunulmadı.** O repoda şu anda **canlı bir oturum
+  var** (son commit 8 dakika önce). Kalan iki sıkışmış cevap (native Android
+  kararı, PR temizliği T-009) orada; ayrıca 2 bayat açık oturum, 6 `pending`
+  ID ve 4 ID çakışması. Canlı bir ajanla aynı anda push'lamak çakışma üretir.
+- **`din_takip`** — sırada: 3 ID çakışması ve 92 oturum boyunca hiç koşmamış
+  tarama.

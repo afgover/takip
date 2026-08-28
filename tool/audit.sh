@@ -247,7 +247,10 @@ for state in ("inbox","active","waiting","done"):
         p = os.path.join(d, fn)
         fm, _ = frontmatter(p)
         tid = fm.get("id")
-        if tid: by_id[tid].append(f"{state}/{fn}")
+        # `pending` bir ID değil, app'in yer tutucusu (lib/hub/task_repo.dart).
+        # inbox'ta birden çok olması normaldir; inbox dışına çıkması ayrı
+        # kontrolün konusu (aşağıda).
+        if tid and tid != "pending": by_id[tid].append(f"{state}/{fn}")
         if state == "done" and fm.get("result","none") in ("none","",'""'):
             no_result.append(fn)
         # App görevi `id: pending` ile yazar ve ID'yi agent atar
