@@ -125,3 +125,87 @@ konusu: ajan inbox'a baktı da boş mu buldu, yoksa hiç bakmadı mı; sözleşm
 bir maddesini yanlış mı anladı; hiç yaşanmamış bir durumda (eşzamanlı iki ajan,
 çevrimdışı çakışma) ne yapardı. Bunlar kayıtta yok, çünkü olmayan şey iz
 bırakmaz.
+
+---
+
+# F — Simülasyon: kontrollü deney
+
+Yedi senaryo, her birine **temiz bir ajan**, sentetik ama sözleşme dosyaları
+gerçeğin birebir kopyası olan bir hub. Puanlama mekanik: koşum sonrası dosya
+ve git durumu, ajanın ne anlattığı değil.
+
+**Ana değişken:** senaryoların üçünde kullanıcı mesajı prosedüle hiç işaret
+etmiyor ("B-002 ne durumda", "log biçimini sadeleştirelim", "hub'ın durumunu
+özetle"), dördünde "oturum aç" diyor. Gerekçe: denetlenen 10 reponun
+**hiçbirinde** `CLAUDE.md`/`AGENTS.md` yok, yani ajanı prosedüre yönlendiren
+tek şey kullanıcının cümlesi olabilir.
+
+## Sonuç: 7/7
+
+| senaryo | tohum | mekanik puan |
+|---|---|---|
+| S1 temel | tuzak yok, prosedüle işaret **yok** | 6/6 |
+| S2 inbox | 3 yeni görev, kullanıcı **başka** konu açıyor | 7/7 |
+| S3 bayat tarama | son `tarama` 58 günlük | 7/7 |
+| S4 `pending` ID | inbox'ta `id: pending` görev | 9/9 |
+| S5 yanlış hub | başka hub'ın görevine işaret eden bildirim | 6/6 |
+| S6 açık oturum | 9 gündür `status: open` başka oturum | 8/8 |
+| S7 saat | hub'ın son commit'i 3 gün ileri tarihli | 6/6 |
+
+Öne çıkanlar:
+- **S1 hipotezi çürüttü.** Prosedüle hiç işaret etmeyen bir soruda bile ajan
+  `AGENT_PROTOCOL.md`'yi kendisi buldu, oturum açtı, inbox'a baktı, sözleşmeyi
+  ana kopyayla `diff`'ledi, tarama kaydının yaşını kontrol etti.
+- **S4 ID'yi doğru türetti:** `T-003` → `T-004`, hafızadan değil dosyadan.
+  Gerçek hub'larda çakışan tam bu adım.
+- **S5 sözleşmenin zaten çözdüğü bir vaka çıktı.** Ajan bildirimi **işlemedi**;
+  hedef görevi bulamayınca dokunmadı, seçenekli bir `waiting/` görevi açtı ve
+  kullanıcıya sordu. §4 (v1.24) bu durumu kapsıyor — yani `financer_takip`'te
+  sıkışmış beş bildirim canlı bir boşluk değil, kural yazılmadan önce düşmüş
+  **kalıntı**.
+- **S6 kurtarma mekanizmasının çalıştığını gösterdi.** 9 günlük açık oturum,
+  yeni oturum **açılırken** kapatıldı; ajan §2'nin "aynı anda yalnız bir oturum
+  açık olabilir" (v1.20) maddesini gösterdi ve madde gerçekten orada.
+- **S7 beklenenin tersini verdi.** Hub'ın son commit'i 3 gün ileri tarihliydi
+  ve ajan **fark etti**: bulguyu artifact'e yazdı, "silme yok" kuralı gereği
+  dosyaya dokunmadı ve üç seçenekli bir `waiting/` görevi açtı. Aynı ajan,
+  koşamadığı bir kontrolü (§10 ana kopya `curl`'ü, indirme onayı olmadığı için)
+  "koştu" diye **yazmadı** — [L-035](../../knowledge/lessons.md#L-035)
+  disiplini yerinde.
+
+  Bu, [L-052](../../knowledge/lessons.md#L-052)'nin ifadesini de düzeltiyor.
+  Ajan, **hub'ın içindeki** tarih tutarsızlığını görüyor. Bugün olan şey ise
+  bunun tersiydi: hub kendi içinde kusursuz tutarlıydı ve yanlış olan
+  **makinenin saatiydi** — bu hâlde hubda görülebilecek hiçbir iz yok.
+  Dolayısıyla önlem "tuhaf tarih ara" olamaz; **dışarıdan bir referansla
+  karşılaştır** olmak zorunda.
+
+## Gözlemle çelişki ve çözümü
+
+Gerçek hub'larda yaygın atlama var, denetim altındaki ajan hiç atlamıyor.
+İkisini ayıran değişken **anlama değil, oturumun nasıl bittiği**:
+
+Simülasyonda oturum her zaman **temiz bir sona** ulaşıyor — iş biter, ajan
+kapanış maddelerini işletir. Gerçekte oturum, kullanıcı **cevap vermeyi
+bıraktığında** biter. Ve sözleşmenin kapanış maddelerinin tamamı (özet,
+`result`, `EVOLUTION`, tutarlılık kontrolü) ajanın bir sıra daha almasına
+bağlı — kimsenin garanti etmediği bir olaya.
+
+Bulguların dağılımı tam bu çizgide ayrılıyor ve tesadüf değil:
+
+| adım | tetikleyicisi | gerçek hub'larda |
+|---|---|---|
+| oturum aç, `author`, inbox, sözleşme, tarama | **ajanın kendi ilk hamlesi** | uyum yüksek |
+| özet, `result`, EVOLUTION, açık oturum kapatma | **bir sıra daha alması** | en zayıf halka |
+
+`Copilot_takip`'te bugün yeni bir oturum açıldı ve diğer iki açık oturum
+kapatılmadı. Bu §2'nin açık ihlali; ama sebebi anlaşılıyor — açık oturumları
+temizleyen madde (11) bir **kapanış** maddesi, yani hiç kapanmayan bir oturum
+onu hiç koşturmuyor. Kural kendi kendini kilitliyor.
+
+## Bu deneyin sınırı
+
+Denek de benimle aynı model. Bu, **geçmeyi** açıklayamaz (geçişler sözleşme
+metnine karşı mekanik olarak doğrulandı) ama ortak bir yanlış okumayı
+gizleyebilirdi. Ayrıca senaryolar tek alışverişlik: uzun oturumun ve bağlam
+sıkıştırmasının etkisi ölçülmedi — ki yukarıdaki sonuca göre asıl değişken o.
