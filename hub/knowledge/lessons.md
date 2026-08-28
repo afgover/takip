@@ -873,3 +873,22 @@ Biçim: `SYSTEM.md` §5.
   göstermiyorsa kayıt yazılmadan önce durulur ve kullanıcıya söylenir.
   Zaten her oturumda ana kopya için bir ağ isteği yapılıyor; bu, o isteğin
   yanına iliştirilebilecek kadar ucuz.
+
+## L-053 — Kapatılan bir kusurun kalıntısı kendiliğinden aranmaz
+- **Tarih:** 2026-08-28
+- **Kaynak:** S-2026-08-28-apk-drive,
+  [A-2026-08-28-001](../artifacts/S-2026-08-28-apk-drive/hub-denetimi.md)
+- **Ders:** B-126 ("bildirim yanlış repoya düşüyor", L-045) 2026-08-12'de
+  kapatıldı ve doğru kapatıldı: kusur bir daha tekrarlamadı. Ama kapanmadan
+  **bir gün önce** yanlış hub'a düşmüş beş bildirim orada kaldı ve 17 gün
+  kimse onları aramadı. Üçü kullanıcının cevabını taşıyordu; üç ayrı hub'ın
+  ajanı bu süre boyunca hâlâ cevap beklediğini sanıyordu.
+  **Kusuru kapatmak, kusurun ürettiklerini kapatmaz.** Düzeltme ileriye
+  dönüktür; geride bıraktığı kayıtlar için ayrı bir arama gerekir ve o arama
+  hiçbir yerde tanımlı değilse hiç yapılmaz. Sessizliği tam da bu: yeni vaka
+  gelmediği için "çözüldü" görünür, oysa eski vakalar hâlâ zarar veriyordur.
+  **Kural:** bir kusur kapatılırken şu soru sorulur ve cevabı kayda yazılır —
+  *"bu kusur kapanmadan önce kaç kez gerçekleşti ve o vakalar nerede?"*
+  Cevap "aramadım" ise bu, düzeltmenin bir parçası olarak backlog'a girer.
+  Bulunuşu da tesadüf değil, ölçümdür: kalıntı, `tool/audit.sh`'ın "17 gündür
+  hareketsiz inbox görevi" kontrolüyle görüldü.

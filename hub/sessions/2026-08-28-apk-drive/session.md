@@ -195,3 +195,24 @@ denetimin bulduğu şey de tam olarak bu boşluk.
   ID ve 4 ID çakışması. Canlı bir ajanla aynı anda push'lamak çakışma üretir.
 - **`din_takip`** — sırada: 3 ID çakışması ve 92 oturum boyunca hiç koşmamış
   tarama.
+
+### [15:50] Agent — temizlik tamam
+`Copilot_takip`'te **yalnız iki cevap** teslim edildi (kullanıcı kararı):
+görevler `active/`e alındı, gecikmenin nedeni gövdelerine yazıldı, hub'ın
+gövdesine (açık oturumlar, `pending` ID'ler, ID çakışmaları) dokunulmadı —
+canlı oturum sürüyordu ve kalanlar o repodaki kayda geçirildi.
+
+`din_takip`: 92 oturumluk tarama boşluğu kapandı — sır taraması çalışma
+ağacında ve 277 commit'in tamamında koşuldu, bulgu yok, ve boş sonuç **kontrol
+grubuyla** doğrulandı. Bağımlılık taraması "temiz" diye değil **konusuz** diye
+yazıldı (repo yalnız `hub/` taşıyor). ID çakışmaları **yeniden
+numaralandırılmadı**: T-027 tek başına 38 dosyada geçiyor ve mevcut atıfların
+hangi göreve baktığı zaten belirsiz — toplu değiştirme belirsizliğe sahte
+kesinlik verirdi. Gerekçesiyle B-170'e yazıldı.
+
+Ders [L-053](../../knowledge/lessons.md#L-053): kusuru kapatmak, kusurun
+ürettiklerini kapatmaz. Plan [P-016](../../PLAN.md#P-016).
+
+**Kendi hatam:** bir önceki commit'te `tool/audit.sh` düzeltmesi bir
+`session(...)` commit'ine karıştı (§8 — ilgisiz değişiklikler ayrılır).
+Sebebi `git add -A`; bundan sonra hub kayıtları yol verilerek stage'leniyor.

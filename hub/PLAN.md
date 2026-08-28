@@ -5,6 +5,29 @@
 plan (`Türetilmiş: true`) kapalı doğduğu için kapalıların arasına tarih
 sırasıyla girer.
 
+## P-016 — Denetim bulgularının üç hub'da temizliği
+- **Tarih:** 2026-08-28
+- **Kaynak:** [S-2026-08-28-apk-drive](sessions/2026-08-28-apk-drive/session.md)
+- **Durum:** tamamlandi
+- **Türetilmiş:** true
+- **İlgili:** [P-014](PLAN.md#P-014), [L-053](knowledge/lessons.md#L-053),
+  [A-2026-08-28-001](artifacts/S-2026-08-28-apk-drive/hub-denetimi.md)
+
+> Planı iş sırasında değil **bittikten sonra** yazıldı (sözleşme 1.26):
+> temizlik tek adımlık görünüyordu, hedefler aranınca çok adımlı çıktı.
+> Adımlar bu oturumun kaydından türetildi.
+>
+> **Ölçüm, işin tanımını değiştirdi.** "Sıkışmış bildirimleri kapat" diye
+> başlandı; hedefler aranınca üçünün asıl görevinin hâlâ `waiting/`te olduğu
+> görüldü — yani iş temizlik değil, **teslim**di.
+
+- [x] P-016.1 — Beş bildirimin hedefi tek tek arandı, üçünün görevi hâlâ bekliyordu · ✅ 2026-08-28
+- [x] P-016.2 — `financer_takip`: beş bildirim `done/`a, cevaplar `result`a; sözleşme 1.25 → 1.27 · ✅ 2026-08-28
+- [x] P-016.3 — `datasources_takip`: cevap teslim (`waiting → active`), 6 günlük açık oturum türetilmiş özetle kapatıldı, 1.26 → 1.27 · ✅ 2026-08-28
+- [x] P-016.4 — `Copilot_takip`: **yalnız** iki cevap teslim edildi · ✅ 2026-08-28 · canlı oturum vardı; gövdeye dokunulmadı, kalanlar kayda yazıldı
+- [x] P-016.5 — `din_takip`: 92 oturumluk tarama boşluğu kapandı (SEC-012, kontrol grubuyla), ID çakışmaları B-170'e, 1.26 → 1.27 · ✅ 2026-08-28
+- [x] P-016.6 — Ders ve kayıtlar · ✅ 2026-08-28 · [L-053](knowledge/lessons.md#L-053)
+
 ## P-015 — Sözleşme 1.27: denetim, açık oturum ve saat
 - **Tarih:** 2026-08-28
 - **Kaynak:** [S-2026-08-28-apk-drive](sessions/2026-08-28-apk-drive/session.md)
