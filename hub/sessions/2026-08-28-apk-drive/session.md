@@ -5,7 +5,8 @@ status: open
 reconstructed: false
 author: afgover
 topics: [apk, dagitim, imza, drive]
-artifacts: []
+artifacts:
+  - artifacts/S-2026-08-28-apk-drive/hub-denetimi.md
 tasks_touched: [T-010]
 ---
 
@@ -108,3 +109,45 @@ yeniden yazmak için `--force-with-lease` gerekiyor ve repo public — karar
 kullanıcıya bırakıldı.
 
 Ders: [L-052](../../knowledge/lessons.md#L-052).
+
+### [13:10] Kullanıcı
+> uygulamayi adan zye test eden bir plan yapalim, ajan sozlesmeyi dogru
+> anliyormu, her session islemesi gerekenleri isliyor mu? gorevler dogru
+> ataniyormu? yapilan gorevler dogru sekilde yapilanlara gonderiliyormu yada
+> bitmediyse nasil bir davranis izliyorlar? telefondaki app ve github arasinda
+> veri akisinda problem var mi? gecikme vs is akisini etkiliyor mu? mukererr
+> isler ortaya cikiyormu? eger cikiyosa bunlar nasil ele aliniyor?
+> su an 10 reponun kaydi var, onlari ve burda o repolarla ilgili sessionlari
+> inceleyip sonuca ulasman riskli mi olur? yada kendi similasyonunu kendin mi
+> calistirirsin?
+
+### [13:20] Agent
+Metodoloji sorusuna cevap: **ikisi de gerekli, farklı sorulara.** Kayıtları
+yazan taraf denetlenen tarafın kendisi olduğu için anlatı, uyumun kanıtı
+sayılamaz; ama mekanik iz (git grafiği, damgalar, yollar, frontmatter, klasör
+geçişleri, ID dizileri) ajanın ne dediğinden bağımsızdır. Bugünkü saat hatası
+([L-052](../../knowledge/lessons.md#L-052)) bunun kanıtı oldu: hub iki saat
+boyunca kendi içinde tutarlı ve tamamen yanlış bir tarih taşıdı; yakalayan şey
+kayıt okuması değil, dışarıdan bağımsız bir referans oldu.
+
+Simülasyonun kendi kör noktası ters yönde: denek de ben olacağım. Önlem,
+puanlamayı benim yargıma değil mekanik iddialara bağlamak ve senaryoların
+çekirdeğini `lessons.md`'den — gerçekten olmuş hatalardan — kurmak.
+
+[P-014](../../PLAN.md#P-014) açıldı; kullanıcı kararı: 10 hub'ın hepsi,
+denetçi kalıcı (`tool/audit.sh`), yanlış damgalı iki commit yeniden yazılmaz.
+A–E koşuldu; rapor:
+[A-2026-08-28-001](../../artifacts/S-2026-08-28-apk-drive/hub-denetimi.md).
+
+**Denetçi önce kendi hatalarını verdi:** ilk koşumdaki 120 bulgunun büyük
+çoğunluğu aracın kusuruydu (format örneğini ID sayma, `--follow`'un taşımayı
+kaçırması, R-008'i çiğneyen `author` kontrolü, iki mekanizmayı tek sayıya
+sıkıştıran gecikme ölçümü). Dördü de düzeltildi; ayrıca "aynı bildirim iki
+hub'da" görünen bir bulgu doğrulamada yanlış çıktı ve rapora girmedi.
+
+Doğrulanmış bulgular: ID çakışması üç hub'da (T-026 üç ayrı işte), `id: pending`
+altı görevde kapanışa kadar yaşamış, yanlış hub'a düşmüş beş bildirim
+`financer_takip/inbox`'ta 17 gündür duruyor, açık kalmış 6 oturum, özetsiz
+kapanan 11 oturum, `result` boş 11 görev, `din_takip`'te 92 oturum boyunca hiç
+tarama yok, ve saat anomalisi bu oturuma özgü değil (`din_takip` 2026-08-16).
+`money_takip` sıfır bulguyla temiz çıktı.

@@ -31,11 +31,11 @@ sırasıyla girer.
 > söyler. Önce simülasyon kurmak, hangi hatanın gerçekte olduğunu bilmeden
 > senaryo uydurmak olurdu.
 
-- [ ] P-014.A — Zemin: 10 hub salt-okunur klonlandı, envanter çıkarıldı
-- [ ] P-014.B — Sözleşme uyumu: her hub'ın `SYSTEM.md`'si ana kopyayla, izi olan §-bazlı kontroller
-- [ ] P-014.C — Oturum prosedürü: kayıt ilk iş commit'inden önce mi, kapanış tam mı, açık kalan var mı
-- [ ] P-014.D — Görev akışı: klasör geçişleri, atlanmış adımlar, `result` boş kapananlar, yarım kalanın davranışı
-- [ ] P-014.E — App ↔ GitHub: gecikme (`created:` → commit) ve mükerrer izleri
+- [x] P-014.A — Zemin: 10 hub salt-okunur klonlandı, envanter çıkarıldı · ✅ 2026-08-28 · `fastpdfreader_takip` boş; `tool/audit.sh`
+- [x] P-014.B — Sözleşme uyumu: izi olan §-bazlı kontroller · ✅ 2026-08-28 · denetçinin kendi 4 hatası önce ayıklandı
+- [x] P-014.C — Oturum prosedürü: kapanış disiplini, açık kalanlar, anlık kayıt · ✅ 2026-08-28 · [A-2026-08-28-001](artifacts/S-2026-08-28-apk-drive/hub-denetimi.md) §4, §7
+- [x] P-014.D — Görev akışı: zincir, ID çakışması, `pending`, yanlış hub · ✅ 2026-08-28 · §1, §2, §3
+- [x] P-014.E — App ↔ GitHub: gecikme **iki** sayıya ayrıldı (push / pick) · ✅ 2026-08-28 · §8
 - [ ] P-014.F — Simülasyon: sentetik hub, tohumlanmış senaryolar, mekanik puanlama
 - [ ] P-014.G — Bulgular kayda; sözleşme boşluğu çıkarsa **öneri** olarak kullanıcıya
 
