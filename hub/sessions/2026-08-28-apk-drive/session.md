@@ -216,3 +216,30 @@ Ders [L-053](../../knowledge/lessons.md#L-053): kusuru kapatmak, kusurun
 **Kendi hatam:** bir önceki commit'te `tool/audit.sh` düzeltmesi bir
 `session(...)` commit'ine karıştı (§8 — ilgisiz değişiklikler ayrılır).
 Sebebi `git add -A`; bundan sonra hub kayıtları yol verilerek stage'leniyor.
+
+### [16:10] Kullanıcı
+> senaryolar tek alışverişlik: uzun oturumun ve bağlam sıkıştırmasının etkisi
+> ölçülmedi demissin, baglam sikilastirilmasi durumunda ajana once hub kaydini
+> yapip sikilastirmayi sonra yap kurali koysak olasi eksik guncellemenin onune
+> gesmis olurmuyuz?
+
+### [16:25] Agent
+**Sezgi doğru, kuralın yeri yanlış — ve ikisi de ölçüldü.**
+
+Ölçüm ([A-2026-08-28-001](../../artifacts/S-2026-08-28-apk-drive/hub-denetimi.md) §G):
+iş commit'lerinin **%40**'ında oturum kaydı 30 dakika içinde güncellenmemiş;
+318 oturumun **80'i (%25)** `reconstructed`. Yani sıkıştırma kaynaklı kayıp
+gerçek ve büyük.
+
+Ama kural sözleşmeye yazılamaz: ajan sıkıştırmanın geldiğini **göremez** —
+[P-015](../../PLAN.md#P-015)'te düzelttiğimiz kusurun aynısı. Kanıtı da elde:
+sözleşmede zaten bu iş için bir kural var (v1.23) ve %40 ihlal ediliyor.
+Göremediği aynı ana ikinci bir cümle koymak birinciyi işler kılmaz.
+
+Belgelenmiş davranış kontrol edildi: `PreCompact` sıkıştırmayı **engelleyebiliyor**
+ama bağlam enjekte edemiyor; `SessionStart(compact)` `additionalContext` ile
+enjekte edebiliyor. İkisi birlikte kullanıcının istediği sırayı kuruyor.
+[`tool/hub-guard.sh`](../../../tool/hub-guard.sh) + `.claude/settings.json`
+yazıldı ([P-017](../../PLAN.md#P-017)); üç mod elle koşularak, şema `jq` ile
+doğrulandı. **Hook'un gerçekten tetiklendiği ölçülmedi** — gerçek bir
+sıkıştırma gerekiyor, bu oturumda yapılamaz (P-017.5).
