@@ -238,7 +238,7 @@ if not dups: ok("tekrarlanan ID yok")
 # ── 5. Görev akışı ───────────────────────────────────────────────────────────
 say("5. Görev akışı (madde 8: durum değişikliği klasör taşımayla)")
 tasks = os.path.join(HUB, "tasks")
-by_id, no_result, no_opt, skipped, migrated = collections.defaultdict(list), [], [], [], []
+by_id, no_result, no_opt, skipped, migrated, pending_out = collections.defaultdict(list), [], [], [], [], []
 for state in ("inbox","active","waiting","done"):
     d = os.path.join(tasks, state)
     if not os.path.isdir(d): continue
@@ -250,6 +250,12 @@ for state in ("inbox","active","waiting","done"):
         if tid: by_id[tid].append(f"{state}/{fn}")
         if state == "done" and fm.get("result","none") in ("none","",'""'):
             no_result.append(fn)
+        # App görevi `id: pending` ile yazar ve ID'yi agent atar
+        # (lib/hub/task_repo.dart). inbox dışında `pending` görmek, o adımın
+        # hiç koşmadığı anlamına gelir: o göreve artık hiçbir kayıttan
+        # bağlantı verilemez.
+        if state != "inbox" and fm.get("id") == "pending":
+            pending_out.append(f"{state}/{fn}")
         if state == "waiting" and "options" not in fm:
             no_opt.append(fn)
         if state == "done" and fm.get("created_by") == "user":
@@ -266,6 +272,8 @@ info("görev sayısı: " + ", ".join(f"{k}={v}" for k,v in counts.items()))
 for t, w in by_id.items():
     if len(w) > 1: warn(f"görev ID {t} birden çok dosyada: {', '.join(w)}")
 if not any(len(w) > 1 for w in by_id.values()): ok("mükerrer görev ID'si yok")
+for f in pending_out: warn(f"{f}: `id: pending` — inbox'tan çıkmış ama ID atanmamış")
+if not pending_out: ok("inbox dışında `id: pending` görev yok")
 for f in no_result: warn(f"done/{f}: `result` boş — ne olduğu okunamıyor")
 if not no_result: ok("kapanan görevlerin hepsinde `result` var")
 for f in skipped: warn(f"done/{f}: inbox/ ya da active/ üzerinden geçmemiş")
