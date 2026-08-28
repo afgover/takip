@@ -5,6 +5,40 @@
 plan (`Türetilmiş: true`) kapalı doğduğu için kapalıların arasına tarih
 sırasıyla girer.
 
+## P-014 — Sistemin A'dan Z'ye denetimi: sözleşme, oturum, görev akışı, veri akışı
+- **Tarih:** 2026-08-28
+- **Kaynak:** [S-2026-08-28-apk-drive](sessions/2026-08-28-apk-drive/session.md)
+- **Durum:** acik
+- **İlgili:** [L-052](knowledge/lessons.md#L-052), [L-035](knowledge/lessons.md#L-035),
+  [L-042](knowledge/lessons.md#L-042), [SEC-011](SECURITY.md#SEC-011)
+
+> **Tasarım ilkesi: her iddia, onu üreten katmanın dışından ölçülür.**
+> Kayıtları yazan taraf, test edilecek tarafın kendisi — "yapıldı" cümlesi
+> yapıldığının değil, o cümlenin yazıldığının kanıtıdır. Bugün ölçülen saat
+> hatası ([L-052](knowledge/lessons.md#L-052)) bunun canlı örneği: hub iki saat
+> boyunca kendi içinde kusursuz tutarlı ve tamamen yanlış bir tarih taşıdı;
+> yakalayan şey kayıt okuması değil, dışarıdan bağımsız bir referans oldu.
+>
+> Bu yüzden kanıt ikiye ayrılıyor: **mekanik** (git grafiği ve damgalar, dosya
+> yolları, frontmatter, klasör geçişleri, ID dizileri) ölçüm sayılır;
+> **anlatı** (düzyazı, "yapıldı") yalnız *yanlış anlamayı* göstermek için
+> kullanılır ve raporda görüş olarak işaretlenir.
+>
+> **Karar (2026-08-28, kullanıcı):** 10 hub'ın hepsi; denetçi kalıcı
+> (`tool/audit.sh`); yanlış damgalı iki commit yeniden yazılmaz.
+>
+> Sıra ucuzdan pahalıya: A–E'nin bulguları F'nin hangi senaryolarının değdiğini
+> söyler. Önce simülasyon kurmak, hangi hatanın gerçekte olduğunu bilmeden
+> senaryo uydurmak olurdu.
+
+- [ ] P-014.A — Zemin: 10 hub salt-okunur klonlandı, envanter çıkarıldı
+- [ ] P-014.B — Sözleşme uyumu: her hub'ın `SYSTEM.md`'si ana kopyayla, izi olan §-bazlı kontroller
+- [ ] P-014.C — Oturum prosedürü: kayıt ilk iş commit'inden önce mi, kapanış tam mı, açık kalan var mı
+- [ ] P-014.D — Görev akışı: klasör geçişleri, atlanmış adımlar, `result` boş kapananlar, yarım kalanın davranışı
+- [ ] P-014.E — App ↔ GitHub: gecikme (`created:` → commit) ve mükerrer izleri
+- [ ] P-014.F — Simülasyon: sentetik hub, tohumlanmış senaryolar, mekanik puanlama
+- [ ] P-014.G — Bulgular kayda; sözleşme boşluğu çıkarsa **öneri** olarak kullanıcıya
+
 ## P-013 — APK'nın Drive'a yüklenmesi (makineden ilk çıkış)
 - **Tarih:** 2026-08-28
 - **Kaynak:** [S-2026-08-28-apk-drive](sessions/2026-08-28-apk-drive/session.md)
