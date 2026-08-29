@@ -3,7 +3,7 @@ id: T-010
 title: "Release imza anahtarını üret ve geçişi yap"
 created_by: agent
 created: "2026-08-06T00:10:00Z"
-updated: "2026-08-06T00:10:00Z"
+updated: "2026-08-29T12:55:00Z"
 priority: normal
 category: gorev
 tags: [guvenlik, imza]
@@ -84,3 +84,12 @@ verisini siler. Bu yüzden **1. adım yedek almak.**
 - `.gitignore` `*.jks`, `*.keystore` ve `key.properties`'i dışarıda tutuyor.
   Yine de keystore'un depo dışında durması esas koruma; gitignore ikinci
   savunma.
+
+## Not (2026-08-29, store çalışması)
+
+Erteleme tetikleyicisi **resmen geldi**: mağaza dağıtımı çalışıldı
+([A-2026-08-29-001](../../artifacts/S-2026-08-29-store-calismasi/store-calismasi.md))
+ve mağaza = SEC-015'in daralttığı "üçüncü kişiye/halka verilme" eşiğinin
+kendisi. Üretilecek şey Play App Signing modelinde **upload key** — imzayı
+Google yönetir, upload anahtarı kurtarılabilir. Karar T-020 ile birlikte.
+

@@ -274,6 +274,12 @@ başlığına ✅ ve tarih yazılır.
       i18n, iOS derlemesi, gizlilik politikası (gover.us'ta barındırılır), Play
       Data Safety ve App Store privacy formları. Dev hesapları mevcut; asıl
       maliyet hesap ücreti değil, bakım taahhüdü
+      · 2026-08-29: **talep geldi, çalışma yapıldı** —
+      [A-2026-08-29-001](artifacts/S-2026-08-29-store-calismasi/store-calismasi.md).
+      Ön koşullar yeniden ölçüldü: B-061 bloker değil, SEC-006 kapalı, i18n
+      hazır; iOS iskeleti hiç yok, ertelenmesi önerildi. Beş karar T-020'de
+      (`waiting/`). İmza tetikleyicisi (SEC-015) resmen geldi: mağaza =
+      üçüncü kişiye verilme
 - [x] B-095 · (agent) Aktif olmayan repodaki değişiklik uygulamada
       görünmüyordu — ✅ 2026-08-03; senkron tüm repoları indiriyordu ama
       yoklama yalnız aktif reponun başına bakıyordu, yani sinyal hiç
