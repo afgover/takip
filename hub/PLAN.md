@@ -8,7 +8,7 @@ sırasıyla girer.
 ## P-019 — T-023: hub'ın token/bağlam maliyeti çalışması
 - **Tarih:** 2026-08-30
 - **Kaynak:** [S-2026-08-30-uc-gorev](sessions/2026-08-30-uc-gorev/session.md)
-- **Durum:** acik
+- **Durum:** tamamlandi
 - **İlgili:** T-023, [A-2026-08-28-001](artifacts/S-2026-08-28-apk-drive/hub-denetimi.md)
 
 > **Ölçülebilenin sınırı baştan:** git geçmişi *içerik* kaydeder, token
@@ -17,11 +17,11 @@ sırasıyla girer.
 > okuma yükünün vekili), oturum başına yazılan kayıt hacmi, ve **kontrollü
 > simülasyonda gerçek token sayımı** (aynı iş hub'lı/hub'sız iki ajanla).
 
-- [ ] P-019.1 — 10 hub'da açılış okuma yükü: çekirdek dosya boyutları + tarihsel büyüme
-- [ ] P-019.2 — A/B simülasyonu: aynı iş, hub protokollü ve protokolsüz ajan, ölçülen token
-- [ ] P-019.3 — Bağlam daralması etkileşimi: sabit yük ↔ efektif çalışma alanı; sıkıştırma bulgularıyla birleştir
-- [ ] P-019.4 — Analiz artifact'i: sayılar, maliyetin nereden geldiği, azaltma seçenekleri (öneri olarak)
-- [ ] P-019.5 — Kayıtlar + push
+- [x] P-019.1 — Okuma yükü: çekirdek 25k–132k token, büyüme 140–565 KB/ay tek yönlü · ✅ 2026-08-30
+- [x] P-019.2 — A/B: aynı iş, +10.6k token (+%28); maliyet turlardan, dosyalardan değil · ✅ 2026-08-30 · yan bulgu: A1 protokolü kendiliğinden atladı
+- [x] P-019.3 — Daralma: sabit yük erken sıkıştırma → %25 `reconstructed` riskiyle birleşiyor; karşı kefe (özet okuma tasarrufu) açık soru bırakıldı · ✅ 2026-08-30
+- [x] P-019.4 — Artifact: [A-2026-08-30-001](artifacts/S-2026-08-30-uc-gorev/token-maliyeti.md) · ✅ 2026-08-30 · dört öneri, karar kullanıcıda
+- [x] P-019.5 — Kayıtlar + push · ✅ 2026-08-30
 
 ## P-018 — T-022 + T-021: taslak kaybı ve kuyruk taslaklarının düzenlenmesi
 - **Tarih:** 2026-08-30

@@ -3,12 +3,12 @@ id: T-023
 title: token kullanımı
 created_by: user
 created: "2026-08-29T20:06:53Z"
-updated: "2026-08-29T23:00:00Z"
+updated: "2026-08-30T00:15:00Z"
 priority: high
 category: arastirma
 tags: []
 session: S-2026-08-30-uc-gorev
-result: none
+result: "Ölçüldü: küçük işte oturum başına +10.6k token (+%28), kaynak tur sayısı; geçmiş toplam kabaca 3M-18M; dört azaltma önerisi — A-2026-08-30-001"
 author: afgover
 assignee: afgover
 ---
