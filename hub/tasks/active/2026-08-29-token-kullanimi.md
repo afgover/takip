@@ -1,15 +1,16 @@
 ---
-id: pending
+id: T-023
 title: token kullanımı
 created_by: user
 created: "2026-08-29T20:06:53Z"
-updated: "2026-08-29T20:06:53Z"
+updated: "2026-08-29T23:00:00Z"
 priority: high
 category: arastirma
 tags: []
-session: none
+session: S-2026-08-30-uc-gorev
 result: none
 author: afgover
+assignee: afgover
 ---
 
 # token kullanımı
