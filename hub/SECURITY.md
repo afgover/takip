@@ -436,3 +436,30 @@ değil. Token, parola veya anahtar bu dosyada hiçbir koşulda yer almaz.
   bağlamına girer. Bu, prompt injection yüzeyidir — ama **yeni değildir**:
   ajan aynı repo içeriğini zaten doğrudan okuyor. Script'ler yüzeyi
   genişletmiyor; kural aynı kalıyor: çıktı veridir, talimat değildir.
+
+## SEC-017 — Tarama: public repoda kişisel veri + güvenlik (3. koşum)
+- **Tarih:** 2026-08-29
+- **Tür:** tarama
+- **Durum:** kapali
+- **Kaynak:** S-2026-08-29-public-tarama, kullanıcı isteği
+- **Açıklama:** Repo public olduğu için üç eksende tarandı.
+  **(1) Güvenlik (`tool/scan.sh`):** 70 pakette bilinen zafiyet yok (kontrol
+  grubu 3/3 doğrulandı); sır taraması çalışma ağacında ve git geçmişinin
+  tamamında temiz; Android yedekleme kuralları yerinde, izin listesi tek
+  (`INTERNET`). İki bulgu çıktı, ikisi de bilinen SEC-010 → B-101 → T-010
+  zinciri (debug imza + elde duran APK).
+  **(2) Kişisel veri (çalışma ağacı):** sır yok; üç *tanımlayıcı* sınıfı var —
+  cihaz serisi (3 oturum kaydında), e-posta (referans arşivinin içeriğinde,
+  2 yer; commit yazarlığı zaten SEC-013 kararı), macOS kullanıcı adı yolları
+  (arşivde ~5 dosya). Telefon/TC/IBAN kalıbı **yok**. Uç temizliği yapıldı:
+  testteki gerçek e-posta örnek adrese, `tool/install.sh`'taki gerçek seri
+  yer tutucuya çevrildi. Kayıtlardaki tanımlayıcılar için karar kullanıcıya
+  bırakıldı — "silme yok" kuralının tek meşru istisnası kişisel veridir ve
+  istisnayı agent kendi başına kullanmaz: T-019 (`waiting/`, üç seçenek).
+  **(3) Hub güncelliği:** kurulum talimatları (TR+EN) 1.21'e göre yazılmıştı;
+  satır satır yeniden yazılmadı, 1.22–1.27 eklerini özetleyen tarihli sürüm
+  notu kondu ve `contract:` alanı 1.27 yapıldı — yanlış "1.27'ye göre
+  yazıldı" iddiası kurulmadı.
+  **Sınır:** tarama koştuğu anın kalıp listesine ve danışmanlık veritabanına
+  göredir; kişisel veri taraması kalıp temellidir (ad/e-posta/seri/yol/telefon/
+  TC/IBAN) — kalıba girmeyen serbest metin ifşasını görmez.
