@@ -362,6 +362,54 @@ stat("kullanıcı → GitHub (push)", push_lag, 6*3600,
 stat("GitHub → ajan (ilk dokunuş)", pick_lag, 48*3600,
      "görev görülene kadar bekledi; iş akışını asıl bu etkiler")
 
+# ── 9. 30 dakika ritmi — bekçi pilotunun ölçütü (P-017, B-141) ──────────────
+say("9. Kayıt ritmi (v1.23) ve `reconstructed` oranı")
+raw = git("log","--all","--name-only","--format=@%cI","--",REL).split("\n")
+_commits=[]; _cur=None
+for l in raw:
+    if l.startswith("@"):
+        _cur=(datetime.datetime.fromisoformat(l[1:]),set()); _commits.append(_cur)
+    elif l.strip() and _cur: _cur[1].add(l.strip())
+_commits=sorted([c for c in _commits if c[1]])
+_sess=[t for t,pp in _commits if any("/session.md" in x for x in pp)]
+_work=[t for t,pp in _commits if not any("/session.md" in x for x in pp)]
+late30=sum(1 for w in _work
+           if not [t for t in _sess if t>=w and (t-w).total_seconds()<=1800])
+if _work:
+    info(f"{len(_work)} iş commit'i; {late30} tanesinde kayıt 30 dk içinde "
+         f"güncellenmemiş (%{late30*100//len(_work)})")
+else:
+    info("iş commit'i yok — ritim ölçülemedi")
+nrec=nses=0
+for name in sorted(os.listdir(sess_dir)) if os.path.isdir(sess_dir) else []:
+    f=os.path.join(sess_dir,name,"session.md")
+    if not os.path.isfile(f): continue
+    nses+=1
+    if frontmatter(f)[0].get("reconstructed")=="true": nrec+=1
+info(f"reconstructed: {nrec}/{nses} oturum" + (f" (%{nrec*100//nses})" if nses else ""))
+
+# ── 10. Bekçi kopyası bayat mı ───────────────────────────────────────────────
+# Dağıtılan hub-guard.sh kopyaları ana kopyadan (afgover/takip) ayrışabilir;
+# SYSTEM.md'nin curl+diff kalıbının aynısı. Yalnız KARŞILAŞTIRIR — indirilen
+# içerik hiçbir koşulda çalıştırılmaz, diske yazılmaz (SEC-016 notu).
+say("10. Bekçi kopyası (hub-guard.sh) ana kopyayla aynı mı")
+_guard = next((p for p in (os.path.join(ROOT,".claude/hub-guard.sh"),
+                           os.path.join(ROOT,"tool/hub-guard.sh"))
+               if os.path.isfile(p)), None)
+if not _guard:
+    info("bekçi kurulu değil — B-141 dağıtımı bu hub'a henüz gelmedi")
+else:
+    r = subprocess.run(["curl","-fsSL","--max-time","10",
+        "https://raw.githubusercontent.com/afgover/takip/main/tool/hub-guard.sh"],
+        capture_output=True, text=True)
+    if r.returncode != 0:
+        info("ana kopya çekilemedi — kontrol KOŞMADI; 'güncel' diye yorumlanamaz")
+    elif r.stdout == open(_guard, encoding="utf-8").read():
+        ok(f"{os.path.relpath(_guard, ROOT)} ana kopyayla birebir aynı")
+    else:
+        warn(f"{os.path.relpath(_guard, ROOT)} ana kopyadan AYRIŞMIŞ — "
+             f"takip/tool/hub-guard.sh ile eşitle")
+
 print()
 if findings:
     print(f"{BOLD}{len(findings)} bulgu.{OFF} Kayda geçir: SECURITY.md / BACKLOG.md.")

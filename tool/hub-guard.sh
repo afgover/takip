@@ -19,6 +19,13 @@
 # ısrarla engellemek oturumu kilitlerdi. İşaret dosyası bu yüzden var: aynı
 # oturumda ikinci kez engellemez, yalnız uyarır.
 #
+# Güvenlik sözleşmesi (SEC-016): bu script git durumunu OKUR; yalnız
+# $TMPDIR'a bir işaret dosyası YAZAR; ağa HİÇ çıkmaz; hiçbir dosyayı
+# değiştirmez. Hata verirse, git yoksa, ikinci kez tetiklenirse GEÇER
+# (fail open) — verebileceği en kötü zarar bir sıkıştırmayı bir kez
+# geciktirmektir. Ana kopya: afgover/takip → tool/hub-guard.sh; kopyaların
+# bayatlığını tool/audit.sh ölçer.
+#
 # Çıkış kodu: 0 geç (ya da bilgi verdi), 2 engelle.
 set -uo pipefail
 
