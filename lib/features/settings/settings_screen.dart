@@ -14,6 +14,7 @@ import '../../hub/hub_sync.dart';
 import '../../hub/hub_watcher.dart';
 import '../../hub/models/task_draft.dart';
 import '../../hub/outbox.dart';
+import 'queued_drafts_sheet.dart';
 import '../../hub/settings.dart';
 import '../../l10n/app_localizations.dart';
 import '../common/hub_error_view.dart';
@@ -157,7 +158,10 @@ class SettingsScreen extends ConsumerWidget {
             ListTile(
               leading: const Icon(Icons.cloud_upload_outlined),
               title: Text(l.queuedTasks(queued.length)),
-              subtitle: Text(l.outboxQueuedSubtitle),
+              // Satır artık dokunulabilir (T-021): kuyruk yalnız sayı değil,
+              // içine bakılıp düzeltilebilen bir liste. Alt yazı bunu söylüyor.
+              subtitle: Text('${l.outboxQueuedSubtitle} · ${l.queuedTasksTapHint}'),
+              onTap: () => QueuedDraftsSheet.show(context),
               trailing: TextButton(
                 onPressed: () => ref.read(outboxProvider.notifier).flush(),
                 child: Text(l.trySendNow),

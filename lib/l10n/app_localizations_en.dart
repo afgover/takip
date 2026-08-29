@@ -1030,4 +1030,30 @@ class LEn extends L {
 
   @override
   String get filterNone => '(no options)';
+
+  @override
+  String get queuedDraftsTitle => 'Queued drafts';
+
+  @override
+  String get queuedDraftEdit => 'Edit';
+
+  @override
+  String get queuedDraftDelete => 'Delete';
+
+  @override
+  String get queuedDraftDeleteConfirm =>
+      'Delete this draft? It has not been sent; deleting it writes nothing anywhere.';
+
+  @override
+  String get queuedDraftDeleted => 'Draft deleted';
+
+  @override
+  String get queuedDraftSaved =>
+      'Draft updated; it will be sent in this form once a connection returns';
+
+  @override
+  String get queuedDraftEditTitle => 'Edit draft';
+
+  @override
+  String get queuedTasksTapHint => 'Tap to view, edit or delete';
 }

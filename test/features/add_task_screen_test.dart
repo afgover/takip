@@ -338,4 +338,43 @@ void main() {
       expect(jsonDecode(queued.single)['repoSlug'], 'b/iki');
     });
   });
+
+  group('taslak kalıcılığı (T-022)', () {
+    testWidgets('yazılan metin diske iner ve yeniden kurulan ekrana geri gelir',
+        (tester) async {
+      final built = buildScreen();
+      await tester.pumpWidget(built.widget);
+      await tester.pumpAndSettle();
+
+      await tester.enterText(
+          find.byKey(AddTaskScreen.titleFieldKey), 'Yarım kalan başlık');
+      await tester.enterText(find.byKey(AddTaskScreen.descriptionFieldKey),
+          'Uzun uzun yazılmış açıklama.');
+      await tester.pump();
+
+      // Süreç ölümü taklidi: ekran tamamen atılıp sıfırdan kuruluyor.
+      // (SharedPreferences sahtesi bellekte yaşadığı için "disk" duruyor.)
+      await tester.pumpWidget(const SizedBox());
+      final built2 = buildScreen();
+      await tester.pumpWidget(built2.widget);
+      await tester.pumpAndSettle();
+
+      expect(find.text('Yarım kalan başlık'), findsOneWidget);
+      expect(find.text('Uzun uzun yazılmış açıklama.'), findsOneWidget);
+    });
+
+    testWidgets('gönderim taslağı da temizler — geri gelmez', (tester) async {
+      final built = buildScreen();
+      await tester.pumpWidget(built.widget);
+      await tester.pumpAndSettle();
+      await fillAndSubmit(tester);
+
+      await tester.pumpWidget(const SizedBox());
+      final built2 = buildScreen();
+      await tester.pumpWidget(built2.widget);
+      await tester.pumpAndSettle();
+
+      expect(find.text('Market listesi'), findsNothing);
+    });
+  });
 }

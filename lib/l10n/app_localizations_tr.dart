@@ -1023,4 +1023,31 @@ class LTr extends L {
 
   @override
   String get filterNone => '(seçenek yok)';
+
+  @override
+  String get queuedDraftsTitle => 'Kuyruktaki taslaklar';
+
+  @override
+  String get queuedDraftEdit => 'Düzenle';
+
+  @override
+  String get queuedDraftDelete => 'Sil';
+
+  @override
+  String get queuedDraftDeleteConfirm =>
+      'Bu taslak silinsin mi? Henüz gönderilmedi; silinirse hiçbir yere yazılmaz.';
+
+  @override
+  String get queuedDraftDeleted => 'Taslak silindi';
+
+  @override
+  String get queuedDraftSaved =>
+      'Taslak güncellendi; bağlantı gelince bu haliyle gönderilecek';
+
+  @override
+  String get queuedDraftEditTitle => 'Taslağı düzenle';
+
+  @override
+  String get queuedTasksTapHint =>
+      'Görüntülemek, düzenlemek ya da silmek için dokun';
 }

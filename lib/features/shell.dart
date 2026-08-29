@@ -51,7 +51,12 @@ class _AppShellState extends State<AppShell> {
               onOpenSettings: () =>
                   setState(() => _index = AppShell.settingsTabIndex),
             ),
-            Expanded(child: _screens[_index]),
+            // IndexedStack: dört sekme de canlı kalır — `_screens[_index]`
+            // seçileni yeniden kurup ötekileri YOK EDİYORDU ve ekleme
+            // ekranındaki yazı, kullanıcı başka sekmeye bakıp dönünce
+            // kayboluyordu (T-022). Bedeli dört ekranın bellekte durması;
+            // dördü de hafif, kabul edildi.
+            Expanded(child: IndexedStack(index: _index, children: _screens)),
           ],
         ),
       ),

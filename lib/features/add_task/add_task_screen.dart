@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+
+import 'add_task_autosave.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/constants.dart';
@@ -58,6 +60,45 @@ class _AddTaskScreenState extends ConsumerState<AddTaskScreen> {
   /// hedef de onunla gelir. Bir kez seçim yapıldıysa seçim korunur — "bu işi
   /// şu projeye açıyorum" niyeti, aktif reponun değişmesiyle bozulmamalı.
   String? _targetSlug;
+
+  static const _autosave = AddTaskAutosave();
+
+  @override
+  void initState() {
+    super.initState();
+    // Yarım kalmış taslak diskten geri gelir (T-022): süreç öldüyse bile
+    // kullanıcının yazdığı kaybolmaz. Denetleyici dinleyicileri kayıttan
+    // SONRA bağlanıyor ki geri yükleme kendi kendini tetiklemesin.
+    _autosave.restore().then((d) {
+      if (d == null || !mounted) return;
+      setState(() {
+        _titleCtrl.text = (d['title'] as String?) ?? '';
+        _descCtrl.text = (d['description'] as String?) ?? '';
+        _priority = (d['priority'] as String?) ?? _priority;
+        final cat = d['category'] as String?;
+        if (cat != null && cat.isNotEmpty) _category = cat;
+        _newCategoryCtrl.text = (d['newCategory'] as String?) ?? '';
+        _targetSlug = d['targetSlug'] as String?;
+      });
+    }).whenComplete(() {
+      _titleCtrl.addListener(_persistDraft);
+      _descCtrl.addListener(_persistDraft);
+      _newCategoryCtrl.addListener(_persistDraft);
+    });
+  }
+
+  void _persistDraft() {
+    // Her tuş vuruşunda küçük bir JSON yazımı; SharedPreferences bunu
+    // bellekte tamponlayıp kendisi seyreltiyor, ayrıca debounce gerekmedi.
+    _autosave.save(
+      title: _titleCtrl.text,
+      description: _descCtrl.text,
+      priority: _priority,
+      category: _category,
+      newCategory: _isNewCategory ? _newCategoryCtrl.text : null,
+      targetSlug: _targetSlug,
+    );
+  }
 
   @override
   void dispose() {
@@ -141,6 +182,10 @@ class _AddTaskScreenState extends ConsumerState<AddTaskScreen> {
     await ref.read(taskCategoriesProvider.notifier).remember(category);
     ref.invalidate(pendingTasksProvider);
 
+    // Taslak diskten de silinir: gönderilen metnin bir sonraki açılışta
+    // "yarım kalmış" diye geri gelmesi, aynı görevi iki kez açtırırdı.
+    await _autosave.clear();
+
     if (!mounted) return;
     _titleCtrl.clear();
     _descCtrl.clear();
@@ -197,8 +242,12 @@ class _AddTaskScreenState extends ConsumerState<AddTaskScreen> {
                           child: Text(c.displayName),
                         ),
                     ],
-                    onChanged:
-                        _busy ? null : (v) => setState(() => _targetSlug = v),
+                    onChanged: _busy
+                        ? null
+                        : (v) {
+                            setState(() => _targetSlug = v);
+                            _persistDraft();
+                          },
                   ),
                 ),
               ),
@@ -246,7 +295,12 @@ class _AddTaskScreenState extends ConsumerState<AddTaskScreen> {
                 for (final p in Hub.priorities)
                   DropdownMenuItem(value: p, child: Text(p)),
               ],
-              onChanged: _busy ? null : (v) => setState(() => _priority = v!),
+              onChanged: _busy
+                  ? null
+                  : (v) {
+                      setState(() => _priority = v!);
+                      _persistDraft();
+                    },
             ),
             const SizedBox(height: 16),
             DropdownButtonFormField<String>(
@@ -264,7 +318,12 @@ class _AddTaskScreenState extends ConsumerState<AddTaskScreen> {
                   child: Text(l.addNewCategory),
                 ),
               ],
-              onChanged: _busy ? null : (v) => setState(() => _category = v!),
+              onChanged: _busy
+                  ? null
+                  : (v) {
+                      setState(() => _category = v!);
+                      _persistDraft();
+                    },
             ),
             if (_isNewCategory) ...[
               const SizedBox(height: 12),

@@ -40,12 +40,30 @@
   },
   "outboxQueuedSubtitle": "Bağlantı gelince gönderilecek",
   "outboxStuckTitle": "{count} görev gönderilemiyor",
-  "@outboxStuckTitle": {"placeholders": {"count": {"type": "int"}}},
+  "@outboxStuckTitle": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "outboxStuckSubtitle": "Hedef repo bağlı değil: {repos}. Repoyu geri eklersen kendiliğinden gider.",
-  "@outboxStuckSubtitle": {"placeholders": {"repos": {"type": "String"}}},
+  "@outboxStuckSubtitle": {
+    "placeholders": {
+      "repos": {
+        "type": "String"
+      }
+    }
+  },
   "outboxStuckDiscard": "Sil",
   "outboxStuckConfirmTitle": "{count} görev silinsin mi?",
-  "@outboxStuckConfirmTitle": {"placeholders": {"count": {"type": "int"}}},
+  "@outboxStuckConfirmTitle": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "outboxStuckConfirmBody": "Bu görevler hiç gönderilmedi. Silinince geri getirilemezler.",
   "outboxStuckDiscarded": "Gönderilemeyen görevler silindi.",
   "outboxQueuedBadge": "Gönderilecek",
@@ -651,5 +669,13 @@
   "filterCategory": "Kategori",
   "filterPriority": "Öncelik",
   "filterReset": "Sıfırla",
-  "filterNone": "(seçenek yok)"
+  "filterNone": "(seçenek yok)",
+  "queuedDraftsTitle": "Kuyruktaki taslaklar",
+  "queuedDraftEdit": "Düzenle",
+  "queuedDraftDelete": "Sil",
+  "queuedDraftDeleteConfirm": "Bu taslak silinsin mi? Henüz gönderilmedi; silinirse hiçbir yere yazılmaz.",
+  "queuedDraftDeleted": "Taslak silindi",
+  "queuedDraftSaved": "Taslak güncellendi; bağlantı gelince bu haliyle gönderilecek",
+  "queuedDraftEditTitle": "Taslağı düzenle",
+  "queuedTasksTapHint": "Görüntülemek, düzenlemek ya da silmek için dokun"
 }

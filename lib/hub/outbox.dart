@@ -84,6 +84,18 @@ class Outbox extends AsyncNotifier<List<TaskDraft>> {
     await _persist(current);
   }
 
+  /// Kuyruktaki bir taslağı yerinde değiştirir (T-021).
+  ///
+  /// Eşleşme `fileName` ile: kuyruğun tekil anahtarı o. Yeni taslak eskisinin
+  /// **sırasını korur** — düzenlenen taslağın kuyruğun sonuna düşmesi,
+  /// gönderim sırasını sessizce değiştirirdi.
+  Future<void> replace(String fileName, TaskDraft updated) async {
+    final current = (state.valueOrNull ?? const <TaskDraft>[])
+        .map((d) => d.fileName == fileName ? updated : d)
+        .toList();
+    await _persist(current);
+  }
+
   Future<void> remove(String fileName) async {
     final current = (state.valueOrNull ?? const <TaskDraft>[])
         .where((d) => d.fileName != fileName)

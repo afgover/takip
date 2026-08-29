@@ -1860,6 +1860,54 @@ abstract class L {
   /// In tr, this message translates to:
   /// **'(seçenek yok)'**
   String get filterNone;
+
+  /// No description provided for @queuedDraftsTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Kuyruktaki taslaklar'**
+  String get queuedDraftsTitle;
+
+  /// No description provided for @queuedDraftEdit.
+  ///
+  /// In tr, this message translates to:
+  /// **'Düzenle'**
+  String get queuedDraftEdit;
+
+  /// No description provided for @queuedDraftDelete.
+  ///
+  /// In tr, this message translates to:
+  /// **'Sil'**
+  String get queuedDraftDelete;
+
+  /// No description provided for @queuedDraftDeleteConfirm.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bu taslak silinsin mi? Henüz gönderilmedi; silinirse hiçbir yere yazılmaz.'**
+  String get queuedDraftDeleteConfirm;
+
+  /// No description provided for @queuedDraftDeleted.
+  ///
+  /// In tr, this message translates to:
+  /// **'Taslak silindi'**
+  String get queuedDraftDeleted;
+
+  /// No description provided for @queuedDraftSaved.
+  ///
+  /// In tr, this message translates to:
+  /// **'Taslak güncellendi; bağlantı gelince bu haliyle gönderilecek'**
+  String get queuedDraftSaved;
+
+  /// No description provided for @queuedDraftEditTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Taslağı düzenle'**
+  String get queuedDraftEditTitle;
+
+  /// No description provided for @queuedTasksTapHint.
+  ///
+  /// In tr, this message translates to:
+  /// **'Görüntülemek, düzenlemek ya da silmek için dokun'**
+  String get queuedTasksTapHint;
 }
 
 class _LDelegate extends LocalizationsDelegate<L> {

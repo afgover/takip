@@ -104,6 +104,56 @@ class TaskDraft {
     );
   }
 
+  /// Başlık ve açıklaması değiştirilmiş yeni taslak (T-021).
+  ///
+  /// Öteki her alan (öncelik, kategori, yazar, hedef repo, dil, oluşturulma
+  /// anı) **eski taslağın kendisinden** okunur — çağırana taşıtılsaydı iki
+  /// kaynak zamanla ayrışır, düzenlenen taslak sessizce alan kaybederdi.
+  /// Oluşturulma anı bilinçli korunuyor: düzenleme yeni bir görev değildir
+  /// ve kuyruk sırası `replace` ile zaten yerinde kalıyor.
+  TaskDraft edited({required String title, required String description}) {
+    final fm = Frontmatter.parse(content);
+    final isTr = content.contains('## ${HubLanguage.tr.requestHeading}\n');
+    return TaskDraft.create(
+      title: title,
+      description: description,
+      priority: (fm.fields['priority'] as String?) ?? 'normal',
+      category: (fm.fields['category'] as String?) ?? 'gorev',
+      author: fm.fields['author'] as String?,
+      repoSlug: repoSlug,
+      lang: isTr ? HubLanguage.tr : HubLanguage.en,
+      now: createdAt,
+    );
+  }
+
+  /// Gövdedeki açıklamayı geri çıkarır (T-021 — kuyruk taslağı düzenleme).
+  ///
+  /// Gövde `_body`'nin ürettiği sabit iskelet: `## İstek/Request` ile bir
+  /// sonraki bölüm arasındaki metin açıklamadır. Ayrıştırma üretimle aynı
+  /// dosyada duruyor ki iskelet değişirse ikisi birlikte değişsin — ayrı
+  /// dosyada yaşasalardı sessizce ayrışırlardı.
+  String get descriptionFromContent {
+    final body = content.contains('\n---\n')
+        ? content.substring(content.indexOf('\n---\n') + 5)
+        : content;
+    for (final lang in HubLanguage.values) {
+      final m = RegExp(
+        '^## ${lang.requestHeading}\\n(.*?)(?=\\n## |\\n- \\*\\*Repo:\\*\\*|\$)',
+        multiLine: true,
+        dotAll: true,
+      ).firstMatch(body);
+      if (m != null) {
+        final text = m.group(1)!.trim();
+        // Açıklamasız taslakta iskelet "verilmedi" cümlesi taşır; onu
+        // düzenleme alanına koymak, kullanıcıya kendi yazmadığı bir metni
+        // düzenletirdi.
+        if (text == lang.noDescriptionGiven) return '';
+        return text;
+      }
+    }
+    return '';
+  }
+
   /// Bir belgeden seçilen metinden üretilen kayıt (sözleşme 1.5).
   ///
   /// Görev, yorum, düzeltme, tartışma — hepsi aynı yoldan gider ve `category`

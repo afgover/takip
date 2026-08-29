@@ -33,12 +33,30 @@
   "pendingFilterEmptySubtitle": "There are {count} tasks but none match your filter.",
   "outboxQueuedSubtitle": "Will be sent when back online",
   "outboxStuckTitle": "{count} tasks cannot be sent",
-  "@outboxStuckTitle": {"placeholders": {"count": {"type": "int"}}},
+  "@outboxStuckTitle": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "outboxStuckSubtitle": "Target repository is not connected: {repos}. Add it back and they will go on their own.",
-  "@outboxStuckSubtitle": {"placeholders": {"repos": {"type": "String"}}},
+  "@outboxStuckSubtitle": {
+    "placeholders": {
+      "repos": {
+        "type": "String"
+      }
+    }
+  },
   "outboxStuckDiscard": "Delete",
   "outboxStuckConfirmTitle": "Delete {count} tasks?",
-  "@outboxStuckConfirmTitle": {"placeholders": {"count": {"type": "int"}}},
+  "@outboxStuckConfirmTitle": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "outboxStuckConfirmBody": "These tasks were never sent. Deleting them cannot be undone.",
   "outboxStuckDiscarded": "Tasks that could not be sent were deleted.",
   "outboxQueuedBadge": "Queued",
@@ -438,5 +456,13 @@
   "filterCategory": "Category",
   "filterPriority": "Priority",
   "filterReset": "Reset",
-  "filterNone": "(no options)"
+  "filterNone": "(no options)",
+  "queuedDraftsTitle": "Queued drafts",
+  "queuedDraftEdit": "Edit",
+  "queuedDraftDelete": "Delete",
+  "queuedDraftDeleteConfirm": "Delete this draft? It has not been sent; deleting it writes nothing anywhere.",
+  "queuedDraftDeleted": "Draft deleted",
+  "queuedDraftSaved": "Draft updated; it will be sent in this form once a connection returns",
+  "queuedDraftEditTitle": "Edit draft",
+  "queuedTasksTapHint": "Tap to view, edit or delete"
 }

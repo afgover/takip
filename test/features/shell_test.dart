@@ -64,4 +64,37 @@ void main() {
       reason: 'kabuk üst güvenli alanı bırakmıyor',
     );
   });
+
+  testWidgets('sekme değişimi ekleme ekranındaki yazıyı öldürmez (T-022)',
+      (tester) async {
+    final container = ProviderContainer(
+      overrides: [
+        activeRepoPendingTasksProvider
+            .overrideWith((ref) async => const <TaskSummary>[]),
+      ],
+    );
+    addTearDown(container.dispose);
+    await container.read(hubConnectionsProvider.future);
+
+    await tester.pumpWidget(UncontrolledProviderScope(
+      container: container,
+      child: testApp(const AppShell()),
+    ));
+    await tester.pumpAndSettle();
+
+    // Ekle sekmesine geç, yaz.
+    await tester.tap(find.byIcon(Icons.add_task));
+    await tester.pumpAndSettle();
+    await tester.enterText(
+        find.byType(TextFormField).first, 'Sekme geçişinde yaşayacak yazı');
+
+    // Başka sekmeye bakıp geri dön — `_screens[_index]` bu noktada ekranı
+    // yok edip yazıyı kaybediyordu.
+    await tester.tap(find.byIcon(Icons.settings));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byIcon(Icons.add_task));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Sekme geçişinde yaşayacak yazı'), findsOneWidget);
+  });
 }
