@@ -4,7 +4,7 @@ session: none
 type: info
 title: "Agent setup instruction — build the hub, reconstruct the history, follow the protocol"
 created: 2026-08-08T00:00:00Z
-contract: "1.21"
+contract: "1.27"
 language: en
 translated_from: hub/artifacts/reference/agent-kurulum-talimati.md
 ---
@@ -20,6 +20,13 @@ system, the user pastes it as-is; the agent does the rest.
 > because a system with two authoritative copies drifts, and drift here is
 > silent (see the contract, §10).
 >
+> **Version note (2026-08-29):** the body was written against 1.21 and has
+> not been rewritten line by line; what 1.22–1.27 added is read from the
+> contract itself — §13 transitional rules (1.22), the 30-minute rhythm
+> (1.23), notifications naming their target hub (1.24), the `PLAN.md` task
+> tree §14 and ID-anchored links §15 (1.25–1.26), open-session cleanup at
+> opening + clock verification + the hub audit item 4b (1.27).
+
 > Written against **contract 1.21**. If the contract itself is newer, the
 > contract wins — see §1.
 

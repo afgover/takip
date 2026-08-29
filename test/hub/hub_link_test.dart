@@ -50,7 +50,7 @@ void main() {
       for (final href in [
         'https://github.com/afgover/takip',
         'http://example.com',
-        'mailto:afgover@gmail.com',
+        'mailto:ornek@example.com',
       ]) {
         expect(resolveHubLink(href, fromPath: 'hub/README.md'), isNull,
             reason: href);

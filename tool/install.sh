@@ -15,7 +15,7 @@
 #   tool/install.sh                 # release derler ve kurar
 #   tool/install.sh --debug         # debug derler ve kurar
 #   tool/install.sh --no-build      # var olan APK'yı kurar
-#   DEVICE=R5CW71GRKPB tool/install.sh
+#   DEVICE=<cihaz-serisi> tool/install.sh
 set -euo pipefail
 
 MODE="release"
