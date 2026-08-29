@@ -3,12 +3,12 @@ id: T-022
 title: görev ekleme
 created_by: user
 created: "2026-08-29T20:04:31Z"
-updated: "2026-08-29T23:00:00Z"
+updated: "2026-08-29T23:45:00Z"
 priority: urgent
 category: hata
 tags: []
 session: S-2026-08-30-uc-gorev
-result: none
+result: "IndexedStack + diske otomatik taslak: sekme geçişi ve süreç ölümü artık yazıyı kaybetmiyor — P-018, S-2026-08-30-uc-gorev"
 author: afgover
 assignee: afgover
 ---

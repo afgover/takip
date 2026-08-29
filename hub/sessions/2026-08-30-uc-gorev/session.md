@@ -26,3 +26,15 @@ inbox'ta üç görev (app, 2026-08-29 akşamı). ID'ler dosyadaki en büyükten
 
 Sıra: T-022 (acil) → T-021 (bitişik kod bölgesi) → T-023 (araştırma).
 Üçü `active/`e alındı.
+
+### [02:40] Agent — T-022 ve T-021 kapandı
+[P-018](../../PLAN.md#P-018) tamamlandı. T-022'nin kök nedeni tekti ama
+katman ikiydi: `_screens[_index]` sekme değişiminde ekranı yok ediyordu
+(→ `IndexedStack`) ve süreç ölümünde bellekteki her şey gidiyordu
+(→ taslak her değişiklikte diske, açılışta geri, gönderimde temiz).
+T-021: kuyruk satırı dokunulabilir oldu — taslak listesi, başlık+açıklama
+düzenleme (`Outbox.replace` sırayı koruyor; öteki alanlar taslağın
+kendisinden okunuyor ki iki kaynak ayrışmasın) ve "hiçbir yere yazılmadı"
+cümlesini açıkça kuran onaylı silme. Test, düzenleme diyaloğunda erken
+`dispose` kusurunu yakaladı — diyalog kendi durumuna ayrıldı.
+629 test, `analyze` temiz. Sırada T-023 (token araştırması).
