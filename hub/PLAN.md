@@ -5,6 +5,26 @@
 plan (`Türetilmiş: true`) kapalı doğduğu için kapalıların arasına tarih
 sırasıyla girer.
 
+## P-018 — T-022 + T-021: taslak kaybı ve kuyruk taslaklarının düzenlenmesi
+- **Tarih:** 2026-08-30
+- **Kaynak:** [S-2026-08-30-uc-gorev](sessions/2026-08-30-uc-gorev/session.md)
+- **Durum:** acik
+- **İlgili:** T-021, T-022, [B-140](BACKLOG.md#B-140)
+
+> İki görev aynı kod bölgesinde. T-022'nin kök nedeni ölçüldü:
+> `shell.dart` sekmeleri `_screens[_index]` ile taşıyor — sekme değişince
+> ekran **yok ediliyor**, form durumu onunla gidiyor. İkinci katman: Android
+> arka planda süreci öldürünce bellekteki her şey uçar; kalıcılık ancak
+> diskte olur. T-021: kuyruktaki taslak için `remove()` API'si var ama
+> arayüzü yok; düzenleme hiç yok.
+
+- [ ] P-018.1 — Shell: `IndexedStack` — sekme değişimi ekranı öldürmesin
+- [ ] P-018.2 — Ekleme ekranı: taslak alanları diske otomatik yazılsın, açılışta geri gelsin, gönderimde temizlensin
+- [ ] P-018.3 — Ayarlar → kuyruk satırı: taslak listesi; her taslakta düzenle (başlık+açıklama) ve onaylı sil
+- [ ] P-018.4 — Arayüz metinleri (`app_tr.arb`, `app_en.arb`)
+- [ ] P-018.5 — Testler: sekme geçişinde durum, otomatik taslak, kuyruk düzenleme/silme
+- [ ] P-018.6 — Tam süit + kayıtlar + push
+
 ## P-017 — 30 dakika ritmini harness'e taşıyan bekçi
 - **Tarih:** 2026-08-28
 - **Kaynak:** [S-2026-08-28-apk-drive](sessions/2026-08-28-apk-drive/session.md)
