@@ -23,7 +23,8 @@ sırasıyla girer.
 - [x] P-017.3 — `tool/hub-guard.sh`: üç işaret, tek seferlik engelleme · ✅ 2026-08-28 · üç mod elle koşuldu
 - [x] P-017.4 — `.claude/settings.json`: iki hook, şema `jq` ile doğrulandı · ✅ 2026-08-28
 - [ ] P-017.5 — Gerçek bir sıkıştırmada tetiklendiğinin ölçülmesi — bu oturumda yapılamaz
-- [ ] P-017.6 — İşlediği doğrulanırsa diğer hub repolarına dağıtım · [B-141](BACKLOG.md#B-141)
+- [x] P-017.6 — Pilot kuruldu: `datasources_takip` · ✅ 2026-08-29 · `.claude/hub-guard.sh` (birebir kopya, origin ile diff'lendi) + hook'lar; üç mod yerinde doğrulandı
+- [ ] P-017.7 — Pilot değerlendirmesi (~2026-09-05): `audit.sh` §9 tabanla kıyaslanır — %74 ritim ihlali, %59 `reconstructed`. Düşerse kalan hub'lara dağıtım, düşmezse tasarım sorgusu
 
 ## P-016 — Denetim bulgularının üç hub'da temizliği
 - **Tarih:** 2026-08-28

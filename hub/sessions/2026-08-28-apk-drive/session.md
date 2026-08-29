@@ -243,3 +243,21 @@ enjekte edebiliyor. İkisi birlikte kullanıcının istediği sırayı kuruyor.
 yazıldı ([P-017](../../PLAN.md#P-017)); üç mod elle koşularak, şema `jq` ile
 doğrulandı. **Hook'un gerçekten tetiklendiği ölçülmedi** — gerçek bir
 sıkıştırma gerekiyor, bu oturumda yapılamaz (P-017.5).
+
+### [2026-08-29 14:35] Agent — güvenlik incelemesi ve pilot
+(Oturum ikinci güne sarktı; saat iki kaynakla yeniden doğrulandı.)
+
+**SEC-016:** kullanıcı isteğiyle bekçi/denetçi script'leri güvenlik gözüyle
+incelendi. Bir bulgu çıktı ve kapatıldı: `hub-guard.sh` stdin'deki
+`session_id`'yi süzmeden dosya yoluna koyuyordu — `../` taşıyan stdin işaret
+dosyasını `$TMPDIR` dışına yazdırabilirdi; süzgeç eklendi, sızmadığı ölçüldü.
+Workspace trust belgeden doğrulandı: proje hook'ları onaysız koşmaz.
+Güvenlik sözleşmesi tablosu (okur/yazar/ağ) kayda geçti.
+
+**Pilot (B-141, kullanıcı onayı):** `datasources_takip`e kuruldu —
+`.claude/hub-guard.sh` (origin ile birebir, git diff'le doğrulandı) +
+hook'lar; üç mod yerinde koşuldu. Ölçüm altyapısı önce yazıldı: `audit.sh`
+§9 (ritim + `reconstructed` — pilotun önce/sonra ölçütü, tabanla doğrulandı)
+ve §10 (kopya bayatlığı, curl+diff; raw CDN'in 5 dk önbellek sınırı nota
+geçti — push sonrası kısa süre yanlış "AYRIŞMIŞ" diyebilir).
+Değerlendirme ~2026-09-05: %74 / %59 tabanı düşecek mi ([P-017.7](../../PLAN.md#P-017)).

@@ -925,3 +925,9 @@ başlığına ✅ ve tarih yazılır.
       **Ön koşul:** [P-017.5](PLAN.md#P-017) — hook'un gerçek bir sıkıştırmada
       tetiklendiği henüz ölçülmedi. Ölçülmeden dağıtmak, çalıştığı
       doğrulanmamış bir şeyi dokuz repoya yaymak olur.
+      · 2026-08-29: **karar (kullanıcı): kopya + bayatlık ölçümü; pilot
+      kuruldu.** Yer: her repoda `.claude/hub-guard.sh` (repo kendi kendine
+      yeter, `takip`in klon yoluna bağlanmaz). Bayatlık `tool/audit.sh` §10
+      ile ölçülüyor (curl+diff, yalnız karşılaştırır — SYSTEM.md kalıbı).
+      Pilot `datasources_takip` — ritim ihlali en yüksek hub (%74). Ölçüt
+      [P-017.7](PLAN.md#P-017)'de; kalan sekiz repo pilot sayıyı düşürürse
