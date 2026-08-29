@@ -845,6 +845,12 @@ işi, bitiş çizgisi değil. Bitiş çizgisi olsaydı aşama hiç kapanmazdı �
   yaptığı ağ isteğiyle doğrulanır oldu ([L-052](knowledge/lessons.md#L-052)).
   Üçü de **ölçülmüş** vakalardan doğdu, tahminden değil.
 
+- 2026-08-29: Bekçi/denetçi script'leri güvenlik incelemesinden geçti
+  ([SEC-016](SECURITY.md#SEC-016) — bir yol-süzme bulgusu kapatıldı, güvenlik
+  sözleşmesi tablosu kayda geçti) ve **bekçi pilotu** `datasources_takip`e
+  kuruldu ([P-017](PLAN.md#P-017), [B-141](BACKLOG.md#B-141)). Değerlendirme
+  ~2026-09-05, ölçüt sayısal: %74 ritim ihlali / %59 `reconstructed` tabanı.
+
 > **Üç koşulun üçü de karşılandı; aşama yine de kendiliğinden kapatılmadı.**
 > Aynı gerekçe T-017'dekiyle bir: sıradaki aşamanın hedefi bir **yön kararıdır**
 > ve agent onu uyduramaz. Ayrıca burada sorulacak ikinci bir soru var — aşama

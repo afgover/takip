@@ -1,7 +1,7 @@
 ---
 id: S-2026-08-28-apk-drive
 date: 2026-08-28
-status: open
+status: closed
 reconstructed: false
 author: afgover
 topics: [apk, dagitim, imza, drive]
@@ -11,6 +11,50 @@ tasks_touched: [T-010]
 ---
 
 # Oturum: APK'nın Drive'a yüklenmesi ve makineden ilk çıkışı
+
+## Özet
+
+İki güne yayılan oturum; APK isteğiyle açıldı, sistemin uçtan uca denetimine
+ve sözleşme 1.27'ye dönüştü.
+
+**1 — APK Drive'a çıktı** ([P-013](../../PLAN.md#P-013)): `5f3b6db`
+derlemesi `Drive'ım/Takip APK/`'ye kondu, SHA-256 doğrulandı. Debug imzası
+kullanıcı kararıyla korundu; T-010'un tetikleyicisi daraltılarak yeniden
+yazıldı ([SEC-015](../../SECURITY.md#SEC-015)).
+
+**2 — Saat hatası ve dersi** ([L-052](../../knowledge/lessons.md#L-052)):
+makinenin saati ~2 gün gerideydi, bütün kayıtlar yanlış tarihle doğdu ve hub
+kendi içinde tutarlı kaldığı için içeriden görülemezdi. Düzeltildi; iki
+commit'in damgası kullanıcı kararıyla yeniden yazılmadı. Saat doğrulaması
+1.27 ile prosedüre girdi.
+
+**3 — A'dan Z'ye denetim** ([P-014](../../PLAN.md#P-014),
+[A-2026-08-28-001](../../artifacts/S-2026-08-28-apk-drive/hub-denetimi.md)):
+10 hub yalnız mekanik kanıtla denetlendi (`tool/audit.sh`, kalıcı). Denetçinin
+kendi 4 hatası önce ayıklandı. Ana bulgular: ID çakışmaları, `id: pending`
+kaçakları, yanlış hub'a düşüp 17 gün bekleyen 5 bildirim, kapanış disiplini
+zafiyeti, `din_takip`'te hiç koşmamış tarama. 7 senaryoluk simülasyon **7/7**
+verdi → sözleşme anlaşılıyor; kusur, ajanın "bir sıra daha" almasına bağlı
+kapanış adımlarında.
+
+**4 — Sözleşme 1.27** ([P-015](../../PLAN.md#P-015)): açık oturum kontrolü
+kapanıştan açılışa (madde 1), saat doğrulaması (madde 3), hub denetimi
+(madde 4b). 622 test.
+
+**5 — Temizlik ve teslim** ([P-016](../../PLAN.md#P-016),
+[L-053](../../knowledge/lessons.md#L-053)): kullanıcının 17 gün önceki üç
+cevabı sahiplerine teslim edildi; dört hub temizlendi/1.27'ye çekildi.
+Ders: kusuru kapatmak, kusurun ürettiklerini kapatmaz.
+
+**6 — Bekçi** ([P-017](../../PLAN.md#P-017), [SEC-016](../../SECURITY.md#SEC-016)):
+ritim ölçüldü (%40 ihlal, %25 `reconstructed`), 30 dk ritmi harness'e taşındı
+(`tool/hub-guard.sh` + hook'lar). Güvenlik incelemesinde bir yol-süzme
+bulgusu kapatıldı. Pilot `datasources_takip`e kuruldu; değerlendirme
+~2026-09-05, ölçüt %74/%59 tabanı ([B-141](../../BACKLOG.md#B-141)).
+
+**Açık kalanlar:** P-017.5 (hook'un gerçek sıkıştırmada tetiklenmesi),
+P-017.7 (pilot değerlendirmesi), `Copilot_takip` gövde temizliği, Aşama 5
+kapanış kararı.
 
 ## Özet
 (Oturum kapanırken yazılacak.)
