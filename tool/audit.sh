@@ -392,6 +392,9 @@ info(f"reconstructed: {nrec}/{nses} oturum" + (f" (%{nrec*100//nses})" if nses e
 # Dağıtılan hub-guard.sh kopyaları ana kopyadan (afgover/takip) ayrışabilir;
 # SYSTEM.md'nin curl+diff kalıbının aynısı. Yalnız KARŞILAŞTIRIR — indirilen
 # içerik hiçbir koşulda çalıştırılmaz, diske yazılmaz (SEC-016 notu).
+# Ölçülmüş sınır: raw.githubusercontent.com ~5 dk önbellekler (max-age=300),
+# yani ana kopya push'landıktan hemen sonra bu kontrol eski sürümü görüp
+# yanlış "AYRIŞMIŞ" diyebilir. 5 dk sonra kendini düzeltir.
 say("10. Bekçi kopyası (hub-guard.sh) ana kopyayla aynı mı")
 _guard = next((p for p in (os.path.join(ROOT,".claude/hub-guard.sh"),
                            os.path.join(ROOT,"tool/hub-guard.sh"))
