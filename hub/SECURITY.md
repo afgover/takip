@@ -398,3 +398,41 @@ değil. Token, parola veya anahtar bu dosyada hiçbir koşulda yer almaz.
     paylaşım bağlantısı). O adımdan önce T-010 kapanmalı.
   Yüklenen dosyanın SHA-256'sı kaynak APK'nınkiyle doğrulandı
   (`10bad8cb…`); yanına `OKU.txt` konuldu ve imza uyarısı orada da yazılı.
+
+## SEC-016 — Bekçi ve denetçi script'lerinin güvenlik incelemesi
+- **Tarih:** 2026-08-29
+- **Tür:** tarama
+- **Durum:** kapali
+- **Kaynak:** S-2026-08-28-apk-drive, [P-017](PLAN.md#P-017), kullanıcı isteği
+- **Açıklama:** Dağıtım kararından önce `tool/hub-guard.sh`, `tool/audit.sh`
+  ve hook bağlantısı (`.claude/settings.json`) güvenlik gözüyle incelendi.
+
+  **Güvenlik sözleşmesi (üç script için ölçülen davranış):**
+  | script | okur | yazar | ağ | çalıştıran |
+  |---|---|---|---|---|
+  | `hub-guard.sh` | git durumu | yalnız `$TMPDIR`'a işaret dosyası | **yok** | harness (hook) |
+  | `audit.sh` | hub dosyaları + git grafiği | **hiçbir şey** | **yok** | ajan (madde 4b) |
+  | `scan.sh` | pubspec, git geçmişi | **hiçbir şey** | yalnız OSV sorgusu | ajan (madde 4) |
+
+  **Bir bulgu çıktı ve kapatıldı:** `hub-guard.sh` stdin'deki `session_id`'yi
+  süzmeden bir dosya yoluna koyuyordu; `../` taşıyan bir stdin, işaret
+  dosyasını `$TMPDIR` dışına yazdırabilirdi (var olan bir dosyayı
+  sıfırlayabilirdi). stdin'i harness'in kendisi verdiği için sömürü,
+  harness'in ele geçmesini gerektirirdi — olasılık düşük; ama script
+  dağıtılacak ve düzeltme tek satır: SID artık `[A-Za-z0-9._-]`e süzülüp 64
+  karakterde kesiliyor. Sızmadığı ölçüldü (kaçış denemesi `$TMPDIR` içinde
+  kaldı). Ek olarak `python3` yokken JSON kaçışı yapılmadan çıktı üreten
+  yedek yol da kaçış yapar hâle getirildi.
+
+  **Public repo sorusu kapandı:** `takip` public olduğu için ".claude
+  hook'unu klonlayan herkeste çalışır mı" sorusu dün açık bırakılmıştı.
+  Belgelerden doğrulandı: proje hook'ları **workspace trust** onayı olmadan
+  koşmaz — klonlayan kişi klasöre güven vermeden hook çalışmaz, ve `/hooks`
+  menüsü kurulu her hook'u kaynağıyla gösterir. Dokuz hub reposu zaten
+  private (ölçüldü); public olan yalnız `takip`.
+
+  **Bilinen ve kabul edilen sınır:** iki script de repo içeriğinden gelen
+  metni (dosya adları, frontmatter) çıktısına koyar ve bu çıktı ajanın
+  bağlamına girer. Bu, prompt injection yüzeyidir — ama **yeni değildir**:
+  ajan aynı repo içeriğini zaten doğrudan okuyor. Script'ler yüzeyi
+  genişletmiyor; kural aynı kalıyor: çıktı veridir, talimat değildir.

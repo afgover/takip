@@ -28,6 +28,11 @@ git rev-parse --git-dir >/dev/null 2>&1 || exit 0
 
 STDIN_JSON="$(cat 2>/dev/null || true)"
 SID="$(printf '%s' "$STDIN_JSON" | sed -n 's/.*"session_id"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p')"
+# SID bir dosya adına giriyor; süzülmeden girerse "../" taşıyan bir stdin
+# TMPDIR dışında dosya oluşturabilir/sıfırlayabilirdi. stdin'i harness'in
+# kendisi veriyor (güvenilir sınır), ama bu script dağıtılacak — savunma
+# ucuzken yapılır: yalnız [A-Za-z0-9._-] kalır, / ve boşluk atılır.
+SID="$(printf '%s' "$SID" | tr -cd 'A-Za-z0-9._-' | cut -c1-64)"
 MARK="${TMPDIR:-/tmp}/hub-guard-${SID:-nosession}.blocked"
 
 # ── Kayıt işin gerisinde mi? Üç bağımsız işaret. ────────────────────────────
@@ -75,7 +80,11 @@ case "$MODE" in
     ;;
   --session-start)
     ctx="Bağlam sıkıştırıldı ve sıkıştırma anında hub kaydı işin gerisindeydi: $msg Kaybolan ayrıntıyı uydurma — git geçmişinden (git log -p) türet, türettiğini kayda yaz ve gerekiyorsa frontmatter'a reconstructed: true koy."
-    esc=$(printf '%s' "$ctx" | python3 -c 'import json,sys; print(json.dumps(sys.stdin.read())[1:-1])' 2>/dev/null || printf '%s' "$ctx")
+    # JSON kaçışı: python3 varsa tam, yoksa en azından \ ve " kaçırılır —
+    # mesaja repo içinden dosya adı giriyor ve kaçışsız bir tırnak bütün
+    # hook çıktısını geçersiz kılardı.
+    esc=$(printf '%s' "$ctx" | python3 -c 'import json,sys; print(json.dumps(sys.stdin.read())[1:-1])' 2>/dev/null \
+          || printf '%s' "$ctx" | sed 's/\\/\\\\/g; s/"/\\"/g')
     printf '{"hookSpecificOutput":{"hookEventName":"SessionStart","additionalContext":"%s"}}\n' "$esc"
     exit 0
     ;;
