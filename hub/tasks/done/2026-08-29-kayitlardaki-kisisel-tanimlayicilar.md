@@ -3,12 +3,12 @@ id: T-019
 title: "Public repodaki kişisel tanımlayıcılar: kayıtlarda ne yapılsın?"
 created_by: agent
 created: "2026-08-29T12:25:00Z"
-updated: "2026-08-29T12:25:00Z"
+updated: "2026-08-29T12:40:00Z"
 priority: normal
 category: tartisma
 tags: [guvenlik, kisisel-veri, public]
 session: S-2026-08-29-public-tarama
-result: none
+result: "Karar (kullanıcı, 2026-08-29): olduğu gibi kalsın — düşük risk, SEC-017 kaydı yeter. Kayıtlar ve geçmiş değiştirilmedi."
 options: ["Olduğu gibi kalsın — düşük risk, kayıt yeter", "Çalışma ağacından temizle — kayıtlar düzenlenir, geçmişte kalır", "Geçmişten de silinsin — force-push, SHA'lar değişir"]
 multi: false
 ---
@@ -39,3 +39,12 @@ istisnası kişisel veridir ve o istisnayı agent kendi başına kullanmaz.
 Kapalı oturum kaydını düzenlemek de aynı iznin konusu (§2: kapanan dosya
 değiştirilmez). Seçenek 3'ün bedeli: repo public, SHA'lar değişir,
 klonlayanlar kopar.
+
+## Sonuç (2026-08-29)
+
+**Karar: 1. seçenek — olduğu gibi kalsın.** Kullanıcı sohbette doğrudan
+cevapladı (bekleme app'e düşmeden çözüldü). Tanımlayıcılar (cihaz serisi,
+arşivdeki e-posta, kullanıcı adı yolları) kayıtlarda ve geçmişte duruyor;
+gerekçe ve risk değerlendirmesi [SEC-017](../../SECURITY.md#SEC-017)'de.
+"Silme yok" kuralına istisna kullanılmadı.
+
