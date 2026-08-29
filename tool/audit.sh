@@ -155,6 +155,11 @@ for name in sorted(os.listdir(sess_dir)) if os.path.isdir(sess_dir) else []:
     f = os.path.join(sess_dir, name, "session.md")
     if not os.path.isfile(f): continue
     fm, _ = frontmatter(f)
+    # `reconstructed: true` oturumlar geçmişten içe aktarılmıştır; kayıt
+    # tarihi ile commit tarihinin ayrışması bu sınıfta beklenen davranıştır
+    # (v1.6). Copilot_takip'te 16 tarihsel oturum bu yüzden yanlış "geç push"
+    # uyarısı üretiyordu — dürüstçe işaretlenmiş kayıt suçlanmaz.
+    if fm.get("reconstructed") == "true": continue
     sha, when = add_commit(os.path.relpath(f, ROOT))
     if not when or "date" not in fm: continue
     rec, com = fm["date"][:10], when[:10]
