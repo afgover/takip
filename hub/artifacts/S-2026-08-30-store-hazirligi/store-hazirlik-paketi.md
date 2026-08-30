@@ -40,9 +40,10 @@ etti. İlk yüklemeyle sonsuza dek kilitleneceği bilinerek verildi.
 
 ## 2. Gizlilik politikası taslağı
 
-Yayım yeri kararı: GitHub Pages (sekuvo-site kalıbı). **Repo açmak onaya
-bağlı** — aşağıdaki metin hazır, onay gelince `takip-site` benzeri bir
-repoya konur ve URL Console'a girilir.
+**Yayımlandı (2026-08-30, kullanıcı onayıyla):**
+`https://afgover.github.io/takip-site/` — TR+EN tek sayfa, karanlık tema
+destekli, HTTP 200 doğrulandı. Console'a girilecek URL bu. Kaynak:
+`afgover/takip-site` (public).
 
 ### Taslak (TR)
 
@@ -107,9 +108,11 @@ beyanı savunulabilir — yine de politika sayfası bu ayrımı açıkça anlat�
 Kural (A-2026-08-29-001 §1.4): **gerçek hub'la görsel çekilmez** — private
 repo adları ve görev başlıkları görünür. Gerekenler:
 
-1. **Demo hub reposu** — sentetik simhub içeriği bir GitHub reposuna konur
-   (öneri: `afgover/takip-demo`, private yeter; app token'la okur).
-   **Repo açmak kullanıcı onayına bağlı** — açılmadı.
+1. **Demo hub reposu — açıldı (2026-08-30):** `afgover/takip-demo`
+   (private), sentetik simhub içeriğiyle. README'si amacını ve gerçek veri
+   içermediğini söylüyor. Görsel çekimi için telefonda bu repoya bağlantı
+   eklenecek (token'ın bu repoyu görmesi gerekir — fine-grained token'a
+   repo eklemek kullanıcı işi).
 2. Telefonda demo bağlantı + TR arayüz; çekilecek ekranlar: bekleyenler
    listesi, görev detayı (seçenekli soru), görev ağacı, ayarlar/veri.
    En az 2, önerilen 4-6 görsel (1080×2340, ≤2:1).
