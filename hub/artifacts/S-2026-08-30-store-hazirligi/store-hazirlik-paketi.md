@@ -27,8 +27,16 @@ uygulamalarıyla dolu — tek başına "Takip" hem jenerik hem yanlış çağrı
 | GitHub Görev Takibi | Ne yaptığını birebir söyler | **"GitHub" markası ad içinde risk** — Play politikası üçüncü taraf marka kullanımına bakar; önerilmez |
 | Takip: Agent Hub | İki kitleye de konuşur | İki dilli karışım |
 
-Öneri: **"Takip Hub"** ile ilerle; listing alt başlığında açıklama taşınır
+Öneri "Takip Hub"tı; **karar (2026-08-30, kullanıcı): ad "Takip" kalıyor.**
+"Hub" seçeneği ölçülüp elendi (Play'de 35+ sonuçla aşırı kalabalık + sistemin
+kendi sözlüğünde hub = kayıt reposu, terminoloji çarpışırdı). Console jenerik
+adı reddederse yedek: "Takip Hub". Listing alt başlığı açıklamayı taşır
 ("GitHub üzerinde ajan-insan görev takibi").
+
+**Paket adı kararı (aynı gün):** `us.gover.takip` **kalıyor** — ters
+alan-adı geleneği (`gover.us` kullanıcının), teklik garantisi oradan.
+Zorunluluk değil tercih; Play URL'sinde göründüğü söylendi, kullanıcı kabul
+etti. İlk yüklemeyle sonsuza dek kilitleneceği bilinerek verildi.
 
 ## 2. Gizlilik politikası taslağı
 
