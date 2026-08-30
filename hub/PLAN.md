@@ -5,6 +5,24 @@
 plan (`Türetilmiş: true`) kapalı doğduğu için kapalıların arasına tarih
 sırasıyla girer.
 
+## P-021 — Store hazırlığı (yükleme yok)
+- **Tarih:** 2026-08-30
+- **Kaynak:** [S-2026-08-30-store-hazirligi](sessions/2026-08-30-store-hazirligi/session.md)
+- **Durum:** acik
+- **İlgili:** T-020, T-010, [A-2026-08-29-001](artifacts/S-2026-08-29-store-calismasi/store-calismasi.md)
+
+> **Karar (2026-08-30, kullanıcı — T-020 kapandı):** önce hazırlık, yükleme
+> sonra; keystore yüklemeden hemen önce (T-010 `waiting/`te, tetikleyicisi
+> netleşti); politika sayfası GitHub Pages (sekuvo-site kalıbı); mağaza adı
+> için öneri listesi.
+
+- [ ] P-021.1 — T-020 kapat, T-010 tetikleyici notu
+- [ ] P-021.2 — Mağaza adı adayları: Play çakışma kontrolüyle
+- [ ] P-021.3 — Gizlilik politikası taslağı (TR+EN) — yayım yeri sonra, repo açmak onaya bağlı
+- [ ] P-021.4 — Listing metinleri taslağı (TR+EN) + Data Safety beyan taslağı
+- [ ] P-021.5 — Ekran görselleri yol haritası: demo hub gereksinimleri (repo açma onayı dahil)
+- [ ] P-021.6 — Kayıtlar + push
+
 ## P-020 — Token önerilerinin uygulanması (Ö1, Ö4, Ö2)
 - **Tarih:** 2026-08-30
 - **Kaynak:** [S-2026-08-30-oneri-uygulamasi](sessions/2026-08-30-oneri-uygulamasi/session.md)

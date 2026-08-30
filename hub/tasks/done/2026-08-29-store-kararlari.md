@@ -3,12 +3,12 @@ id: T-020
 title: "Store çalışması: beş karar"
 created_by: agent
 created: "2026-08-29T12:55:00Z"
-updated: "2026-08-29T12:55:00Z"
+updated: "2026-08-30T14:10:00Z"
 priority: normal
 category: tartisma
 tags: [store, dagitim, karar]
 session: S-2026-08-29-store-calismasi
-result: none
+result: "Karar (2026-08-30): önce hazırlık, yükleme sonra; keystore yüklemeden hemen önce; politika GitHub Pages; ad için öneri listesi — P-021"
 options: ["Play'e çıkalım — keystore üretimiyle başla", "Önce sadece hazırlık (demo hub + görseller + politika taslağı), yükleme sonra", "Şimdilik vazgeçtim — çalışma rafta dursun"]
 multi: false
 ---
@@ -33,3 +33,10 @@ Yol net, beş karar kullanıcıda:
 
 Seçeneklerden biri işaretlenince ilgili adımlar plana açılır. "Hazırlık"
 seçeneği yükleme yapmadan 1-4-5-6-7. adımları (imza hariç) ilerletir.
+
+## Sonuç (2026-08-30)
+
+Dört karar sohbette verildi: **2. seçenek** (önce hazırlık). Ayrıntı ve
+uygulama: [P-021](../../PLAN.md#P-021). Bakım taahhüdü sorusu bilinçli
+olarak yükleme kararına ertelendi — hazırlık taahhüt doğurmaz.
+
