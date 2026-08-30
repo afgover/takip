@@ -8,7 +8,7 @@ sırasıyla girer.
 ## P-020 — Token önerilerinin uygulanması (Ö1, Ö4, Ö2)
 - **Tarih:** 2026-08-30
 - **Kaynak:** [S-2026-08-30-oneri-uygulamasi](sessions/2026-08-30-oneri-uygulamasi/session.md)
-- **Durum:** acik
+- **Durum:** tamamlandi
 - **İlgili:** [A-2026-08-30-001](artifacts/S-2026-08-30-uc-gorev/token-maliyeti.md) §5–§6,
   [P-019](PLAN.md#P-019)
 
@@ -17,13 +17,13 @@ sırasıyla girer.
 > yazılmaz; Ö2'de sayım denetimi + "iş yapmadan önce gövde okunur" kuralı;
 > Ö4'te tek satır işaretçi (L-022) ve bayatlık ölçümü.
 
-- [ ] P-020.1 — Ö1: `tool/acilis.sh` — açılış kontrolleri tek komutta, kompakt çıktı
-- [ ] P-020.2 — Ö2: script'e BACKLOG açık-madde özeti (sayım denetimli) + protokole gövde kuralı
-- [ ] P-020.3 — Ö4: `CLAUDE.md` işaretçisi (takip)
-- [ ] P-020.4 — Protokol (TR+EN): madde 0–5'e tek-komut önsözü, madde 3'e BACKLOG yöntemi
-- [ ] P-020.5 — Sözleşme 1.28: SYSTEM ×2, constants, README ×2
-- [ ] P-020.6 — Dağıtım maddesi: acilis.sh + CLAUDE.md diğer repolara — B-141 koşuluna bağlı
-- [ ] P-020.7 — Tam süit + denetim + kayıtlar + push
+- [x] P-020.1 — Ö1: `tool/acilis.sh` — 8 kontrol tek çağrıda · ✅ 2026-08-30 · üç kendi kusuru test koşumlarında yakalandı ve düzeltildi
+- [x] P-020.2 — Ö2: sayım denetimli seçici bakış + gövde kuralı · ✅ 2026-08-30
+- [x] P-020.3 — Ö4: `CLAUDE.md` tek satır işaretçi · ✅ 2026-08-30
+- [x] P-020.4 — Protokol (TR+EN) · ✅ 2026-08-30
+- [x] P-020.5 — Sözleşme 1.28 zinciri · ✅ 2026-08-30
+- [x] P-020.6 — B-141 üç parçalık pakete genişledi · ✅ 2026-08-30
+- [x] P-020.7 — 629 test, analyze temiz, push · ✅ 2026-08-30
 
 ## P-019 — T-023: hub'ın token/bağlam maliyeti çalışması
 - **Tarih:** 2026-08-30

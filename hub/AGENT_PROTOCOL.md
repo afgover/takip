@@ -9,6 +9,18 @@ tanımlanır. Prosedür, oturumun konusu ne olursa olsun geçerlidir.
 
 ## Oturum açılışında (ilk mesajdan hemen sonra)
 
+> **Tek komut (v1.28, Ö1):** aşağıdaki maddelerin ölçüm kısmı
+> [`tool/acilis.sh`](../tool/acilis.sh) ile **tek çağrıda** koşulur — saat,
+> sözleşme diff'i, tarama yaşı, açık oturum, inbox/waiting, BACKLOG açık
+> maddeleri ve hub denetimi. Gerekçe ölçüldü
+> ([A-2026-08-30-001](artifacts/S-2026-08-30-uc-gorev/token-maliyeti.md)):
+> açılış maliyetinin ana kaynağı tur sayısıdır, her araç çağrısı bağlamın
+> tamamını yeniden taşır. İki değişmez kural: script **özetin kaynağıdır,
+> yetkisi değil** — şüphelenilen her satırda dosyanın kendisine inilir; ve
+> çıktıda "KOŞMADI" görünen madde **elle yapılır**, asla "kontrol edildi"
+> yazılmaz (L-035). Script yoksa maddeler tek tek elle koşulur; maddelerin
+> tanımı aşağıdadır ve script yalnız uygulamasıdır.
+
 0. **Hub'ın dilini oku** (`SYSTEM.md` → `**Hub dili:**`, sözleşme 1.19) ve bu
    oturumda ürettiğin her şeyi o dilde yaz: oturum kaydı, backlog maddeleri,
    knowledge kayıtları, görev gövdeleri. Alan yoksa `tr`. Hub'ın dili ile
@@ -37,7 +49,14 @@ tanımlanır. Prosedür, oturumun konusu ne olursa olsun geçerlidir.
    - Yeni görev varsa kullanıcıya bildir ("inbox'ta N yeni görev var: ...").
    - Kullanıcının talimatına göre ele al; ele aldığını `active/`e taşı.
    - Kullanıcı farklı bir konu açtıysa inbox'ı sadece raporla, kendiliğinden işleme.
-3. `BACKLOG.md`'ye bak; yarım kalmış işleri hatırla.
+3. `BACKLOG.md`'ye **seçici** bak (v1.28, Ö2): açık maddeler
+   `grep -nE '^- \[ \] B-' BACKLOG.md` ile çıkarılır — dosyanın tamamı
+   (~17k token) açılışta okunmaz. İki koruma kuralı: (a) desen boş dönüyor
+   ve dosya boş değilse biçim değişmiş olabilir — **elle bakılır**, "açık iş
+   yok" yazılmaz; (b) satırlar özettir: bir maddeye **dayanarak iş yapmadan
+   önce gövdesi okunur** — ön koşullar gövdede yaşar (ölçülen örnek: B-098'in
+   "gerçek talep" ön koşulu yalnız gövdesindeydi).
+   Yarım kalmış işleri hatırla.
    **Sözleşmeyi ana kopyayla karşılaştır** (`SYSTEM.md` §10) — tek komut,
    dosyayı hub'ının diline göre seç (v1.21: `tr` → `SYSTEM.md`, `en` →
    `SYSTEM.en.md`):

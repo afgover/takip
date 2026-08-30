@@ -7,7 +7,7 @@ named, and what schema it follows**. Neither the agent nor the user application
 steps outside it. Contract changes are recorded in `EVOLUTION.md` and the
 version number at the top of this file is incremented.
 
-**Contract version:** 1.27
+**Contract version:** 1.28
 **Master copy:** `afgover/takip` → `hub/SYSTEM.md` (Turkish) ·
 `hub/SYSTEM.en.md` (English)
 (see §10 — every hub updates its own copy from there)
@@ -175,6 +175,14 @@ Rules:
   being audited. The **clock** is also verified using the network request item
   3 already makes (v1.27, L-052): the whole hub hangs on dates, and a wrong
   clock cannot be seen from inside the hub.
+
+- **(v1.28) Opening is one command; the definition stays in the items.**
+  The opening measurements run in a single call via `tool/acilis.sh`, and
+  `BACKLOG.md` is read selectively at opening (open items by pattern, the
+  body before acting). The reason was measured (A-2026-08-30-001): the cost
+  of opening comes from the number of turns. The script implements the
+  items, it does not define them; a check that could not run is done by
+  hand and never written up as run.
 
 ## 3. `artifacts/` — produced files
 

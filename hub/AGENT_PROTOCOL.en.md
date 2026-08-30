@@ -9,6 +9,18 @@ what*. The procedure holds whatever the session is about.
 
 ## At session opening (right after the first message)
 
+> **One command (v1.28, Ö1):** the measurable part of the items below runs in
+> a **single call** via [`tool/acilis.sh`](../tool/acilis.sh) — clock,
+> contract diff, scan age, open sessions, inbox/waiting, open BACKLOG items
+> and the hub audit. The reason was measured
+> ([A-2026-08-30-001](artifacts/S-2026-08-30-uc-gorev/token-maliyeti.md)):
+> the main cost of opening is the number of turns — every tool call carries
+> the whole context again. Two invariants: the script is **the source of the
+> digest, not its authority** — drill into the file itself on any doubt; and
+> an item shown as "KOŞMADI/did not run" is **done by hand**, never written
+> up as checked (L-035). Without the script, run the items one by one; the
+> items below are the definition and the script is only their implementation.
+
 0. **Read the hub's language** (`SYSTEM.md` → `**Hub language:**`, contract
    1.19) and write everything you produce in this session in that language:
    the session record, backlog entries, knowledge records, task bodies. If the
@@ -41,7 +53,14 @@ what*. The procedure holds whatever the session is about.
    - Handle them as the user instructs; move what you pick up to `active/`.
    - If the user opened a different subject, only report the inbox — do not
      process it on your own.
-3. Look at `BACKLOG.md`; recall unfinished work.
+3. Look at `BACKLOG.md` **selectively** (v1.28, Ö2): extract open items with
+   `grep -nE '^- \[ \] B-' BACKLOG.md` — the whole file (~17k tokens) is not
+   read at opening. Two guards: (a) if the pattern returns empty on a
+   non-empty file, the format may have changed — **look by hand**, never
+   write "no open work"; (b) the lines are summaries: before **acting** on an
+   item, read its body — preconditions live there (measured example: B-098's
+   "real demand" precondition existed only in its body).
+   Recall unfinished work.
    **Compare the contract against the master** (`SYSTEM.md` §10) — one command,
    picking the file for your hub's language (v1.21):
    `curl -fsSL https://raw.githubusercontent.com/afgover/takip/main/hub/SYSTEM.en.md

@@ -5,7 +5,7 @@ ve hangi şemaya uyacağını** tanımlar. Agent ve kullanıcı uygulaması bu s
 dışına çıkmaz. Sözleşme değişiklikleri `EVOLUTION.md`'ye kaydedilir ve bu dosyanın
 başındaki sürüm numarası artırılır.
 
-**Sözleşme sürümü:** 1.27
+**Sözleşme sürümü:** 1.28
 **Ana kopya (master):** `afgover/takip` → `hub/SYSTEM.md` (tr, **kanonik**) ·
 `hub/SYSTEM.en.md` (en)
 (bkz. §10 — her hub kendi kopyasını, kendi dilindeki varyanttan günceller)
@@ -168,6 +168,13 @@ Kurallar:
   Ayrıca **saat**, madde 3'ün zaten yaptığı ağ isteğiyle doğrulanır
   (v1.27, L-052): hub'ın tamamı tarihe bağlı ve yanlış bir saat hub'ın
   içinden görülemez.
+
+- **(v1.28) Açılış tek komuttur, tanım maddededir.** Protokolün açılış
+  ölçümleri `tool/acilis.sh` ile tek çağrıda koşulur ve `BACKLOG.md`'ye
+  açılışta seçici bakılır (açık maddeler desenle, gövde iş yapmadan önce).
+  Gerekçe ölçüldü (A-2026-08-30-001): açılış maliyetinin kaynağı tur sayısı.
+  Script maddelerin uygulamasıdır, tanımı değil; koşamayan kontrol elle
+  yapılır ve asla "koştu" yazılmaz.
 
 ## 3. `artifacts/` — üretilen dosyalar
 

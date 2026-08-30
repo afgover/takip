@@ -265,3 +265,9 @@ karşılığında projenin hafızasını tek güvenilir kopya olarak tutan bir
 sistemdir; vergiyi düşürmenin yolu dosyaları küçültmek değil, turları
 birleştirmektir — ve verginin kalkması, ölçtüğümüz kadarıyla, tasarruf
 değil kayıptır.**
+
+> **Uygulama notu (2026-08-30, S-2026-08-30-oneri-uygulamasi):** kullanıcı
+> kararıyla Ö1 + Ö4 + Ö2 uygulandı (sözleşme **1.28**, `tool/acilis.sh`,
+> `CLAUDE.md`); **Ö3 uygulanmadı** — §6'daki gerekçeyle. §6'daki riskler
+> uygulamada karşılandı: KOŞMADI kuralı, sayım denetimi, gövde-okuma kuralı,
+> tek satır işaretçi.

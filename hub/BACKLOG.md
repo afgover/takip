@@ -928,6 +928,10 @@ başlığına ✅ ve tarih yazılır.
       `tool/` taşımıyor, yani script'in kopyalanması gerekiyor — ve iki
       bağlayıcı kopya zamanla ayrışır (L-022). Dağıtımdan önce karar: kopya mı,
       yoksa hub'ların `takip`i klonlayıp `--hub` ile koşması mı.
+      · 2026-08-30: kapsam genişledi — dağıtım paketi artık üç parça:
+      `hub-guard.sh` + `tool/acilis.sh` + `CLAUDE.md` işaretçisi (Ö4;
+      tek satır, L-022). Koşul aynı: önce pilot değerlendirmesi (P-017.7).
+      Bayatlık ölçümü `audit.sh` §10 kalıbıyla `acilis.sh`'a da genişletilmeli.
       **Ön koşul:** [P-017.5](PLAN.md#P-017) — hook'un gerçek bir sıkıştırmada
       tetiklendiği henüz ölçülmedi. Ölçülmeden dağıtmak, çalıştığı
       doğrulanmamış bir şeyi dokuz repoya yaymak olur.
