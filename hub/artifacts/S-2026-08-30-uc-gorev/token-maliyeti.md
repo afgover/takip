@@ -239,3 +239,29 @@ yönü net: **hub, token cinsinden bile kendini ödüyor görünüyor; kesin
 kanıt iki ikiz proje ister ve bu çalışma o iddiayı kurmuyor.** Zaman
 cinsinden ise fark tartışmasız: kaybolan karar/cevap sınıfının ölçülmüş
 maliyeti gün-hafta mertebesi.
+
+---
+
+# 8. Sonuç
+
+Çalışmanın tamamı tek tabloda:
+
+| soru | ölçülen cevap |
+|---|---|
+| Hub bir oturuma kaça mal oluyor? | Küçük işte **+10.6k token (+%28)**; zengin açılışta tabanın ~2.5 katına kadar. Kaynak dosya okumak değil, **tur sayısı** |
+| Maliyet nereden büyüyor? | Tamamı okunan dosyalardan (`BACKLOG` ~17.5k) ve tur çoğaltan protokol adımlarından; çekirdek 25k–132k token/repo, tek yönlü ~140–565 KB/ay |
+| Geçmiş toplam? | 318 oturum × 10–57k ≈ **3M–18M token** (geniş aralık, uyum oranına bağlı) |
+| Bağlamı daraltıyor mu? | Evet: sabit yük sıkıştırmayı öne çeker; %25 `reconstructed` bu zincirin ucu. `hub-guard` (P-017) bu katmanın önlemi |
+| Hub olmasaydı? | Aynı durum sorgusu **aynı paraya "cevap veremem"** döndürüyor (42.0k'ya karşı 48.7k). Kayıtların belgeledikleri: 21 hata sınıfı teste bağlanıp mekanik olarak kapatıldı, 3 kayıp cevap kurtarıldı, 80 oturum sıkıştırma sonrası yeniden kurulabildi, 5 karar kalıcılaştı |
+| Kendini ödüyor mu? | 6 haftalık bedel ~0.7M token; başabaş için 2–7 hata tekrarı ya da ~35 durum sorusu önlemek yeterli — belgelenen bunun üstünde. **Token cinsinden bile ödüyor görünüyor; zaman cinsinden fark tartışmasız** (kaybolan cevabın ölçülmüş bedeli 17 gündü). Kesin kanıt ikiz proje ister; bu çalışma iddiayı o sınırla kurar |
+
+**Karar bekleyen:** dört azaltma önerisi (§5) risk analiziyle (§6) birlikte
+duruyor; kullanıcı kararıyla uygulanacak. Çalışmanın önerdiği sıra:
+**Ö1 (tur birleştirme) → Ö4 (CLAUDE.md, bilinçli maliyet artışıyla) →
+Ö2 (ancak sayım denetimiyle) → Ö3 (şimdilik hiç)**.
+
+Tek cümlelik özet: **hub, oturum başına ~%28 token vergisi alan ama
+karşılığında projenin hafızasını tek güvenilir kopya olarak tutan bir
+sistemdir; vergiyi düşürmenin yolu dosyaları küçültmek değil, turları
+birleştirmektir — ve verginin kalkması, ölçtüğümüz kadarıyla, tasarruf
+değil kayıptır.**
