@@ -136,6 +136,20 @@ tanımlanır. Prosedür, oturumun konusu ne olursa olsun geçerlidir.
 5. Rapor, plan, analiz, info niteliğinde **her üretilen dosyayı**
    `artifacts/<session-id>/` altına frontmatter'ıyla kaydet ve `session.md`'nin
    `artifacts:` listesine ekle.
+
+   **Yazım biçimi bağlayıcıdır (v1.29, [§3](SYSTEM.md#3)).** Artifact'ın
+   okunduğu yer telefondaki uygulamadır; biçim kuralları oranın render
+   sınırlarından ölçülerek türetildi: markdown (HTML çizilmez), en çok üç
+   başlık seviyesi, en çok üç sütunlu tablo, hücrede yol/kod yok, işaretler
+   ASCII sözlükten (`[BLOKER]`, `[EKSIK]`, `[TAMAM]`, `[DOGRULANMALI]`,
+   `[RISK]`, `[KARAR]`), emoji yok, satır 80 karakter. Commit'ten önce
+   [`tool/artifact-lint.sh <dosya>`](../tool/artifact-lint.sh) koşulur; script
+   yoksa §3'ün kontrol listesi elle geçilir ve **koşulamadığı kayda yazılır**.
+
+   **Bir ekranı aşan hiçbir çıktı sohbette bırakılmaz.** Rapor, karşılaştırma,
+   inceleme — önce dosya olur, kullanıcıya bağlantısı ve en çok beş satırlık
+   özeti verilir. Gerekçe yapısal, üslup değil: sohbet hub'a girmez, dosya
+   girer. Yazılmayan rapor bir sonraki oturumda hiç yaşanmamıştır.
 6. Bir backlog maddesi tamamlandığında `BACKLOG.md`'de **anında** işaretle
    (tarih + link). Konuşma sırasında yeni iş ortaya çıktıysa ilgili faza ekle.
 7. Yeni bir kural, skill veya ders ortaya çıktığında `knowledge/` altındaki

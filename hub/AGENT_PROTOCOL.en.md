@@ -144,6 +144,22 @@ what*. The procedure holds whatever the session is about.
 5. Save **every file you produce** that is a report, plan, analysis or info
    document under `artifacts/<session-id>/` with its frontmatter, and add it to
    `session.md`'s `artifacts:` list.
+
+   **The writing format is binding (v1.29, [§3](SYSTEM.md#3)).** Artifacts are
+   read in the app on a phone, and the rules were derived by measuring that
+   renderer's limits: markdown (HTML is not drawn), at most three heading
+   levels, at most three columns per table, no paths or code inside cells,
+   markers from the ASCII vocabulary (`[BLOCKER]`, `[MISSING]`, `[DONE]`,
+   `[UNVERIFIED]`, `[RISK]`, `[DECISION]`), no emoji, lines under 80
+   characters. Run [`tool/artifact-lint.sh <file>`](../tool/artifact-lint.sh)
+   before committing; if the script is unavailable, walk §3's checklist by
+   hand and **write in the record that it could not be run**.
+
+   **No output longer than a screen is left in the chat.** A report,
+   comparison or review becomes a file first; the user gets the link and a
+   summary of at most five lines. The reason is structural, not stylistic:
+   chat does not enter the hub, files do. An unwritten report never happened
+   as far as the next session is concerned.
 6. When a backlog entry is finished, check it off in `BACKLOG.md`
    **immediately** (date + link). If new work surfaced during the conversation,
    add it to the relevant phase.

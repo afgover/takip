@@ -5,7 +5,7 @@ ve hangi şemaya uyacağını** tanımlar. Agent ve kullanıcı uygulaması bu s
 dışına çıkmaz. Sözleşme değişiklikleri `EVOLUTION.md`'ye kaydedilir ve bu dosyanın
 başındaki sürüm numarası artırılır.
 
-**Sözleşme sürümü:** 1.28
+**Sözleşme sürümü:** 1.29
 **Ana kopya (master):** `afgover/takip` → `hub/SYSTEM.md` (tr, **kanonik**) ·
 `hub/SYSTEM.en.md` (en)
 (bkz. §10 — her hub kendi kopyasını, kendi dilindeki varyanttan günceller)
@@ -198,6 +198,88 @@ created: 2026-07-30T14:20:00Z
 
 Oturumdan bağımsız, kalıcı referans dokümanlar (mimari kararlar gibi)
 `artifacts/reference/` altına konur; frontmatter'da `session: none` yazılır.
+
+### Yazım biçimi (v1.29)
+
+Artifact'ın okunduğu yer **telefondaki uygulama**dır; GitHub ikincildir. Bu
+yüzden biçim bir zevk meselesi değil, render'ın koyduğu bir sınır. Sınırlar
+`flutter_markdown` 0.7.7 kaynağından **ölçüldü**, tahmin edilmedi:
+
+| Ölçülen sınır | Ekrandaki sonucu |
+|---|---|
+| Builder'da HTML işleyen kod yok | `<table>`, `<div>`, `<br>` etiketin kendisi olarak görünür |
+| `h4`–`h6` gövde metniyle aynı stile düşer | dördüncü seviye başlık, başlık gibi görünmez |
+| Kod bloğu sarmaz, yatay kayar | uzun satırın sonu kaydırılmadan görünmez |
+| Tablo genişliği içeriğe göre açılır | dar ekranda yatay kaydırma gerekir |
+
+Kurallar bağlayıcıdır; artifact üreten her agent bunlara uyar.
+
+1. **Biçim markdown'dır; HTML yazılmaz.** "HTML gibi okunaklı" olan şey etiket
+   değil **düzen**dir: kısa satır, dar tablo, net başlık. HTML yazmak
+   okunaklılığı artırmaz, belgeyi ekranda etiket çöplüğüne çevirir.
+
+2. **İskelet sabittir:** frontmatter → `# Başlık` → `## Özet` → gövde
+   bölümleri → `## Sonuç`. `## Özet` en çok **beş satır**dır ve üç şeyi
+   söyler: ne soruldu, ne bulundu, ne öneriliyor. Telefonda ilk ekran odur;
+   raporun tamamı okunmadan da karar verilebilmeli.
+
+3. **Başlık en çok üç seviye:** `#` (yalnız bir kez, belgenin adı), `##`,
+   `###`. `####` ve altı gövde metniyle aynı boyutta çizilir — yani başlık
+   olmayan bir başlık üretir, belgenin yapısını okunamaz kılar.
+
+4. **Tablo en çok üç sütun, her hücre tek satır (~40 karakter).** Tablo
+   yalnızca gerçekten kısa ve aynı türden alanların karşılaştırıldığı yerde
+   kullanılır. Daha genişi **listeye** çevrilir: her satır kendi başlığı,
+   altında maddeleri. Gerekçe ölçüldü: telefonda gövde genişliği ~45
+   karakterdir; yedi sütunlu bir tablo sütun başına üç-dört karaktere iner ve
+   her hücre karakter karakter sarar. Yatay kaydırma bunu kurtarmaz, yalnız
+   okuma maliyetini satır başına iki geçişe çıkarır.
+
+5. **Hücrenin içine dosya yolu, kod parçası ya da uzun kimlik konmaz.** Yol,
+   tablonun altındaki maddeye `dosya.dart:93` biçiminde tek tek yazılır. Tek
+   bir yol hücresi, tablonun bütün genişliğini yutar.
+
+6. **Durum ve önem işaretleri ASCII sözlüğünden seçilir; emoji kullanılmaz.**
+
+   | İşaret | Anlamı |
+   |---|---|
+   | `[BLOKER]` | bu bitmeden ilerlenmez |
+   | `[EKSIK]` | var, ama yetersiz ya da riskli |
+   | `[TAMAM]` | bitti ve doğrulandı |
+   | `[DOGRULANMALI]` | iddia var, ölçüm yok |
+   | `[RISK]` | ölçülmüş olumsuz olasılık |
+   | `[KARAR]` | kullanıcının kararını bekliyor |
+
+   Gerekçe ölçülmüş bir vakadır: emojiyle işaretlenmiş bir denetim raporu
+   kodlaması bozulduğu için ekranda `â` ve boş kutu olarak çıktı; anlamın
+   tamamı işaretin içinde olduğundan belge **okunamaz** hâle geldi, yalnız
+   çirkinleşmedi. Metin işareti hiçbir kodlamada bozulmaz, aranabilir ve ekran
+   okuyucuda okunur. Aynı sebeple gövdede emoji, kutu çizim karakteri ve
+   ASCII sanat kullanılmaz.
+
+7. **Satır 80 karakteri geçmez; kod bloğu satırı 72'yi.** Kod bloğu ekranda
+   sarmaz, yatay kayar: sığmayan kısım kaydırılmadan görünmez.
+
+8. **Her artifact oturumuna bağlanır:** `session.md`'nin `artifacts:` listesine
+   yazılır ve oturum kaydında bağlantıyla anılır. Bağlanmamış artifact, bir
+   sonraki oturumda bulunmaz.
+
+9. **Uzun çıktı sohbette bırakılmaz.** Rapor, plan, inceleme, karşılaştırma —
+   bir ekranı aşan her üretilmiş metin **önce dosya olur**:
+   `artifacts/<session-id>/<ad>.md`. Kullanıcıya bağlantısı verilir, özeti
+   (en çok beş satır) sohbette söylenir. Gerekçe yapısal: sohbet hub'a
+   girmez, dosya girer — yazılmamış rapor bir sonraki oturumda **hiç
+   yaşanmamıştır**.
+
+**Bitmeden önce** (`tool/artifact-lint.sh <dosya>` bu listeyi makinece koşar):
+
+- [ ] frontmatter tam (`id`, `session`, `type`, `title`, `created`)
+- [ ] `## Özet` var ve beş satırı geçmiyor
+- [ ] `####` ve altı başlık yok
+- [ ] tablo üç sütunu, hücre bir satırı geçmiyor
+- [ ] emoji yok, işaretler ASCII sözlükten
+- [ ] satır 80 karakteri geçmiyor
+- [ ] dosya `artifacts/<session-id>/` altında ve `session.md`'ye bağlı
 
 ## 4. `tasks/` — görevler
 

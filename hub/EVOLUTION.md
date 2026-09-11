@@ -851,6 +851,16 @@ işi, bitiş çizgisi değil. Bitiş çizgisi olsaydı aşama hiç kapanmazdı �
   kuruldu ([P-017](PLAN.md#P-017), [B-141](BACKLOG.md#B-141)). Değerlendirme
   ~2026-09-05, ölçüt sayısal: %74 ritim ihlali / %59 `reconstructed` tabanı.
 
+- 2026-09-11: Sözleşme [1.29](SYSTEM.md): **artifact yazım biçimi** §3'e
+  yazıldı. Tetikleyici iki bozuk rapor ekran görüntüsüydü; sebepleri ayrı
+  çıktı ve ikisi de ölçüldü ([A-2026-09-11-001](artifacts/S-2026-09-11-artifact-bicimi/artifact-yazim-bicimi.md)):
+  tablo sıkışması uygulamanın yazılmamış bir render ayarı
+  ([L-055](knowledge/lessons.md#L-055)), kutuya dönen işaretler ise anlamı
+  emojiye yükleyen bir belgenin kodlama hatasında okunamaz hâle gelmesi
+  ([L-054](knowledge/lessons.md#L-054)). Kural dokuz madde + ASCII işaret
+  sözlüğü; `tool/artifact-lint.sh` ile makinece koşuyor ve `tool/audit.sh`
+  §11'den her açılışta ölçülüyor. Yürürlük 2026-09-11; öncesi denetlenmez.
+
 > **Üç koşulun üçü de karşılandı; aşama yine de kendiliğinden kapatılmadı.**
 > Aynı gerekçe T-017'dekiyle bir: sıradaki aşamanın hedefi bir **yön kararıdır**
 > ve agent onu uyduramaz. Ayrıca burada sorulacak ikinci bir soru var — aşama

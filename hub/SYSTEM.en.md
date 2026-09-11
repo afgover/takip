@@ -7,7 +7,7 @@ named, and what schema it follows**. Neither the agent nor the user application
 steps outside it. Contract changes are recorded in `EVOLUTION.md` and the
 version number at the top of this file is incremented.
 
-**Contract version:** 1.28
+**Contract version:** 1.29
 **Master copy:** `afgover/takip` → `hub/SYSTEM.md` (Turkish) ·
 `hub/SYSTEM.en.md` (English)
 (see §10 — every hub updates its own copy from there)
@@ -208,6 +208,92 @@ created: 2026-07-30T14:20:00Z
 Permanent reference documents that do not belong to a session (architectural
 decisions, for instance) go under `artifacts/reference/`, with `session: none`
 in the frontmatter.
+
+### Writing format (v1.29)
+
+Artifacts are read **in the app on a phone**; GitHub is secondary. The format
+is therefore not a matter of taste but a limit set by the renderer. The limits
+were **measured** in the `flutter_markdown` 0.7.7 source, not guessed:
+
+| Measured limit | What it does on screen |
+|---|---|
+| No HTML handling in the builder | tags show up as literal text |
+| `h4`-`h6` fall back to body style | a level-four heading is not a heading |
+| Code blocks scroll, never wrap | the end of a long line stays hidden |
+| Table width follows content | a wide table needs horizontal scrolling |
+
+The rules are binding for every agent that produces an artifact.
+
+1. **The format is markdown; no HTML.** What makes a document read "like
+   HTML" is layout, not tags: short lines, narrow tables, clear headings.
+   Writing HTML does not improve readability, it turns the page into visible
+   tag soup.
+
+2. **The skeleton is fixed:** frontmatter, `# Title`, `## Summary`, body
+   sections, `## Conclusion`. `## Summary` is at most **five lines** and says
+   three things: what was asked, what was found, what is proposed. That is the
+   first screen on a phone; a decision must be possible without reading on.
+
+3. **At most three heading levels:** `#` (once, the document's name), `##`,
+   `###`. `####` and below render at body size — a heading that is not one,
+   which makes the document's structure unreadable.
+
+4. **At most three columns per table, one line per cell (~40 characters).**
+   Use a table only where genuinely short fields of the same kind are being
+   compared. Anything wider becomes a **list**: each row its own heading with
+   items below. Measured reason: body width on a phone is ~45 characters, so a
+   seven-column table drops to three or four characters per column and wraps
+   character by character. Horizontal scrolling does not save it, it only
+   makes every row take two passes to read.
+
+5. **No file paths, code fragments or long identifiers inside cells.** Put the
+   path in an item below the table, one per line, as `file.dart:93`. A single
+   path cell eats the whole table width.
+
+6. **Status and severity markers come from an ASCII vocabulary; no emoji.**
+
+   | Marker | Meaning |
+   |---|---|
+   | `[BLOCKER]` | nothing proceeds until this is done |
+   | `[MISSING]` | present but insufficient or risky |
+   | `[DONE]` | finished and verified |
+   | `[UNVERIFIED]` | claimed, not measured |
+   | `[RISK]` | a measured adverse possibility |
+   | `[DECISION]` | waiting on the user's decision |
+
+   The reason is a measured case: an audit report marked with emoji arrived
+   on screen as `â` and empty boxes because its encoding was broken, and since
+   all the meaning sat inside the markers the document became **unreadable**,
+   not merely ugly. A text marker survives any encoding, is searchable and is
+   read out by a screen reader. For the same reason the body carries no emoji,
+   box-drawing characters or ASCII art.
+
+7. **Lines stay under 80 characters; code block lines under 72.** Code blocks
+   do not wrap on screen, they scroll: whatever does not fit stays invisible
+   until scrolled.
+
+8. **Every artifact is linked to its session:** it goes into the `artifacts:`
+   list in `session.md` and is referenced from the session record. An
+   unlinked artifact will not be found in the next session.
+
+9. **Long output is never left in the chat.** A report, plan, review or
+   comparison — any produced text longer than a screen **becomes a file
+   first**: `artifacts/<session-id>/<name>.md`. The user gets the link and a
+   summary of at most five lines. The reason is structural: chat does not
+   enter the hub, files do — an unwritten report never happened as far as the
+   next session is concerned.
+
+**Before finishing** (`tool/artifact-lint.sh <file>` runs this list
+mechanically):
+
+- [ ] frontmatter complete (`id`, `session`, `type`, `title`, `created`)
+- [ ] `## Summary` exists and is at most five lines
+- [ ] no `####` or deeper headings
+- [ ] no table wider than three columns, no cell longer than one line
+- [ ] no emoji; markers from the ASCII vocabulary
+- [ ] no line over 80 characters
+- [ ] file lives under `artifacts/<session-id>/` and is linked from
+      `session.md`
 
 ## 4. `tasks/` — tasks
 
