@@ -892,3 +892,48 @@ Biçim: `SYSTEM.md` §5.
   Cevap "aramadım" ise bu, düzeltmenin bir parçası olarak backlog'a girer.
   Bulunuşu da tesadüf değil, ölçümdür: kalıntı, `tool/audit.sh`'ın "17 gündür
   hareketsiz inbox görevi" kontrolüyle görüldü.
+
+## L-054 — Anlamı işaretin biçimine emanet eden belge, bir kodlama hatasında okunamaz olur
+- **Tarih:** 2026-09-11
+- **Kaynak:** S-2026-09-11-artifact-bicimi,
+  [A-2026-09-11-001](../artifacts/S-2026-09-11-artifact-bicimi/artifact-yazim-bicimi.md)
+- **Ders:** Kullanıcı iki bozuk rapor gösterdi. Biri emojiyle işaretlenmiş bir
+  mağaza hazırlık listesiydi: renkli daire emojileriyle yazılmış efsane satırı
+  ekranda `â` ve boş kutu olarak çıkmıştı, tablo hücrelerindeki işaretler de
+  aynı kutuya dönüşmüştü. Belge **çirkinleşmedi, okunamaz oldu** — çünkü
+  "bloker mı, tamam mı" bilgisinin tamamı işaretin *biçiminde* yaşıyordu ve
+  biçim bozulunca geriye ayırt edilemeyen kutular kaldı.
+  Desen tanı koyuyor: `·` karakterinin `Â·` olarak çıkması, UTF-8 baytlarının
+  Latin-1 sanılmasının imzasıdır. Yani sorun font ya da emoji desteği değil,
+  **kodlama**; ve kodlama zinciri belgeyi üreten araçtan telefona kadar uzun,
+  her halkası bozabilir. Uygulamanın okuma yolu temiz çıktı
+  (`utf8.decode`), yani bozulma büyük olasılıkla dosyayı üreten tarafta.
+  **Asıl ders zincirin nerede koptuğu değil, belgenin kopmaya karşı
+  dayanıksız yazılmış olması.** `[BLOKER]` yazan bir satır her kodlamada
+  aynıdır; üstelik aranabilir ve ekran okuyucuda okunur. Emoji, üçünü de
+  tek bir bayt hatasında kaybeder.
+  **Kural:** üretilen belgelerde durum/önem bilgisi **metin** işaretle
+  taşınır, emojiyle değil (sözleşme 1.29, [§3](../SYSTEM.md#3)). Kural
+  `tool/artifact-lint.sh` ile makinece koşuyor ve bozuk kodlama izini de
+  arıyor — ikinci vaka kullanıcının ekran görüntüsüyle değil, denetimle
+  görülsün diye.
+
+## L-055 — Kütüphanenin varsayılanı, yazılmamış olsa da senin tercihindir
+- **Tarih:** 2026-09-11
+- **Kaynak:** S-2026-09-11-artifact-bicimi,
+  [A-2026-09-11-001](../artifacts/S-2026-09-11-artifact-bicimi/artifact-yazim-bicimi.md)
+- **Ders:** Uygulamanın markdown stili on beş alanı özenle ayarlıyordu ama
+  `tableColumnWidth`'e hiç dokunmamıştı. Bu "ayarsız" değil, `FlexColumnWidth`
+  demekti: tablo ekran genişliğine zorla sığdırılır. Üstüne, `flutter_markdown`
+  tabloyu **yalnız** bu alan `Intrinsic`/`Fixed` iken yatay kaydırmaya sarıyor
+  — yani yazılmamış tek satır, hem sıkıştırmayı açmış hem de kurtarıcı
+  kaydırmayı kapatmıştı. Telefonda yedi sütunlu bir tablo sütun başına üç
+  karaktere indi.
+  **Kusurun sessizliği "varsayılan" kelimesinde saklı:** kod incelemesinde
+  görünmez, çünkü ortada yanlış yazılmış bir satır yok; hiç yazılmamış bir
+  satır var. Test de yakalamaz, çünkü var olan test "tablo çizildi mi" diye
+  soruyordu ve tablo gerçekten çiziliyordu.
+  **Kural:** bir kütüphaneye görünüm teslim edilirken, **ekranda etkisi olan
+  her varsayılanı** bilinçli seç ya da en azından oku. Yeni testin sorusu
+  "çizildi mi" değil, "dar ekranda okunabilir mi" — ölçüsü tablonun
+  genişliğinin ekranı aşması.

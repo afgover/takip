@@ -923,6 +923,14 @@ başlığına ✅ ve tarih yazılır.
       çıkışı** yazılı olduğu sürece borç sessiz değildir (Aşama 5 kapanma
       koşulu 1)
 
+- [ ] B-142 · (agent) **`artifact-lint.sh` diğer hub'lara nasıl ulaşacak.**
+      Kural sözleşmede (1.29 §3) olduğu için her hub bir sonraki oturumunda
+      alıyor; ama kuralı **ölçen** script yalnız `takip`te. `audit.sh` §11
+      script yoksa "kontrol KOŞMADI" diyor — yani sessiz geçmiyor, fakat
+      denetim de yapılmıyor. B-141'in dağıtım paketine dördüncü parça olarak
+      girmesi doğal aday; ön koşulu da aynı (pilot değerlendirmesi).
+      · 2026-09-11: `takip`te yürürlükte, eşik 2026-09-11 · doğdu:
+      [P-022](PLAN.md#P-022)
 - [ ] B-141 · (agent) **Hub bekçisini diğer repolara dağıt.** `tool/hub-guard.sh`
       ve `.claude/settings.json` şimdilik yalnız `takip`te. Diğer hub repoları
       `tool/` taşımıyor, yani script'in kopyalanması gerekiyor — ve iki

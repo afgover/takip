@@ -5,6 +5,24 @@
 plan (`Türetilmiş: true`) kapalı doğduğu için kapalıların arasına tarih
 sırasıyla girer.
 
+## P-022 — Artifact yazım biçimi sözleşmeye giriyor
+- **Tarih:** 2026-09-11
+- **Kaynak:** [S-2026-09-11-artifact-bicimi](sessions/2026-09-11-artifact-bicimi/session.md)
+- **Durum:** tamamlandi
+- **İlgili:** [A-2026-09-11-001](artifacts/S-2026-09-11-artifact-bicimi/artifact-yazim-bicimi.md),
+  [L-054](knowledge/lessons.md#L-054), [L-055](knowledge/lessons.md#L-055)
+
+> **Tetikleyici:** kullanıcı iki bozuk rapor ekran görüntüsü getirdi —
+> sıkışmış tablo ve kutuya dönmüş emoji işaretler. Kararlar kullanıcıdan:
+> kural sözleşmeye (tüm hub'lara), app kusuru bu oturumda, işaretler ASCII.
+
+- [x] P-022.1 — Render sınırları ölçüldü (HTML, h4-h6, kod bloğu, tablo) · ✅ 2026-09-11
+- [x] P-022.2 — App kusuru: `tableColumnWidth` → `IntrinsicColumnWidth` + test · ✅ 2026-09-11
+- [x] P-022.3 — Sözleşme §3 "Yazım biçimi" (tr+en), sürüm 1.29 · ✅ 2026-09-11
+- [x] P-022.4 — Protokol maddesi 5 genişletildi (tr+en) · ✅ 2026-09-11
+- [x] P-022.5 — `tool/artifact-lint.sh` + `audit.sh` §11 bağlantısı · ✅ 2026-09-11 · iki kendi kusuru test koşumunda yakalandı (satır içi kod, ilk işaretten sonra durma)
+- [x] P-022.6 — Kayıtlar (L-054, L-055, EVOLUTION, artifact) ve push · ✅ 2026-09-11
+
 ## P-021 — Store hazırlığı (yükleme yok)
 - **Tarih:** 2026-08-30
 - **Kaynak:** [S-2026-08-30-store-hazirligi](sessions/2026-08-30-store-hazirligi/session.md)
