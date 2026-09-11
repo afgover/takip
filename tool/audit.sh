@@ -418,6 +418,37 @@ else:
         warn(f"{os.path.relpath(_guard, ROOT)} ana kopyadan AYRIŞMIŞ — "
              f"takip/tool/hub-guard.sh ile eşitle")
 
+# Artifact'ın okunduğu yer telefondur; yazım biçimi sözleşme 1.29 §3'te
+# bağlandı. Kural buradan koşuyor çünkü "bitmeden önce lint'i çalıştır"
+# maddesi, hatırlamaya dayanan bir maddedir — bu hub'ın ölçülmüş dersi ise
+# hatırlanması gereken kurala uyulmadığıdır. Yürürlük tarihinden öncesi
+# denetlenmez (R-008: yeni kural geçmişi suçlamaz).
+say("11. Artifact yazım biçimi (sözleşme 1.29, §3)")
+_lint = next((p for p in (os.path.join(ROOT, "tool/artifact-lint.sh"),
+                          os.path.join(os.path.dirname(HUB), "tool/artifact-lint.sh"))
+              if os.path.isfile(p)), None)
+_arts = []
+for _dir, _, _files in os.walk(os.path.join(HUB, "artifacts")):
+    _arts += [os.path.join(_dir, f) for f in _files if f.endswith(".md")]
+if not _lint:
+    info("artifact-lint.sh bu hub'da yok — kontrol KOŞMADI, 'temiz' sayılamaz")
+elif not _arts:
+    info("artifact yok")
+else:
+    r = subprocess.run(["bash", _lint, *sorted(_arts)],
+                       capture_output=True, text=True)
+    if r.returncode == 2:
+        info(f"lint koşamadı: {r.stderr.strip() or 'bilinmeyen sebep'}")
+    elif r.returncode == 0:
+        ok(r.stdout.strip().split("\n")[-1] if r.stdout.strip() else "temiz")
+    else:
+        _file = None
+        for line in r.stdout.split("\n"):
+            if line.startswith("  ! "):
+                _file = os.path.relpath(line[4:].strip(), ROOT)
+            elif line.startswith("      ") and _file:
+                warn(f"{_file}: {line.strip()}")
+
 print()
 if findings:
     print(f"{BOLD}{len(findings)} bulgu.{OFF} Kayda geçir: SECURITY.md / BACKLOG.md.")
