@@ -55,6 +55,20 @@ düzeltilsin; (3) işaretler ASCII sözlükten.
 Uygulandı: app düzeltmesi + test, sözleşme 1.29 §3 (tr+en), protokol maddesi 5
 (tr+en), `tool/artifact-lint.sh`, `audit.sh` §11, kayıtlar.
 
+### [23:40] Kullanıcı
+
+> uzaktayım derleyip drive'a yükler misin, telefona kurunca mevcut datanın
+> silinmediğine emin olalım
+
+### [23:55] Agent
+
+Release derlendi ve Drive'a kondu ([P-023](../../PLAN.md#P-023)). Veri
+korunumu iddia değil ölçüm: yeni APK ile Drive'daki 2026-08-28 APK'sı yan
+yana karşılaştırıldı — imza SHA-1 `f4994730...`, paket `us.gover.takip` ve
+versionCode `1` üçü de aynı. Android'de veriyi silen tek şey imza değişimi
+olduğu için bağlantılar ve token'lar yerinde kalıyor. Eski APK geri dönüş
+için klasörde bırakıldı.
+
 ## Notlar
 
 - Açılış `tool/acilis.sh` ile tek çağrıda koştu: hub dili tr, saat ağla aynı
@@ -72,3 +86,10 @@ Uygulandı: app düzeltmesi + test, sözleşme 1.29 §3 (tr+en), protokol maddes
   işaretin arkasındaki uydurma işareti görmüyordu.
 - B-141'in pilot değerlendirmesi ~2026-09-05'te yapılacaktı; bugün 09-11 ve
   henüz yapılmadı. Bu oturumun konusu değil, kullanıcıya hatırlatıldı.
+- APK: `takip-2026-09-11-7d211e7.apk`, SHA-256
+  `d4fa0e7734775c2f14009184f78d026c47d1b54d71486fbf1538e835e764c2b0`,
+  Drive'ım/Takip APK/. Yüklemenin **tamamlandığı** makineden doğrulanamadı
+  (DriveFS durum kaydı dışarı vermiyor); dosya yerel Drive klasöründe ve
+  istemci çalışıyor.
+- `versionCode` her derlemede 1 kalıyor: telefondan "hangi derleme kurulu"
+  sorusu cevaplanamıyor, cevap yalnız OKU.txt'de. Kullanıcıya soruldu.

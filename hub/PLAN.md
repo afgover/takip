@@ -5,6 +5,21 @@
 plan (`Türetilmiş: true`) kapalı doğduğu için kapalıların arasına tarih
 sırasıyla girer.
 
+## P-023 — APK derlendi ve Drive'a kondu (veri korunumu ölçüldü)
+- **Tarih:** 2026-09-11
+- **Kaynak:** [S-2026-09-11-artifact-bicimi](sessions/2026-09-11-artifact-bicimi/session.md)
+- **Durum:** tamamlandi
+- **İlgili:** [P-013](PLAN.md#P-013), [SEC-015](SECURITY.md#SEC-015), T-010
+
+> **Tetikleyici:** kullanıcı uzakta; tablo düzeltmesi kod tarafında olduğu
+> için telefona ancak yeni derlemeyle gidiyor. İstek: derle, Drive'a yükle,
+> **kurulumda verinin silinmediğinden emin ol.**
+
+- [x] P-023.1 — `key.properties` yok doğrulandı → debug anahtarı · ✅ 2026-09-11
+- [x] P-023.2 — Release derlendi (`7d211e7`, 56.2 MB) · ✅ 2026-09-11
+- [x] P-023.3 — Veri korunumu **ölçüldü**: imza SHA-1, paket adı ve versionCode yeni APK ile Drive'daki eski APK'da birebir aynı · ✅ 2026-09-11
+- [x] P-023.4 — Drive'a kopyalandı, SHA-256 iki tarafta aynı; OKU.txt yenilendi, eski APK geri dönüş için bırakıldı · ✅ 2026-09-11
+
 ## P-022 — Artifact yazım biçimi sözleşmeye giriyor
 - **Tarih:** 2026-09-11
 - **Kaynak:** [S-2026-09-11-artifact-bicimi](sessions/2026-09-11-artifact-bicimi/session.md)
