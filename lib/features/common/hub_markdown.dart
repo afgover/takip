@@ -145,6 +145,13 @@ MarkdownStyleSheet hubMarkdownStyleSheet(ThemeData theme) {
       border: Border(left: BorderSide(color: colors.primary, width: 3)),
     ),
     tableBorder: TableBorder.all(color: colors.outlineVariant),
+    // Sütun genişliği **içeriğe** göre; tablo dar ekrana sıkıştırılmaz.
+    // flutter_markdown tabloyu yalnız bu ayar `Intrinsic`/`Fixed` iken yatay
+    // kaydırmaya sarıyor (`builder.dart` §_buildTable); varsayılan `Flex` ile
+    // yedi sütunlu bir tablo telefon genişliğine zorla sığdırılıyor ve her
+    // hücre üç-dört karaktere iniyordu — hücre başına bir kelime, okunaksız.
+    // Kaydırma sarmalayıcısı paketin içinde, burada yapılacak başka şey yok.
+    tableColumnWidth: const IntrinsicColumnWidth(),
     tableCellsPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
     tableHead: theme.textTheme.bodyMedium?.copyWith(
       fontWeight: FontWeight.w700,

@@ -39,6 +39,42 @@ Gövde metni.
     expect(find.textContaining('SYSTEM.md'), findsOneWidget);
   });
 
+  testWidgets('geniş tablo sıkıştırılmaz, yatay kaydırılır', (tester) async {
+    // Dar ekranda çok sütunlu tablo: varsayılan `FlexColumnWidth` ile her
+    // sütun ekrana zorla sığdırılıyor ve hücreler karakter karakter sarıyordu
+    // (ölçülen vaka: yedi sütunlu denetim tablosu, hücre başına üç karakter).
+    tester.view.physicalSize = const Size(360, 800);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+
+    await tester.pumpWidget(testApp(const Scaffold(
+      body: HubMarkdown('''
+| Blok | Bloker | Eksik | Tamam | Kritik yol |
+|---|---|---|---|---|
+| Google Play | 2 | 4 | 9 | upload keystore |
+'''),
+    )));
+
+    final table = tester.widget<Table>(find.byType(Table));
+    expect(table.defaultColumnWidth, isA<IntrinsicColumnWidth>());
+
+    // Paket, tabloyu yalnız `Intrinsic`/`Fixed` genişlikte yatay kaydırmaya
+    // sarıyor; sarmalayıcının varlığı sıkıştırmanın kalktığının kanıtı.
+    expect(
+      find.ancestor(
+        of: find.byType(Table),
+        matching: find.byWidgetPredicate(
+          (w) => w is SingleChildScrollView &&
+              w.scrollDirection == Axis.horizontal,
+        ),
+      ),
+      findsWidgets,
+    );
+
+    // Hücre metni sarmadan tek satırda duruyor: sütun içeriğe göre açıldı.
+    expect(tester.getSize(find.byType(Table)).width, greaterThan(360));
+  });
+
   testWidgets('görev kutuları işaretli/işaretsiz çizilir (BACKLOG.md)',
       (tester) async {
     await tester.pumpWidget(wrap(const HubMarkdown('''
