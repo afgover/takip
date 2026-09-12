@@ -69,6 +69,19 @@ versionCode `1` üçü de aynı. Android'de veriyi silen tek şey imza değişim
 olduğu için bağlantılar ve token'lar yerinde kalıyor. Eski APK geri dönüş
 için klasörde bırakıldı.
 
+### [2026-09-12 09:50] Kullanıcı
+
+> sözleşmenin session'lara olan yükünü/getirisini ölçen bir simülasyon
+> çalıştırmıştık, geçmiş session'ları da inceleyerek (tüm repolar) bir analiz
+> çalıştırmanı istiyorum
+
+### [2026-09-12 10:10] Agent
+
+Önceki çalışma simülasyondu ([A-2026-08-30-001](../../artifacts/S-2026-08-30-uc-gorev/token-maliyeti.md));
+bu çalışma **gerçek kayıtlara** bakıyor. Deterministik taban ana ajan
+tarafından çıkarıldı: 10 hub, 365 oturum, 2289 commit, 207 artifact, 499
+ders. Ardından çok ajanlı ölçüm koştu (10 hub + 4 kesit).
+
 ## Notlar
 
 - Açılış `tool/acilis.sh` ile tek çağrıda koştu: hub dili tr, saat ağla aynı
