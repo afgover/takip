@@ -227,3 +227,16 @@ tanımlanır. Prosedür, oturumun konusu ne olursa olsun geçerlidir.
   (taşıma ve not ekleme serbest).
 - **Commit disiplini:** Her commit `SYSTEM.md` §8'deki önek kurallarına uyar;
   ilgisiz değişiklikler aynı commit'e konmaz.
+- **Madde numaralarında depo öneki (v1.30):** Kendi hub'ında ID'ler **çıplak**
+  yazılır (`B-219`), başka bir hub'a atıf verirken **önekli**
+  (`financer#B-219`). Numara uzayları hub başına ayrıdır: aynı numara iki
+  hub'da iki farklı işi gösterir.
+
+  *Ölçülmüş vaka (2026-09-06):* `DataSources`ta `B-219` bir nöbetçi
+  düzeltmesiydi, `financer`da aynı numara bir lot bölme düzeltmesi; financer
+  karşı tarafa çıplak `B-219` yazdı ve iş karıştı. İki taraf da **kendi**
+  hub'ında kuralı çiğnememişti — kural yalnız **karşıya yazarken** eksikti.
+  Konvansiyon fiilen uygulanıyordu ama yazılı değildi.
+
+  Yazılmamış bir konvansiyon, uygulanıyor olsa bile yeni gelen için yok
+  hükmündedir.

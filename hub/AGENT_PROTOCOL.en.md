@@ -247,3 +247,16 @@ what*. The procedure holds whatever the session is about.
   adding notes is fine).
 - **Commit discipline:** every commit follows the prefix rules in `SYSTEM.md`
   §8; unrelated changes do not share a commit.
+- **Repo prefix on record numbers (v1.30):** inside your own hub, IDs are
+  written **bare** (`B-219`); when referring to another hub, they carry a
+  **prefix** (`financer#B-219`). Number spaces are per hub: the same number
+  means two different pieces of work in two hubs.
+
+  *Measured case (2026-09-06):* in `DataSources`, `B-219` was a watchdog fix;
+  in `financer` the same number was a lot-splitting fix. financer wrote a bare
+  `B-219` to the other side and the two were confused. Neither side had broken
+  the rule **inside its own hub** — the rule was missing only for **writing
+  across**. The convention was in effect but was never written down.
+
+  An unwritten convention, even one in active use, does not exist for whoever
+  arrives next.

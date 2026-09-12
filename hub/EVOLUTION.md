@@ -880,3 +880,14 @@ işi, bitiş çizgisi değil. Bitiş çizgisi olsaydı aşama hiç kapanmazdı �
 > ve agent onu uyduramaz. Ayrıca burada sorulacak ikinci bir soru var — aşama
 > bir günde kapandığına göre kapanma koşulu **dar mı yazıldı**? Cevap "evet"se
 > düzeltilecek yer bir sonraki aşamanın koşulu, geçmişe dönük bir rötuş değil.
+
+- 2026-09-12: Sözleşme [1.30](SYSTEM.md): **madde numaralarında depo öneki**
+  `AGENT_PROTOCOL.md`'nin değişmezlerine yazıldı. Kural `DataSources_takip`'te
+  2026-09-06'da yerel olarak yazılmıştı ve ana kopyaya taşınmamıştı; bu
+  oturumda taşındı — aksi hâlde o hub'ın bir sonraki §10 güncellemesi kuralı
+  sessizce silecekti. Vaka: aynı numara (`B-219`) iki hub'da iki farklı işti,
+  karşıya çıplak yazıldı ve karıştı; iki taraf da kendi hub'ında kuralı
+  çiğnememişti — eksik olan **karşıya yazma** kuralıydı. Kural bilerek **tek
+  yere** kondu (protokolün değişmezleri), §15'e kopyalanmadı: bu projenin en
+  çok tekrarlayan hatası "aynı kural iki yerde, biri güncellendi öteki
+  unutuldu".
