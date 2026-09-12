@@ -923,6 +923,25 @@ başlığına ✅ ve tarih yazılır.
       çıkışı** yazılı olduğu sürece borç sessiz değildir (Aşama 5 kapanma
       koşulu 1)
 
+- [ ] B-146 · (agent+user) **`waiting/` kurulum tortusu.** On hub'da 64
+      bekleyen görevin %45'i eşiği aşmış; 30 durgun görevin 21'i tek günden
+      (2026-08-03, altı hub'ın kurulduğu gün). Kuyruğun neredeyse yarısı
+      kurulum sorularından ibaret. Toplu cevap mı toplu kapatma mı — karar
+      kullanıcının · ölçüm: [A-2026-09-12-001](artifacts/S-2026-09-12-sozlesme-analizi/sozlesme-yuku-ve-getirisi.md)
+- [ ] B-145 · (agent) **Artifact'ın tüketicisi tanımlı değil.** 196
+      artifact'ın %50-67'si doğduğu günden sonra hiçbir kayıtta anılmıyor
+      (0,75-1,69 MB tek yönlü yazım). Ya kapanışta atıf zorunluluğu ya
+      üretim eşiği. Ölçütün tanımı belirleyici: "herhangi bir atıf" ölçütü
+      %99 veriyor ama zorunlu indeks satırını sayıyor · → L-056
+- [ ] B-144 · (agent) **Denetim kör noktaları.** Üç somut madde: (a) ritim
+      kontrolü `info` basıyor, %59 ihlal çıkış kodunda sıfır bulgu üretiyor;
+      (b) `reconstructed` bayrağı doğrulanmıyor ve korpusun %24'ünü iki
+      kontrolden muaf tutuyor; (c) şema dışı yazılmış 8 oturum (din_takip)
+      denetim döngüsünün dışında · ölçüm: A-2026-09-12-001 §7
+- [ ] B-143 · (agent) **Açılış kontrolü koştuğunu kayda yazmıyor.** `curl`
+      farkı bulamazsa hiçbir iz kalmıyor; sonuç: kontrolün kaç kez koştuğu
+      ölçülemiyor ve 1.28 tipi tedbirlerin etkisi ölçülemez kalıyor. Tur
+      sayısı da hiçbir yerde tutulmuyor · ölçüm: A-2026-09-12-001 §3
 - [ ] B-142 · (agent) **`artifact-lint.sh` diğer hub'lara nasıl ulaşacak.**
       Kural sözleşmede (1.29 §3) olduğu için her hub bir sonraki oturumunda
       alıyor; ama kuralı **ölçen** script yalnız `takip`te. `audit.sh` §11

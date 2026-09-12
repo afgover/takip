@@ -861,6 +861,20 @@ işi, bitiş çizgisi değil. Bitiş çizgisi olsaydı aşama hiç kapanmazdı �
   sözlüğü; `tool/artifact-lint.sh` ile makinece koşuyor ve `tool/audit.sh`
   §11'den her açılışta ölçülüyor. Yürürlük 2026-09-11; öncesi denetlenmez.
 
+- 2026-09-12: **Sözleşmenin yükü ve getirisi gerçek kayıtlardan ölçüldü**
+  ([A-2026-09-12-001](artifacts/S-2026-09-12-sozlesme-analizi/sozlesme-yuku-ve-getirisi.md),
+  [P-024](PLAN.md#P-024)): 10 hub, 366 oturum, 2.289 commit; 28 ajan, 1.258
+  araç çağrısı. Ağustos'taki A/B simülasyonunun ikizi — bu kez simülasyon
+  değil iz. İki taraf da ölçüldü: defter `takip`te yazılan satırların
+  %39,5'ini alıyor ve kayıtların %70'i geri okunuyor; artifact'ların yarısı
+  ise bir daha hiç okunmuyor. Asıl bulgu ikisinin ortasında: **metin
+  yayılıyor, uygulama yayılmıyor** — 1.28'in tur azaltan tedbiri dokuz hub'a
+  hiç ulaşmadı, denetim en büyük sapmayı (%59 ritim ihlali) bulgu saymıyor,
+  muafiyetler korpusun dörtte birini kapsam dışında tutuyor. Yedi manşet
+  iddia çürütme turundan geçti; ikisi düştü
+  ([L-056](knowledge/lessons.md#L-056), [L-057](knowledge/lessons.md#L-057)).
+  Açılan maddeler: B-143..B-146.
+
 > **Üç koşulun üçü de karşılandı; aşama yine de kendiliğinden kapatılmadı.**
 > Aynı gerekçe T-017'dekiyle bir: sıradaki aşamanın hedefi bir **yön kararıdır**
 > ve agent onu uyduramaz. Ayrıca burada sorulacak ikinci bir soru var — aşama

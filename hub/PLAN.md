@@ -5,6 +5,24 @@
 plan (`Türetilmiş: true`) kapalı doğduğu için kapalıların arasına tarih
 sırasıyla girer.
 
+## P-024 — Sözleşmenin yükü/getirisi: 365 oturumun analizi
+- **Tarih:** 2026-09-12
+- **Kaynak:** [S-2026-09-12-sozlesme-analizi](sessions/2026-09-12-sozlesme-analizi/session.md)
+- **Durum:** tamamlandi
+- **İlgili:** [A-2026-09-12-001](artifacts/S-2026-09-12-sozlesme-analizi/sozlesme-yuku-ve-getirisi.md),
+  [A-2026-08-30-001](artifacts/S-2026-08-30-uc-gorev/token-maliyeti.md)
+
+> **Öncekinden farkı:** A-2026-08-30-001 kontrollü bir simülasyondu (aynı iş,
+> hub'lı/hub'sız). Bu çalışma simülasyon kurmuyor; 366 gerçek oturumun git
+> grafiğinde bıraktığı izi ölçüyor. İki çalışma aynı soruyu iki bağımsız
+> yöntemle soruyor.
+
+- [x] P-024.1 — Deterministik taban: 10 hub, 366 oturum, 2.289 commit · ✅ 2026-09-12
+- [x] P-024.2 — Ölçüm fan-out: 10 hub ajanı + 4 kesit · ✅ 2026-09-12 · 740 araç çağrısı, 70 iddia
+- [x] P-024.3 — Adversarial doğrulama: 7 iddia × 2 mercek · ✅ 2026-09-12 · 2 iddia düştü, 4'ü daraldı
+- [x] P-024.4 — Rapor + 1.29 biçim denetimi · ✅ 2026-09-12
+- [x] P-024.5 — Bulguların backlog'a bağlanması · ✅ 2026-09-12
+
 ## P-023 — APK derlendi ve Drive'a kondu (veri korunumu ölçüldü)
 - **Tarih:** 2026-09-11
 - **Kaynak:** [S-2026-09-11-artifact-bicimi](sessions/2026-09-11-artifact-bicimi/session.md)

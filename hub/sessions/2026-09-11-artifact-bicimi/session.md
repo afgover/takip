@@ -1,7 +1,7 @@
 ---
 id: S-2026-09-11-artifact-bicimi
 date: 2026-09-11
-status: open
+status: closed
 reconstructed: false
 author: afgover
 topics: [artifact, bicim, sozlesme, render]
@@ -14,7 +14,27 @@ tasks_touched: []
 
 ## Özet
 
-*(oturum açık — kapanışta yazılacak)*
+Kullanıcının getirdiği iki bozuk rapor ekran görüntüsünden iki ayrı kusur
+çıktı ve ikisi de kapandı.
+
+**1 — Tablo sıkışması app kusuruydu:** `hub_markdown.dart` `tableColumnWidth`
+yazmadığı için `flutter_markdown` varsayılanı (`FlexColumnWidth`) kalıyor ve
+paketin yatay kaydırma sarmalayıcısı hiç oluşmuyordu. `IntrinsicColumnWidth`
+ile düzeltildi; test dar ekranda tablo genişliğinin ekranı aştığını ölçüyor
+([L-055](../../knowledge/lessons.md#L-055)).
+
+**2 — İşaret bozulması kodlama hatasıydı,** font değil: `·` → `Â·` deseni
+UTF-8'in Latin-1 sanılmasının imzası. Asıl ders zincirin nerede koptuğu değil,
+anlamın tamamının emojiye yüklenmiş olması ([L-054](../../knowledge/lessons.md#L-054)).
+
+**3 — Sözleşme 1.29:** artifact yazım biçimi §3'e yazıldı (tr+en), protokol
+maddesi 5 genişletildi, `tool/artifact-lint.sh` yazıldı ve `tool/audit.sh`
+§11'den her açılışta koşuyor ([A-2026-09-11-001](../../artifacts/S-2026-09-11-artifact-bicimi/artifact-yazim-bicimi.md),
+[P-022](../../PLAN.md#P-022)).
+
+**4 — APK:** kullanıcı uzakta olduğu için derlenip Drive'a kondu; veri
+korunumu iddia değil ölçüm — imza SHA-1, paket adı ve versionCode kurulu
+sürümle birebir aynı ([P-023](../../PLAN.md#P-023)).
 
 ## Kayıt
 

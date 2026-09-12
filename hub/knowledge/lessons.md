@@ -937,3 +937,42 @@ Biçim: `SYSTEM.md` §5.
   her varsayılanı** bilinçli seç ya da en azından oku. Yeni testin sorusu
   "çizildi mi" değil, "dar ekranda okunabilir mi" — ölçüsü tablonun
   genişliğinin ekranı aşması.
+
+## L-056 — Ölçümü yapan taraf da kendi çıktısını denetlemez
+- **Tarih:** 2026-09-12
+- **Kaynak:** S-2026-09-12-sozlesme-analizi,
+  [A-2026-09-12-001](../artifacts/S-2026-09-12-sozlesme-analizi/sozlesme-yuku-ve-getirisi.md)
+- **Ders:** Bu hub'ın kurucu kuralı "kaydı yazan taraf denetlenen tarafın
+  kendisidir" der ve bu yüzden `audit.sh` düzyazıya değil git grafiğine
+  bakar. 365 oturumluk ölçümde aynı kuralın **ölçüm ajanları için de**
+  geçerli olduğu görüldü: yedi manşet iddia ikişer bağımsız çürütücüye
+  verilince ikisi düştü, dördü daraldı, yalnız biri olduğu gibi kaldı.
+  Düşen iddiaların hiçbiri uydurma değildi; hepsi **yanlış tanımlanmış bir
+  ölçüt** üzerine kuruluydu. "Sözleşme hiç küçülmedi" doğruydu (dosya
+  büyüdü) ama ölçmek istediği şey yanlıştı — 1.28 dosyayı değil **okuma
+  politikasını** küçültmüştü. "1.28'in etkisi yok" cümlesi de yanlıştı:
+  doğrusu "n=15, etkin n≈4, %30 etkiyi görme gücü %13 — saptanamadı".
+  En öğretici düzeltme ana ajanın kendi sayısına geldi: "artifact'ların
+  %86'sı atıf almış" ölçümü, sözleşmenin **zorunlu kıldığı doğum-indeksi
+  satırını** sayıyordu; kullanımı ölçen tanımla oran %33-50'ye düşüyor.
+  **Kural:** çok ajanlı bir ölçümde bulgular, üretildikleri yoldan **farklı
+  bir yoldan** ölçen bağımsız bir tura sokulmadan rapora girmez. Çürütücüye
+  "doğrula" değil "çürüt" denir ve belirsizlik çürük tarafına yazılır.
+  Maliyeti ölçüldü: doğrulama turu ölçüm turunun yarısı kadar tuttu, buna
+  karşılık manşetlerin yarısını düzeltti.
+
+## L-057 — Bir oranın tanımı, oranın kendisinden daha belirleyici
+- **Tarih:** 2026-09-12
+- **Kaynak:** S-2026-09-12-sozlesme-analizi,
+  [A-2026-09-12-001](../artifacts/S-2026-09-12-sozlesme-analizi/sozlesme-yuku-ve-getirisi.md)
+- **Ders:** Aynı artifact kümesi için üç ölçüt üç farklı gerçek üretti:
+  "herhangi bir yerde anılıyor" %99, "doğduğu klasör dışından anılıyor" %84,
+  "doğduğu günden sonra bir kayıtta anılıyor" %33-50. Üçü de aritmetik olarak
+  doğru; yalnız biri sorulan soruyu ("yazdığımız rapor geri okunuyor mu")
+  ölçüyor. Fark, sözleşmenin kendi zorunluluğundan doğuyor: her artifact
+  doğduğu oturumun kaydına yazılmak **zorunda**, yani en gevşek ölçüt
+  kuralın kendi izini "kullanım" sanıyor.
+  **Kural:** bir oran rapora girerken payın ve paydanın tanımı yanında yazılır.
+  Özellikle "atıf/kullanım/uyum" oranlarında, ölçülen davranışın bir
+  bölümünün **kural gereği zorunlu** olup olmadığı sorulur; zorunlu kısım
+  gönüllü kullanımdan ayrılmadan oran anlamsızdır.
