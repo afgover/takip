@@ -78,6 +78,14 @@ tek tek değerlendirildi:
 başladı — detaylar bu kaydın devamında, ayrı commit'lerle (bu oturumun
 kendisi artık madde 4'e göre anlık yazılıyor).
 
+### [00:55] Agent
+
+`knowledge/lessons.md`'ye [L-059](../../knowledge/lessons.md#L-059) eklendi:
+madde 4'ün art arda iki oturumda ihlal edilmesi, kök nedeni ve kuralın
+"kendi işine uygulanması" alışkanlığı. `BACKLOG.md`'deki
+[B-144](../../BACKLOG.md#B-144)'e dördüncü madde eklendi: `audit.sh` §3
+yalnız açılışta koşuyor, kendi oturumunun ihlalini göremiyor.
+
 ## Notlar
 
 - Bu oturum, T-010/waiting incelemesi ve denetim değerlendirmesiyle

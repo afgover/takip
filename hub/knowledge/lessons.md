@@ -995,3 +995,27 @@ Biçim: `SYSTEM.md` §5.
   varabilir. Sessiz bozulma ihtimali olan yerlerde (aynı dosyaya farklı
   yazma, git'in çakışma saymadığı durumlar) yazdıktan **sonra** koşulan ucuz
   bir denetim komutu tek korumadır.
+
+## L-059 — "Anında ekle" kuralı, denetimin kendisi tarafından iki kez yakalandı
+- **Tarih:** 2026-09-20
+- **Kaynak:** `audit.sh` §3, `S-2026-09-12-sozlesme-analizi` (5 satır tek
+  commit'te), `S-2026-09-19-id-karsisi-karari` (6 satır tek commit'te)
+- **Ders:** Madde 4 ("her kullanıcı mesajını ve cevabını anında ekle, oturum
+  sonuna biriktirme") art arda iki oturumda ihlal edildi — ikisinde de
+  `session.md` konuşma bitince tek seferde yazılıp tek commit'te push'landı.
+  Denetim (`audit.sh` §3) ikisini de mekanik olarak yakaladı, ama yakalamak
+  düzeltmek değil: aynı ihlal bir dahaki oturumda tekrarlandı çünkü bulgu
+  yalnızca **açılışta okunan bir özet satırı** olarak kaldı, davranışı
+  değiştiren bir şeye dönüşmedi.
+  **Kök neden:** `session.md`'yi baştan yazmak (tüm konuşmayı elde tutup tek
+  `Write`'la oluşturmak) her zaman mümkün ve daha az sürtünmeli — ajanın
+  önünde "her adımda küçük bir `Edit` + commit" ile "sonunda tek büyük
+  `Write` + commit" arasında bir seçim var ve ikincisi hep daha kolay
+  görünüyor, özellikle iş kendi içinde hızlı akarken.
+  **Kural:** oturum kaydı tutan bir ajan, kendi **bu oturumdaki** çıktısını
+  denetlemeden kapatmaz — `audit.sh`'ı yalnız açılışta değil, çok adımlı bir
+  işin ortasında da (ör. üç veya daha fazla commit atacaksa) bir kez daha
+  koşturup kendi oturumunun madde 3/4'ü ihlal etmediğini görür. Bir kuralın
+  varlığı onun uygulanabilir olduğu anlamına gelmiyor ([L-058](#L-058));
+  burada eksik olan da kuralın metni değil, kuralı **kendi işine** uygulama
+  alışkanlığıydı.

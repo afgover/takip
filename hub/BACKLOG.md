@@ -933,11 +933,16 @@ başlığına ✅ ve tarih yazılır.
       (0,75-1,69 MB tek yönlü yazım). Ya kapanışta atıf zorunluluğu ya
       üretim eşiği. Ölçütün tanımı belirleyici: "herhangi bir atıf" ölçütü
       %99 veriyor ama zorunlu indeks satırını sayıyor · → L-056
-- [ ] B-144 · (agent) **Denetim kör noktaları.** Üç somut madde: (a) ritim
+- [ ] B-144 · (agent) **Denetim kör noktaları.** Dört somut madde: (a) ritim
       kontrolü `info` basıyor, %59 ihlal çıkış kodunda sıfır bulgu üretiyor;
       (b) `reconstructed` bayrağı doğrulanmıyor ve korpusun %24'ünü iki
       kontrolden muaf tutuyor; (c) şema dışı yazılmış 8 oturum (din_takip)
-      denetim döngüsünün dışında · ölçüm: A-2026-09-12-001 §7
+      denetim döngüsünün dışında; (d) `audit.sh` §3 ("tek commit'te
+      biriktirme") yalnız **açılışta** koşuyor — kendi oturumunun ihlalini
+      hiç görmüyor, bir sonraki oturumun açılışına kadar iz sürmüyor. Aynı
+      ihlal art arda iki oturumda tekrarlandı ([L-059](knowledge/lessons.md#L-059))
+      çünkü bulgu davranışı değiştirecek bir ana denk gelmeden yalnızca
+      okunuyordu · ölçüm: A-2026-09-12-001 §7, L-059
 - [ ] B-143 · (agent) **Açılış kontrolü koştuğunu kayda yazmıyor.** `curl`
       farkı bulamazsa hiçbir iz kalmıyor; sonuç: kontrolün kaç kez koştuğu
       ölçülemiyor ve 1.28 tipi tedbirlerin etkisi ölçülemez kalıyor. Tur
