@@ -891,3 +891,17 @@ işi, bitiş çizgisi değil. Bitiş çizgisi olsaydı aşama hiç kapanmazdı �
   yere** kondu (protokolün değişmezleri), §15'e kopyalanmadı: bu projenin en
   çok tekrarlayan hatası "aynı kural iki yerde, biri güncellendi öteki
   unutuldu".
+
+- 2026-09-19: Sözleşme [1.31](SYSTEM.md): **ID atarken "en büyük", komşu giriş
+  değil, dosyanın tamamıdır** — `AGENT_PROTOCOL.md`'nin v1.15 bloğuna eklendi
+  ([T-024](tasks/done/2026-09-19-id-numarasi-cakismasi-sozlesme.md)).
+  Vaka: `vault_takip/hub/BACKLOG.md`'de B-123/B-124 numaraları ikişer kez
+  verildi (2026-09-18) — yeni giriş ilgili maddenin (B-122) hemen altına
+  eklenmiş ve numara oradan türetilmişti, oysa dosya kronolojik sıralı değil
+  ve B-123..B-127 başka bir oturumdan daha aşağıda duruyordu. Kural
+  (v1.15) zaten "dosyadaki en büyükten türet" diyordu ve okunmuştu; eksik
+  olan **nerede aranacağıydı**. Sürüm artırıldı çünkü ek, salt açıklama değil
+  iki yeni zorunlu komut getiriyor (en büyüğü bulma + çakışma denetimi) —
+  v1.29/v1.30 emsaliyle aynı ölçekte bir prosedür değişikliği. Ders:
+  [L-058](knowledge/lessons.md#L-058). `vault_takip` ayrıca iki sürüm geride
+  kalmıştı (1.28, §10 diff'i koşulmamış); bu da senkron gündemine eklendi.

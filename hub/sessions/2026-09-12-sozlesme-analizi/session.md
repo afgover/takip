@@ -1,7 +1,7 @@
 ---
 id: S-2026-09-12-sozlesme-analizi
 date: 2026-09-12
-status: open
+status: closed
 reconstructed: false
 author: afgover
 topics: [olcum, sozlesme, analiz, coklu-hub]
@@ -14,7 +14,13 @@ tasks_touched: []
 
 ## Özet
 
-*(oturum açık — kapanışta yazılacak)*
+10 hub, 366 oturum, 2.289 commit üzerinden sözleşmenin gerçek yükü/getirisi
+ölçüldü (28 ajan, ~4,1M token, 1.258 araç çağrısı). Ana bulgu: metin
+yayılıyor, uygulama yayılmıyor — 1.28'in tur azaltan tedbiri dokuz hub'a hiç
+ulaşmadı, denetim en büyük sapmayı (%59 ritim ihlali) bulgu saymıyor.
+Rapor: [A-2026-09-12-001](../../artifacts/S-2026-09-12-sozlesme-analizi/sozlesme-yuku-ve-getirisi.md).
+Bu oturum, ertesi oturumun (T-024 kararı, S-2026-09-19) açılışında madde 1
+gereği burada kapatıldı — özeti oturumun kendi kaydından türetildi.
 
 ## Kayıt
 

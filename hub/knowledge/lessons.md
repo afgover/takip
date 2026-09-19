@@ -976,3 +976,22 @@ Biçim: `SYSTEM.md` §5.
   Özellikle "atıf/kullanım/uyum" oranlarında, ölçülen davranışın bir
   bölümünün **kural gereği zorunlu** olup olmadığı sorulur; zorunlu kısım
   gönüllü kullanımdan ayrılmadan oran anlamsızdır.
+
+## L-058 — Bir kuralın varlığı, kuralın uygulanabilir olduğu anlamına gelmiyor
+- **Tarih:** 2026-09-19
+- **Kaynak:** [T-024](../tasks/done/2026-09-19-id-numarasi-cakismasi-sozlesme.md),
+  `afgover/vault_takip` (B-130, L-034)
+- **Ders:** `AGENT_PROTOCOL.md` v1.15'ten beri "numarayı dosyadaki en
+  büyükten türet" diyordu; kural okunmuş ve uygulanmıştı, yine de
+  `vault_takip/hub/BACKLOG.md`'de B-123/B-124 ikişer kez verildi. Sebep
+  kuralın **söylemediği** şeydi: "en büyük" nerede aranacak? Dosya kronolojik
+  sıralı olmadığı için "eklediğim yerin üstü" ile "dosyanın tamamı" farklı
+  cevaplar veriyor; ajan birincisini seçti, tutarlı ama yanlış bir cevap
+  üretti. İkinci gözlem: çakışma **sessizdi** — iki ayrı ID'yi aynı dosyaya
+  yazmak git için çakışma değil, hiçbir araç uyarmadı.
+  **Kural:** bir prosedür maddesi yazılırken yalnız "ne yapılacağı" değil,
+  belirsiz kalabilecek her "nerede/hangi kapsamda" sorusu da yanıtlanır;
+  aksi hâlde her ajan kendi lokal bakışıyla tutarlı ama farklı bir cevaba
+  varabilir. Sessiz bozulma ihtimali olan yerlerde (aynı dosyaya farklı
+  yazma, git'in çakışma saymadığı durumlar) yazdıktan **sonra** koşulan ucuz
+  bir denetim komutu tek korumadır.

@@ -136,6 +136,25 @@ what*. The procedure holds whatever the session is about.
 > collision can occur without concurrency too: in a long session the answer to
 > "what was the last number I gave" lives only in the file (on 2026-08-06 B-111
 > was issued twice in exactly this way).
+>
+> **"Largest" is not the neighboring entry (v1.31).** The file is NOT in
+> chronological order: newer entries can land in between, so the entry above
+> where you're adding often does not carry the largest number. Derive the
+> number by scanning the whole file, and check for collisions after adding:
+>
+> ```
+> grep -oE '\*\*B-[0-9]+\*\*' hub/BACKLOG.md | sort -u | tail -1   # largest
+> grep -oE '\*\*B-[0-9]+\*\*' hub/BACKLOG.md | sort | uniq -d      # collision
+> ```
+>
+> The second command should return nothing; if it returns something, renumber
+> the entry written later and fix its **cross-references in the body** too.
+> The same pattern applies to the other counters — substitute `T-`, `L-`,
+> `SK-`, `R-`, `SEC-`, `K-`, `A-` for `B-` and look at the relevant file. `T-`
+> counters live in task files' frontmatter, so the pattern there is
+> `^id: T-[0-9]+` (on 2026-09-19 `vault_takip` issued B-123/B-124 twice this
+> way — the rule was already there, what was missing was where to look for
+> "the largest").
 
 4. Append **every user message and every one of your replies** to `session.md`
    immediately — do not save them up for the end. User messages go in unabridged;

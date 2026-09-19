@@ -3,12 +3,12 @@ id: T-024
 title: "Sözleşme: ID numarası komşu girişten türetilince çakışıyor (vault_takip'te B-123/B-124 ikişer kez verildi)"
 created_by: agent
 created: "2026-09-19T20:15:00Z"
-updated: "2026-09-19T20:15:00Z"
+updated: "2026-09-19T23:05:00Z"
 priority: normal
 category: tartisma
 tags: [sozlesme, agent-protocol, id, cakisma, vault]
-session: none
-result: none
+session: S-2026-09-19-id-karsisi-karari
+result: "Seçenek 1: ana kopyaya v1.31 olarak eklendi (AGENT_PROTOCOL.md + .en.md), SYSTEM.md 1.30→1.31, EVOLUTION.md notu, L-058. vault_takip senkronu ayrı bir adım — bu hub'ın işi değil."
 options: ["Ana kopyaya v1.31 olarak ekle + SYSTEM.md 1.30→1.31 + vault_takip'i senkronla", "Yalnız kuralı ekle, sürüm artırma (açıklama sayılsın)", "Kuralı ekleme; vault_takip'teki yerel eklemeyi geri al ve yalnız senkronla"]
 multi: false
 ---
@@ -101,3 +101,23 @@ orada `^id: T-[0-9]+` olur; metne bunu da eklemek gerekebilir.
 
 **İlgili kayıtlar:** `afgover/vault_takip` → B-130 (oturum kaydı), L-034
 (ders), commit `89a3360` (yerel prosedür eklemesi + B-130 önlem maddesi).
+
+## Karar (2026-09-19, S-2026-09-19-id-karsisi-karari)
+
+Seçenek 1 uygulandı:
+
+- Metin `AGENT_PROTOCOL.md` (+ `.en.md`) v1.15 bloğunun altına **v1.31**
+  etiketiyle eklendi.
+- `SYSTEM.md` (+ `.en.md`) sözleşme sürümü 1.30 → 1.31. Gerekçe: ek salt
+  açıklama değil, iki yeni zorunlu komut getiriyor (dosyanın tamamından en
+  büyüğü bulma + yazdıktan sonra çakışma denetimi) — v1.29/v1.30 emsaliyle
+  aynı ölçekte bir prosedür değişikliği (bkz. `SYSTEM.md` §5-6: "sözleşme
+  değişiklikleri sürüm artırır").
+- Ders kaydı ana kopyaya `L-058` olarak girdi (`knowledge/lessons.md`) —
+  vault'taki L-034'ün bu hub'ın diliyle karşılığı, birebir kopya değil.
+- `vault_takip` senkronu bu hub'ın kapsamı dışında: karar burada push'landıktan
+  sonra Vault oturumuna cross-session mesajla bildirildi, 1.28→1.31 senkronu
+  ve yerel eklemenin (`89a3360`) geri alınması Vault tarafının işi.
+
+Elenen seçenekler ve gerekçesi `EVOLUTION.md`'nin 2026-09-19 girdisinde ve
+`S-2026-09-19-id-karsisi-karari` oturum kaydında.

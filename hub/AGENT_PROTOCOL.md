@@ -129,6 +129,25 @@ tanımlanır. Prosedür, oturumun konusu ne olursa olsun geçerlidir.
 > olmadan da çakışma çıkabilir: uzun bir oturumda "en son kaç vermiştim"
 > sorusunun cevabı yalnız dosyada durur (2026-08-06'da tam bu şekilde
 > B-111 iki kez verildi).
+>
+> **"En büyük" komşu giriş değildir (v1.31).** Dosya kronolojik sıralı DEĞİL:
+> yeni kayıtlar araya da girebiliyor, dolayısıyla ekleyeceğin yerin üstündeki
+> madde çoğu zaman en büyük numarayı taşımıyor. Numara, dosyanın tamamı
+> taranarak bulunur ve ekledikten sonra çakışma denetlenir:
+>
+> ```
+> grep -oE '\*\*B-[0-9]+\*\*' hub/BACKLOG.md | sort -u | tail -1   # en büyük
+> grep -oE '\*\*B-[0-9]+\*\*' hub/BACKLOG.md | sort | uniq -d      # çakışma
+> ```
+>
+> İkinci komut boş dönmelidir; bir şey döndüyse sonradan yazılan kayıt yeniden
+> numaralandırılır ve **gövdesindeki çapraz atıflar da** düzeltilir. Aynı
+> kalıp öbür sayaçlar için de geçerlidir — desen `B-`'nin yerine `T-`, `L-`,
+> `SK-`, `R-`, `SEC-`, `K-`, `A-` konarak ve ilgili dosyaya bakılarak
+> kullanılır. `T-` sayaçları görev dosyalarının frontmatter'ında durduğu için
+> desen orada `^id: T-[0-9]+` olur (2026-09-19'da bu şekilde `vault_takip`te
+> B-123/B-124 ikişer kez verildi — kural zaten oradaydı, eksik olan
+> "en büyük" nerede aranacağıydı).
 
 4. **Her kullanıcı mesajını ve her cevabını** `session.md`'ye anında ekle —
    oturum sonuna biriktirme. Kullanıcı mesajları kısaltılmadan; agent cevapları
