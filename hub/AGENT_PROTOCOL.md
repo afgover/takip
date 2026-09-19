@@ -194,6 +194,18 @@ tanımlanır. Prosedür, oturumun konusu ne olursa olsun geçerlidir.
    başlık metni değil. Bir belgede ID'nin **ilk** geçtiği yer bağlanır, sonraki
    tekrarları düz metin kalır.
 8. Görev durum değişikliklerini klasör taşımayla ve doğru commit mesajıyla işle.
+
+   **Doğrudan `done/`'da doğan görev (v1.32).** `inbox → active → done`
+   akışı, isteğin görülmesiyle ele alınması arasında bir **devir** (aynı
+   ajanın hemen cevap veremediği bir boşluk) olduğunda anlamlıdır. Kullanıcı
+   canlı bir oturumda bir şey istiyor ve ajan **aynı oturumda** bitiriyorsa
+   böyle bir boşluk hiç oluşmaz; görev dosyasını önce `inbox/`e yazıp hemen
+   `active/`e, sonra hemen `done/`e taşımak akışı taklit etmekten öteye
+   geçmez. Bu durumda dosya doğrudan `done/` içinde, tam frontmatter'la
+   (`result` dâhil) oluşturulabilir. Ölçüt **devrin olup olmadığıdır**,
+   isteğin kaynağı değil — kullanıcı bir görevi açıp sonra beklemeye
+   bırakıyorsa (`assignee` başkası, ya da ajan işi bitiremiyorsa) akış
+   normal şekilde `inbox`'tan başlar.
 9. **Kullanıcıdan bir şey bekliyorsan görev aç ve `tasks/waiting/`e koy.**
    Sohbette söylemek yeterli değildir: sohbet kapanır, kullanıcı telefonunda
    hiçbir iz görmez. Kural şu — *"kullanıcı yapmadan ilerleyemiyorsam, bu bir

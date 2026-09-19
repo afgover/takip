@@ -207,6 +207,18 @@ what*. The procedure holds whatever the session is about.
    record's ID, not the heading text. Link the **first** occurrence of an ID in
    a document; later repeats stay plain.
 8. Handle task status changes by moving folders, with the right commit message.
+
+   **A task born directly in `done/` (v1.32).** The `inbox → active → done`
+   flow makes sense when there's a **handoff gap** between the request being
+   seen and being picked up. If the user asks for something in a live
+   session and the agent finishes it **in that same session**, no such gap
+   ever exists; writing the task file to `inbox/` first only to immediately
+   move it to `active/` and then to `done/` doesn't do anything but mimic
+   the flow. In that case the file can be created directly in `done/`, with
+   full frontmatter (including `result`). The test is **whether a handoff
+   happened**, not where the request came from — if the user opens a task
+   and it's left pending (a different `assignee`, or the agent can't finish
+   it), the flow starts from `inbox` as usual.
 9. **If you are waiting on the user for something, open a task and put it in
    `tasks/waiting/`.** Saying it in chat is not enough: the chat ends and the
    user sees no trace of it on their phone. The rule is — *"if I cannot proceed

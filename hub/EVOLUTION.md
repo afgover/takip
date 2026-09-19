@@ -905,3 +905,18 @@ işi, bitiş çizgisi değil. Bitiş çizgisi olsaydı aşama hiç kapanmazdı �
   v1.29/v1.30 emsaliyle aynı ölçekte bir prosedür değişikliği. Ders:
   [L-058](knowledge/lessons.md#L-058). `vault_takip` ayrıca iki sürüm geride
   kalmıştı (1.28, §10 diff'i koşulmamış); bu da senkron gündemine eklendi.
+
+- 2026-09-20: Sözleşme [1.32](SYSTEM.md): **doğrudan `done/`'da doğan görev**
+  istisnası `AGENT_PROTOCOL.md` madde 8'e yazıldı. Vaka:
+  [T-016](tasks/done/2026-08-11-filtre-menuleri.md) `inbox/`/`active/`'den
+  hiç geçmeden `done/`de doğmuştu; denetim (`audit.sh` §5) bunu her
+  koştuğunda bulgu olarak veriyordu. İnceleme gösterdi ki `inbox → active →
+  done` akışının var oluş nedeni **devir** (isteğin görülmesiyle ele
+  alınması arasındaki boşluk) — istek ve tamamlanma aynı canlı oturumda
+  olduğunda bu boşluk hiç oluşmuyor, akışı zorlamak biçimi taklit etmekten
+  öteye geçmiyor. Aynı denetim turunda ikinci bir bulgu da işlendi:
+  `audit.sh` §3 ("tek commit'te biriktirme") art arda iki oturumda aynı
+  ihlali yakaladı ama davranışı hiç değiştirmedi çünkü yalnız açılışta
+  okunuyordu — bu bir sözleşme maddesi değil, ders (`L-059`) ve denetim
+  kör noktası (`B-144`) olarak kaydedildi, çünkü `audit.sh`'ın kendisini
+  değiştirmek gerekiyor, prosedür metnini değil.

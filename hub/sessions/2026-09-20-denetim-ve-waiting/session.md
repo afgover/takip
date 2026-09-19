@@ -86,6 +86,17 @@ madde 4'ün art arda iki oturumda ihlal edilmesi, kök nedeni ve kuralın
 [B-144](../../BACKLOG.md#B-144)'e dördüncü madde eklendi: `audit.sh` §3
 yalnız açılışta koşuyor, kendi oturumunun ihlalini göremiyor.
 
+### [01:05] Agent
+
+4 numaralı bulgu netleştirildi: `AGENT_PROTOCOL.md` (+ `.en.md`) madde 8'e
+"doğrudan `done/`'da doğan görev" istisnası eklendi — sözleşme 1.31 → **1.32**
+(`SYSTEM.md` + `.en.md`). Ölçüt devrin olup olmadığı: istek ve tamamlanma
+aynı canlı oturumdaysa `inbox/active` akışı taklitten öteye geçmiyor.
+`EVOLUTION.md`'ye not düşüldü, [T-016](../../tasks/done/2026-08-11-filtre-menuleri.md)
+dosyasına çapraz atıf eklendi. Bu, sürüm artışının aynı oturumda ikinci kez
+(1.31→1.32) yapıldığı bir gün oldu — ikisi de bağımsız, farklı vakalardan
+geldi (T-024 / T-016), aynı güne denk gelmesi tesadüf.
+
 ## Notlar
 
 - Bu oturum, T-010/waiting incelemesi ve denetim değerlendirmesiyle

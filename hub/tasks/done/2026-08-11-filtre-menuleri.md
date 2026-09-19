@@ -30,3 +30,12 @@ sıfırlama tuşu var, birden fazla seçenek seçilebiliyor.
   bozuk tercih filtresiz açar (yanlış filtre görevleri sessizce gizlerdi).
 - Yan bulgu: lifecycle testi baştan beri yarışlıydı (10 koşumda 2), yeni
   SharedPreferences okumaları görünür kıldı; test belirlenimci yapıldı.
+
+## Not (2026-09-20)
+
+Bu görev `inbox/`/`active/`'den geçmeden doğrudan `done/`de doğduğu için
+denetimde (`audit.sh` §5) tekrarlayan bir bulgu olarak çıkıyordu. İnceleme
+sonucu `AGENT_PROTOCOL.md` madde 8'e "doğrudan `done/`'da doğan görev"
+istisnası eklendi (sözleşme 1.32) — istek ve tamamlanma aynı canlı oturumda
+olduğunda devir hiç oluşmuyor, akışı taklit etmenin bir anlamı yok. Bu görev
+artık o istisnanın örnek vakası.
