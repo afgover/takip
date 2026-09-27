@@ -1,7 +1,7 @@
 ---
 id: S-2026-09-28-artifact-lint-duzeltme
 date: 2026-09-28
-status: open
+status: closed
 reconstructed: false
 author: afgover
 topics: [artifact-lint, sahte-negatif, tool, T-025]
@@ -13,7 +13,13 @@ tasks_touched: [T-025]
 
 ## Özet
 
-*(oturum açık — kapanışta yazılacak)*
+T-025 (`artifact-lint.sh`'ın tırnaklı/eksik `created`'ı sessizce atlayıp
+"temiz" demesi) düzeltildi: eşik ataması artık yalnız ayrıştırılabilen
+tarihte yapılıyor, `checked == 0` KOŞMADI/çıkış 2 veriyor, `--selftest`
+eklendi (4/4). `--all` ile tüm hub'a karşı regresyonsuz koşuldu; tek fark
+daha önce gizli kalan `hub/artifacts/README.md` bulgusunun görünür olması.
+`PLAN.md`'ye P-025 (türetilmiş) yazıldı. README'nin frontmatter'sız kalma
+sorusu ayrı bırakıldı, kullanıcıya soruldu.
 
 ## Kayıt
 
