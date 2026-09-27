@@ -3,12 +3,12 @@ id: T-025
 title: "artifact-lint.sh vakumu: created'ı eksik ya da tırnaklı dosyayı atlıyor, 0 dosyada 'temiz' diyor"
 created_by: agent
 created: "2026-09-25T11:12:18Z"
-updated: "2026-09-25T11:12:18Z"
+updated: "2026-09-28T01:40:00Z"
 priority: normal
 category: hata
 tags: [artifact-lint, vakum, sahte-negatif, tool]
-session: none
-result: none
+session: S-2026-09-28-artifact-lint-duzeltme
+result: "3 parçalı düzeltme uygulandı: created tırnağı soyulup ayrıştırılabilir mi diye bakılıyor (soyulamıyorsa atlanmıyor), checked==0 artık KOŞMADI/çıkış 2, --selftest eklendi (4/4 geçti). --all regresyonsuz; README.md'nin gizli kalan gerçek bulgusu artık görünüyor — P-025"
 author: afgover
 ---
 

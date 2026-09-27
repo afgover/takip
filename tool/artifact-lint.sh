@@ -12,6 +12,7 @@
 #   tool/artifact-lint.sh hub/artifacts/S-.../rapor.md   # tek dosya
 #   tool/artifact-lint.sh --all                          # kural sonrası hepsi
 #   tool/artifact-lint.sh --all --since 2026-09-11       # başka bir eşikten
+#   tool/artifact-lint.sh --selftest                     # kapının kendi testi
 #
 # Çıkış kodu:
 #   0  temiz
@@ -20,6 +21,97 @@
 set -uo pipefail
 
 command -v python3 >/dev/null || { echo "python3 yok — denetim koşmadı" >&2; exit 2; }
+
+if [ "${1:-}" = "--selftest" ]; then
+  # T-025: eşik atlaması `created`'ı tırnaklı ya da eksik dosyalarda
+  # sessizce yanlış çalışıyordu (bkz. aşağıdaki python bloğu). Dört satır
+  # burada sınama olarak duruyor; tırnaklı ve eksik `created` kırmızıya
+  # düşmeli, gerçekten eski dosya hâlâ atlanmalı.
+  TMP=$(mktemp -d)
+  trap 'rm -rf "$TMP"' EXIT
+  ART="$TMP/hub/artifacts/S-selftest"
+  mkdir -p "$ART"
+  SELF="$0"
+
+  cat > "$ART/kontrol.md" <<'EOF'
+---
+id: A-selftest-1
+type: rapor
+title: kontrol
+created: 2026-09-24T10:00:00Z
+---
+
+# kontrol
+
+## Özet
+tek satır.
+EOF
+
+  cat > "$ART/tirnakli.md" <<'EOF'
+---
+id: A-selftest-2
+type: rapor
+title: tirnakli
+created: "2026-09-24T10:00:00Z"
+---
+
+# tirnakli
+
+## Özet
+tek satır.
+EOF
+
+  cat > "$ART/eksik.md" <<'EOF'
+---
+id: A-selftest-3
+type: rapor
+title: eksik
+---
+
+# eksik
+
+## Özet
+tek satır.
+EOF
+
+  cat > "$ART/eski.md" <<'EOF'
+---
+id: A-selftest-4
+type: rapor
+title: eski
+created: "2026-08-01T00:00:00Z"
+---
+
+# eski
+
+## Özet
+tek satır.
+EOF
+
+  FAIL=0
+  chk() {
+    local name="$1" want_exit="$2" want_grep="$3"; shift 3
+    local out got_exit
+    out=$("$SELF" --since 2026-09-11 "$@" 2>&1); got_exit=$?
+    if [ "$got_exit" != "$want_exit" ]; then
+      echo "  ✗ $name: çıkış $got_exit (beklenen $want_exit)"; echo "$out" | sed 's/^/      /'
+      FAIL=1
+    elif [ -n "$want_grep" ] && ! grep -q "$want_grep" <<<"$out"; then
+      echo "  ✗ $name: '$want_grep' çıktıda yok"; echo "$out" | sed 's/^/      /'
+      FAIL=1
+    else
+      echo "  ✓ $name"
+    fi
+  }
+
+  chk "kontrol (tırnaksız, sağlam) denetlenir"          1 "1 dosya denetlendi" "$ART/kontrol.md"
+  chk "tırnaklı created de denetlenir (eski hata: atlanıyordu)" 1 "1 dosya denetlendi" "$ART/tirnakli.md"
+  chk "created eksikse atlanmaz, bulgu verir"           1 "eksik: created" "$ART/eksik.md"
+  chk "gerçekten eski + tırnaklı → hâlâ atlanır (KOŞMADI, temiz değil)" 2 "" "$ART/eski.md"
+
+  if [ "$FAIL" -eq 0 ]; then echo "selftest: 4/4 geçti"; exit 0; fi
+  echo "selftest: BAŞARISIZ"; exit 1
+fi
 
 ALL=0
 SINCE="2026-09-11"   # kuralın yürürlük tarihi; öncesi denetlenmez
@@ -47,6 +139,18 @@ import os, re, sys
 since = os.environ.get("SINCE", "")
 findings = 0
 checked = 0
+skipped = 0
+DATE_RE = re.compile(r"^\d{4}-\d{2}-\d{2}")
+
+
+def parse_date(raw):
+    # YAML'da tarih tırnaklı da yazılabilir (`created: "2026-…"`); tırnağı
+    # soymadan yapılan string karşılaştırması `"` (0x22) her zaman `2`
+    # (0x32) harfinden küçük çıktığı için sessizce "eşik öncesi" sanıyordu.
+    v = raw.strip()
+    if len(v) >= 2 and v[0] == v[-1] and v[0] in "'\"":
+        v = v[1:-1]
+    return v
 
 EMOJI = re.compile(
     "[\\U0001F000-\\U0001FAFF"              # emoji blokları
@@ -96,9 +200,15 @@ for path in sys.argv[1:]:
             if m:
                 fields[m.group(1)] = m.group(2).strip()
 
-    created = fields.get("created", "")
-    if since and created[:10] < since:
+    created_raw = fields.get("created", "")
+    created = parse_date(created_raw)
+    created_ok = bool(DATE_RE.match(created))
+    if since and created_ok and created[:10] < since:
+        skipped += 1
         continue   # kural yürürlüğe girmeden önce yazılmış; denetlenmez
+    # created eksik ya da ayrıştırılamıyorsa (tırnak soyulduktan sonra bile
+    # `YYYY-MM-DD` değilse) eşik öncesi sayılıp atlanmaz — denetlenir ve
+    # aşağıdaki zorunlu-alan kontrolü bunu bulgu olarak yazar.
     checked += 1
 
     out = []
@@ -109,6 +219,8 @@ for path in sys.argv[1:]:
     for key in ("id", "session", "type", "title", "created"):
         if key not in fields:
             bad("frontmatter eksik: %s" % key)
+    if "created" in fields and not created_ok:
+        bad("frontmatter bozuk: created ayrıştırılamadı (%r)" % created_raw)
 
     body = lines[body_at:]
     heads = [(i, l) for i, l in enumerate(body) if re.match(r"^#{1,6}\s", l)]
@@ -181,7 +293,10 @@ for path in sys.argv[1:]:
             print("      %s" % msg)
 
 if findings:
-    print("\n%d bulgu (%d dosya denetlendi)." % (findings, checked))
+    print("\n%d bulgu (%d dosya denetlendi, %d atlandı)." % (findings, checked, skipped))
     sys.exit(1)
-print("temiz (%d dosya denetlendi; %s öncesi hariç)." % (checked, since))
+if checked == 0:
+    print("KOŞMADI (0 dosya denetlendi, %d atlandı) — sonucu temiz sayma" % skipped)
+    sys.exit(2)
+print("temiz (%d dosya denetlendi, %d atlandı; %s öncesi hariç)." % (checked, skipped, since))
 PY

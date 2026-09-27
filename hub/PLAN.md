@@ -520,3 +520,25 @@ sırasıyla girer.
 - [x] P-001.13 — Tam süit teyidi + push · ✅ 2026-08-13; 531 geçti, 2 kırık ve
       ikisi de [B-130](BACKLOG.md#B-130) (oturum öncesi commit'te de düşüyor,
       ölçüldü). Ana kopya 1.25'i sunuyor: `curl` + `diff` farksız
+
+## P-025 — `artifact-lint.sh`: tırnaklı/eksik `created` sessiz sahte-negatif
+- **Tarih:** 2026-09-28
+- **Kaynak:** [T-025](tasks/done/2026-09-25-artifact-lint-created-vakumu.md),
+  [S-2026-09-28-artifact-lint-duzeltme](sessions/2026-09-28-artifact-lint-duzeltme/session.md)
+- **Durum:** tamamlandi
+- **Türetilmiş:** true
+- **İlgili:** [B-144](BACKLOG.md#B-144), `financer_takip#B-331`
+
+> Planı iş bittikten sonra yazıldı (sözleşme 1.26) — üç adımlık düzeltme tek
+> oturumda art arda uygulandı, adım sayısı ancak bittiğinde nettti.
+
+- [x] P-025.1 — Eşik atlaması yalnız ayrıştırılabilen tarihte: tırnak soyulur,
+      `YYYY-MM-DD` eşleşmiyorsa dosya atlanmaz, denetlenir · ✅ 2026-09-28
+- [x] P-025.2 — `checked == 0` artık "temiz" değil "KOŞMADI" + çıkış 2; atlanan
+      sayısı her sonuçta yazılıyor · ✅ 2026-09-28
+- [x] P-025.3 — `--selftest`: T-025'in dört ölçüm satırı sınama olarak eklendi
+      (tırnaklı ve eksik `created` kırmızıya düşüyor, gerçek eski dosya hâlâ
+      atlanıyor) · ✅ 2026-09-28 · 4/4 geçti
+- [x] P-025.4 — `--all` ile tüm hub'a karşı koşuldu: regresyon yok, fix
+      `hub/artifacts/README.md`'nin (frontmatter'sız) daha önce sessizce
+      atlanan gerçek bulgusunu artık gösteriyor · ✅ 2026-09-28
