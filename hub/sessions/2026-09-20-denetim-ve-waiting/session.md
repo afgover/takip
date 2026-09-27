@@ -1,7 +1,7 @@
 ---
 id: S-2026-09-20-denetim-ve-waiting
 date: 2026-09-20
-status: open
+status: closed
 reconstructed: false
 author: afgover
 topics: [denetim, waiting, gorev-akisi, audit]
@@ -13,7 +13,19 @@ tasks_touched: []
 
 ## Özet
 
-*(oturum açık — kapanışta yazılacak)*
+T-010 (release imza anahtarı) kontrol edildi: tetikleyici gelmemiş, peer
+bulut oturumu ("App store submission hazırlıkları") farklı bir uygulamanın
+(copilot, iOS) süreciymiş, T-010 beklemede kaldı. `audit.sh`'ın 5 bulgusu
+tek tek değerlendirildi; üçü zaten açıklanmış (L-052, EVOLUTION bağlamı,
+app-tarafı), ikisi işlendi: (a) "anında ekle" ihlali art arda iki oturumda
+tekrarlanmış — L-059 yazıldı, B-144'e madde eklendi; (b) T-016'nın
+doğrudan-`done/`'da doğması — `AGENT_PROTOCOL.md` madde 8'e istisna
+eklendi, sözleşme 1.31→1.32. Bu netleştirmeyi belgeleyen not T-016'ya
+eklenirken `audit.sh`'ın commit-sayısı sezgisini yanıltan yeni bir artefakt
+ortaya çıktı; L-052 emsaliyle T-016'ya ve B-144(e)'ye kaydedildi.
+Oturum 8 gün açık kaldı (konuşma ara verdi); kapanışta `acilis.sh` yeniden
+koşuldu, yeni bir inbox görevi (T-025, `artifact-lint.sh` sahte-negatifi)
+bulundu ve kullanıcıya bildirildi.
 
 ## Kayıt
 
