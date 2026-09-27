@@ -97,6 +97,39 @@ dosyasına çapraz atıf eklendi. Bu, sürüm artışının aynı oturumda ikinc
 (1.31→1.32) yapıldığı bir gün oldu — ikisi de bağımsız, farklı vakalardan
 geldi (T-024 / T-016), aynı güne denk gelmesi tesadüf.
 
+### [01:08] Agent
+
+Oturumu kapatmadan önce `audit.sh --quiet` tekrar koşuldu (kendi oturumumu
+denetlemek — L-059'un önerdiği alışkanlık). Bu oturum "tek commit'te
+biriktirme" bulgusuna **girmedi** — anlık commit gerçekten işe yaradı. Ama
+yeni bir bulgu çıktı: T-016'ya eklenen not, dosyaya 40 gün sonra ikinci bir
+commit düşürünce `audit.sh`'ın "GitHub → ajan ilk dokunuş" ölçütü (commit
+sayısına dayanıyor) sahte bir 48 saatlik gecikme gördü. Kullanıcıya
+sorulup 1. seçenek (kayda geçir, script'i şimdi değiştirme) onaylandı.
+
+### [2026-09-20 01:10] Kullanıcı
+
+> 1i yap
+
+### [2026-09-20 01:12] Agent
+
+[T-016](../../tasks/done/2026-08-11-filtre-menuleri.md)'ya ikinci bir not
+eklendi: bu notun kendisinin dosyaya 40 gün sonra ikinci bir commit
+düşürdüğü, bunun `audit.sh`'ın commit-sayısı sezgisini yanılttığı ve L-052
+tipi kalıcı/zararsız bir artefakt olduğu belgelendi. `BACKLOG.md`'deki
+B-144'e (e) maddesi eklendi.
+
+### [2026-09-28 01:04] Agent
+
+Oturum 8 gündür açık kaldığı için (bu konuşmanın kendisi ara verip devam
+etti) `tool/acilis.sh` yeniden koşuldu — madde 1'in "30 dakikadan uzun
+aradan sonra inbox kontrolünü tekrarla" kuralı gereği. Sözleşme hâlâ 1.32,
+tarama 30 gün (eşikte, henüz aşmadı). **Yeni inbox görevi bulundu:**
+[T-025](../../tasks/inbox/2026-09-25-artifact-lint-created-vakumu.md) —
+`artifact-lint.sh`'ın `created` alanı tırnaklı ya da eksikse dosyayı sessizce
+atlayıp "temiz" dediği bir sahte-negatif; `financer_takip`ten iletilmiş,
+somut ölçüm ve önerilen düzeltme ile birlikte. Kullanıcıya bildirildi.
+
 ## Notlar
 
 - Bu oturum, T-010/waiting incelemesi ve denetim değerlendirmesiyle

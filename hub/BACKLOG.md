@@ -942,7 +942,14 @@ başlığına ✅ ve tarih yazılır.
       hiç görmüyor, bir sonraki oturumun açılışına kadar iz sürmüyor. Aynı
       ihlal art arda iki oturumda tekrarlandı ([L-059](knowledge/lessons.md#L-059))
       çünkü bulgu davranışı değiştirecek bir ana denk gelmeden yalnızca
-      okunuyordu · ölçüm: A-2026-09-12-001 §7, L-059
+      okunuyordu; (e) **"GitHub → ajan ilk dokunuş" ölçütü commit sayısına
+      göre çalışıyor.** Tek commit'li bir görev (v1.32 istisnası, doğrudan
+      `done/`'da doğan) bu ölçütten muaf; ona **sonradan ikinci bir commit**
+      düşünce (ör. bir not eklemek için) sanki uzun bir görülme gecikmesi
+      varmış gibi görünüyor — bkz.
+      [done/2026-08-11-filtre-menuleri.md](tasks/done/2026-08-11-filtre-menuleri.md)'nin
+      kendi notu, L-052'ye benzer kalıcı/zararsız bir artefakt · ölçüm:
+      A-2026-09-12-001 §7, L-059
 - [ ] B-143 · (agent) **Açılış kontrolü koştuğunu kayda yazmıyor.** `curl`
       farkı bulamazsa hiçbir iz kalmıyor; sonuç: kontrolün kaç kez koştuğu
       ölçülemiyor ve 1.28 tipi tedbirlerin etkisi ölçülemez kalıyor. Tur

@@ -39,3 +39,14 @@ sonucu `AGENT_PROTOCOL.md` madde 8'e "doğrudan `done/`'da doğan görev"
 istisnası eklendi (sözleşme 1.32) — istek ve tamamlanma aynı canlı oturumda
 olduğunda devir hiç oluşmuyor, akışı taklit etmenin bir anlamı yok. Bu görev
 artık o istisnanın örnek vakası.
+
+**Ek not (aynı gün, kendi kendine artefakt):** Bu notu eklerken dosyaya
+2026-08-11'den 40 gün sonra **ikinci bir commit** düştü. `audit.sh`'ın
+"GitHub → ajan ilk dokunuş" ölçütü, git geçmişindeki commit sayısına bakarak
+çalışıyor; tek commit'li bir dosya bu ölçütten muaftı (sayılmıyordu), iki
+commit'e çıkınca sanki "48 saati aşan görülme gecikmesi" varmış gibi
+görünmeye başladı. Bu **yanlış bir sinyal** — gerçek olan, görevin
+2026-08-11'de aynı gün açılıp kapandığı. L-052'deki saat vakasına benzer:
+kalıcı, zararsız, denetim script'inin varsayımından (her görevin
+inbox→active→done'da çok-commit'li bir geçmişi olacağı) kaynaklanan bir
+artefakt. Kayıt: [B-144](../../BACKLOG.md#B-144) (e).
