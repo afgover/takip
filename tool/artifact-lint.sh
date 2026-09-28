@@ -88,8 +88,15 @@ created: "2026-08-01T00:00:00Z"
 tek satır.
 EOF
 
-  FAIL=0
+  cat > "$ART/README.md" <<'EOF'
+# dizin belgesi
+
+Frontmatter'sız; artifact değil.
+EOF
+
+  FAIL=0; N=0
   chk() {
+    N=$((N + 1))
     local name="$1" want_exit="$2" want_grep="$3"; shift 3
     local out got_exit
     out=$("$SELF" --since 2026-09-11 "$@" 2>&1); got_exit=$?
@@ -108,8 +115,20 @@ EOF
   chk "tırnaklı created de denetlenir (eski hata: atlanıyordu)" 1 "1 dosya denetlendi" "$ART/tirnakli.md"
   chk "created eksikse atlanmaz, bulgu verir"           1 "eksik: created" "$ART/eksik.md"
   chk "gerçekten eski + tırnaklı → hâlâ atlanır (KOŞMADI, temiz değil)" 2 "" "$ART/eski.md"
+  chk "README denetlenmez ama sayılır"                   2 "1 README" "$ART/README.md"
+  chk "README yanında gerçek artifact denetlenmeye devam eder" 1 "1 dosya denetlendi" "$ART/README.md" "$ART/kontrol.md"
 
-  if [ "$FAIL" -eq 0 ]; then echo "selftest: 4/4 geçti"; exit 0; fi
+  # audit.sh §11 çıkış 2'nin sebebini yalnız stderr'den okur.
+  N=$((N + 1))
+  so=$("$SELF" --since 2026-09-11 "$ART/eski.md" 2>/dev/null)
+  se=$("$SELF" --since 2026-09-11 "$ART/eski.md" 2>&1 >/dev/null)
+  if [ -z "$so" ] && grep -q "KOŞMADI" <<<"$se"; then
+    echo "  ✓ KOŞMADI mesajı stderr'de (audit.sh okuyabilir)"
+  else
+    echo "  ✗ KOŞMADI mesajı stderr'de değil — stdout: '$so'"; FAIL=1
+  fi
+
+  if [ "$FAIL" -eq 0 ]; then echo "selftest: $N/$N geçti"; exit 0; fi
   echo "selftest: BAŞARISIZ"; exit 1
 fi
 
@@ -140,6 +159,7 @@ since = os.environ.get("SINCE", "")
 findings = 0
 checked = 0
 skipped = 0
+readme = 0
 DATE_RE = re.compile(r"^\d{4}-\d{2}-\d{2}")
 
 
@@ -184,6 +204,11 @@ def frontmatter(lines):
 
 
 for path in sys.argv[1:]:
+    # README dizin belgesidir, artifact değil — uygulama da artifact
+    # listesinden eliyor (lib/hub/browse_repo.dart). Sayılır, sessiz kalmaz.
+    if os.path.basename(path) == "README.md":
+        readme += 1
+        continue
     try:
         raw = open(path, encoding="utf-8").read()
     except (OSError, UnicodeDecodeError) as exc:
@@ -292,11 +317,14 @@ for path in sys.argv[1:]:
         for msg in out:
             print("      %s" % msg)
 
+atlanan = "atlanan: %d eşik öncesi, %d README" % (skipped, readme)
 if findings:
-    print("\n%d bulgu (%d dosya denetlendi, %d atlandı)." % (findings, checked, skipped))
+    print("\n%d bulgu (%d dosya denetlendi; %s)." % (findings, checked, atlanan))
     sys.exit(1)
 if checked == 0:
-    print("KOŞMADI (0 dosya denetlendi, %d atlandı) — sonucu temiz sayma" % skipped)
+    # Çıkış 2'nin mesajı stderr'e: çağıran (audit.sh §11) sebebi oradan okur.
+    print("KOŞMADI (0 dosya denetlendi; %s) — sonucu temiz sayma" % atlanan,
+          file=sys.stderr)
     sys.exit(2)
-print("temiz (%d dosya denetlendi, %d atlandı; %s öncesi hariç)." % (checked, skipped, since))
+print("temiz (%d dosya denetlendi; %s; eşik %s)." % (checked, atlanan, since))
 PY

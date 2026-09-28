@@ -542,3 +542,10 @@ sırasıyla girer.
 - [x] P-025.4 — `--all` ile tüm hub'a karşı koşuldu: regresyon yok, fix
       `hub/artifacts/README.md`'nin (frontmatter'sız) daha önce sessizce
       atlanan gerçek bulgusunu artık gösteriyor · ✅ 2026-09-28
+- [x] P-025.5 — README muafiyeti: `artifacts/**/README.md` denetlenmez ama
+      "N README" olarak sayılır — uygulamanın artifact tanımıyla hizalı
+      (`browse_repo.dart`) · ✅ 2026-09-28 ·
+      [S-2026-09-28-readme-muafiyeti](sessions/2026-09-28-readme-muafiyeti/session.md)
+- [x] P-025.6 — Gerileme düzeltmesi: P-025.2'nin KOŞMADI satırı stdout'a
+      gidiyordu, `audit.sh` §11 çıkış 2'de stderr okuyor; stderr'e alındı,
+      selftest sözleşmeyi sınıyor · ✅ 2026-09-28 · selftest 7/7
