@@ -5,7 +5,8 @@ status: open
 reconstructed: false
 author: afgover
 topics: [kiyas, agent-hafizasi, harici-repo]
-artifacts: []
+artifacts:
+  - artifacts/S-2026-09-28-agentmemory-kiyas/agentmemory-kiyas.md
 tasks_touched: []
 ---
 
@@ -45,3 +46,15 @@ olarak uygulanmaz.
 - `DESIGN.md` mimari değil, sitenin görsel tasarım sistemi.
 - Gizlilik filtresi 40 satır: yalnız bilinen anahtar kalıpları + `<private>`;
   kişisel veri filtresi yok, istemler ve araç çıktıları saklanıyor.
+
+### [12:10] Agent
+
+Kıyas yazıldı:
+[A-2026-09-28-001](../../artifacts/S-2026-09-28-agentmemory-kiyas/agentmemory-kiyas.md)
+(`artifact-lint.sh` temiz). Sonuç: iki sistem farklı problemi çözüyor —
+agentmemory ajan için geri çağırma motoru, takip insan ve ajan arasında
+denetlenebilir iş defteri; örtüşme yalnız "geçmişi hatırlama". Benimseme
+önerilmedi. Alınabilecek üç fikir [KARAR] olarak işaretlendi: hub içi arama
+(B-145), oturum ritmi kancası (B-144 d), ders/kurallar için "yerine geçen"
+alanı. Alınmaması gerekenler: otomatik ham yakalama (public repo, SEC-017),
+servis bağımlılığı (K-001), sıkıştırılmış hafızayı kaynak saymak.

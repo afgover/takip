@@ -553,7 +553,7 @@ sırasıyla girer.
 ## P-026 — `rohitg00/agentmemory` incelemesi ve kıyas
 - **Tarih:** 2026-09-28
 - **Kaynak:** [S-2026-09-28-agentmemory-kiyas](sessions/2026-09-28-agentmemory-kiyas/session.md)
-- **Durum:** acik
+- **Durum:** tamamlandi
 
 - [x] P-026.1 — Repoyu scratchpad'e salt okunur klonla; envanter çıkar ·
       ✅ 2026-09-28 · `c314c7b`, v0.9.29
@@ -561,5 +561,7 @@ sırasıyla girer.
       ✅ 2026-09-28
 - [x] P-026.3 — İddiaları kaynağında doğrula (benchmark, özellik listesi) ·
       ✅ 2026-09-28 · iki manşet daraltıldı, biri doğrulandı
-- [ ] P-026.4 — Takip hub'ı ile eksen eksen kıyas; alınabilecekler
-- [ ] P-026.5 — Artifact yaz, `artifact-lint.sh` geçir, oturuma bağla, push
+- [x] P-026.4 — Takip hub'ı ile eksen eksen kıyas; alınabilecekler ·
+      ✅ 2026-09-28 · üç [KARAR] maddesi kullanıcıda
+- [x] P-026.5 — Artifact yaz, `artifact-lint.sh` geçir, oturuma bağla, push ·
+      ✅ 2026-09-28 · [A-2026-09-28-001](artifacts/S-2026-09-28-agentmemory-kiyas/agentmemory-kiyas.md)

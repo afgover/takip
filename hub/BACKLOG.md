@@ -932,7 +932,8 @@ başlığına ✅ ve tarih yazılır.
       artifact'ın %50-67'si doğduğu günden sonra hiçbir kayıtta anılmıyor
       (0,75-1,69 MB tek yönlü yazım). Ya kapanışta atıf zorunluluğu ya
       üretim eşiği. Ölçütün tanımı belirleyici: "herhangi bir atıf" ölçütü
-      %99 veriyor ama zorunlu indeks satırını sayıyor · → L-056
+      %99 veriyor ama zorunlu indeks satırını sayıyor · → L-056 ·
+      öneri (servissiz hub içi arama): [A-2026-09-28-001](artifacts/S-2026-09-28-agentmemory-kiyas/agentmemory-kiyas.md)
 - [ ] B-144 · (agent) **Denetim kör noktaları.** Dört somut madde: (a) ritim
       kontrolü `info` basıyor, %59 ihlal çıkış kodunda sıfır bulgu üretiyor;
       (b) `reconstructed` bayrağı doğrulanmıyor ve korpusun %24'ünü iki
@@ -949,7 +950,8 @@ başlığına ✅ ve tarih yazılır.
       varmış gibi görünüyor — bkz.
       [done/2026-08-11-filtre-menuleri.md](tasks/done/2026-08-11-filtre-menuleri.md)'nin
       kendi notu, L-052'ye benzer kalıcı/zararsız bir artefakt · ölçüm:
-      A-2026-09-12-001 §7, L-059
+      A-2026-09-12-001 §7, L-059 · (d) için öneri (Stop/PreCompact
+      kancası): A-2026-09-28-001
 - [ ] B-143 · (agent) **Açılış kontrolü koştuğunu kayda yazmıyor.** `curl`
       farkı bulamazsa hiçbir iz kalmıyor; sonuç: kontrolün kaç kez koştuğu
       ölçülemiyor ve 1.28 tipi tedbirlerin etkisi ölçülemez kalıyor. Tur
