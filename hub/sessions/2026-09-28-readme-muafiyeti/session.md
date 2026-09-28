@@ -1,7 +1,7 @@
 ---
 id: S-2026-09-28-readme-muafiyeti
 date: 2026-09-28
-status: open
+status: closed
 reconstructed: false
 author: afgover
 topics: [artifact-lint, readme, tool]
@@ -13,7 +13,12 @@ tasks_touched: [T-025]
 
 ## Özet
 
-*(oturum açık — kapanışta yazılacak)*
+T-025 düzeltmesinin ortaya çıkardığı `hub/artifacts/README.md` bulgusu
+çözüldü. README'ye frontmatter eklemek yerine linter uygulamanın artifact
+tanımıyla hizalandı: `README.md` denetlenmiyor, "N README" diye sayılıyor.
+Aynı turda T-025'in getirdiği bir gerileme düzeltildi: KOŞMADI mesajı
+stdout'tan stderr'e alındı, çünkü `audit.sh` §11 sebebi oradan okuyor.
+Selftest 7/7, `--all` ve `audit.sh` §11 temiz. P-025.5/.6 işaretlendi.
 
 ## Kayıt
 
