@@ -89,3 +89,17 @@ yalnız uyar, (3) ders/kurallarda "Yerine geçen" alanı (sözleşme 1.33),
 artı kıyas hatası için L-060. Plan [P-027](../../PLAN.md) olarak yazıldı.
 Kanca davranışı (Stop girdisi, döngü koruması, uyarı kanalı) resmi
 belgelere karşı ayrıca doğrulatılıyor.
+
+### [12:55] Agent
+
+L-060 yazıldı. [tool/ara.sh](../../../tool/ara.sh) eklendi: her koşumda
+hub'ı okuyup bellekte BM25 kuruyor (servis yok); sorgu ve metin Türkçe
+harften katlanıyor (ş→s, ı→i…), kelimeler ilk 5 harfe kısaltılıyor, ID'ler
+bütün kalıyor. Kayıt birimi ders/kural/SEC/plan başlığı, backlog ve
+EVOLUTION maddesi; oturum/görev/artifact/not dosyası bütün. Geçersiz ve
+yerine geçilmiş kayıt geri itilip işaretleniyor. Selftest 7/7. Gerçek hub'da
+"saat dogrulama" → L-052, "artifact tuketicisi" → B-145, "release imza
+anahtari" → T-010, ID sorguları kendi kaydını ilk getiriyor; ~0,1 sn.
+Kanca doğrulaması geldi: Stop'ta belgelenen durdurma yolu
+`{"decision":"block","reason":…}`; `stop_hook_active` döngü koruması;
+kanca düzenlemesi oturum içinde hemen devreye giriyor.

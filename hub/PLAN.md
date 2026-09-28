@@ -575,8 +575,9 @@ sırasıyla girer.
 
 - [x] P-027.1 — L-060: kıyasın iki tarafı aynı yöntemle, dosyadan çıkarılır ·
       ✅ 2026-09-28
-- [ ] P-027.2 — `tool/ara.sh`: servissiz hub içi arama (BM25, Türkçe harf
-      katlama, ilk 5 harf kökü) + `--selftest`
+- [x] P-027.2 — `tool/ara.sh`: servissiz hub içi arama (BM25, Türkçe harf
+      katlama, ilk 5 harf kökü) + `--selftest` · ✅ 2026-09-28 · selftest
+      7/7; gerçek hub'da 5 sorgunun 5'inde beklenen kayıt ilk sırada, ~0,1 sn
 - [ ] P-027.3 — "Yerine geçen" alanı: §5 şeması (isteğe bağlı), `ara.sh`
       yerine geçilen kaydı işaretler
 - [ ] P-027.4 — Bekçiye tur sonu: `--prompt` (UserPromptSubmit) ve `--stop`
