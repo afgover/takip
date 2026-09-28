@@ -569,7 +569,7 @@ sırasıyla girer.
 ## P-027 — agentmemory kıyasından alınan üç fikir + ders
 - **Tarih:** 2026-09-28
 - **Kaynak:** [S-2026-09-28-agentmemory-kiyas](sessions/2026-09-28-agentmemory-kiyas/session.md)
-- **Durum:** acik
+- **Durum:** tamamlandi
 - **İlgili:** [A-2026-09-28-001](artifacts/S-2026-09-28-agentmemory-kiyas/agentmemory-kiyas.md),
   [B-145](BACKLOG.md#B-145), [B-144](BACKLOG.md#B-144), [R-008](knowledge/rules.md#R-008)
 
@@ -587,4 +587,5 @@ sırasıyla girer.
 - [x] P-027.5 — Sözleşme 1.32 → 1.33: protokole `ara.sh`'ın ne zaman
       koşulacağı ve alan; `.en` varyantları; `EVOLUTION.md` · ✅ 2026-09-28 ·
       `ara.sh` sözleşme ve protokolü de tarıyor
-- [ ] P-027.6 — B-145 / B-144 (d) işaretleri, oturum kaydı, push
+- [x] P-027.6 — B-145 / B-144 (d) işaretleri, oturum kaydı, push ·
+      ✅ 2026-09-28 · ikisi de açık kaldı: etkisi ölçülmedi
