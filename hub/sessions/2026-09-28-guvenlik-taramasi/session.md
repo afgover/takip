@@ -1,7 +1,7 @@
 ---
 id: S-2026-09-28-guvenlik-taramasi
 date: 2026-09-28
-status: open
+status: closed
 reconstructed: false
 author: afgover
 topics: [guvenlik, tarama]
@@ -13,7 +13,11 @@ tasks_touched: []
 
 ## Özet
 
-*(oturum açık — kapanışta yazılacak)*
+Periyodik güvenlik taraması koşuldu (4. koşum, SEC-017'den 30 gün sonra).
+Sonuç doğrulandı: OSV kontrol grubu 3/3. Bilinen zafiyet yok, sır yok.
+Android tarafı yerinde. İki bulgu bilinen SEC-010 → B-101 → T-010 zincirine
+ait, yeni işlem gerektirmiyor. B-138 ertelemesi geçerli, çünkü danışmanlık
+yok. Kayıt: SEC-018. Açılış kontrolü yeni tarihi görüyor (0 gün).
 
 ## Kayıt
 
