@@ -549,3 +549,14 @@ sırasıyla girer.
 - [x] P-025.6 — Gerileme düzeltmesi: P-025.2'nin KOŞMADI satırı stdout'a
       gidiyordu, `audit.sh` §11 çıkış 2'de stderr okuyor; stderr'e alındı,
       selftest sözleşmeyi sınıyor · ✅ 2026-09-28 · selftest 7/7
+
+## P-026 — `rohitg00/agentmemory` incelemesi ve kıyas
+- **Tarih:** 2026-09-28
+- **Kaynak:** [S-2026-09-28-agentmemory-kiyas](sessions/2026-09-28-agentmemory-kiyas/session.md)
+- **Durum:** acik
+
+- [ ] P-026.1 — Repoyu scratchpad'e salt okunur klonla; envanter çıkar
+- [ ] P-026.2 — Mimari: hafıza neyi, nerede, nasıl saklıyor; geri çağırma
+- [ ] P-026.3 — İddiaları kaynağında doğrula (benchmark, özellik listesi)
+- [ ] P-026.4 — Takip hub'ı ile eksen eksen kıyas; alınabilecekler
+- [ ] P-026.5 — Artifact yaz, `artifact-lint.sh` geçir, oturuma bağla, push
