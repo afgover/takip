@@ -26,3 +26,14 @@ tasks_touched: []
 Son `tarama` kaydı SEC-017 (2026-08-29) — bugün 30 gün, madde 4'ün
 eşiğinde. `tool/scan.sh` tam koşumla (OSV dahil) çalıştırılıyor; sonuç
 SEC-018 olarak yazılacak.
+
+### [11:30] Agent
+
+Tarama doğrulandı (OSV kontrol grubu 3/3). 70 pakette bilinen zafiyet yok;
+sır taraması ağaçta ve git geçmişinde temiz; Android yedekleme kuralları
+yerinde, tek izin `INTERNET`. İki bulgu bilinen SEC-010 → B-101 → T-010
+zinciri (debug imza, elde duran debug imzalı APK) — T-010 tetikleyicisi
+gelmediği için yeni işlem yok. B-138'in tetikleyicisi (a) kontrol edildi:
+riverpod/secure_storage'ın mevcut sürümlerinde danışmanlık yok, erteleme
+geçerli. Yama düzeyinde `dio` ve `yaml` kısıt içinde yükseltilebilir
+(bilgi). Kayıt: [SEC-018](../../SECURITY.md#SEC-018).

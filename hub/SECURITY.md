@@ -463,3 +463,28 @@ değil. Token, parola veya anahtar bu dosyada hiçbir koşulda yer almaz.
   **Sınır:** tarama koştuğu anın kalıp listesine ve danışmanlık veritabanına
   göredir; kişisel veri taraması kalıp temellidir (ad/e-posta/seri/yol/telefon/
   TC/IBAN) — kalıba girmeyen serbest metin ifşasını görmez.
+
+## SEC-018 — Tarama: periyodik (4. koşum)
+- **Tarih:** 2026-09-28
+- **Tür:** tarama
+- **Durum:** kapali
+- **Kaynak:** [S-2026-09-28-guvenlik-taramasi](sessions/2026-09-28-guvenlik-taramasi/session.md),
+  madde 4 (son tarama [SEC-017](#SEC-017), 30 gün)
+- **Açıklama:** `tool/scan.sh` tam koşum (OSV dahil).
+  **(1) Bilinen zafiyet:** 70 pakette yok; kontrol grubu 3/3 doğrulandı —
+  sonuç ölçülmüş, varsayılmış değil (L-035).
+  **(2) Sürüm güncelliği (bilgi):** yama düzeyinde `dio` 5.11.0 → 5.11.1 ve
+  `yaml` 3.1.3 → 3.1.4 kısıt içinde yükseltilebilir; `clock`, `intl` SDK'ya
+  sabit. Major farklar (`flutter_riverpod` 2.6.1 / 3.4.3,
+  `flutter_secure_storage` 9.2.4 / 11.2.0) [B-138](BACKLOG.md#B-138)'in
+  konusu; tetikleyici (a) — mevcut sürümde danışmanlık — bu taramayla
+  kontrol edildi ve **yok**, erteleme geçerli.
+  **(3) Sır taraması:** çalışma ağacı ve git geçmişinin tamamı temiz.
+  **(4) Android:** yedekleme kuralları bağlı (SEC-009), izin listesi tek
+  (`INTERNET`). İki bulgu, ikisi de bilinen zincir
+  [SEC-010](#SEC-010) → [B-101](BACKLOG.md#B-101) → T-010: release debug
+  anahtarıyla imzalanıyor ve elde duran APK debug imzalı. T-010'un
+  tetikleyicisi (store yüklemesinden hemen önce) gelmedi; yeni işlem yok.
+  **Sınır:** SEC-017'deki kişisel veri ekseni bu koşumda yok — o eksen
+  repo public olduğu için tek seferlik yapılmıştı; `scan.sh` kapsamında
+  değil. Tarama koştuğu günün danışmanlık veritabanına göredir.
