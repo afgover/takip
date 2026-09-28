@@ -149,3 +149,13 @@ kırmızı (beklenen 1.29, gerçek 1.33). Ayrışma 1.30'da başladı; 1.31, 1.3
 ve 1.33'ü bu konuşmada ben artırdım, sabiti ben de atladım. **Kök neden:**
 sözleşme-yalnız oturumlarda Flutter süiti koşulmuyor ve sürüm artışı
 adımları sürümü taşıyan öbür yeri aramıyor.
+
+### [2026-09-29 00:01] Kullanıcı
+
+> evet, üçünü de yap
+
+### [2026-09-29 00:03] Agent
+
+Plan [P-028](../../PLAN.md): sabit 1.33 + tam süit, `audit.sh`'a sabit
+kontrolü, release derleme + P-023'teki gibi veri korunumu ölçümü, Drive'a
+kopya (`Drive'ım/Takip APK`, `OKU.txt`), SEC-015 notu.

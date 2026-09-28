@@ -589,3 +589,23 @@ sırasıyla girer.
       `ara.sh` sözleşme ve protokolü de tarıyor
 - [x] P-027.6 — B-145 / B-144 (d) işaretleri, oturum kaydı, push ·
       ✅ 2026-09-28 · ikisi de açık kaldı: etkisi ölçülmedi
+
+## P-028 — Uygulamanın sözleşme sabiti 1.29 → 1.33, denetim kontrolü, APK
+- **Tarih:** 2026-09-29
+- **Kaynak:** [S-2026-09-28-agentmemory-kiyas](sessions/2026-09-28-agentmemory-kiyas/session.md)
+- **Durum:** acik
+- **İlgili:** [P-023](PLAN.md#P-023), [SEC-015](SECURITY.md#SEC-015), T-010
+
+> **Tetikleyici:** kullanıcı "APK güncellemeye gerek var mı" diye sordu;
+> cevap ararken `contractVersion` sabitinin 1.30'dan beri güncellenmediği
+> ve onu yakalayan testin kırmızı olduğu görüldü.
+
+- [ ] P-028.1 — `constants.dart` 1.33; sürümü taşıyan başka yer var mı ara;
+      tam test süiti
+- [ ] P-028.2 — `audit.sh`'a kontrol: uygulama sabiti ile `SYSTEM.md` aynı mı
+      (Flutter koşulmayan oturumlar için)
+- [ ] P-028.3 — Release derle; imza SHA-1, paket, versionCode Drive'daki son
+      APK ile karşılaştır (veri korunumu)
+- [ ] P-028.4 — Drive'a kopyala (SHA-256 iki tarafta), `OKU.txt`, eski APK
+      geri dönüş için kalır; SEC-015'e not
+- [ ] P-028.5 — Kayıtlar ve push
