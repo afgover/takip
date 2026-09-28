@@ -573,7 +573,8 @@ sırasıyla girer.
 - **İlgili:** [A-2026-09-28-001](artifacts/S-2026-09-28-agentmemory-kiyas/agentmemory-kiyas.md),
   [B-145](BACKLOG.md#B-145), [B-144](BACKLOG.md#B-144), [R-008](knowledge/rules.md#R-008)
 
-- [ ] P-027.1 — L-060: kıyasın iki tarafı aynı yöntemle, dosyadan çıkarılır
+- [x] P-027.1 — L-060: kıyasın iki tarafı aynı yöntemle, dosyadan çıkarılır ·
+      ✅ 2026-09-28
 - [ ] P-027.2 — `tool/ara.sh`: servissiz hub içi arama (BM25, Türkçe harf
       katlama, ilk 5 harf kökü) + `--selftest`
 - [ ] P-027.3 — "Yerine geçen" alanı: §5 şeması (isteğe bağlı), `ara.sh`

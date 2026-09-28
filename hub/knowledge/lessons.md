@@ -1019,3 +1019,23 @@ Biçim: `SYSTEM.md` §5.
   varlığı onun uygulanabilir olduğu anlamına gelmiyor ([L-058](#L-058));
   burada eksik olan da kuralın metni değil, kuralı **kendi işine** uygulama
   alışkanlığıydı.
+
+## L-060 — Kıyasın iki tarafı aynı yöntemle, dosyadan çıkarılır
+- **Tarih:** 2026-09-28
+- **Kaynak:** S-2026-09-28-agentmemory-kiyas,
+  [A-2026-09-28-001](../artifacts/S-2026-09-28-agentmemory-kiyas/agentmemory-kiyas.md)
+- **Ders:** `rohitg00/agentmemory` ile kıyasta dış repo dosya dosya
+  envanterlendi (dizin listesi, yapılandırma, kaynak kodu, test sayımı), iddiaları
+  kaynağına karşı sınandı. Kendi tarafımız ise protokol metninden ve
+  hafızadan anlatıldı. Sonuç: artifact, `tool/hub-guard.sh`'ın 2026-08-28'den
+  beri PreCompact kancası olarak kurulu olduğunu atlayıp "kanca" fikrini yeni
+  bir öneri gibi sundu. Bekçi o gün iki yerde görünüyordu: açılışın listelediği
+  açık backlog'da (B-141) ve denetimin §10 çıktısında. Hata kullanıcı öneriyi
+  açmamı isteyince, `.claude/settings.json` okunurken yakalandı.
+  **Asimetrinin sebebi:** yabancı olanı incelerken hiçbir şey bilinmiyor
+  sayılır, her şeye bakılır; tanıdık olanı anlatırken "biliyorum" duygusu
+  bakmanın yerini alır. Yanılma tam da tanıdık tarafta çıkar.
+  **Kural:** bir kıyasın her tarafı aynı envanter komutlarıyla çıkarılır.
+  Dışa bakarken koşulan her komutun (dizin, yapılandırma, kancalar, araçlar)
+  karşılığı kendi repomuzda da koşulur. Kendi tarafımız için "biliyorum"
+  bir kaynak değildir.
