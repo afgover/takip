@@ -612,3 +612,6 @@ sırasıyla girer.
       geri dönüş için kalır; SEC-015'e not · ✅ 2026-09-29 ·
       `takip-2026-09-29-fd93fa6.apk`, SHA-256 `a9824a8d…` iki tarafta aynı
 - [x] P-028.5 — Kayıtlar ve push · ✅ 2026-09-29
+- [x] P-028.6 — Kurulum doğrulaması (kullanıcı): takip "Sözleşme 1.33" ✓,
+      bağlantı/token yerinde · ✅ 2026-09-29 ·
+      [S-2026-09-29-apk-dogrulama](sessions/2026-09-29-apk-dogrulama/session.md)
