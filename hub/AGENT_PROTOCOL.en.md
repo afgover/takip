@@ -156,10 +156,31 @@ what*. The procedure holds whatever the session is about.
 > way — the rule was already there, what was missing was where to look for
 > "the largest").
 
+> **Search when you enter a topic (v1.33).** Before starting a job, decision
+> or proposal, search what the hub already says about it:
+> [`tool/ara.sh`](../tool/ara.sh) `<topic words>` (`--hub <path>` for another
+> hub). **Read the body** of the top results; the line is a summary. The reason
+> was measured: the hub is strong at writing and weak at reading back — more
+> than half of the artifacts are never mentioned again after the day they were
+> born ([B-145](BACKLOG.md#B-145)), the lesson and backlog files run to tens of
+> KB, and grep neither ranks nor understands Turkish suffixes and letters. The
+> script runs without a service: each run reads the hub and builds BM25 in
+> memory; a query typed on an English keyboard finds Turkish text. If a result
+> is marked `[yerine geçildi → ...]` (superseded) or `[geçersiz]` (invalid),
+> move on to the record the mark points to. Not run at opening — its cost pays
+> off once the topic is known. If you cannot reach the script, search with
+> `grep -ri` and keep in mind that the search was unranked.
+
 4. Append **every user message and every one of your replies** to `session.md`
    immediately — do not save them up for the end. User messages go in unabridged;
    agent replies are summarised around decisions, findings and work done, with
    long output going to an artifact.
+   **In Claude Code this item is also enforced by a hook (v1.33):**
+   [`tool/hub-guard.sh`](../tool/hub-guard.sh) `--stop` stops the agent once at
+   the end of a turn if the open session's record was not updated during that
+   turn. Left to memory, the rule was broken in two sessions in a row
+   ([L-059](knowledge/lessons.md#L-059)). Where the guard is not installed the
+   item applies unchanged.
 5. Save **every file you produce** that is a report, plan, analysis or info
    document under `artifacts/<session-id>/` with its frontmatter, and add it to
    `session.md`'s `artifacts:` list.
@@ -184,7 +205,9 @@ what*. The procedure holds whatever the session is about.
    add it to the relevant phase.
 7. When a new rule, skill or lesson emerges, add an ID'd record to the right file
    under `knowledge/`. There is no "I will write it later" — it is written the
-   moment it emerges.
+   moment it emerges. If the new record refines or extends an older one, also
+   write the `Superseded by:` field on the older record ([§5](SYSTEM.md#5),
+   v1.33).
 7b. **When starting a job of three or more steps, write the plan into
    [`PLAN.md`](PLAN.md)** (contract [§14](SYSTEM.en.md#14)) — *before* carrying
    the steps out, because the tree's job is not to list what is finished but to

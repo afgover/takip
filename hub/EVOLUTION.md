@@ -920,3 +920,22 @@ işi, bitiş çizgisi değil. Bitiş çizgisi olsaydı aşama hiç kapanmazdı �
   okunuyordu — bu bir sözleşme maddesi değil, ders (`L-059`) ve denetim
   kör noktası (`B-144`) olarak kaydedildi, çünkü `audit.sh`'ın kendisini
   değiştirmek gerekiyor, prosedür metnini değil.
+
+- 2026-09-28: Sözleşme [1.33](SYSTEM.md): **dışarıdan alınan üç fikir.**
+  `rohitg00/agentmemory` incelendi ve takip ile kıyaslandı
+  ([A-2026-09-28-001](artifacts/S-2026-09-28-agentmemory-kiyas/agentmemory-kiyas.md),
+  [P-027](PLAN.md#P-027)). Sonuç benimseme değil: o bir geri çağırma servisi,
+  takip git üzerinde denetlenebilir bir iş defteri. Ama kıyas takip'in zayıf
+  yanını açıkça gösterdi — yazmakta güçlü, geri okumakta zayıf (B-145).
+  Alınanlar: (1) **`tool/ara.sh`** — servissiz hub içi arama; her koşumda
+  BM25, Türkçe harf katlama, ilk 5 harf kökü; protokole "konuya girerken
+  ara" bloğu. (2) **Bekçinin tur sonu modu** — `hub-guard.sh --stop`
+  (Claude Code Stop kancası), kayıt o turda yazılmadıysa ajanı bir kez
+  durduruyor; L-059'un "kuralı hatırlamaya bırakma" sonucunun uygulaması,
+  madde 4'e tek cümleyle bağlandı. (3) **`Yerine geçen:` alanı** (§5,
+  isteğe bağlı) — yanlış çıkan kayıt üstü çizilir, inceltilen kayıt yeni
+  kayda yönlendirilir; ikisi artık ayrı. Alınmayanlar ve nedeni artifact'ta:
+  otomatik ham yakalama (public repo, SEC-017), servis bağımlılığı (K-001).
+  Kıyasın kendisi de bir hata üretti: bekçi zaten kuruluydu ama kendi
+  tarafımız dosyadan değil hafızadan anlatıldığı için atlandı
+  ([L-060](knowledge/lessons.md#L-060)).

@@ -17,7 +17,8 @@
 #     "oturumun", "oturumda", "oturumlar" aynı köke düşer. ID'ler (L-052,
 #     SEC-017, B-145) bütün kalır.
 #   - Kayıt birimi: ders/kural/skill/SEC/plan başlığı, backlog maddesi,
-#     EVOLUTION maddesi; oturum, görev, artifact ve not dosyası bütün.
+#     EVOLUTION maddesi, sözleşme bölümü (§), protokol maddesi/bloğu;
+#     oturum, görev, artifact ve not dosyası bütün.
 #   - Geçersiz (~~üstü çizili~~) ve yerine geçilmiş ("Yerine geçen:") kayıt
 #     gösterilir ama geri itilir ve işaretlenir — silme yok kuralı gereği
 #     kayıt durur, okuyan yönlendirilir.
@@ -61,6 +62,16 @@ if [ "${1:-}" = "--selftest" ]; then
 - **Tarih:** 2026-01-03
 - **Ders:** Önbellek anahtarı yol ve sürüm ile kurulur.
 EOF
+  cat > "$H/knowledge/skills.md" <<'EOF'
+# Skills
+
+## SK-001 — Retry with backoff
+- **Superseded by:** SK-002
+- **Description:** retry three times.
+
+## SK-002 — Retry with jittered backoff
+- **Description:** retry with jitter.
+EOF
   cat > "$H/knowledge/rules.md" <<'EOF'
 # Kurallar
 
@@ -97,6 +108,7 @@ EOF
   chk "yerine geçilen kayıt yenisinin arkasında kalır"       0 "L-003" onbellek anahtari
   chk "oturum kaydı aranır"                                 0 "S-2026-01-01" sifre
   chk "eşleşme yoksa çıkış 1"                               1 "" zzqqxx
+  chk "İngilizce hub alanı (Superseded by) da tanınır"      0 "SK-002" retry backoff
   N=$((N + 1))
   out=$("$0" --hub "$H" onbellek anahtari 2>&1)
   if grep -q "L-002.*yerine geçildi → L-003" <<<"$out" \
@@ -201,7 +213,7 @@ def add_chunks(path, start_re, id_re):
                 cur = [m.group(0), title, rel(path), i + 1, [l], mark]
         elif cur:
             cur[4].append(l)
-            y = re.match(r"^- \*\*Yerine geçen:\*\*\s*(\S+)", l)
+            y = re.match(r"^- \*\*(?:Yerine geçen|Superseded by):\*\*\s*(\S+)", l)
             if y and not cur[5]:
                 cur[5] = "yerine geçildi → " + y.group(1).rstrip(".,;")
     if cur:
@@ -221,6 +233,36 @@ add_chunks(os.path.join(HUB, "BACKLOG.md"),
 add_chunks(os.path.join(HUB, "EVOLUTION.md"),
            re.compile(r"^- (\*\*K-\d+|\d{4}-\d{2}-\d{2})"),
            re.compile(r"K-\d+|\d{4}-\d{2}-\d{2}"))
+
+
+
+def add_sections(path, start_re, ident):
+    # Sözleşme bölüm, protokol madde/blok düzeyinde aranır.
+    lines = read(path)
+    if lines is None:
+        return
+    cur = None
+    for i, l in enumerate(lines):
+        m = start_re.match(l)
+        if m:
+            if cur:
+                docs.append(cur)
+            did, title = ident(m)
+            cur = [did, title.strip(" *."), rel(path), i + 1, [l], ""]
+        elif cur:
+            cur[4].append(l)
+    if cur:
+        docs.append(cur)
+
+
+add_sections(os.path.join(HUB, "SYSTEM.md"),
+             re.compile(r"^## (\d+)\.\s*(.*)"),
+             lambda m: ("SYSTEM §" + m.group(1), m.group(2)))
+add_sections(os.path.join(HUB, "AGENT_PROTOCOL.md"),
+             re.compile(r"^(?:## (.+)|(\d+[a-z]?)\. (.+)|> \*\*(.+?)\*\*)"),
+             lambda m: ("PROTOKOL madde " + m.group(2), m.group(3))
+             if m.group(2) else ("PROTOKOL", m.group(1) or m.group(4)))
+
 for d in docs:
     if d[2] == "BACKLOG.md" and d[4][0].startswith("- [x]") and not d[5]:
         d[5] = "kapalı"

@@ -7,7 +7,7 @@ named, and what schema it follows**. Neither the agent nor the user application
 steps outside it. Contract changes are recorded in `EVOLUTION.md` and the
 version number at the top of this file is incremented.
 
-**Contract version:** 1.32
+**Contract version:** 1.33
 **Master copy:** `afgover/takip` → `hub/SYSTEM.md` (Turkish) ·
 `hub/SYSTEM.en.md` (English)
 (see §10 — every hub updates its own copy from there)
@@ -582,6 +582,27 @@ Record format (identical in all three files):
 - **Source:** S-2026-07-30-infrastructure-design
 - **Description:** ...
 ```
+
+**(v1.33) Superseded record.** A record goes stale in two different ways, and
+the two are marked differently:
+
+- **It turned out wrong:** its heading is `~~struck through~~` and the reason
+  is written (above).
+- **A newer record refined or extended it:** the old record is not wrong, but
+  should no longer be read on its own. An optional field is added to the old
+  record:
+
+  ```markdown
+  - **Superseded by:** L-058
+  ```
+
+The field lives **on the old record only**: that is where the reader lands, so
+that is where the redirect is needed. No matching field is written on the new
+record; keeping the same fact in two places invites the two to drift apart.
+`tool/ara.sh` recognises the field under both hub languages (`Superseded by:`
+and the Turkish `Yerine geçen:`), pushes such a record down in the results and
+marks it `[yerine geçildi → L-058]`. The field is optional; records written
+without it remain valid (R-008).
 
 ## 6. `BACKLOG.md` — the work list
 

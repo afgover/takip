@@ -578,11 +578,13 @@ sırasıyla girer.
 - [x] P-027.2 — `tool/ara.sh`: servissiz hub içi arama (BM25, Türkçe harf
       katlama, ilk 5 harf kökü) + `--selftest` · ✅ 2026-09-28 · selftest
       7/7; gerçek hub'da 5 sorgunun 5'inde beklenen kayıt ilk sırada, ~0,1 sn
-- [ ] P-027.3 — "Yerine geçen" alanı: §5 şeması (isteğe bağlı), `ara.sh`
-      yerine geçilen kaydı işaretler
+- [x] P-027.3 — "Yerine geçen" alanı: §5 şeması (isteğe bağlı), `ara.sh`
+      yerine geçilen kaydı işaretler · ✅ 2026-09-28 · İngilizce hub'lar için
+      `Superseded by:`, ikisi de tanınıyor
 - [x] P-027.4 — Bekçiye tur sonu: `--prompt` (UserPromptSubmit) ve `--stop`
       (Stop) modları, `.claude/settings.json`, elle sınama · ✅ 2026-09-28 ·
       8 durum sınandı; sınamada bir hata bulunup düzeltildi (izlenmeyen dizin)
-- [ ] P-027.5 — Sözleşme 1.32 → 1.33: protokole `ara.sh`'ın ne zaman
-      koşulacağı ve alan; `.en` varyantları; `EVOLUTION.md`
+- [x] P-027.5 — Sözleşme 1.32 → 1.33: protokole `ara.sh`'ın ne zaman
+      koşulacağı ve alan; `.en` varyantları; `EVOLUTION.md` · ✅ 2026-09-28 ·
+      `ara.sh` sözleşme ve protokolü de tarıyor
 - [ ] P-027.6 — B-145 / B-144 (d) işaretleri, oturum kaydı, push

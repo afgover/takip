@@ -149,9 +149,29 @@ tanımlanır. Prosedür, oturumun konusu ne olursa olsun geçerlidir.
 > B-123/B-124 ikişer kez verildi — kural zaten oradaydı, eksik olan
 > "en büyük" nerede aranacağıydı).
 
+> **Konuya girerken ara (v1.33).** Bir işe, karara ya da öneriye başlamadan
+> önce o konuda hub'da ne yazıldığını ara:
+> [`tool/ara.sh`](../tool/ara.sh) `<konu kelimeleri>` (başka bir hub için
+> `--hub <yol>`). İlk sonuçların **gövdesini oku**; satır özettir. Gerekçe
+> ölçüldü: hub yazmakta güçlü, geri okumakta zayıf — artifact'ların yarısından
+> fazlası doğduğu günden sonra bir daha anılmıyor
+> ([B-145](BACKLOG.md#B-145)), ders ve backlog dosyaları onlarca KB ve grep
+> sıralamıyor, Türkçe eki ve harfi tanımıyor. Script servissiz: her koşumda
+> hub'ı okuyup BM25 kuruyor; İngilizce klavyeyle yazılan sorgu Türkçe metni
+> buluyor. `[yerine geçildi → ...]` ya da `[geçersiz]` işaretli bir sonuç
+> çıkarsa işaretin gösterdiği kayda geç. Açılışta koşulmaz — maliyeti konu
+> belli olduğunda anlamlıdır. Script'e erişemiyorsan `grep -ri` ile ara ve
+> aramanın sıralamasız yapıldığını bil.
+
 4. **Her kullanıcı mesajını ve her cevabını** `session.md`'ye anında ekle —
    oturum sonuna biriktirme. Kullanıcı mesajları kısaltılmadan; agent cevapları
    karar/bulgu/iş odaklı özetlenerek yazılır, uzun çıktılar artifact'e gider.
+   **Claude Code'da bu madde kancayla da uygulanır (v1.33):**
+   [`tool/hub-guard.sh`](../tool/hub-guard.sh) `--stop`, açık oturumun kaydı
+   o turda güncellenmediyse ajanı tur sonunda bir kez durdurur. Kural
+   hatırlamaya bırakılınca art arda iki oturumda çiğnendi
+   ([L-059](knowledge/lessons.md#L-059)). Bekçi kurulu olmayan ortamda madde
+   aynen geçerlidir.
 5. Rapor, plan, analiz, info niteliğinde **her üretilen dosyayı**
    `artifacts/<session-id>/` altına frontmatter'ıyla kaydet ve `session.md`'nin
    `artifacts:` listesine ekle.
@@ -173,6 +193,8 @@ tanımlanır. Prosedür, oturumun konusu ne olursa olsun geçerlidir.
    (tarih + link). Konuşma sırasında yeni iş ortaya çıktıysa ilgili faza ekle.
 7. Yeni bir kural, skill veya ders ortaya çıktığında `knowledge/` altındaki
    ilgili dosyaya ID'li kayıt ekle. "Sonra yazarım" yok — çıktığı anda yazılır.
+   Yeni kayıt eski bir kaydı inceltiyor ya da genişletiyorsa eski kayda
+   `Yerine geçen:` alanını da yaz ([§5](SYSTEM.md#5), v1.33).
 7b. **Üç ya da daha fazla adımlı bir işe başlarken planı
    [`PLAN.md`](PLAN.md)'ye yaz** (sözleşme [§14](SYSTEM.md#14)) — adımları
    *uygulamadan önce*, çünkü ağacın işi biteni listelemek değil, yarım kalanı

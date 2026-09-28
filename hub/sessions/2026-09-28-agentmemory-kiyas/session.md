@@ -118,3 +118,14 @@ dosyanın değil dizinin zamanını veriyordu; `git diff --name-only HEAD` +
 `git ls-files --others` ile düzeltildi. Belgeler arası çelişki: yardımcı
 ajan `systemMessage`'ın ajana, yapılandırma rehberi kullanıcıya
 gösterildiğini söylüyor — canlı sınanacak.
+
+### [13:50] Agent
+
+Sözleşme 1.32 → **1.33** (`SYSTEM.md` + `.en`, `AGENT_PROTOCOL.md` +
+`.en`): (1) protokole "Konuya girerken ara" bloğu; (2) madde 4'e "Claude
+Code'da kancayla da uygulanır" cümlesi; (3) §5'e isteğe bağlı `Yerine
+geçen:` alanı (yalnız eski kayıtta), madde 7'den ona işaret. İngilizce
+hub'lara Türkçe alan adı dayatmamak için `Superseded by:` da tanımlandı ve
+`ara.sh` ikisini de tanıyor (selftest 8/8). Aynı turda `ara.sh`'ın sözleşme
+ve protokolü taramadığı görüldü ("yerine gecen alan" sorgusu §5'i
+bulamadı); bölüm/madde düzeyinde eklendi. `EVOLUTION.md` notu yazıldı.

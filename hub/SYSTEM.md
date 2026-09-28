@@ -5,7 +5,7 @@ ve hangi şemaya uyacağını** tanımlar. Agent ve kullanıcı uygulaması bu s
 dışına çıkmaz. Sözleşme değişiklikleri `EVOLUTION.md`'ye kaydedilir ve bu dosyanın
 başındaki sürüm numarası artırılır.
 
-**Sözleşme sürümü:** 1.32
+**Sözleşme sürümü:** 1.33
 **Ana kopya (master):** `afgover/takip` → `hub/SYSTEM.md` (tr, **kanonik**) ·
 `hub/SYSTEM.en.md` (en)
 (bkz. §10 — her hub kendi kopyasını, kendi dilindeki varyanttan günceller)
@@ -556,6 +556,24 @@ Kayıt biçimi (üç dosyada da aynı):
 - **Kaynak:** S-2026-07-30-altyapi-tasarimi
 - **Açıklama:** ...
 ```
+
+**(v1.33) Yerine geçilen kayıt.** Bir kayıt iki farklı yoldan eskir ve iki
+yol farklı işaretlenir:
+
+- **Yanlış çıktı:** başlığı `~~üstü çizilir~~` ve nedeni yazılır (yukarıda).
+- **Daha yeni bir kayıtla inceltildi ya da genişletildi:** eski kayıt yanlış
+  değildir ama artık tek başına okunmamalıdır. Eski kayda isteğe bağlı bir
+  alan eklenir:
+
+  ```markdown
+  - **Yerine geçen:** L-058
+  ```
+
+Alan **yalnız eski kayıtta** durur: okuyan oraya düştüğü için yönlendirme
+orada gerekir. Yeni kayda karşılık gelen bir alan yazılmaz; aynı bilgiyi iki
+yerde tutmak ikisinin ayrışmasına davetiyedir. `tool/ara.sh` bu alanı taşıyan
+kaydı sonuçlarda geri iter ve `[yerine geçildi → L-058]` diye işaretler. Alan
+isteğe bağlıdır; onsuz yazılmış kayıtlar geçerliliğini korur (R-008).
 
 ## 6. `BACKLOG.md` — yapılacak işler
 
