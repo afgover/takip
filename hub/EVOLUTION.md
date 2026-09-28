@@ -939,3 +939,14 @@ işi, bitiş çizgisi değil. Bitiş çizgisi olsaydı aşama hiç kapanmazdı �
   Kıyasın kendisi de bir hata üretti: bekçi zaten kuruluydu ama kendi
   tarafımız dosyadan değil hafızadan anlatıldığı için atlandı
   ([L-060](knowledge/lessons.md#L-060)).
+
+- 2026-09-29: **Uygulamanın sözleşme sabiti 1.29'da kalmıştı** ([P-028](PLAN.md#P-028)).
+  Sabit, Repolar ekranındaki "sözleşmen eski" uyarısının ölçütü; 1.30-1.33
+  dört artış boyunca güncellenmediği için geride kalan hub'lar "güncel"
+  görünüyordu. Bunu yakalayan Flutter testi vardı ve kırmızıydı, ama
+  sözleşmeye dokunan oturumlar Flutter koşmuyor. Sabit 1.33 yapıldı (630/630
+  test), `audit.sh` §12 sabiti açılışta `SYSTEM.md` ile karşılaştırıyor, APK
+  `fd93fa6` Drive'a kondu (veri korunumu ölçüldü, SEC-015). Ders aynı:
+  aynı bilgi iki yerde tutuluyorsa, ikincisini hatırlamak değil ölçmek
+  gerekir.
+

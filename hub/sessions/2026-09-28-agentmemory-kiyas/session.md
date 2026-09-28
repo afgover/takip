@@ -1,7 +1,7 @@
 ---
 id: S-2026-09-28-agentmemory-kiyas
 date: 2026-09-28
-status: open
+status: closed
 reconstructed: false
 author: afgover
 topics: [kiyas, agent-hafizasi, harici-repo]
@@ -14,7 +14,16 @@ tasks_touched: []
 
 ## Özet
 
-*(oturum açık — kapanışta yazılacak)*
+`rohitg00/agentmemory` incelendi ve takip ile kıyaslandı
+(A-2026-09-28-001): farklı problemler, benimseme yok. Kıyas takip'in geri
+okuma zayıflığını gösterdi; kullanıcı onayıyla üç fikir alındı ve sözleşme
+1.33 oldu: `tool/ara.sh` (servissiz hub içi arama, "konuya girerken ara"),
+bekçinin tur sonu modu (`hub-guard.sh --prompt/--stop`, Claude Code
+kancaları), `Yerine geçen:` alanı. Kıyastaki hata (bekçi zaten kuruluydu)
+L-060 oldu. Kullanıcının APK sorusu uygulamanın sözleşme sabitinin
+1.29'da kaldığını ortaya çıkardı: sabit 1.33, `audit.sh` §12, APK
+`fd93fa6` Drive'a kondu (P-028). Canlı kanıt: prompt işareti bu oturumun
+kimliğiyle oluştu.
 
 ## Kayıt
 
