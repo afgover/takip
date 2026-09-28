@@ -76,3 +76,16 @@ aynı commit'te yazılınca sessiz kalıyor.
 **Kök neden:** kıyasın dış tarafı dosya dosya envanterlendi, kendi tarafı
 protokol metninden ve hafızadan anlatıldı. Bekçi hem açık backlog'da
 (B-141) hem bugünkü denetim çıktısında (§10) görünüyordu.
+
+### [12:25] Kullanıcı
+
+> 3 karar da ok
+
+### [12:27] Agent
+
+Onaylananlar: (1) hub içi arama script'i, (2) bekçiye tur sonu modu —
+kayıt bu turda güncellenmediyse bir kez durdur, commit/push gecikmesinde
+yalnız uyar, (3) ders/kurallarda "Yerine geçen" alanı (sözleşme 1.33),
+artı kıyas hatası için L-060. Plan [P-027](../../PLAN.md) olarak yazıldı.
+Kanca davranışı (Stop girdisi, döngü koruması, uyarı kanalı) resmi
+belgelere karşı ayrıca doğrulatılıyor.

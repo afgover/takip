@@ -565,3 +565,21 @@ sırasıyla girer.
       ✅ 2026-09-28 · üç [KARAR] maddesi kullanıcıda
 - [x] P-026.5 — Artifact yaz, `artifact-lint.sh` geçir, oturuma bağla, push ·
       ✅ 2026-09-28 · [A-2026-09-28-001](artifacts/S-2026-09-28-agentmemory-kiyas/agentmemory-kiyas.md)
+
+## P-027 — agentmemory kıyasından alınan üç fikir + ders
+- **Tarih:** 2026-09-28
+- **Kaynak:** [S-2026-09-28-agentmemory-kiyas](sessions/2026-09-28-agentmemory-kiyas/session.md)
+- **Durum:** acik
+- **İlgili:** [A-2026-09-28-001](artifacts/S-2026-09-28-agentmemory-kiyas/agentmemory-kiyas.md),
+  [B-145](BACKLOG.md#B-145), [B-144](BACKLOG.md#B-144), [R-008](knowledge/rules.md#R-008)
+
+- [ ] P-027.1 — L-060: kıyasın iki tarafı aynı yöntemle, dosyadan çıkarılır
+- [ ] P-027.2 — `tool/ara.sh`: servissiz hub içi arama (BM25, Türkçe harf
+      katlama, ilk 5 harf kökü) + `--selftest`
+- [ ] P-027.3 — "Yerine geçen" alanı: §5 şeması (isteğe bağlı), `ara.sh`
+      yerine geçilen kaydı işaretler
+- [ ] P-027.4 — Bekçiye tur sonu: `--prompt` (UserPromptSubmit) ve `--stop`
+      (Stop) modları, `.claude/settings.json`, elle sınama
+- [ ] P-027.5 — Sözleşme 1.32 → 1.33: protokole `ara.sh`'ın ne zaman
+      koşulacağı ve alan; `.en` varyantları; `EVOLUTION.md`
+- [ ] P-027.6 — B-145 / B-144 (d) işaretleri, oturum kaydı, push
