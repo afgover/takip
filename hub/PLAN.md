@@ -593,7 +593,7 @@ sırasıyla girer.
 ## P-028 — Uygulamanın sözleşme sabiti 1.29 → 1.33, denetim kontrolü, APK
 - **Tarih:** 2026-09-29
 - **Kaynak:** [S-2026-09-28-agentmemory-kiyas](sessions/2026-09-28-agentmemory-kiyas/session.md)
-- **Durum:** acik
+- **Durum:** tamamlandi
 - **İlgili:** [P-023](PLAN.md#P-023), [SEC-015](SECURITY.md#SEC-015), T-010
 
 > **Tetikleyici:** kullanıcı "APK güncellemeye gerek var mı" diye sordu;
@@ -605,8 +605,10 @@ sırasıyla girer.
 - [x] P-028.2 — `audit.sh`'a kontrol: uygulama sabiti ile `SYSTEM.md` aynı mı
       (Flutter koşulmayan oturumlar için) · ✅ 2026-09-29 · §12; iki yönde
       sınandı (1.33 → ✓, geçici 1.29 → bulgu)
-- [ ] P-028.3 — Release derle; imza SHA-1, paket, versionCode Drive'daki son
-      APK ile karşılaştır (veri korunumu)
-- [ ] P-028.4 — Drive'a kopyala (SHA-256 iki tarafta), `OKU.txt`, eski APK
-      geri dönüş için kalır; SEC-015'e not
-- [ ] P-028.5 — Kayıtlar ve push
+- [x] P-028.3 — Release derle; imza SHA-1, paket, versionCode Drive'daki son
+      APK ile karşılaştır (veri korunumu) · ✅ 2026-09-29 · `fd93fa6`,
+      56.2 MB; üçü de aynı (SHA-1 `f4994730…`, `us.gover.takip`, 1)
+- [x] P-028.4 — Drive'a kopyala (SHA-256 iki tarafta), `OKU.txt`, eski APK
+      geri dönüş için kalır; SEC-015'e not · ✅ 2026-09-29 ·
+      `takip-2026-09-29-fd93fa6.apk`, SHA-256 `a9824a8d…` iki tarafta aynı
+- [x] P-028.5 — Kayıtlar ve push · ✅ 2026-09-29

@@ -166,3 +166,15 @@ Sabit 1.33 yapıldı; sürümü taşıyan başka canlı yer aranıp bulunmadı (
 geçişler tarihsel kayıt). Tam süit 630/630 geçti — kırmızı test yeşile
 döndü. `audit.sh`'a §12 eklendi: uygulama sabiti ile `SYSTEM.md` farklıysa
 bulgu; uygulaması olmayan hub'da geçer. İki yönde sınandı.
+
+### [2026-09-29 00:20] Agent
+
+Release derlendi (`fd93fa6`, 56.2 MB, `key.properties` yok → debug
+anahtarı). Veri korunumu ölçüldü: imza SHA-1 (`f4994730…`), paket adı ve
+versionCode Drive'daki 2026-09-11 APK'sıyla birebir aynı — üstüne kurulur,
+veri silinmez. `Drive'ım/Takip APK/takip-2026-09-29-fd93fa6.apk` olarak
+kopyalandı, SHA-256 (`a9824a8d…`) iki tarafta aynı; `OKU.txt` yenilendi,
+iki eski APK geri dönüş için kaldı. SEC-015'e çıkış satırı eklendi (09-11
+çıkışı o gün işlenmemişti, o da yazıldı). Önceki cevapta ekran adı
+"Bağlantılar" diye yanlış verilmişti; uygulamadaki adı "Repolar", OKU.txt
+doğru adla yazıldı.

@@ -398,6 +398,12 @@ değil. Token, parola veya anahtar bu dosyada hiçbir koşulda yer almaz.
     paylaşım bağlantısı). O adımdan önce T-010 kapanmalı.
   Yüklenen dosyanın SHA-256'sı kaynak APK'nınkiyle doğrulandı
   (`10bad8cb…`); yanına `OKU.txt` konuldu ve imza uyarısı orada da yazılı.
+  **Sonraki çıkışlar (aynı sınıf, aynı klasör, paylaşım yok):**
+  2026-09-11 `takip-2026-09-11-7d211e7.apk` ([P-023](PLAN.md#P-023),
+  SHA-256 `d4fa0e77…`, bu kayda o gün işlenmemişti); 2026-09-29
+  `takip-2026-09-29-fd93fa6.apk` ([P-028](PLAN.md#P-028), SHA-256
+  `a9824a8d…`). İkisinde de imza SHA-1 `f4994730…` (debug), tetikleyici
+  değişmedi: üçüncü kişiye ya da halka verilmedi.
 
 ## SEC-016 — Bekçi ve denetçi script'lerinin güvenlik incelemesi
 - **Tarih:** 2026-08-29
