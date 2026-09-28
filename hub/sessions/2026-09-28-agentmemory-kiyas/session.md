@@ -129,3 +129,23 @@ hub'lara Türkçe alan adı dayatmamak için `Superseded by:` da tanımlandı ve
 `ara.sh` ikisini de tanıyor (selftest 8/8). Aynı turda `ara.sh`'ın sözleşme
 ve protokolü taramadığı görüldü ("yerine gecen alan" sorgusu §5'i
 bulamadı); bölüm/madde düzeyinde eklendi. `EVOLUTION.md` notu yazıldı.
+
+### [2026-09-29 00:00] Kullanıcı
+
+> apk guncellemeye gerek varmi
+
+### [2026-09-29 00:05] Agent
+
+Uzun aradan sonra inbox'a bakıldı: boş. Son APK `8cda7ab` (2026-09-11
+23:21) ile derlenmiş; uygulama kodundaki son iki değişiklik (`945cd76`,
+`48e88e3`) içinde. Bugünkü işlerin hiçbiri `lib/`, `android/` ya da
+`pubspec`'e dokunmadı; uygulama hub içeriğini GitHub'dan canlı okuyor.
+Ama bir **hata** bulundu: `lib/core/constants.dart`'ta
+`contractVersion = '1.29'` duruyor, sözleşme 1.33. Bu sabit Bağlantılar
+ekranında hub'ın sözleşmesi eskiyse "agent güncellemeli" uyarısını
+üretiyor; 1.29'da kaldığı için 1.29-1.32'deki hub'ları "güncel" gösteriyor.
+`test/hub/annotations_test.dart` tam bu ayrışmayı yakalamak için var ve
+kırmızı (beklenen 1.29, gerçek 1.33). Ayrışma 1.30'da başladı; 1.31, 1.32
+ve 1.33'ü bu konuşmada ben artırdım, sabiti ben de atladım. **Kök neden:**
+sözleşme-yalnız oturumlarda Flutter süiti koşulmuyor ve sürüm artışı
+adımları sürümü taşıyan öbür yeri aramıyor.
