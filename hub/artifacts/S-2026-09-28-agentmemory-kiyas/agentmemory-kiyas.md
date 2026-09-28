@@ -99,7 +99,7 @@ geliyor.
 
 | Eksen | agentmemory | takip |
 |---|---|---|
-| Yakalama | Otomatik, her araç kullanımı | Ajan yazar, prosedürle |
+| Yakalama | Otomatik, her araç kullanımı | Ajan yazar; bekçi kancası |
 | Seçicilik | Hepsini al, sonra süz | Karar ve bulgu özeti |
 | Depo | Yerel depo, motor süreci | Git üzerinde markdown |
 | Sürümleme | İsteğe bağlı git anlık kopyası | Her kayıt bir commit |
@@ -121,6 +121,9 @@ takip'te yakalama ajanın disiplinine bağlı ve bu disiplin ölçülüp eksik
 bulundu: [B-144](../../BACKLOG.md#B-144) ritim kuralında %59 ihlal
 kaydediyor (ölçüm A-2026-09-12-001), [L-059](../../knowledge/lessons.md#L-059)
 "anında ekle" kuralının art arda iki oturumda çiğnendiğini kaydetti.
+Bir kanca zaten var: `tool/hub-guard.sh` (P-017) bağlam sıkıştırılmadan
+önce kayıt gerideyse sıkıştırmayı bir kez durduruyor. Ama yalnız
+sıkıştırma anında koşuyor; sıkıştırmasız bir oturumda hiç devreye girmiyor.
 Karşılığında kayıt seçici: ham çıktı değil karar ve bulgu yazılıyor. Bu,
 public bir repoda tutulabilmesinin ön koşulu.
 
@@ -156,12 +159,15 @@ omurga olarak GitHub.
    script. Açılışta değil, ajan bir konuya girerken koşulur ("bu konuda ne
    yapmıştık"). agentmemory'nin kendi ölçümüne göre BM25 tek başına %86,2
    isabet veriyor; boşluğun çoğu vektörsüz kapanabilir. [KARAR]
-2. **Oturum ritmi için kanca** (B-144 d ile birlikte). agentmemory'nin
-   hattı hatırlamaya değil kancaya dayanıyor.
-   takip'te karşılığı: Claude Code'un Stop ya da PreCompact kancasında
-   açık oturumun son yanıttan beri kayıt alıp almadığını soran bir kontrol.
-   Kanca Claude Code'a özgü; öbür ajanlar için prosedür geçerli kalır.
-   [KARAR]
+2. **Bekçiyi tur sonuna genişletmek** (B-144 d ile birlikte).
+   agentmemory'nin hattı hatırlamaya değil kancaya dayanıyor. takip'in
+   bekçisi zaten var ama yalnız sıkıştırmada koşuyor. Öneri: aynı script'e
+   Claude Code'un Stop kancası (her yanıtın sonu) için bir mod eklemek; açık
+   oturumun kaydı bu turda güncellenmediyse ajanı bir kez durdurur. Kanca
+   Claude Code'a özgü; öbür ajanlar için prosedür geçerli kalır. [KARAR]
+
+   *Düzeltme (aynı gün):* bu madde ilk yazımında bekçiyi atlayıp kancayı
+   yeni bir fikir gibi sunuyordu.
 3. **Yerine geçme alanı.** agentmemory eski sürümü aramadan çıkarıp sürüm
    zincirinde tutuyor. takip'te ders ve kurallar için "Yerine geçen" alanı,
    eskimiş bir dersin okunup uygulanmasını önler. Sözleşme değişikliği

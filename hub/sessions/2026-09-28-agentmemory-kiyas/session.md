@@ -58,3 +58,21 @@ denetlenebilir iş defteri; örtüşme yalnız "geçmişi hatırlama". Benimseme
 (B-145), oturum ritmi kancası (B-144 d), ders/kurallar için "yerine geçen"
 alanı. Alınmaması gerekenler: otomatik ham yakalama (public repo, SEC-017),
 servis bağımlılığı (K-001), sıkıştırılmış hafızayı kaynak saymak.
+
+### [12:10] Kullanıcı
+
+> 1 ve 3 mantıklı, 2 yi biraz daha açıklarmısın
+
+### [12:15] Agent
+
+2\. maddeyi açıklamadan önce `.claude/settings.json` okundu ve kıyasta bir
+**hata** bulundu: `tool/hub-guard.sh` 2026-08-28'den beri (P-017)
+PreCompact ve SessionStart kancası olarak kurulu. Artifact 2. öneriyi yeni
+bir fikir gibi sunuyordu; gerçekte öneri, var olan bekçiyi **tur sonuna**
+(Stop kancası) genişletmek. Artifact düzeltildi. Bekçi L-059 vakasını
+neden görmedi: yalnız sıkıştırma anında koşuyor (o oturumlarda sıkıştırma
+olmadı) ve üçüncü işareti "iş commit'i kayıttan 30 dk yeni mi" — kayıt işle
+aynı commit'te yazılınca sessiz kalıyor.
+**Kök neden:** kıyasın dış tarafı dosya dosya envanterlendi, kendi tarafı
+protokol metninden ve hafızadan anlatıldı. Bekçi hem açık backlog'da
+(B-141) hem bugünkü denetim çıktısında (§10) görünüyordu.
