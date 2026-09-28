@@ -555,8 +555,11 @@ sırasıyla girer.
 - **Kaynak:** [S-2026-09-28-agentmemory-kiyas](sessions/2026-09-28-agentmemory-kiyas/session.md)
 - **Durum:** acik
 
-- [ ] P-026.1 — Repoyu scratchpad'e salt okunur klonla; envanter çıkar
-- [ ] P-026.2 — Mimari: hafıza neyi, nerede, nasıl saklıyor; geri çağırma
-- [ ] P-026.3 — İddiaları kaynağında doğrula (benchmark, özellik listesi)
+- [x] P-026.1 — Repoyu scratchpad'e salt okunur klonla; envanter çıkar ·
+      ✅ 2026-09-28 · `c314c7b`, v0.9.29
+- [x] P-026.2 — Mimari: hafıza neyi, nerede, nasıl saklıyor; geri çağırma ·
+      ✅ 2026-09-28
+- [x] P-026.3 — İddiaları kaynağında doğrula (benchmark, özellik listesi) ·
+      ✅ 2026-09-28 · iki manşet daraltıldı, biri doğrulandı
 - [ ] P-026.4 — Takip hub'ı ile eksen eksen kıyas; alınabilecekler
 - [ ] P-026.5 — Artifact yaz, `artifact-lint.sh` geçir, oturuma bağla, push
