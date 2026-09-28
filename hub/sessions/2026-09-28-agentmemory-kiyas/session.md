@@ -103,3 +103,18 @@ anahtari" → T-010, ID sorguları kendi kaydını ilk getiriyor; ~0,1 sn.
 Kanca doğrulaması geldi: Stop'ta belgelenen durdurma yolu
 `{"decision":"block","reason":…}`; `stop_hook_active` döngü koruması;
 kanca düzenlemesi oturum içinde hemen devreye giriyor.
+
+### [13:25] Agent
+
+Bekçiye iki mod eklendi ([tool/hub-guard.sh](../../../tool/hub-guard.sh)):
+`--prompt` (UserPromptSubmit) kullanıcı mesajının anını `$TMPDIR`'daki bir
+işarete yazıyor; `--stop` (Stop) tur sonunda açık oturumun session.md'si
+bu işaretten sonra değişmediyse ajanı bir kez durduruyor, commit/push 30
+dakikadan eskiyse yalnız uyarıyor. İşaret yoksa ya da açık oturum yoksa
+geçiyor. `.claude/settings.json`'a iki kanca eklendi, mevcut PreCompact ve
+SessionStart korundu. Sahte girdiyle 8 durum sınandı. Sınama bir hata
+yakaladı: `git status --porcelain` izlenmeyen dizini tek satıra indirip
+dosyanın değil dizinin zamanını veriyordu; `git diff --name-only HEAD` +
+`git ls-files --others` ile düzeltildi. Belgeler arası çelişki: yardımcı
+ajan `systemMessage`'ın ajana, yapılandırma rehberi kullanıcıya
+gösterildiğini söylüyor — canlı sınanacak.

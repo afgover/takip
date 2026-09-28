@@ -580,8 +580,9 @@ sırasıyla girer.
       7/7; gerçek hub'da 5 sorgunun 5'inde beklenen kayıt ilk sırada, ~0,1 sn
 - [ ] P-027.3 — "Yerine geçen" alanı: §5 şeması (isteğe bağlı), `ara.sh`
       yerine geçilen kaydı işaretler
-- [ ] P-027.4 — Bekçiye tur sonu: `--prompt` (UserPromptSubmit) ve `--stop`
-      (Stop) modları, `.claude/settings.json`, elle sınama
+- [x] P-027.4 — Bekçiye tur sonu: `--prompt` (UserPromptSubmit) ve `--stop`
+      (Stop) modları, `.claude/settings.json`, elle sınama · ✅ 2026-09-28 ·
+      8 durum sınandı; sınamada bir hata bulunup düzeltildi (izlenmeyen dizin)
 - [ ] P-027.5 — Sözleşme 1.32 → 1.33: protokole `ara.sh`'ın ne zaman
       koşulacağı ve alan; `.en` varyantları; `EVOLUTION.md`
 - [ ] P-027.6 — B-145 / B-144 (d) işaretleri, oturum kaydı, push

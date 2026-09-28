@@ -9,19 +9,29 @@
 # (A-2026-08-28-001). Sıkıştırmayı gören taraf harness, o yüzden kural buraya
 # taşındı.
 #
-# İki mod:
+# Dört mod:
 #   --precompact     kayıt işin gerisindeyse çıkış 2 → sıkıştırma engellenir
 #                    ve ajan, bağlamı hâlâ tamken kaydı yazar.
 #   --session-start  sıkıştırmadan sonra ajana bağlam enjekte eder
 #                    (PreCompact bunu yapamıyor, SessionStart yapabiliyor).
+#   --prompt         (UserPromptSubmit, v1.33) kullanıcı mesajının geldiği
+#                    anı bir işaret dosyasına yazar; başka bir şey yapmaz.
+#   --stop           (Stop, v1.33) tur sonunda: açık oturumun session.md'si
+#                    o işaretten sonra hiç değişmediyse ajanı BİR KEZ durdurur
+#                    ({"decision":"block"}); commit/push 30 dakikadan eskiyse
+#                    yalnız uyarır (systemMessage). Gerekçe L-059: sıkıştırma
+#                    olmayan oturumda bekçi hiç koşmuyordu ve "sonuna
+#                    biriktirme" art arda iki oturumda yakalanamadı.
+#                    İşaret yoksa (kanca oturum ortasında kurulduysa) geçer;
+#                    açık oturum yoksa geçer — oturum açmayı zorlamaz.
 #
 # **Bir kez engeller.** Otomatik sıkıştırma bağlam dolduğu için tetiklenir;
 # ısrarla engellemek oturumu kilitlerdi. İşaret dosyası bu yüzden var: aynı
 # oturumda ikinci kez engellemez, yalnız uyarır.
 #
 # Güvenlik sözleşmesi (SEC-016): bu script git durumunu OKUR; yalnız
-# $TMPDIR'a bir işaret dosyası YAZAR; ağa HİÇ çıkmaz; hiçbir dosyayı
-# değiştirmez. Hata verirse, git yoksa, ikinci kez tetiklenirse GEÇER
+# $TMPDIR'a oturum başına iki işaret dosyası YAZAR (.blocked, .prompt); ağa
+# HİÇ çıkmaz; hiçbir repo dosyasını değiştirmez. Hata verirse, git yoksa, ikinci kez tetiklenirse GEÇER
 # (fail open) — verebileceği en kötü zarar bir sıkıştırmayı bir kez
 # geciktirmektir. Ana kopya: afgover/takip → tool/hub-guard.sh; kopyaların
 # bayatlığını tool/audit.sh ölçer.
@@ -41,6 +51,19 @@ SID="$(printf '%s' "$STDIN_JSON" | sed -n 's/.*"session_id"[[:space:]]*:[[:space
 # ucuzken yapılır: yalnız [A-Za-z0-9._-] kalır, / ve boşluk atılır.
 SID="$(printf '%s' "$SID" | tr -cd 'A-Za-z0-9._-' | cut -c1-64)"
 MARK="${TMPDIR:-/tmp}/hub-guard-${SID:-nosession}.blocked"
+PROMPT_MARK="${TMPDIR:-/tmp}/hub-guard-${SID:-nosession}.prompt"
+
+if [ "$MODE" = "--prompt" ]; then
+  : > "$PROMPT_MARK" 2>/dev/null
+  exit 0
+fi
+
+# JSON dizesi: mesaja repo içinden dosya adı giriyor; kaçışsız bir tırnak
+# bütün hook çıktısını geçersiz kılardı.
+json_str() {
+  printf '%s' "$1" | python3 -c 'import json,sys; print(json.dumps(sys.stdin.read()))' 2>/dev/null \
+    || printf '"%s"' "$(printf '%s' "$1" | sed 's/\\/\\\\/g; s/"/\\"/g')"
+}
 
 # ── Kayıt işin gerisinde mi? Üç bağımsız işaret. ────────────────────────────
 reasons=()
@@ -65,6 +88,49 @@ if [ "${last_work:-0}" -gt "${last_rec:-0}" ]; then
 fi
 
 open_sess=$(grep -l '^status: open' hub/sessions/*/session.md 2>/dev/null | head -1)
+
+if [ "$MODE" = "--stop" ]; then
+  # Döngü koruması: bu tur zaten bu kancanın durdurmasıyla devam ediyorsa geç.
+  printf '%s' "$STDIN_JSON" | grep -Eq '"stop_hook_active"[[:space:]]*:[[:space:]]*true' && exit 0
+  [ -f "$PROMPT_MARK" ] || exit 0
+
+  # 1) Kayıt bu turda güncellendi mi? Açık oturumlardan biri işaretten yeni
+  #    olmalı (bu turda açılan ya da kapanan oturum da sayılır).
+  if [ -n "$open_sess" ]; then
+    fresh=0
+    for s in $(grep -l '^status: open' hub/sessions/*/session.md 2>/dev/null); do
+      [ "$s" -nt "$PROMPT_MARK" ] && fresh=1
+    done
+    if [ "$fresh" -eq 0 ]; then
+      r="Hub bekçisi: açık oturumun kaydı (${open_sess#hub/}) bu turda güncellenmedi. AGENT_PROTOCOL madde 4: kullanıcının mesajı kısaltılmadan, cevabının özü karar/bulgu odaklı session.md'ye anında eklenir. Şimdi ekle; commit/push 30 dakika ritmine tabidir (v1.23). Bu tur için yalnız bir kez durduruldu."
+      printf '{"decision":"block","reason":%s}\n' "$(json_str "$r")"
+      exit 0
+    fi
+  fi
+
+  # 2) Commit/push gecikmesi: yalnız uyar, 30 dakikayı aşmışsa.
+  now=$(date +%s); stale=()
+  oldest=0
+  while IFS= read -r f; do
+    [ -e "$f" ] || continue
+    m=$(stat -f %m "$f" 2>/dev/null || stat -c %Y "$f" 2>/dev/null || echo 0)
+    { [ "$oldest" -eq 0 ] || [ "$m" -lt "$oldest" ]; } && oldest=$m
+  # porcelain izlenmeyen dizini tek satıra indirir ("?? hub/x/"); dizinin
+  # zamanı yanıltır. Dosyalar tek tek: değişen izlenenler + izlenmeyenler.
+  done < <({ git diff --name-only HEAD -- hub; git ls-files --others --exclude-standard -- hub; } 2>/dev/null)
+  [ "$oldest" -gt 0 ] && [ $(( (now - oldest) / 60 )) -gt 30 ] \
+    && stale+=("commit'lenmemiş hub değişikliği $(( (now - oldest) / 60 )) dakikalık")
+  if git rev-parse --abbrev-ref --symbolic-full-name '@{u}' >/dev/null 2>&1; then
+    first=$(git log --format=%ct '@{u}..HEAD' -- hub 2>/dev/null | tail -1)
+    [ -n "$first" ] && [ $(( (now - first) / 60 )) -gt 30 ] \
+      && stale+=("push'lanmamış hub commit'i $(( (now - first) / 60 )) dakikalık")
+  fi
+  if [ ${#stale[@]} -gt 0 ]; then
+    w="Hub bekçisi: $(IFS='; '; echo "${stale[*]}") — v1.23 ritmi 30 dakika."
+    printf '{"systemMessage":%s}\n' "$(json_str "$w")"
+  fi
+  exit 0
+fi
 
 if [ ${#reasons[@]} -eq 0 ]; then
   [ "$MODE" = "--session-start" ] && exit 0
