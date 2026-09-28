@@ -449,6 +449,29 @@ else:
             elif line.startswith("      ") and _file:
                 warn(f"{_file}: {line.strip()}")
 
+# ── 12. Uygulamanın bildiği sözleşme sürümü (P-028) ──────────────────────────
+# Sürüm iki yerde yaşıyor: SYSTEM.md ve uygulamanın sabiti. Sabit, Bağlantılar
+# ekranındaki "sözleşmen eski" uyarısının ölçütü; geride kalırsa geride kalan
+# hub'lar "güncel" görünür. Bunu yakalayan Flutter testi var ama sözleşmeye
+# dokunan oturumlar Flutter koşmuyor: 1.30-1.33 dört artış boyunca sabit
+# 1.29'da kaldı. Kontrol bu yüzden açılışın koştuğu yerde. Uygulaması olmayan
+# hub'da sessizce geçer.
+say("12. Uygulamanın sözleşme sabiti SYSTEM.md ile aynı mı")
+_const = os.path.join(ROOT, "lib/core/constants.dart")
+if not os.path.isfile(_const):
+    info("uygulama yok (lib/core/constants.dart) — kontrol bu hub'a uygulanmaz")
+else:
+    _m = re.search(r"contractVersion\s*=\s*'([0-9.]+)'", open(_const, encoding="utf-8").read())
+    _s = re.search(r"\*\*(?:Sözleşme sürümü|Contract version):\*\*\s*([0-9.]+)",
+                   open(os.path.join(HUB, "SYSTEM.md"), encoding="utf-8").read())
+    if not _m or not _s:
+        info("sürüm okunamadı — kontrol KOŞMADI, 'aynı' sayılamaz")
+    elif _m.group(1) != _s.group(1):
+        warn(f"uygulama sabiti {_m.group(1)}, SYSTEM.md {_s.group(1)} — "
+             "sabit güncellenip APK yeniden derlenmeli (P-028)")
+    else:
+        ok(f"ikisi de {_s.group(1)}")
+
 print()
 if findings:
     print(f"{BOLD}{len(findings)} bulgu.{OFF} Kayda geçir: SECURITY.md / BACKLOG.md.")

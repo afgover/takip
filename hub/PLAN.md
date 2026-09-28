@@ -600,10 +600,11 @@ sırasıyla girer.
 > cevap ararken `contractVersion` sabitinin 1.30'dan beri güncellenmediği
 > ve onu yakalayan testin kırmızı olduğu görüldü.
 
-- [ ] P-028.1 — `constants.dart` 1.33; sürümü taşıyan başka yer var mı ara;
-      tam test süiti
-- [ ] P-028.2 — `audit.sh`'a kontrol: uygulama sabiti ile `SYSTEM.md` aynı mı
-      (Flutter koşulmayan oturumlar için)
+- [x] P-028.1 — `constants.dart` 1.33; sürümü taşıyan başka yer var mı ara;
+      tam test süiti · ✅ 2026-09-29 · başka canlı yer yok; 630/630 geçti
+- [x] P-028.2 — `audit.sh`'a kontrol: uygulama sabiti ile `SYSTEM.md` aynı mı
+      (Flutter koşulmayan oturumlar için) · ✅ 2026-09-29 · §12; iki yönde
+      sınandı (1.33 → ✓, geçici 1.29 → bulgu)
 - [ ] P-028.3 — Release derle; imza SHA-1, paket, versionCode Drive'daki son
       APK ile karşılaştır (veri korunumu)
 - [ ] P-028.4 — Drive'a kopyala (SHA-256 iki tarafta), `OKU.txt`, eski APK

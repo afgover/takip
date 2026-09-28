@@ -159,3 +159,10 @@ adımları sürümü taşıyan öbür yeri aramıyor.
 Plan [P-028](../../PLAN.md): sabit 1.33 + tam süit, `audit.sh`'a sabit
 kontrolü, release derleme + P-023'teki gibi veri korunumu ölçümü, Drive'a
 kopya (`Drive'ım/Takip APK`, `OKU.txt`), SEC-015 notu.
+
+### [2026-09-29 00:12] Agent
+
+Sabit 1.33 yapıldı; sürümü taşıyan başka canlı yer aranıp bulunmadı (kalan
+geçişler tarihsel kayıt). Tam süit 630/630 geçti — kırmızı test yeşile
+döndü. `audit.sh`'a §12 eklendi: uygulama sabiti ile `SYSTEM.md` farklıysa
+bulgu; uygulaması olmayan hub'da geçer. İki yönde sınandı.
