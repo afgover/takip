@@ -118,6 +118,8 @@ ile aşağıdaki maddeler aynen geçerlidir. `ORTAM.md` `projects` diyorsa
   `afgover/takip` klonundadır). Madde 1'deki "açık kalan oturumu kapat"
   yalnız **klasik** oturumlar ve **7 günden uzun** dokunulmamış thread
   oturumları içindir; başka bir thread'in açık oturumuna dokunulmaz.
+- **Önce eşitle:** açılışta, bir kayıt okunup raporlanmadan önce
+  `git pull --rebase` (betik yerel kopyanın geride olup olmadığını ölçer).
 - **Oturum kaydı:** her thread kendi `session.md`'sini açar
   (`surface: projects`, `thread: <kök mesaj kimliği>`) ve madde 4'teki
   gibi anında tutar. inbox/waiting durumu thread'in ilk cevabında söylenir.

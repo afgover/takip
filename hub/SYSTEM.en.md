@@ -1195,6 +1195,17 @@ contract):
 - Classic sessions remain subject to §2 among themselves: only one open
   classic session at a time.
 
+### Sync first at opening
+
+In a Projects hub work runs from several places: threads on this machine,
+classic sessions, other machines and the cloud. The local copy can silently
+fall behind, and every finding read from a stale copy is stale. At opening,
+before any record is read and reported, run `git pull --rebase`; the
+opening script measures whether the local copy contains the remote's
+latest commit. Measured case (2026-10-09): the copy was 225 commits behind
+and the thread reported a security scan that was really two days old as
+"32 days, stale".
+
 ### Tasks — they continue unchanged
 
 The `tasks/` flow (§4) continues **unchanged** under Projects, because the

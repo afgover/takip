@@ -79,6 +79,21 @@ else
   else warn "sözleşme ana kopyadan FARKLI — güncelle (raw ~5 dk önbellekler; az önce push'landıysa yanlış alarm olabilir)"; fi
 fi
 
+# 2b) Yerel kopya uzaktan geride mi (v1.34)
+# Ölçülen vaka (2026-10-09): Projects thread'i financer_takip'in bu Mac'teki
+# kopyasında açıldı; kopya 225 commit gerideydi (iş bulutta ve başka
+# oturumlarda yürümüştü) ve thread bayat bir "tarama 32 gün" bulgusu
+# raporladı — gerçekte tarama 2 günlüktü. Kontrol yalnız ls-remote ile
+# OKUR; fetch yapmaz, hiçbir ref'i değiştirmez.
+UZAK=$(git -C "$HUB" ls-remote origin HEAD 2>/dev/null | awk '{print $1}')
+if [ -z "$UZAK" ]; then
+  kos "uzak kopya karşılaştırması (ls-remote başarısız)"
+elif git -C "$HUB" merge-base --is-ancestor "$UZAK" HEAD 2>/dev/null; then
+  ok "yerel kopya uzaktaki son commit'i içeriyor"
+else
+  warn "YEREL KOPYA GERİDE: uzaktaki ${UZAK:0:7} yerelde yok — kayıt yazmadan ve bulgu raporlamadan önce git pull --rebase"
+fi
+
 # 3) Tarama yaşı (madde 4 — 30 gün)
 # awk sırası: madde 4'ün istediği şey son `tarama` kaydının tarihi. Tarih
 # satırı Tür satırından ÖNCE geldiği için önce tarih yakalanıp tür görülünce

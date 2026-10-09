@@ -969,7 +969,8 @@ işi, bitiş çizgisi değil. Bitiş çizgisi olsaydı aşama hiç kapanmazdı �
   `-A` yok), tek thread'lik iş için `PLAN.md` zorunlu değil, proje hafızası
   yalnız işaretçi; (3) protokole "Projects ortamında" bloğu. Betikler:
   `acilis.sh --hub` (başka hub'a koşulabiliyor, ortamı okuyor, thread
-  oturumlarını ayırıyor; yerel sözleşme dosyası hep `SYSTEM.md`),
+  oturumlarını ayırıyor, yerel kopyanın uzaktan geride olup olmadığını
+  ölçüyor; yerel sözleşme dosyası hep `SYSTEM.md`),
   `audit.sh` ortamı okuyor. Yolda bulunan iki eski kusur da kapandı:
   BACKLOG deseni kalın numaralı biçimi (`- [ ] **B-298**`, financer) hiç
   yakalamıyordu — açılış sayımı da çift ID kontrolü de o hub'da boş

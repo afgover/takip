@@ -127,6 +127,9 @@ differences:
   left open" applies only to **classic** sessions and to thread sessions
   untouched for **more than 7 days**; another thread's open session is not
   touched.
+- **Sync first:** at opening, before any record is read and reported, run
+  `git pull --rebase` (the script measures whether the local copy is
+  behind).
 - **Session record:** every thread opens its own `session.md`
   (`surface: projects`, `thread: <root message id>`) and keeps it at once,
   as in item 4. The inbox/waiting state is reported in the thread's first

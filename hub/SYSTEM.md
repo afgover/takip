@@ -1151,6 +1151,16 @@ Projects ile çalışan hub, kökünde kısa bir `ORTAM.md` taşır:
 - Klasik oturumlar kendi aralarında §2'ye tabidir: aynı anda yalnız bir
   açık klasik oturum.
 
+### Açılışta önce eşitle
+
+Projects hub'ında iş birden çok yerden yürür: bu makinedeki thread'ler,
+klasik oturumlar, başka makineler ve bulut. Yerel kopya sessizce geride
+kalabilir ve geride kalan kopyadan okunan her bulgu bayattır. Açılışta,
+hiçbir kayıt okunup raporlanmadan önce `git pull --rebase` yapılır; açılış
+betiği yerel kopyanın uzaktaki son commit'i içerip içermediğini ölçer.
+Ölçülen vaka (2026-10-09): kopya 225 commit gerideydi ve thread, gerçekte
+iki günlük olan güvenlik taramasını "32 gün, bayat" diye raporladı.
+
 ### Görevler — değişmeden devam eder
 
 `tasks/` akışı (§4) Projects'te **aynen** sürer, çünkü kullanıcı görevleri
