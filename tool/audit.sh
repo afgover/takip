@@ -194,10 +194,35 @@ for name in sorted(os.listdir(sess_dir)) if os.path.isdir(sess_dir) else []:
     if fm.get("status") == "closed" and (not m or len(m.group(1).strip()) < 40):
         no_sum.append(name)
 info(f"{total} oturum kaydı")
-for n, d in open_s:
-    age = days(d)
-    warn(f"oturum {n} hâlâ `open`" + (f" — {age} gün" if age is not None else ""))
-if not open_s: ok("açık kalmış oturum yok")
+# §16 (v1.34): ORTAM.md `projects` diyorsa thread oturumları birlikte açık
+# kalabilir; yalnız 7 günden uzun dokunulmamış olan bulgudur. Klasik
+# oturumlarda tek açık oturum meşrudur (en yeni olan), fazlası bulgudur.
+_ortam = ""
+_op = os.path.join(HUB, "ORTAM.md")
+if os.path.isfile(_op):
+    _m = re.search(r"^\*\*Çalışma ortamı:\*\*\s*(\S+)", open(_op, encoding="utf-8").read(), re.M)
+    _ortam = _m.group(1) if _m else ""
+if _ortam == "projects":
+    info("çalışma ortamı: projects (§16)")
+    _klasik = []
+    for n, d in open_s:
+        f = os.path.join(sess_dir, n, "session.md")
+        if frontmatter(f)[0].get("surface", "").split("#")[0].strip() == "projects":
+            ts = git("log","-1","--format=%ct","--",os.path.relpath(f, ROOT)).strip()
+            ts = int(ts) if ts else int(os.path.getmtime(f))
+            age = (datetime.datetime.now().timestamp() - ts) // 86400
+            if age > 7: warn(f"thread oturumu {n} {int(age)} gündür dokunulmamış — terk edilmiş (§16)")
+            else: info(f"açık thread oturumu {n} ({int(age)} gün)")
+        else:
+            _klasik.append((n, d))
+    if len(_klasik) > 1:
+        for n, d in _klasik: warn(f"klasik oturum {n} hâlâ `open` — birden çok açık klasik oturum")
+    if not open_s: ok("açık kalmış oturum yok")
+else:
+    for n, d in open_s:
+        age = days(d)
+        warn(f"oturum {n} hâlâ `open`" + (f" — {age} gün" if age is not None else ""))
+    if not open_s: ok("açık kalmış oturum yok")
 for n in no_sum: warn(f"oturum {n} `closed` ama `## Özet` boş/çok kısa")
 if not no_sum: ok("kapanmış oturumların hepsinde özet var")
 for n in no_auth: warn(f"oturum {n}: `author` alanı yok (v1.15)")
@@ -223,7 +248,10 @@ if not batch: ok("kayıtlar birden çok commit'e yayılmış (anlık tutulmuş)"
 # ── 4. ID tekrarı ────────────────────────────────────────────────────────────
 say("4. ID tekrarı (madde: sayaçlar tekildir)")
 dups = 0
-for fn, pat in (("BACKLOG.md", r"\b(B-\d{3})\b(?=\s*·)"),
+# BACKLOG iki biçimde yazılıyor: `- [ ] B-098 · ...` (takip) ve
+# `- [ ] **B-298** ...` (financer). İkinci biçim v1.34'e kadar hiç
+# sayılmıyordu — çift ID kontrolü o hub'larda sessizce boş dönüyordu.
+for fn, pat in (("BACKLOG.md", r"\b(B-\d{3})\b(?=\s*·)|^- \[[ xX]\] \*\*(B-\d{3,})\*\*"),
                 ("SECURITY.md", r"^##\s+(SEC-\d{3})\b"),
                 ("PLAN.md", r"^##\s+(P-\d{3})\b"),
                 ("knowledge/lessons.md", r"^##\s+(L-\d{3})\b"),
@@ -235,6 +263,7 @@ for fn, pat in (("BACKLOG.md", r"\b(B-\d{3})\b(?=\s*·)"),
     # önceki her şey atlanır (B-001/B-002 örnek satırları buradaydı).
     i = txt.find("\n## ")
     ids = re.findall(pat, txt[i:] if i > 0 else txt, re.M)
+    ids = [next((g for g in x if g), "") if isinstance(x, tuple) else x for x in ids]
     for i, n in collections.Counter(ids).items():
         if n > 1:
             warn(f"{fn}: {i} {n} kez tanımlanmış"); dups += 1
@@ -346,10 +375,10 @@ for state in ("inbox","active","waiting","done"):
         moved_at = hist[-2][1] if len(hist) > 1 else None   # ajanın ilk dokunuşu
         try:
             c = datetime.datetime.fromisoformat(fm["created"].replace("Z","+00:00"))
-            a = datetime.datetime.fromisoformat(added_at)
+            a = datetime.datetime.fromisoformat(added_at.replace("Z","+00:00"))
             push_lag.append(((a - c).total_seconds(), f"{state}/{fn}"))
             if moved_at:
-                m = datetime.datetime.fromisoformat(moved_at)
+                m = datetime.datetime.fromisoformat(moved_at.replace("Z","+00:00"))
                 pick_lag.append(((m - a).total_seconds(), f"{state}/{fn}"))
         except Exception: pass
 
@@ -373,7 +402,9 @@ raw = git("log","--all","--name-only","--format=@%cI","--",REL).split("\n")
 _commits=[]; _cur=None
 for l in raw:
     if l.startswith("@"):
-        _cur=(datetime.datetime.fromisoformat(l[1:]),set()); _commits.append(_cur)
+        # Python 3.9 (macOS sistem python'u) `Z` sonekini okumaz; GitHub'ın
+        # web/API commit'leri %cI'yı `Z` ile verir — denetim burada çöküyordu.
+        _cur=(datetime.datetime.fromisoformat(l[1:].replace("Z","+00:00")),set()); _commits.append(_cur)
     elif l.strip() and _cur: _cur[1].add(l.strip())
 _commits=sorted([c for c in _commits if c[1]])
 _sess=[t for t,pp in _commits if any("/session.md" in x for x in pp)]

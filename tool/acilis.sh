@@ -16,11 +16,28 @@
 # Güvenlik sözleşmesi: git durumunu ve hub dosyalarını OKUR; hiçbir şey
 # YAZMAZ; ağa yalnız iki GET atar (github.com Date başlığı, ana kopya diff'i).
 #
+# Kullanım:
+#   tool/acilis.sh                   # bu reponun hub'ı
+#   tool/acilis.sh --hub /yol/hub    # başka bir hub (v1.34; Projects
+#                                    # thread'leri betiği takip klonundan
+#                                    # kendi hub'larına koşar)
+#
 # Çıkış: 0 = temiz, 1 = dikkat isteyen madde var, 2 = koşamayan kontrol var.
 set -uo pipefail
-cd "$(dirname "$0")/.." || exit 2
-HUB="hub"
-[ -d "$HUB" ] || { echo "hub/ yok"; exit 2; }
+HUB=""
+while [ $# -gt 0 ]; do
+  case "$1" in
+    --hub) HUB="${2:-}"; shift 2 ;;
+    *) echo "Bilinmeyen seçenek: $1" >&2; exit 2 ;;
+  esac
+done
+TOOL="$(cd "$(dirname "$0")" && pwd)"
+if [ -z "$HUB" ]; then
+  cd "$TOOL/.." || exit 2
+  HUB="hub"
+fi
+HUB="${HUB%/}"
+[ -d "$HUB" ] || { echo "hub yok: $HUB"; exit 2; }
 
 ATTN=0; FAIL=0
 say()  { printf '\033[1m%s\033[0m\n' "$*"; }
@@ -34,6 +51,11 @@ say "Açılış — $(date '+%Y-%m-%d %H:%M %z')"
 DIL=$(sed -n 's/^\*\*Hub dili:\*\* *//p' "$HUB/SYSTEM.md" | head -1)
 DIL=${DIL:-tr}
 ok "hub dili: $DIL"
+
+# 0b) Çalışma ortamı (§16, v1.34) — ORTAM.md yoksa klasik
+ORTAM=$(sed -n 's/^\*\*Çalışma ortamı:\*\* *//p' "$HUB/ORTAM.md" 2>/dev/null | head -1 | tr -d ' ')
+[ "$ORTAM" = "projects" ] || ORTAM="klasik"
+ok "çalışma ortamı: $ORTAM"
 
 # 1) Saat — dış referansla (L-052)
 NET=$(curl -fsSI --max-time 10 https://github.com 2>/dev/null | grep -i '^date:' | awk '{print $3" "$4" "$5}')
@@ -51,7 +73,9 @@ MASTER=$(curl -fsSL --max-time 15 "https://raw.githubusercontent.com/afgover/tak
 if [ -z "$MASTER" ]; then
   kos "sözleşme karşılaştırması (ana kopya çekilemedi)"
 else
-  if [ "$MASTER" = "$(cat "$HUB/$SF")" ]; then ok "sözleşme ana kopyayla aynı ($(sed -n 's/.*ürümü:\*\* *//p;s/.*ersion:\*\* *//p' "$HUB/$SF" | head -1))"
+  # Hub kendi kopyasını dil eki olmadan SYSTEM.md'ye yazar (§10, v1.21);
+  # ana kopya dil ekli olabilir, yerel dosya her zaman SYSTEM.md.
+  if [ "$MASTER" = "$(cat "$HUB/SYSTEM.md")" ]; then ok "sözleşme ana kopyayla aynı ($(sed -n 's/.*ürümü:\*\* *//p;s/.*ersion:\*\* *//p' "$HUB/SYSTEM.md" | head -1))"
   else warn "sözleşme ana kopyadan FARKLI — güncelle (raw ~5 dk önbellekler; az önce push'landıysa yanlış alarm olabilir)"; fi
 fi
 
@@ -70,8 +94,33 @@ fi
 
 # 4) Açık oturum (madde 1)
 ACIK=$(grep -l '^status: open' "$HUB"/sessions/*/session.md 2>/dev/null || true)
-NACIK=$(printf '%s' "$ACIK" | grep -c . || true)
-if [ "$NACIK" -eq 0 ]; then ok "açık oturum yok"
+if [ "$ORTAM" = "projects" ] && [ -n "$ACIK" ]; then
+  # §16: thread oturumları birlikte açık kalabilir; terk eşiği 7 gün (son
+  # commit'e göre, yoksa dosya zamanına göre). Klasikler kendi aralarında
+  # tek açık kuralına tabi.
+  KLASIK=""
+  for f in $ACIK; do
+    ad=${f#"$HUB"/sessions/}; ad=${ad%/session.md}
+    if grep -q '^surface: projects' "$f"; then
+      ts=$(git -C "$(dirname "$f")" log -1 --format=%ct -- session.md 2>/dev/null)
+      [ -z "$ts" ] && ts=$(stat -f %m "$f" 2>/dev/null || stat -c %Y "$f" 2>/dev/null || echo 0)
+      gun=$(( ($(date +%s) - ${ts:-0}) / 86400 ))
+      if [ "$gun" -gt 7 ]; then warn "TERK EDİLMİŞ THREAD OTURUMU: $ad ($gun gün) — §16: türetilmiş özetle kapat"
+      else printf '  · açık thread oturumu: %s (%s gün — §16 izin veriyor)\n' "$ad" "$gun"; fi
+    else KLASIK="$KLASIK $f"; fi
+  done
+  NK=$(printf '%s' "$KLASIK" | wc -w | tr -d ' ')
+  if [ "$NK" -gt 1 ]; then
+    for f in $KLASIK; do warn "AÇIK KLASİK OTURUM: ${f#"$HUB"/sessions/} — birden çok açık olamaz (madde 1)"; done
+  elif [ "$NK" -eq 1 ]; then
+    printf '  · açık klasik oturum: %s (tek — §2 izin veriyor)\n' "$(echo $KLASIK | sed 's|.*/sessions/||;s|/session.md||')"
+  fi
+  NACIK=-1
+else
+  NACIK=$(printf '%s' "$ACIK" | grep -c . || true)
+fi
+if [ "$NACIK" -eq -1 ]; then :
+elif [ "$NACIK" -eq 0 ]; then ok "açık oturum yok"
 elif [ "$NACIK" -eq 1 ]; then
   # Tek açık oturum meşru (§2: en yeni açık kalabilir) — büyük olasılıkla bu
   # oturumun kendisi; uyarı değil bilgi.
@@ -87,25 +136,25 @@ WT=$(ls "$HUB/tasks/waiting" 2>/dev/null | grep -v '^README' || true)
 
 # 6) BACKLOG açık maddeleri — seçici bakış (Ö2, sayım denetimli)
 say "BACKLOG — açık maddeler (satırlar özettir: bir maddeye dayanıp İŞ YAPMADAN önce gövdesi okunur)"
-ACIKLAR=$(grep -nE '^- \[ \] B-[0-9]+' "$HUB/BACKLOG.md" 2>/dev/null | grep -v 'B-001 · (sorumlu)' || true)
+ACIKLAR=$(grep -nE '^- \[ \] (\*\*)?B-[0-9]+' "$HUB/BACKLOG.md" 2>/dev/null | grep -v 'B-001 · (sorumlu)' || true)
 SAYI=$(printf '%s' "$ACIKLAR" | grep -c . || true)
 BOYUT=$(wc -c < "$HUB/BACKLOG.md" | tr -d ' ')
 if [ "$SAYI" -eq 0 ] && [ "$BOYUT" -gt 10000 ]; then
   kos "BACKLOG deseni boş döndü ama dosya ${BOYUT}B — biçim değişmiş olabilir, dosyaya elle bak"
 else
   printf '%s\n' "$ACIKLAR" | sed 's/^/  /' | cut -c1-110
-  ok "$SAYI açık madde (desen: '- [ ] B-')"
+  ok "$SAYI açık madde (desen: '- [ ] B-' ya da '- [ ] **B-')"
 fi
 
 # 7) Geçici maddeler (§13)
 grep -qE '^### G-[0-9]+' "$HUB/SYSTEM.md" && printf '  · §13 geçici madde var — oku ve hub\x27ına uyuyorsa uygula\n'
 
 # 8) Hub denetimi (madde 4b)
-if [ -x tool/audit.sh ]; then
+if [ -x "$TOOL/audit.sh" ]; then
   say "Denetim (tool/audit.sh --quiet)"
   # rc boru hattından DEĞİL komutun kendisinden alınır — sed'in çıkışını
   # okumak, denetim bulgularını sessizce yutuyordu (ilk koşumda ölçüldü).
-  AOUT=$(tool/audit.sh --quiet 2>&1); rc=$?
+  AOUT=$("$TOOL/audit.sh" --hub "$(cd "$HUB" && pwd)" --quiet 2>&1); rc=$?
   printf '%s\n' "$AOUT" | sed 's/^/  /'
   [ $rc -eq 1 ] && ATTN=1
   [ $rc -eq 2 ] && kos "denetim"
