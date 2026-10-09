@@ -54,7 +54,8 @@ what*. The procedure holds whatever the session is about.
    - If the user opened a different subject, only report the inbox — do not
      process it on your own.
 3. Look at `BACKLOG.md` **selectively** (v1.28, Ö2): extract open items with
-   `grep -nE '^- \[ \] B-' BACKLOG.md` — the whole file (~17k tokens) is not
+   `grep -nE '^- \[ \] (\*\*)?B-' BACKLOG.md` (v1.34: also catches backlogs
+   that write the item number in bold, `- [ ] **B-123**`) — the whole file (~17k tokens) is not
    read at opening. Two guards: (a) if the pattern returns empty on a
    non-empty file, the format may have changed — **look by hand**, never
    write "no open work"; (b) the lines are summaries: before **acting** on an
@@ -113,6 +114,35 @@ what*. The procedure holds whatever the session is about.
    skip it. If an entry's "who it concerns" line matches your hub, apply it and
    tell the user what you did. These are not permanent rules; they end when the
    master copy deletes them.
+
+## In a Projects environment (v1.34)
+
+If there is no `ORTAM.md` at the hub root, skip this section — the hub is
+classic and the items above and below apply unchanged. If `ORTAM.md` says
+`projects` ([§16](SYSTEM.md#16)) the items stay the same, with only these
+differences:
+
+- **Opening:** run `tool/acilis.sh --hub <hub path>` in one call (the
+  script lives in a clone of `afgover/takip`). Item 1's "close the session
+  left open" applies only to **classic** sessions and to thread sessions
+  untouched for **more than 7 days**; another thread's open session is not
+  touched.
+- **Session record:** every thread opens its own `session.md`
+  (`surface: projects`, `thread: <root message id>`) and keeps it at once,
+  as in item 4. The inbox/waiting state is reported in the thread's first
+  reply.
+- **Waiting on the user:** ask in the thread **and** open the `waiting/`
+  task from item 9 (with a `thread:` field) — the user may answer from the
+  app, offline too.
+- **Shared working tree:** re-read a file right before editing it; add
+  only your own files to a commit, by path (no `git add -A`); commit right
+  after assigning an ID; `git pull --rebase` before pushing.
+- **Plan:** for work that finishes in one thread the thread's status
+  checklist is enough; a plan spanning several threads or days goes into
+  `PLAN.md`.
+- **Closing:** when the thread's work is done (the user took the last step
+  or the thread was resolved), the closing items below run for that
+  thread's session.
 
 ## During the session (at every exchange)
 

@@ -7,7 +7,7 @@ named, and what schema it follows**. Neither the agent nor the user application
 steps outside it. Contract changes are recorded in `EVOLUTION.md` and the
 version number at the top of this file is incremented.
 
-**Contract version:** 1.33
+**Contract version:** 1.34
 **Master copy:** `afgover/takip` → `hub/SYSTEM.md` (Turkish) ·
 `hub/SYSTEM.en.md` (English)
 (see §10 — every hub updates its own copy from there)
@@ -86,6 +86,7 @@ else is in the **hub language**
 | `EVOLUTION.md` | The project's evolution, stage by stage | agent |
 | `SECURITY.md` | Security log — scans, measures, holes (§12) | agent |
 | `PLAN.md` | Task tree — steps and state of multi-step jobs (§14) | agent |
+| `ORTAM.md` | (v1.34, optional) Working environment — absent means classic (§16) | agent (with the user's approval) |
 
 ## 2. `sessions/` — session records
 
@@ -165,6 +166,9 @@ Rules:
   session with no summary does not exist for whoever is looking — the next agent
   scans the sessions, reads the summaries, and concludes "there is nothing
   here". That session carried the project's founding decisions.
+  **(v1.34)** In a hub whose `ORTAM.md` says `projects`, several **thread
+  sessions** may be open at once; there this rule applies only among classic
+  sessions (§16). In a hub without `ORTAM.md` the rule applies unchanged.
 
 - **(v1.27) The audit is the scan's sibling.** §12's `scan` record looks at
   the **code**; the check that looks at the hub itself is separate and is
@@ -1120,3 +1124,122 @@ Where it is particularly expected:
 
 Adding a link **is not mandatory** and a missing link is not a contract
 violation; links are never manufactured at the cost of what a record says.
+
+## 16. Working with Claude Projects (v1.34)
+
+A hub's work can run two ways: a **classic session** (one Claude Code
+session the user opens by hand) or **Claude Projects** (a separate thread
+for every request written in the project chat, each thread its own Claude
+session, several threads at once). Up to 1.33 the contract modelled only
+the first. The second structurally breaks three rules: one open session at
+a time (§2, v1.20), the single-working-tree assumption (§4 IDs), and the
+user being present in the chat of every session.
+
+This section applies that difference **only to hubs that ask for it**. The
+recording scheme (sessions, tasks, backlog, security, knowledge) is the
+same either way; what changes is what a session corresponds to and the
+concurrency rules.
+
+### `ORTAM.md` — the hub's working environment
+
+A hub that works with Projects carries a short `ORTAM.md` at its root (the
+file name is the same in every language, like every path in this
+contract):
+
+```markdown
+# ORTAM.md — Çalışma ortamı
+
+**Çalışma ortamı:** projects
+**Proje:** financer
+**Kod reposu:** afgover/financer
+```
+
+- **If the file is absent the hub is classic** and nothing in this section
+  applies: §2's one-open-session rule, opening and closing apply
+  unchanged. A hub that does not use Projects has nothing to do (R-008).
+- The only known value is `projects`. An unknown value counts as classic.
+- Why not in `SYSTEM.md`: `SYSTEM.md` is compared **byte for byte** with
+  the master (§10); a hub-specific field there would make every hub look
+  permanently "diverged". Like the hub language, it is chosen at setup.
+- Opening a classic session in a Projects hub is also allowed; both live
+  in the same hub.
+
+### Session = thread
+
+- In Projects every thread keeps **its own session record**:
+  `sessions/<YYYY-MM-DD>-<slug>/session.md`, schema as in §2, with two
+  extra frontmatter fields:
+
+  ```yaml
+  surface: projects            # projects | session (classic)
+  thread: cmsg_01Lg...         # id of the thread's root message
+  ```
+
+  A record without `surface` is a classic session. If the same slug occurs
+  twice on one day, append `-2`.
+- The record is kept as in §2: the file is created `status: open` as soon
+  as the thread starts; user messages verbatim, replies decision/finding
+  focused, added **at the moment of the reply**; the 30-minute rhythm
+  (v1.23) applies. Even though the thread's own conversation stays on
+  screen, the record goes into the hub: nobody outside the thread, and no
+  later session, can see the thread.
+- **Several open thread sessions are legitimate.** A thread does not close
+  another thread's session. A thread session is closed by its own thread:
+  when the work is done (the user took the last step, the thread was
+  resolved) the `## Summary` is written and `status: closed` set.
+- **Abandoned thread session.** An open thread session whose record has
+  not been touched for **more than 7 days** counts as abandoned; the agent
+  that sees it at opening closes it as in §2 (summary derived from its own
+  record, and saying so). The threshold is looser than the open-session
+  rule so that nobody closes an active thread's record.
+- Classic sessions remain subject to §2 among themselves: only one open
+  classic session at a time.
+
+### Tasks — they continue unchanged
+
+The `tasks/` flow (§4) continues **unchanged** under Projects, because the
+user reads, answers and adds tasks in the app, offline too; Projects has no
+counterpart for that.
+
+- At thread opening `tasks/inbox/` and `tasks/waiting/` are checked (the
+  opening script does this) and reported in the thread's first reply.
+- If the thread is waiting on the user for a **decision or a job**, it asks
+  in the thread **and** opens a `waiting/` task as in §4 (with `options`
+  for a decision). The task gets an optional `thread:` field. Whichever
+  answer arrives first wins: if in the thread, the task is closed with a
+  `result`; if from the app (inbox notification), the agent processing the
+  notification writes the answer into the task and tells the task's
+  `thread:` if it can.
+- A new request written in the project chat is handled in its own thread;
+  no separate task file is needed (there is no hand-off, §4 v1.32).
+
+### The shared working tree
+
+Projects threads may run on the same machine in the same folder, without
+separate copies. That is §4's "two agents working at once" scenario
+happening not remotely but **on the same disk**; `git pull --rebase` does
+not catch it. Rules:
+
+1. **Re-read** a hub file right before editing it; do not trust the old
+   copy in context.
+2. Commit right after assigning an ID. Add only your own files to the
+   commit, **by path** (`git add hub/BACKLOG.md hub/sessions/<yours>/`);
+   `git add -A` and `git add .` are not used — they sweep another thread's
+   half-done change into your commit.
+3. `git pull --rebase` before pushing. If there is a collision the
+   renumbering rule (§4) applies; the audit's duplicate-ID check is the
+   last safeguard.
+
+### The plan tree
+
+For multi-step work that finishes inside one thread, the thread's status
+checklist is enough; the session record links to the steps and the
+result. `PLAN.md` (§14) is required for plans spanning **several threads
+or several days**. In a classic session §14 applies unchanged.
+
+### Project memory
+
+Projects' shared memory **does not replace** the hub: memory carries short
+pointers (where the hub is, the code repo, ID and commit rules); decisions,
+lessons and work stay in the hub and are searched there (`tool/ara.sh`).
+Keeping the same information in two places invites the two to diverge.

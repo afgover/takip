@@ -50,7 +50,8 @@ tanımlanır. Prosedür, oturumun konusu ne olursa olsun geçerlidir.
    - Kullanıcının talimatına göre ele al; ele aldığını `active/`e taşı.
    - Kullanıcı farklı bir konu açtıysa inbox'ı sadece raporla, kendiliğinden işleme.
 3. `BACKLOG.md`'ye **seçici** bak (v1.28, Ö2): açık maddeler
-   `grep -nE '^- \[ \] B-' BACKLOG.md` ile çıkarılır — dosyanın tamamı
+   `grep -nE '^- \[ \] (\*\*)?B-' BACKLOG.md` ile çıkarılır (v1.34: madde
+   numarası kalın yazılan backlog'lar da — `- [ ] **B-123**` — yakalanır) — dosyanın tamamı
    (~17k token) açılışta okunmaz. İki koruma kuralı: (a) desen boş dönüyor
    ve dosya boş değilse biçim değişmiş olabilir — **elle bakılır**, "açık iş
    yok" yazılmaz; (b) satırlar özettir: bir maddeye **dayanarak iş yapmadan
@@ -106,6 +107,31 @@ tanımlanır. Prosedür, oturumun konusu ne olursa olsun geçerlidir.
    maddenin "kimi ilgilendiriyor" satırı hub'ına uyuyorsa uygula ve
    kullanıcıya ne yaptığını söyle. Bu maddeler kalıcı kural değildir; ana
    kopya sildiğinde biter.
+
+## Projects ortamında (v1.34)
+
+Hub kökünde `ORTAM.md` yoksa bu bölümü atla — hub klasiktir ve yukarıdaki
+ile aşağıdaki maddeler aynen geçerlidir. `ORTAM.md` `projects` diyorsa
+([§16](SYSTEM.md#16)) maddeler aynı kalır, yalnız şu farklarla:
+
+- **Açılış:** `tool/acilis.sh --hub <hub yolu>` tek çağrıda koşulur (betik
+  `afgover/takip` klonundadır). Madde 1'deki "açık kalan oturumu kapat"
+  yalnız **klasik** oturumlar ve **7 günden uzun** dokunulmamış thread
+  oturumları içindir; başka bir thread'in açık oturumuna dokunulmaz.
+- **Oturum kaydı:** her thread kendi `session.md`'sini açar
+  (`surface: projects`, `thread: <kök mesaj kimliği>`) ve madde 4'teki
+  gibi anında tutar. inbox/waiting durumu thread'in ilk cevabında söylenir.
+- **Kullanıcıyı bekleme:** soru thread'de sorulur **ve** madde 9'daki
+  `waiting/` görevi açılır (`thread:` alanıyla) — kullanıcı cevabı
+  uygulamadan çevrimdışı da verebilir.
+- **Paylaşılan çalışma ağacı:** düzenlemeden hemen önce dosyayı yeniden
+  oku; commit'e yalnız kendi dosyalarını yolla ekle (`git add -A` yok);
+  ID verince hemen commit'le; push'tan önce `git pull --rebase`.
+- **Plan:** tek thread'de biten iş için thread'in durum listesi yeter;
+  birden çok thread'e ya da güne yayılan plan `PLAN.md`'ye girer.
+- **Kapanış:** thread'in işi bitince (kullanıcı son adımı attı ya da
+  thread çözüldü) aşağıdaki kapanış maddeleri o thread'in oturumu için
+  koşulur.
 
 ## Oturum boyunca (her mesaj alışverişinde)
 

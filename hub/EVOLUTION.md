@@ -950,3 +950,29 @@ işi, bitiş çizgisi değil. Bitiş çizgisi olsaydı aşama hiç kapanmazdı �
   aynı bilgi iki yerde tutuluyorsa, ikincisini hatırlamak değil ölçmek
   gerekir.
 
+
+- 2026-10-09: Sözleşme [1.34](SYSTEM.md#16): **Claude Projects ile çalışma.**
+  financer bir Claude Project'e taşındı: proje sohbetine yazılan her iş ayrı
+  bir thread, her thread kendi oturumu, aynı anda birden çok thread, hepsi
+  aynı Mac'te aynı klasörde. Bu düzen üç kuralı yapısal olarak çiğniyordu:
+  tek açık oturum (§2, v1.20), tek çalışma ağacı varsayımı (ID'ler) ve her
+  oturumda kullanıcının sohbette olması. İnceleme ve karar financer
+  hub'ında (financer#S-2026-10-09-projects-entegrasyonu). Kullanıcı kararı:
+  thread'ler oturum olarak kaydedilmeye, görevler (`tasks/`) uygulamadan
+  çevrimdışı okunup cevaplandığı için aynen sürmeye devam eder; Projects
+  kullanmayan hub'lar için hiçbir şey değişmez. Getirilenler: (1) isteğe
+  bağlı **`ORTAM.md`** — hub'ın çalışma ortamı; `SYSTEM.md`'ye değil ayrı
+  dosyaya, çünkü `SYSTEM.md` ana kopyayla birebir karşılaştırılıyor;
+  (2) **§16** — oturum = thread (`surface`, `thread` alanları), birden çok
+  açık thread oturumu meşru, 7 gün terk eşiği, bekleyen soru hem thread'de
+  hem `waiting/`de, paylaşılan çalışma ağacı kuralları (yolla `git add`,
+  `-A` yok), tek thread'lik iş için `PLAN.md` zorunlu değil, proje hafızası
+  yalnız işaretçi; (3) protokole "Projects ortamında" bloğu. Betikler:
+  `acilis.sh --hub` (başka hub'a koşulabiliyor, ortamı okuyor, thread
+  oturumlarını ayırıyor; yerel sözleşme dosyası hep `SYSTEM.md`),
+  `audit.sh` ortamı okuyor. Yolda bulunan iki eski kusur da kapandı:
+  BACKLOG deseni kalın numaralı biçimi (`- [ ] **B-298**`, financer) hiç
+  yakalamıyordu — açılış sayımı da çift ID kontrolü de o hub'da boş
+  dönüyordu; `audit.sh` macOS'un Python 3.9'unda GitHub'ın `Z` sonekli
+  commit zamanında çöküyordu (takip'te §9–§12 hiç koşmuyordu). Uygulama
+  sabiti 1.34 yapıldı; APK yeniden derlenmedi (bu makinede Flutter yok).

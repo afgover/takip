@@ -5,7 +5,7 @@ ve hangi şemaya uyacağını** tanımlar. Agent ve kullanıcı uygulaması bu s
 dışına çıkmaz. Sözleşme değişiklikleri `EVOLUTION.md`'ye kaydedilir ve bu dosyanın
 başındaki sürüm numarası artırılır.
 
-**Sözleşme sürümü:** 1.33
+**Sözleşme sürümü:** 1.34
 **Ana kopya (master):** `afgover/takip` → `hub/SYSTEM.md` (tr, **kanonik**) ·
 `hub/SYSTEM.en.md` (en)
 (bkz. §10 — her hub kendi kopyasını, kendi dilindeki varyanttan günceller)
@@ -80,6 +80,7 @@ başındaki sürüm numarası artırılır.
 | `EVOLUTION.md` | Projenin aşama aşama evrimi | agent |
 | `SECURITY.md` | Güvenlik logu — taramalar, önlemler, açıklar (§12) | agent |
 | `PLAN.md` | Görev ağacı — çok adımlı işlerin adımları ve durumu (§14) | agent |
+| `ORTAM.md` | (v1.34, isteğe bağlı) Çalışma ortamı — yoksa klasik (§16) | agent (kullanıcı onayıyla) |
 
 ## 2. `sessions/` — oturum kayıtları
 
@@ -158,6 +159,10 @@ Kurallar:
   olmayan oturum arayan için yok demektir — sonraki agent oturumları tarar,
   özete bakar, "burada bir şey yok" der. O oturum projenin kurucu kararlarını
   taşıyordu.
+  **(v1.34)** `ORTAM.md`'si `projects` diyen hub'da birden çok **thread
+  oturumu** aynı anda açık olabilir; bu kural orada yalnız klasik oturumlar
+  arasında geçerlidir (§16). `ORTAM.md`'si olmayan hub'da kural aynen
+  geçerlidir.
 
 - **(v1.27) Denetim, taramanın kardeşidir.** §12'nin `tarama` kaydı **koda**
   bakar; hub'ın kendisine bakan kontrol ayrıdır ve `AGENT_PROTOCOL.md`
@@ -1078,3 +1083,119 @@ gönderir, her tekrarı bağlantılı bir metin ise mavi bir gürültüye döner
 
 Bağlantı **eklemek zorunlu değildir** ve eksik bağlantı sözleşme ihlali
 sayılmaz; kayıtların içeriğinden ödün verilerek bağlantı üretilmez.
+
+## 16. Claude Projects ile çalışma (v1.34)
+
+Bir hub'ın işleri iki yoldan yürüyebilir: **klasik oturum** (kullanıcının
+elle açtığı tek bir Claude Code oturumu) ya da **Claude Projects** (proje
+sohbetine yazılan her iş için ayrı bir thread, her thread kendi Claude
+oturumu, aynı anda birden çok thread). Sözleşme 1.33'e kadar yalnız
+birincisini modelliyordu. İkincisi üç kuralı yapısal olarak çiğner: aynı
+anda tek açık oturum (§2, v1.20), tek kişinin çalışma ağacı varsayımı
+(§4 ID'ler) ve her oturumda kullanıcının sohbette bulunması.
+
+Bu bölüm o farkı **yalnız isteyen hub'a** uygular. Kayıt düzeni (oturum,
+görev, backlog, güvenlik, knowledge) iki yolda da aynıdır; değişen,
+oturumun neye karşılık geldiği ve eşzamanlılık kurallarıdır.
+
+### `ORTAM.md` — hub'ın çalışma ortamı
+
+Projects ile çalışan hub, kökünde kısa bir `ORTAM.md` taşır:
+
+```markdown
+# ORTAM.md — Çalışma ortamı
+
+**Çalışma ortamı:** projects
+**Proje:** financer
+**Kod reposu:** afgover/financer
+```
+
+- **Dosya yoksa hub klasiktir** ve bu bölümün hiçbir maddesi uygulanmaz:
+  §2'nin tek açık oturum kuralı, açılış ve kapanış aynen geçerlidir.
+  Projects kullanmayan her hub için yapılacak bir şey yoktur (R-008).
+- Alanın bilinen tek değeri `projects`'tir. Tanınmayan değer klasik sayılır.
+- Ortam neden `SYSTEM.md`'de değil: `SYSTEM.md` ana kopyayla **birebir**
+  karşılaştırılır (§10); hub'a özgü bir alan oraya yazılırsa her hub
+  sürekli "ayrışmış" görünürdü. Hub dili gibi kurulum anında seçilir.
+- Projects hub'ında klasik oturum açmak da serbesttir; ikisi aynı hub'da
+  birlikte yaşar.
+
+### Oturum = thread
+
+- Projects'te her thread **kendi oturum kaydını** tutar:
+  `sessions/<YYYY-MM-DD>-<slug>/session.md`, şema §2'deki gibi, iki ek
+  frontmatter alanıyla:
+
+  ```yaml
+  surface: projects            # projects | session (klasik)
+  thread: cmsg_01Lg...         # thread'in kök mesaj kimliği
+  ```
+
+  `surface` yazılmamış kayıt klasik oturumdur. Aynı gün aynı slug
+  çıkarsa sona `-2` eklenir.
+- Kayıt §2'deki gibi tutulur: thread açılır açılmaz dosya `status: open`
+  ile oluşur; kullanıcı mesajları kısaltılmadan, cevaplar karar/bulgu
+  odaklı, **cevap verildiği anda** eklenir; 30 dakika ritmi (v1.23)
+  geçerlidir. Thread'in kendi yazışması ekranda kalıcı olsa da kayıt
+  hub'a girer: thread'i hub dışındaki biri, ya da bir sonraki oturum
+  göremez.
+- **Birden çok açık thread oturumu meşrudur.** Bir thread başka bir
+  thread'in oturumunu kapatmaz. Thread oturumu kendi thread'i tarafından
+  kapatılır: iş bittiğinde (kullanıcı son adımı attı, thread çözüldü)
+  `## Özet` yazılır ve `status: closed` yapılır.
+- **Terk edilmiş thread oturumu.** Kaydına **7 günden uzun** süredir
+  dokunulmamış açık bir thread oturumu terk edilmiş sayılır; açılışta
+  gören agent onu §2'deki gibi kapatır (özet kendi kaydından türetilir ve
+  türetildiği yazılır). Eşik, aktif bir thread'in kaydını başkasının
+  kapatmasını önlemek için açık oturum kuralından gevşektir.
+- Klasik oturumlar kendi aralarında §2'ye tabidir: aynı anda yalnız bir
+  açık klasik oturum.
+
+### Görevler — değişmeden devam eder
+
+`tasks/` akışı (§4) Projects'te **aynen** sürer, çünkü kullanıcı görevleri
+uygulamadan, çevrimdışıyken de okur, cevaplar ve ekler; Projects buna bir
+karşılık getirmez.
+
+- Thread açılışında `tasks/inbox/` ve `tasks/waiting/` kontrol edilir
+  (açılış betiği bunu yapar) ve thread'in ilk cevabında bildirilir.
+- Thread kullanıcıdan bir **karar ya da iş** bekliyorsa soruyu thread'de
+  sorar **ve** §4'teki gibi `waiting/` görevi açar (karar ise `options`
+  ile). Göreve isteğe bağlı `thread:` alanı yazılır. Cevap hangi yoldan
+  önce gelirse o geçerlidir: thread'de geldiyse görev `result` ile
+  kapatılır; uygulamadan geldiyse (inbox bildirimi) bildirimi işleyen
+  agent cevabı göreve yazar ve görevin `thread:`'ine haber verebiliyorsa
+  verir.
+- Proje sohbetine yazılan yeni bir istek kendi thread'inde ele alınır;
+  ayrıca görev dosyası açmak gerekmez (devir yoktur, §4 v1.32).
+
+### Paylaşılan çalışma ağacı
+
+Projects thread'leri aynı makinede aynı klasörde, ayrı kopya olmadan
+çalışabilir. Bu, §4'ün "iki agent aynı anda çalışırsa" senaryosunun
+uzaktan değil **aynı diskte** yaşanmasıdır; `git pull --rebase` onu
+yakalamaz. Kurallar:
+
+1. Hub dosyasını düzenlemeden **hemen önce yeniden oku**; bağlamdaki eski
+   kopyaya güvenme.
+2. ID verdikten hemen sonra commit'le. Commit'e yalnız kendi dosyalarını
+   **yolla** ekle (`git add hub/BACKLOG.md hub/sessions/<kendi>/`);
+   `git add -A` ve `git add .` kullanılmaz — başka bir thread'in yarım
+   değişikliğini kendi commit'ine süpürür.
+3. Push'tan önce `git pull --rebase`. Çakışma olursa yeniden
+   numaralandırma kuralı (§4) geçerlidir; denetimin çift ID kontrolü son
+   güvencedir.
+
+### Plan ağacı
+
+Tek thread içinde biten çok adımlı iş için thread'in durum listesi
+yeterlidir; oturum kaydı adımlara ve sonuca bağlantı verir. `PLAN.md`
+(§14) **birden çok thread'e ya da birden çok güne** yayılan planlar için
+zorunludur. Klasik oturumda §14 aynen geçerlidir.
+
+### Proje hafızası
+
+Projects'in paylaşılan hafızası hub'ın **yerine geçmez**: hafıza kısa
+işaretçiler taşır (hub'ın yeri, kod reposu, ID ve commit kuralları);
+kararlar, dersler ve işler hub'da kalır ve oradan aranır (`tool/ara.sh`).
+Aynı bilgiyi iki yerde tutmak ikisinin ayrışmasına davetiyedir.
