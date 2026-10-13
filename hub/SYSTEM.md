@@ -5,7 +5,7 @@ ve hangi şemaya uyacağını** tanımlar. Agent ve kullanıcı uygulaması bu s
 dışına çıkmaz. Sözleşme değişiklikleri `EVOLUTION.md`'ye kaydedilir ve bu dosyanın
 başındaki sürüm numarası artırılır.
 
-**Sözleşme sürümü:** 1.34
+**Sözleşme sürümü:** 1.35
 **Ana kopya (master):** `afgover/takip` → `hub/SYSTEM.md` (tr, **kanonik**) ·
 `hub/SYSTEM.en.md` (en)
 (bkz. §10 — her hub kendi kopyasını, kendi dilindeki varyanttan günceller)
@@ -163,6 +163,15 @@ Kurallar:
   oturumu** aynı anda açık olabilir; bu kural orada yalnız klasik oturumlar
   arasında geçerlidir (§16). `ORTAM.md`'si olmayan hub'da kural aynen
   geçerlidir.
+  **(v1.35) Devam oturumu.** Kullanıcının bir sohbetteki ilk mesajı yalnız
+  proje adıysa (`sekuvo`, `financer` gibi) bu **"devam edelim"** demektir:
+  kullanıcı onu sohbetin başlığı o kelime olsun diye yazar. Açık bir oturum
+  varsa **kapatılmaz ve yeni oturum açılmaz**. Kayıt aynı `session.md`'ye
+  `### [devam] <YYYY-MM-DD>` başlığıyla sürer. Açık oturum 2 günden
+  eskiyse (son commit'ine göre) devam etmeden önce kullanıcıya "bu oturuma
+  mı devam, kapatıp yenisi mi?" diye sorulur. Açık oturum yoksa açılış olağan
+  şekilde yapılır ve son oturumun kaldığı yer kullanıcıya özetlenir. Tek açık
+  oturum kuralı değişmez: devam edilen oturum zaten tek açık oturumdur.
 
 - **(v1.27) Denetim, taramanın kardeşidir.** §12'nin `tarama` kaydı **koda**
   bakar; hub'ın kendisine bakan kontrol ayrıdır ve `AGENT_PROTOCOL.md`

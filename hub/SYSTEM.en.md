@@ -7,7 +7,7 @@ named, and what schema it follows**. Neither the agent nor the user application
 steps outside it. Contract changes are recorded in `EVOLUTION.md` and the
 version number at the top of this file is incremented.
 
-**Contract version:** 1.34
+**Contract version:** 1.35
 **Master copy:** `afgover/takip` → `hub/SYSTEM.md` (Turkish) ·
 `hub/SYSTEM.en.md` (English)
 (see §10 — every hub updates its own copy from there)
@@ -169,6 +169,16 @@ Rules:
   **(v1.34)** In a hub whose `ORTAM.md` says `projects`, several **thread
   sessions** may be open at once; there this rule applies only among classic
   sessions (§16). In a hub without `ORTAM.md` the rule applies unchanged.
+  **(v1.35) Continuation session.** If the user's first message in a chat is
+  only the project name (`sekuvo`, `financer`, …) it means **"let's
+  continue"**: the user types it so that the chat is titled with that word. If
+  a session is open it is **not closed and no new session is opened**; the
+  record goes on in the same `session.md` under a `### [devam] <YYYY-MM-DD>`
+  heading. If the open session is older than 2 days (by its last commit),
+  ask the user "continue this session, or close it and open a new one?"
+  before continuing. If no session is open, open normally and summarise for
+  the user where the last session left off. The single-open-session rule is
+  unchanged: the continued session is that one open session.
 
 - **(v1.27) The audit is the scan's sibling.** §12's `scan` record looks at
   the **code**; the check that looks at the hub itself is separate and is

@@ -977,3 +977,17 @@ işi, bitiş çizgisi değil. Bitiş çizgisi olsaydı aşama hiç kapanmazdı �
   dönüyordu; `audit.sh` macOS'un Python 3.9'unda GitHub'ın `Z` sonekli
   commit zamanında çöküyordu (takip'te §9–§12 hiç koşmuyordu). Uygulama
   sabiti 1.34 yapıldı; APK yeniden derlenmedi (bu makinede Flutter yok).
+
+- 2026-10-13: Sözleşme [1.35](SYSTEM.md#2-sessions--oturum-kayıtları): **Devam
+  oturumu.** Kullanıcı oturuma ilk mesaj olarak yalnız proje adını yazıyor
+  (`sekuvo`). Sebebi, sohbet başlığının ilk mesajdan alınması ve sonradan
+  değiştirmekle uğraşmak istememesi. Bu mesaj "devam edelim" anlamına
+  geliyor. Ölçülen vaka: vault'ta tek kelimelik açılış belirsiz sayıldı ve
+  agent bir soru turu harcadı. Protokolün madde 1'i bu durumda açık oturumu
+  kapatıp yenisini açtırıyordu, oysa kullanıcı kaldığı yerden sürmek
+  istiyordu. Kural: açık oturum varsa ona `### [devam] <tarih>` başlığıyla
+  eklenir. 2 günden eskiyse önce kullanıcıya sorulur; bu eşiği agent önerdi
+  ve kullanıcı onayladı. Açık oturum yoksa açılış olağan şekilde yapılır ve
+  kalınan yer özetlenir. Tek açık oturum kuralı (§2, v1.20) değişmedi.
+  `acilis.sh` tek açık oturumda yaşını ölçüp hangi yolun geçerli olduğunu
+  yazıyor. Uygulama sabiti 1.35 yapıldı; APK yeniden derlenmedi.

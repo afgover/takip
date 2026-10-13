@@ -140,6 +140,13 @@ elif [ "$NACIK" -eq 1 ]; then
   # Tek açık oturum meşru (§2: en yeni açık kalabilir) — büyük olasılıkla bu
   # oturumun kendisi; uyarı değil bilgi.
   printf '  · açık oturum: %s (tek — §2 izin veriyor)\n' "$(echo "$ACIK" | sed 's|.*/sessions/||;s|/session.md||')"
+  # v1.35: ilk mesaj yalnız proje adıysa bu oturuma devam edilir; 2 günden
+  # eskiyse önce kullanıcıya sorulur (son commit'e göre, yoksa dosya zamanı).
+  ts=$(git -C "$(dirname "$ACIK")" log -1 --format=%ct -- session.md 2>/dev/null)
+  [ -z "$ts" ] && ts=$(stat -f %m "$ACIK" 2>/dev/null || stat -c %Y "$ACIK" 2>/dev/null || echo 0)
+  gun=$(( ($(date +%s) - ${ts:-0}) / 86400 ))
+  if [ "$gun" -gt 2 ]; then printf '    ilk mesaj proje adıysa: oturum %s gündür bekliyor — devam mı, kapat+yeni mi, kullanıcıya sor (v1.35)\n' "$gun"
+  else printf '    ilk mesaj proje adıysa: bu oturuma [devam] başlığıyla devam et (v1.35)\n'; fi
 else for f in $ACIK; do warn "AÇIK OTURUM: ${f#"$HUB"/sessions/} — birden çok açık olamaz (madde 1)"; done; fi
 
 # 5) inbox / waiting (madde 2, 9)

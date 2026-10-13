@@ -41,6 +41,14 @@ what*. The procedure holds whatever the session is about.
    saw neither
    ([A-2026-08-28-001](artifacts/S-2026-08-28-apk-drive/hub-denetimi.md)).
    The only guaranteed trigger is the **opening** of the next session.
+   **Exception — continuation session (v1.35, `SYSTEM.en.md` §2):** if the
+   user's first message is only the project name it means "let's continue";
+   do not ask what it means. If a session is open, do not close it and do not
+   open a new one: append to it under a `### [devam] <date>` heading,
+   summarise where it left off, and carry on. If the open session is older
+   than 2 days, first ask "continue this session, or close it and open a new
+   one?". If no session is open, open a new one as below and summarise where
+   the last session left off. The other opening items (2–5) run either way.
    Create `sessions/<date>-<slug>/session.md` with `status: open`.
    **Write the `author:` field too** (v1.15) — who is running the session. If you
    do not know, ask the user; in a multi-user hub the answer to "who did this"

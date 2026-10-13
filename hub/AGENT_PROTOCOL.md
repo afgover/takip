@@ -39,6 +39,14 @@ tanımlanır. Prosedür, oturumun konusu ne olursa olsun geçerlidir.
    üç oturum aynı anda açık kaldı ve o gün açılan dördüncü oturum ikisini de
    görmedi ([A-2026-08-28-001](artifacts/S-2026-08-28-apk-drive/hub-denetimi.md)).
    Garantili tek tetikleyici bir sonraki oturumun **açılışı**dır.
+   **İstisna — devam oturumu (v1.35, `SYSTEM.md` §2):** kullanıcının ilk
+   mesajı yalnız proje adıysa bu "devam edelim" demektir; ne demek olduğu
+   sorulmaz. Açık oturum varsa kapatılmaz, yeni oturum da açılmaz: kayıt o
+   oturuma `### [devam] <tarih>` başlığıyla eklenir ve kaldığı yer
+   kullanıcıya özetlenip işe devam edilir. Açık oturum 2 günden eskiyse önce
+   "bu oturuma mı devam, kapatıp yenisi mi?" diye sorulur. Açık oturum
+   yoksa aşağıdaki gibi yeni oturum açılır ve son oturumun kaldığı yer
+   özetlenir. Açılışın diğer maddeleri (2–5) her iki durumda da koşulur.
    `sessions/<tarih>-<slug>/session.md` dosyasını `status: open` ile oluştur.
    **`author:` alanını da yaz** (v1.15) — oturumu kimin yürüttüğü. Bilmiyorsan
    kullanıcıya sor; hub çok kullanıcılıysa "kim yaptı" sorusunun cevabı burada
