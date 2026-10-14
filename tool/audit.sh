@@ -505,8 +505,14 @@ else:
     # Kaynak kod doğru olsa da APK derlenmemiş olabilir (1.34-1.35, P-029).
     # Dağıtılan APK'nın derlendiği commit `apk/<tarih>-<sha>` etiketinde.
     if _s:
-        _tags = subprocess.run(["git", "-C", ROOT, "tag", "-l", "apk/*", "--sort=-refname"],
-                               capture_output=True, text=True).stdout.split()
+        # Sıra: önce etiketteki tarih (geriye dönük etiket eski günde kalsın),
+        # aynı günde oluşturulma zamanı (adın sha kısmı sıra taşımaz).
+        _refs = subprocess.run(["git", "-C", ROOT, "for-each-ref",
+                                "--format=%(refname:short) %(creatordate:unix)", "refs/tags/apk/"],
+                               capture_output=True, text=True).stdout.split("\n")
+        _tags = [t for t, _ in sorted(
+            ((p[0], int(p[1])) for p in (l.split() for l in _refs) if len(p) == 2),
+            key=lambda x: (x[0][4:14], x[1]), reverse=True)]
         if not _tags:
             info("dağıtılan APK izi yok (apk/* etiketi) — kurulu sürüm ölçülemiyor")
         else:

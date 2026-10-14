@@ -123,3 +123,15 @@ P-030.4: release derlendi (`d44ebe6`) ve kablosuz adb ile yerinde kuruldu
 ("Success"); dağıtım etiketi `apk/2026-10-14-d44ebe6` push'landı. Aşama 0
 tamam; kullanıcıdan telefonda kontrol istendi.
 
+
+### [12:20] Agent
+
+Kurulum sonrası denetimde P-029'da eklediğim §12'de bir hata görüldü: "son
+dağıtılan APK" olarak yeni `d44ebe6` yerine sabahki `fc20227` seçildi.
+Kök neden: etiketler ada göre sıralanıyordu; aynı gün iki etikette ad
+sırası commit kısaltmasına düşüyor (f > d). Yalnız oluşturulma zamanına
+geçmek de yetmezdi — geriye dönük etiketlerin oluşturulma zamanı bugün.
+Sıra anahtarı artık iki parçalı: etiketteki tarih, sonra oluşturulma
+zamanı. Gerçek veride (aynı gün iki etiket, aynı anda üç geriye dönük
+etiket) doğru seçim doğrulandı. İkisi de 1.36 bildiği için yanlış bulgu
+üretmemişti.
