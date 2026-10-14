@@ -150,9 +150,25 @@ elif [ "$NACIK" -eq 1 ]; then
 else for f in $ACIK; do warn "AÇIK OTURUM: ${f#"$HUB"/sessions/} — birden çok açık olamaz (madde 1)"; done; fi
 
 # 5) inbox / waiting (madde 2, 9)
-IN=$(ls "$HUB/tasks/inbox" 2>/dev/null | grep -v '^README' || true)
-if [ -z "$IN" ]; then ok "inbox boş"
-else warn "inbox'ta $(echo "$IN" | wc -l | tr -d ' ') görev:"; echo "$IN" | sed 's/^/      · /'; fi
+# Olay dosyaları (sözleşme 1.37 §4: tags [comment|assign] + target) görev
+# değil: ayrı sayılır; agent onları talimat beklemeden hedefe işler. Tanıma
+# kuralı uygulamayla aynı — hedefsiz olay sıradan inbox kaydı sayılır.
+IN=""; EV=""
+for f in "$HUB/tasks/inbox"/*.md; do
+  [ -e "$f" ] || continue
+  n=$(basename "$f"); [ "$n" = "README.md" ] && continue
+  if grep -qE '^tags:.*(comment|assign)' "$f" && grep -qE '^target: *[^ ]' "$f"; then
+    EV="${EV}${n}"$'\n'
+  else
+    IN="${IN}${n}"$'\n'
+  fi
+done
+IN=$(printf '%s' "$IN" | sed '/^$/d'); EV=$(printf '%s' "$EV" | sed '/^$/d')
+if [ -z "$IN" ] && [ -z "$EV" ]; then ok "inbox boş"
+else
+  [ -n "$IN" ] && { warn "inbox'ta $(echo "$IN" | wc -l | tr -d ' ') görev:"; echo "$IN" | sed 's/^/      · /'; }
+  [ -n "$EV" ] && warn "inbox'ta $(echo "$EV" | wc -l | tr -d ' ') olay (yorum/atama): hedefe işle, tasks/events/'e taşı (§4, v1.37)"
+fi
 WT=$(ls "$HUB/tasks/waiting" 2>/dev/null | grep -v '^README' || true)
 [ -n "$WT" ] && printf '  · waiting (%s): %s\n' "$(echo "$WT" | wc -l | tr -d ' ')" "$(echo "$WT" | tr '\n' ' ')"
 

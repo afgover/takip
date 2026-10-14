@@ -259,3 +259,10 @@ penceresinin metin denetleyicisi pencere döner dönmez siliniyordu, kapanma
 animasyonu onu hâlâ kullanıyordu; pencere kendi ömrünü yöneten ayrı bir
 widget oldu. 5 widget testi; tam süit geçti.
 
+### [01:10] Agent
+
+P-032.4: `acilis.sh` inbox'ta görevleri ve olayları ayrı sayıyor; olaylar
+için "hedefe işle, tasks/events/'e taşı" diyor. Tanıma kuralı uygulamayla
+aynı (`tags` comment/assign + dolu `target`; hedefsiz olay görev sayılır).
+Geçici bir hubda görev + olay + hedefsiz olayla sınandı.
+

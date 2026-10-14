@@ -701,5 +701,6 @@ sırasıyla girer.
 - [x] P-032.3 — Detay: yorum akışı (işlenmiş + bekleyen), yorum yazma
       (çevrimdışı kuyruk dahil), Üstlen ve Ata; test · ✅ 2026-10-15 ·
       5 widget testi; Ata penceresinde kapanış hatası testte yakalandı
-- [ ] P-032.4 — `acilis.sh`: inbox'ta görev ve olay ayrı sayılır
+- [x] P-032.4 — `acilis.sh`: inbox'ta görev ve olay ayrı sayılır ·
+      ✅ 2026-10-15 · tanıma kuralı uygulamayla aynı (hedefsiz = görev)
 - [ ] P-032.5 — Tam süit; derle, kablosuz kur, etiketle; kayıtlar
