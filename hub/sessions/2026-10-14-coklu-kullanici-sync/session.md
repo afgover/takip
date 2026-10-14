@@ -184,3 +184,11 @@ arasında "tüket ve sıfırla" yarışı yok. Yeni giriş yüzeyi
 [SEC-019](../../SECURITY.md#SEC-019)'a karar olarak yazıldı. 8 yeni test
 (kurallar, taklit kanal, iki form senaryosu); 654/654.
 
+### [00:44] Agent
+
+P-031.4: süit 654/654, release derlendi (`ca17ae9`); APK manifest'inde
+`SEND`/`text/plain` filtresi ve `singleTask` doğrulandı — Kotlin kanalı
+derleniyor. Kurulum yapılamadı: telefon adb'de görünmüyor, ağda kablosuz
+hata ayıklama ilanı yok (kapanmış). Kullanıcıdan telefonda kablosuz hata
+ayıklamayı açması istendi; alternatif olarak Drive yolu önerildi.
+

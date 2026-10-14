@@ -671,5 +671,7 @@ sırasıyla girer.
       açılır, gönderim kullanıcıda; yeni bağımlılık yok; test · ✅ 2026-10-15 ·
       singleTask; SEC-019; 654/654
 - [ ] P-031.4 — Tam süit, analyze; derle, kablosuz kur, etiketle; paylaş
-      hedefinin sistemde kayıtlı olduğunu doğrula
+      hedefinin sistemde kayıtlı olduğunu doğrula · 2026-10-15: süit ve
+      derleme tamam (`ca17ae9`, manifest'te SEND + singleTask); kurulum
+      bekliyor — telefonda kablosuz hata ayıklama kapalı
 - [ ] P-031.5 — Kayıtlar ve push
