@@ -117,3 +117,9 @@ Sıralama değişmedi (Aşama 1'in "Bana" görünümü). 3 yeni widget testi;
 636/636, analyze temiz. Kod tabanı `dart format`'a uymuyor (139 dosyanın
 74'ü değişirdi) — biçimlendirici koşulmadı, üsluba uyuldu.
 
+### [12:19] Agent
+
+P-030.4: release derlendi (`d44ebe6`) ve kablosuz adb ile yerinde kuruldu
+("Success"); dağıtım etiketi `apk/2026-10-14-d44ebe6` push'landı. Aşama 0
+tamam; kullanıcıdan telefonda kontrol istendi.
+
