@@ -109,10 +109,13 @@ class Outbox extends AsyncNotifier<List<TaskDraft>> {
   /// Bağlantının geldiğini yoklama servisi söylüyor (B-024): başarılı bir
   /// kontrol, "çevrimiçiyiz" demektir. Ayrı bir bağlantı dinleyicisi
   /// eklemeye gerek kalmıyor.
-  Future<void> flush() async {
-    if (_flushing) return;
+  ///
+  /// Gönderilen taslak sayısını döndürür. Çağıran, gönderim olduysa yoklamayı
+  /// hemen tetikler; kuyruk yoklama servisini bilmez (hub katmanı).
+  Future<int> flush() async {
+    if (_flushing) return 0;
     final queued = state.valueOrNull ?? const <TaskDraft>[];
-    if (queued.isEmpty) return;
+    if (queued.isEmpty) return 0;
 
     _flushing = true;
     final remaining = <TaskDraft>[];
@@ -167,9 +170,7 @@ class Outbox extends AsyncNotifier<List<TaskDraft>> {
       }
 
       await _persist(remaining);
-      if (remaining.length != queued.length) {
-        ref.invalidate(pendingTasksProvider);
-      }
+      return queued.length - remaining.length;
     } finally {
       _flushing = false;
     }

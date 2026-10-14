@@ -643,8 +643,9 @@ sırasıyla girer.
 - **İlgili:** [A-2026-10-14-001](artifacts/S-2026-10-14-coklu-kullanici-sync/coklu-kullanici-ve-sync.md) §4-5,
   [B-110](BACKLOG.md#B-110), [R-001](knowledge/rules.md#R-001)
 
-- [ ] P-030.1 — Liste yenileme hatası: cevap ve çevrimdışı kuyruk sonrası
-      ekranın izlediği liste yenilensin; test
+- [x] P-030.1 — Liste yenileme hatası: cevap ve çevrimdışı kuyruk sonrası
+      ekranın izlediği liste yenilensin; test · ✅ 2026-10-14 · yazma sonrası
+      hemen yoklama; ölü `pendingTasksProvider` silindi; 633/633
 - [ ] P-030.2 — "Seni bekliyor" yalnız `for` ben ya da boşken; başkasını
       bekleyen görev kimi beklediğini söylesin (liste + detay); test
 - [ ] P-030.3 — Satırda yazar; test

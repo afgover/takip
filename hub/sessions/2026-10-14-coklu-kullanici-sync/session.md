@@ -88,3 +88,20 @@ için ayrı bir uygulama kullanılıyor — paylaş menüsü anlamlı; (4) R-001
 korunur: atama ve yorum yalnız inbox'a yeni dosya yazarak tasarlanacak
 (cevapların bugünkü modeli gibi); (5) Aşama 0 başlıyor. Plan
 [P-030](../../PLAN.md).
+
+### [12:14] Agent
+
+P-030.1: Hata raporda yazıldığından da genişti. Görev ekleme, soru
+cevaplama ve çevrimdışı kuyruk sonrası yenilenen `pendingTasksProvider`'ı
+**hiçbir ekran izlemiyordu**; ekran yerel kopyadan okuyan
+`activeRepoPendingTasksProvider`'ı izliyor. Yalnız doğru sağlayıcıyı
+yenilemek de yetmezdi: yerel kopya senkron olmadan yeni dosyayı içermiyor.
+Düzeltme: yazma sonrası `HubWatcher.checkAfterWrite()` hemen yoklar (yeni
+commit → senkron → liste); o an süren bir yoklama varsa bittiğinde bir kez
+daha bakar. Zamanlayıcı tikleri bu bayrağı kullanmaz (yavaş ağda üst üste
+istek kuralı korunuyor). İlk denemede kuyruk (hub katmanı) yoklamayı kendisi
+çağırıyordu; testte arka planda kalan çağrı kapanmış container'a erişti ve
+ağa çıkma riski taşıdı. Kuyruk artık yalnız gönderdiği sayıyı döndürüyor,
+yoklamayı arayüz katmanı (yoklama kapsamı, ayarlar düğmesi) tetikliyor.
+Ölü `pendingTasksProvider` silindi. 3 yeni test; 633/633, analyze temiz.
+

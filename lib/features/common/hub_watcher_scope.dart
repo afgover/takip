@@ -61,7 +61,12 @@ class _HubWatcherScopeState extends ConsumerState<HubWatcherScope>
           next.lastCheckedAt != null &&
           next.lastCheckedAt != previous?.lastCheckedAt;
       if (becameHealthy) {
-        ref.read(outboxProvider.notifier).flush();
+        ref.read(outboxProvider.notifier).flush().then((sent) {
+          // Kuyruktan giden taslaklar bir sonraki aralığı beklemeden görünsün.
+          if (sent > 0 && mounted) {
+            ref.read(hubWatcherProvider.notifier).checkAfterWrite();
+          }
+        });
       }
     });
 

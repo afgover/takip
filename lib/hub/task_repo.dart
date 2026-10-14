@@ -372,13 +372,6 @@ final draftSenderProvider = Provider<DraftSender>(
   (ref) => (target, draft) => withTaskRepoFor(target, (repo) => repo.sendDraft(draft)),
 );
 
-/// Bekleyen görevler. Yoklama hub'da değişiklik görürse (B-024) `headSha`
-/// değişir ve liste kendiliğinden tazelenir.
-final pendingTasksProvider = FutureProvider<List<TaskSummary>>((ref) {
-  ref.watch(hubWatcherProvider.select((s) => s.headSha));
-  return ref.watch(taskRepoProvider).listPending();
-});
-
 final doneTasksProvider = FutureProvider<List<TaskSummary>>((ref) async {
   ref.watch(hubWatcherProvider.select((s) => s.headSha));
   final done = await ref.watch(taskRepoProvider).listDone();

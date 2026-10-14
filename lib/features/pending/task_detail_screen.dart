@@ -1,9 +1,12 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/errors.dart';
 import '../../hub/hub_config.dart';
 import '../../hub/hub_language.dart';
+import '../../hub/hub_watcher.dart';
 import '../../hub/models/task.dart';
 import '../../hub/models/task_draft.dart';
 import '../../hub/outbox.dart';
@@ -290,7 +293,7 @@ class _WaitingBannerState extends ConsumerState<_WaitingBanner> {
       .mark(widget.summary.repoSlug, widget.summary.path);
 
   void _finish(String message) {
-    ref.invalidate(pendingTasksProvider);
+    unawaited(ref.read(hubWatcherProvider.notifier).checkAfterWrite());
     if (!mounted) return;
     ScaffoldMessenger.of(context)
         .showSnackBar(SnackBar(content: Text(message)));

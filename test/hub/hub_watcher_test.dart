@@ -149,6 +149,42 @@ void main() {
     });
   });
 
+  test('yazma sonrası kontrol boştayken aralığı beklemeden sorar', () {
+    fakeAsync((async) {
+      final t = boot(async);
+      addTearDown(t.container.dispose);
+
+      t.container.read(hubWatcherProvider.notifier).checkAfterWrite();
+      async.flushMicrotasks();
+      expect(t.api.calls, 1);
+    });
+  });
+
+  test('yazma sonrası kontrol, süren yoklamaya denk gelirse kaybolmaz', () {
+    fakeAsync((async) {
+      final t = boot(async);
+      addTearDown(t.container.dispose);
+      t.api.gate = Completer<String?>();
+      final watcher = t.container.read(hubWatcherProvider.notifier);
+
+      watcher.checkNow();
+      async.flushMicrotasks();
+      expect(t.api.calls, 1);
+
+      // Yazma, süren yoklamadan sonra oldu: o yoklama yeni commit'i görmeyebilir.
+      watcher.checkAfterWrite();
+      async.flushMicrotasks();
+      expect(t.api.calls, 1, reason: 'üst üste istek atılmaz');
+
+      t.api.gate!.complete('commit-1');
+      t.api.gate = null;
+      t.api.sha = 'commit-2';
+      async.flushMicrotasks();
+      expect(t.api.calls, 2, reason: 'süren yoklama bitince hemen bir kez daha');
+      expect(t.container.read(hubWatcherProvider).headSha, 'commit-2');
+    });
+  });
+
   test('token geçersizse yoklama durur (boşuna istek atılmaz)', () {
     fakeAsync((async) {
       final t = boot(async);

@@ -163,7 +163,12 @@ class SettingsScreen extends ConsumerWidget {
               subtitle: Text('${l.outboxQueuedSubtitle} · ${l.queuedTasksTapHint}'),
               onTap: () => QueuedDraftsSheet.show(context),
               trailing: TextButton(
-                onPressed: () => ref.read(outboxProvider.notifier).flush(),
+                onPressed: () async {
+                  final sent = await ref.read(outboxProvider.notifier).flush();
+                  if (sent > 0 && context.mounted) {
+                    await ref.read(hubWatcherProvider.notifier).checkAfterWrite();
+                  }
+                },
                 child: Text(l.trySendNow),
               ),
             ),

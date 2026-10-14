@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 import 'add_task_autosave.dart';
@@ -10,6 +12,7 @@ import '../../hub/categories.dart';
 import '../../hub/hub_config.dart';
 import '../../hub/hub_connections.dart';
 import '../../hub/hub_language.dart';
+import '../../hub/hub_watcher.dart';
 import '../../hub/models/task_draft.dart';
 import '../../hub/outbox.dart';
 import '../../hub/task_repo.dart';
@@ -180,7 +183,7 @@ class _AddTaskScreenState extends ConsumerState<AddTaskScreen> {
   /// kullanıcının yazdığı iş kaybolmamıştır.
   Future<void> _finishSuccessfully(String category, String message) async {
     await ref.read(taskCategoriesProvider.notifier).remember(category);
-    ref.invalidate(pendingTasksProvider);
+    unawaited(ref.read(hubWatcherProvider.notifier).checkAfterWrite());
 
     // Taslak diskten de silinir: gönderilen metnin bir sonraki açılışta
     // "yarım kalmış" diye geri gelmesi, aynı görevi iki kez açtırırdı.

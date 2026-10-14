@@ -65,6 +65,26 @@ void main() {
     expect(restored.single.title, 'Market');
   });
 
+  test('flush gönderdiği taslak sayısını döndürür (çağıran yoklamayı tetikler)', () async {
+    final t = boot(ok);
+    addTearDown(t.container.dispose);
+
+    await t.container.read(outboxProvider.future);
+    final outbox = t.container.read(outboxProvider.notifier);
+    expect(await outbox.flush(), 0, reason: 'boş kuyruk');
+
+    await outbox.add(draft('Market'));
+    await outbox.add(draft('Fatura'));
+    expect(await outbox.flush(), 2);
+
+    final down = boot(offline);
+    addTearDown(down.container.dispose);
+    await down.container.read(outboxProvider.future);
+    await down.container.read(outboxProvider.notifier).add(draft('Kira'));
+    expect(await down.container.read(outboxProvider.notifier).flush(), 0,
+        reason: 'ağ yoksa gönderilen yok, taslak kuyrukta kalır');
+  });
+
   test('flush kuyruğu gönderir ve boşaltır', () async {
     final t = boot(ok);
     addTearDown(t.container.dispose);

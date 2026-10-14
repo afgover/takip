@@ -90,6 +90,7 @@ final pollIntervalProvider = Provider<Duration>(
 class HubWatcher extends Notifier<HubStatus> {
   Timer? _timer;
   bool _inFlight = false;
+  bool _recheck = false;
   String? _configSlug;
 
   /// Rate limit yendiğinde bu ana kadar istek atılmaz.
@@ -124,6 +125,19 @@ class HubWatcher extends Notifier<HubStatus> {
   void _cancelTimer() {
     _timer?.cancel();
     _timer = null;
+  }
+
+  /// Uygulama bir dosya yazdıktan hemen sonra: kendi commit'i listede bir
+  /// sonraki aralığı (45 sn) beklemeden görünsün. O an bir yoklama sürüyorsa
+  /// yazmadan önce başlamış olabilir; bittiğinde bir kez daha bakılır.
+  /// Zamanlayıcı bunu kullanmaz — yavaş ağda tiklerin üst üste binmemesi
+  /// ayrı bir kural.
+  Future<void> checkAfterWrite() {
+    if (_inFlight) {
+      _recheck = true;
+      return Future.value();
+    }
+    return checkNow();
   }
 
   /// Tek yoklama. Kullanıcı "aşağı çekip yenile" yaptığında da çağrılır.
@@ -203,6 +217,10 @@ class HubWatcher extends Notifier<HubStatus> {
       );
     } finally {
       _inFlight = false;
+      if (_recheck) {
+        _recheck = false;
+        unawaited(checkNow());
+      }
     }
   }
 }
