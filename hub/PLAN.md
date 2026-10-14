@@ -654,3 +654,20 @@ sırasıyla girer.
 - [x] P-030.4 — Tam süit, analyze; release derle, kablosuz kur, etiketle ·
       ✅ 2026-10-14 · `apk/2026-10-14-d44ebe6`
 - [x] P-030.5 — Kayıtlar ve push · ✅ 2026-10-14
+
+## P-031 — Görev ekranı Aşama 1: kişiye göre görünümler, paylaş menüsü
+- **Tarih:** 2026-10-15
+- **Kaynak:** [S-2026-10-14-coklu-kullanici-sync](sessions/2026-10-14-coklu-kullanici-sync/session.md)
+- **Durum:** acik
+- **İlgili:** [A-2026-10-14-001](artifacts/S-2026-10-14-coklu-kullanici-sync/coklu-kullanici-ve-sync.md) §4-5,
+  [P-030](PLAN.md#P-030), [R-001](knowledge/rules.md#R-001)
+
+- [ ] P-031.1 — Model: özete `assignee` ve `created_by`; görünüm tanımları
+      (Bana, Açtıklarım, Ekip, Ajanlar) ve kişiye göre grup anahtarı; test
+- [ ] P-031.2 — Bekleyenler: sayılı görünüm seçici, seçim kalıcı; Ekip'te
+      kişiye göre bölümler; test
+- [ ] P-031.3 — Android paylaş hedefi: metin paylaşılınca Ekle sekmesi dolu
+      açılır, gönderim kullanıcıda; yeni bağımlılık yok; test
+- [ ] P-031.4 — Tam süit, analyze; derle, kablosuz kur, etiketle; paylaş
+      hedefinin sistemde kayıtlı olduğunu doğrula
+- [ ] P-031.5 — Kayıtlar ve push

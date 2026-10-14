@@ -135,3 +135,14 @@ Sıra anahtarı artık iki parçalı: etiketteki tarih, sonra oluşturulma
 zamanı. Gerçek veride (aynı gün iki etiket, aynı anda üç geriye dönük
 etiket) doğru seçim doğrulandı. İkisi de 1.36 bildiği için yanlış bulgu
 üretmemişti.
+
+### [2026-10-15 00:33] Kullanıcı
+
+> aşama 1'e başla
+
+### [2026-10-15 00:33] Agent
+
+Aşama 1 (A-2026-10-14-001 §5): Bana / Açtıklarım / Ekip / Ajanlar
+görünümleri ve Android paylaş menüsü; sözleşme değişmiyor, R-001 korunuyor.
+Sarraf hub'ının yeri sorusu cevapsız kaldı; görünümler genel tanımla
+yapılıyor. Plan [P-031](../../PLAN.md).
