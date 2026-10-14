@@ -5,7 +5,8 @@ status: open
 reconstructed: false
 author: afgover
 topics: [coklu-kullanici, sync, mesajlasma, gorev-ekrani, hub-tarayici]
-artifacts: []
+artifacts:
+  - artifacts/S-2026-10-14-coklu-kullanici-sync/coklu-kullanici-ve-sync.md
 tasks_touched: []
 ---
 
@@ -52,3 +53,24 @@ bütün `author`/`assignee` alanları `afgover`. Fatih Gover'ın kim olduğu
 kullanıcıya sorulacak; öneri ona bağlı. Hub tarayıcısı işi
 [B-147](../../BACKLOG.md#B-147) olarak açıldı; önceki konuşmanın kaydı
 yoktu.
+
+### [10:55] Agent
+
+Uygulama kodu haritalandı (keşif ajanı) ve kritik iddialar elle
+doğrulandı: sorgulama 45 sn, yalnız uygulama açıkken; bildirim yok;
+`assignee` uygulamada hiç yok; liste yalnız aktif hub; belge tek parça
+çiziliyor. Somut bir hata bulundu: cevaplama ve çevrimdışı kuyruk sonrası
+`pendingTasksProvider` yenileniyor, ekran ise `activeRepoPendingTasksProvider`
+izliyor — liste 45 sn'ye kadar eski kalıyor. Dış iddialar birinci
+kaynaktan doğrulandı: GitHub'da ETag'li 304 kotadan düşmüyor ve GitHub
+webhook öneriyor; GitHub Mobile commit'te bildirim göndermiyor (yalnız
+bahsetme, atama, inceleme, dağıtım); Slack ücretsiz planda 90 gün
+görünürlük. Rapor:
+[A-2026-10-14-001](../../artifacts/S-2026-10-14-coklu-kullanici-sync/coklu-kullanici-ve-sync.md)
+(lint temiz). Öneri: dış mesajlaşma yok; hub içi atama ve yorum (yeni
+dosya olarak), Android paylaş menüsü, ölçüme bağlı push (B-060); görev
+ekranı Bana/Açtıklarım/Ekip/Ajanlar görünümleri. Beş karar soruldu.
+**Yan bulgu:** v1.31'de protokole yazılan "en büyük B" komutu yalnız kalın
+numaraları (`**B-n**`) arıyor; takip'in BACKLOG'unda numaralar kalın değil,
+komut burada boş dönüyor. Ayrıca düzeltilecek.
+
