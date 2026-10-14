@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../l10n/app_localizations.dart';
 
@@ -8,6 +9,7 @@ import 'common/hub_status_banner.dart';
 import 'common/repo_switcher.dart';
 import 'pending/pending_screen.dart';
 import 'settings/settings_screen.dart';
+import 'share/shared_text.dart';
 
 /// Alt gezinmeli ana kabuk: Bekleyenler · Ekle · Tarayıcı · Ayarlar.
 ///
@@ -15,16 +17,17 @@ import 'settings/settings_screen.dart';
 /// ekranda olursa olsun görünür. Sıra bilinçli: "hangi repodayım" sorusu
 /// "bağlantı iyi mi" sorusundan önce gelir — ikincisinin cevabı birincisine
 /// bağlıdır.
-class AppShell extends StatefulWidget {
+class AppShell extends ConsumerStatefulWidget {
   const AppShell({super.key});
 
+  static const addTabIndex = 1;
   static const settingsTabIndex = 3;
 
   @override
-  State<AppShell> createState() => _AppShellState();
+  ConsumerState<AppShell> createState() => _AppShellState();
 }
 
-class _AppShellState extends State<AppShell> {
+class _AppShellState extends ConsumerState<AppShell> {
   int _index = 0;
 
   static const _screens = [
@@ -37,6 +40,12 @@ class _AppShellState extends State<AppShell> {
   @override
   Widget build(BuildContext context) {
     final l = L.of(context);
+    // Paylaş menüsünden metin geldi (P-031): formu gösteren sekmeye geç.
+    ref.listen<SharedText?>(sharedTextProvider, (previous, next) {
+      if (next != null && next.seq != previous?.seq) {
+        setState(() => _index = AppShell.addTabIndex);
+      }
+    });
 
     return Scaffold(
       // Gövde `AppBar`sız başlıyor: en üstteki şerit, korunmazsa durum

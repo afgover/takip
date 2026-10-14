@@ -1974,6 +1974,18 @@ abstract class L {
   /// In tr, this message translates to:
   /// **'Görüntülemek, düzenlemek ya da silmek için dokun'**
   String get queuedTasksTapHint;
+
+  /// No description provided for @shareFilled.
+  ///
+  /// In tr, this message translates to:
+  /// **'Paylaşılan metin forma yerleştirildi; göndermeden önce gözden geçir.'**
+  String get shareFilled;
+
+  /// No description provided for @shareAppended.
+  ///
+  /// In tr, this message translates to:
+  /// **'Formda yazılı metin vardı; paylaşılan metin açıklamanın sonuna eklendi.'**
+  String get shareAppended;
 }
 
 class _LDelegate extends LocalizationsDelegate<L> {

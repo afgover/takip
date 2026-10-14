@@ -716,5 +716,7 @@
   "queuedDraftDeleted": "Taslak silindi",
   "queuedDraftSaved": "Taslak güncellendi; bağlantı gelince bu haliyle gönderilecek",
   "queuedDraftEditTitle": "Taslağı düzenle",
-  "queuedTasksTapHint": "Görüntülemek, düzenlemek ya da silmek için dokun"
+  "queuedTasksTapHint": "Görüntülemek, düzenlemek ya da silmek için dokun",
+  "shareFilled": "Paylaşılan metin forma yerleştirildi; göndermeden önce gözden geçir.",
+  "shareAppended": "Formda yazılı metin vardı; paylaşılan metin açıklamanın sonuna eklendi."
 }

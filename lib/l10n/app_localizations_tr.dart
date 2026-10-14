@@ -1092,4 +1092,12 @@ class LTr extends L {
   @override
   String get queuedTasksTapHint =>
       'Görüntülemek, düzenlemek ya da silmek için dokun';
+
+  @override
+  String get shareFilled =>
+      'Paylaşılan metin forma yerleştirildi; göndermeden önce gözden geçir.';
+
+  @override
+  String get shareAppended =>
+      'Formda yazılı metin vardı; paylaşılan metin açıklamanın sonuna eklendi.';
 }

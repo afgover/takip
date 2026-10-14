@@ -494,3 +494,25 @@ değil. Token, parola veya anahtar bu dosyada hiçbir koşulda yer almaz.
   **Sınır:** SEC-017'deki kişisel veri ekseni bu koşumda yok — o eksen
   repo public olduğu için tek seferlik yapılmıştı; `scan.sh` kapsamında
   değil. Tarama koştuğu günün danışmanlık veritabanına göredir.
+
+## SEC-019 — Paylaş menüsü: dışa açık metin girişi
+- **Tarih:** 2026-10-15
+- **Tür:** karar
+- **Durum:** kapali
+- **Kaynak:** [S-2026-10-14-coklu-kullanici-sync](sessions/2026-10-14-coklu-kullanici-sync/session.md),
+  [P-031](PLAN.md#P-031)
+- **Açıklama:** Uygulamaya Android paylaş hedefi eklendi: ana Activity artık
+  `ACTION_SEND` / `text/plain` kabul ediyor, yani **telefondaki herhangi bir
+  uygulama** takip'e metin gönderebilir. Bu yeni bir giriş yüzeyi; kabul
+  edilen sınırları:
+  - Gelen metin **yalnız Ekle formunu doldurur**; hiçbir şey kendiliğinden
+    gönderilmez, hub'a yazılmaz. Gönderim kullanıcının dokunuşudur.
+  - Formda yazılmış metin varsa ezilmez, paylaşım açıklamanın sonuna eklenir.
+  - Metin veri olarak işlenir: yorumlanmaz, bağlantı açılmaz, dosya ya da URI
+    kabul edilmez (yalnız düz metin; `EXTRA_STREAM` okunmuyor).
+  - Activity `singleTask`'a alındı: paylaşım gönderen uygulamanın görevi
+    içinde ikinci bir kopya açılmıyor. `taskAffinity=""` (Flutter'ın görev
+    ele geçirme önlemi) korunuyor.
+  - Yeni bağımlılık yok; kanal `MainActivity.kt` içinde, ~40 satır.
+  Kalan risk: kötü niyetli bir uygulama formu yanıltıcı metinle
+  doldurabilir; kullanıcı göndermeden önce metni görür. Kabul edildi.

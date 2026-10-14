@@ -17,6 +17,7 @@ import '../../hub/models/task_draft.dart';
 import '../../hub/outbox.dart';
 import '../../hub/task_repo.dart';
 import '../../l10n/app_localizations.dart';
+import '../share/shared_text.dart';
 
 /// Görev ekleme: hedef repo, başlık, açıklama, öncelik, kategori →
 /// `tasks/inbox/` (B-030).
@@ -66,6 +67,12 @@ class _AddTaskScreenState extends ConsumerState<AddTaskScreen> {
 
   static const _autosave = AddTaskAutosave();
 
+  /// Taslak diskten geri yüklenmeden gelen paylaşım burada bekler: önce
+  /// yerleşseydi geri yükleme onu ezerdi.
+  bool _restored = false;
+  SharedText? _pendingShare;
+  int? _lastShareSeq;
+
   @override
   void initState() {
     super.initState();
@@ -87,7 +94,41 @@ class _AddTaskScreenState extends ConsumerState<AddTaskScreen> {
       _titleCtrl.addListener(_persistDraft);
       _descCtrl.addListener(_persistDraft);
       _newCategoryCtrl.addListener(_persistDraft);
+      // Dinleyiciler bağlandıktan SONRA: yerleşen metin taslağa da yazılsın,
+      // süreç ölse bile paylaşılan mesaj kaybolmasın.
+      _restored = true;
+      if (!mounted) return;
+      final waiting = _pendingShare ?? ref.read(sharedTextProvider);
+      _pendingShare = null;
+      if (waiting != null) _applyShared(waiting);
     });
+  }
+
+  void _onShared(SharedText? previous, SharedText? next) {
+    if (next == null || next.seq == previous?.seq) return;
+    if (_restored) {
+      _applyShared(next);
+    } else {
+      _pendingShare = next;
+    }
+  }
+
+  void _applyShared(SharedText shared) {
+    if (shared.seq == _lastShareSeq) return;
+    _lastShareSeq = shared.seq;
+    final merged = mergeShared(
+      title: _titleCtrl.text,
+      description: _descCtrl.text,
+      shared: shared,
+    );
+    setState(() {
+      _titleCtrl.text = merged.title;
+      _descCtrl.text = merged.description;
+    });
+    final l = L.of(context);
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text(merged.appended ? l.shareAppended : l.shareFilled),
+    ));
   }
 
   void _persistDraft() {
@@ -200,6 +241,7 @@ class _AddTaskScreenState extends ConsumerState<AddTaskScreen> {
 
   @override
   Widget build(BuildContext context) {
+    ref.listen<SharedText?>(sharedTextProvider, _onShared);
     final l = L.of(context);
     final categories =
         ref.watch(taskCategoriesProvider).valueOrNull ?? Hub.defaultCategories;

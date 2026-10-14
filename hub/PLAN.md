@@ -667,8 +667,9 @@ sırasıyla girer.
       ✅ 2026-10-15 · bölümleme yalnız 2+ kişide
 - [x] P-031.2 — Bekleyenler: sayılı görünüm seçici, seçim kalıcı; Ekip'te
       kişiye göre bölümler; test · ✅ 2026-10-15 · "@ad üstlendi" de eklendi
-- [ ] P-031.3 — Android paylaş hedefi: metin paylaşılınca Ekle sekmesi dolu
-      açılır, gönderim kullanıcıda; yeni bağımlılık yok; test
+- [x] P-031.3 — Android paylaş hedefi: metin paylaşılınca Ekle sekmesi dolu
+      açılır, gönderim kullanıcıda; yeni bağımlılık yok; test · ✅ 2026-10-15 ·
+      singleTask; SEC-019; 654/654
 - [ ] P-031.4 — Tam süit, analyze; derle, kablosuz kur, etiketle; paylaş
       hedefinin sistemde kayıtlı olduğunu doğrula
 - [ ] P-031.5 — Kayıtlar ve push

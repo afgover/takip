@@ -169,3 +169,18 @@ yolu yazıyor. Çip genellendi: bekleyen iş başkasını bekliyorsa "@ad
 bekliyor", aktif işi başkası üstlendiyse "@ad üstlendi"; kimlik
 bilinmiyorsa kimse "başkası" sayılmıyor. 5 yeni widget testi.
 
+### [00:42] Agent
+
+P-031.3: Paylaş hedefi. Manifest'e `ACTION_SEND`/`text/plain`;
+`MainActivity.kt` metni bekletip Dart'a kanal üzerinden veriyor (yeni
+bağımlılık yok). Activity `singleTop` → `singleTask`: yoksa paylaşım
+gönderen uygulamanın içinde ikinci bir kopya (ikinci Flutter motoru, çift
+yoklama) açılırdı. Dart: `SharedTextNotifier` (açılışta bekleyeni ve
+sonradan geleni alır), kabuk Ekle sekmesine geçer, form metni taslak geri
+yüklendikten **sonra** yerleştirir (yoksa geri yükleme ezerdi): boş formda
+başlık ilk satır/konu (en çok 80), açıklama metnin tamamı; yazılı metin
+varsa ezilmez, sona eklenir. Her paylaşım sıra numaralı — iki dinleyici
+arasında "tüket ve sıfırla" yarışı yok. Yeni giriş yüzeyi
+[SEC-019](../../SECURITY.md#SEC-019)'a karar olarak yazıldı. 8 yeni test
+(kurallar, taklit kanal, iki form senaryosu); 654/654.
+

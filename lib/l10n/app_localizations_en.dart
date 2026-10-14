@@ -1098,4 +1098,12 @@ class LEn extends L {
 
   @override
   String get queuedTasksTapHint => 'Tap to view, edit or delete';
+
+  @override
+  String get shareFilled =>
+      'The shared text was placed in the form; review it before sending.';
+
+  @override
+  String get shareAppended =>
+      'The form already had text; the shared text was added to the end of the description.';
 }
