@@ -7,7 +7,7 @@ named, and what schema it follows**. Neither the agent nor the user application
 steps outside it. Contract changes are recorded in `EVOLUTION.md` and the
 version number at the top of this file is incremented.
 
-**Contract version:** 1.35
+**Contract version:** 1.36
 **Master copy:** `afgover/takip` → `hub/SYSTEM.md` (Turkish) ·
 `hub/SYSTEM.en.md` (English)
 (see §10 — every hub updates its own copy from there)
@@ -1207,14 +1207,10 @@ contract):
 
 ### Sync first at opening
 
-In a Projects hub work runs from several places: threads on this machine,
-classic sessions, other machines and the cloud. The local copy can silently
-fall behind, and every finding read from a stale copy is stale. At opening,
-before any record is read and reported, run `git pull --rebase`; the
-opening script measures whether the local copy contains the remote's
-latest commit. Measured case (2026-10-09): the copy was 225 commits behind
-and the thread reported a security scan that was really two days old as
-"32 days, stale".
+(v1.36) This rule now applies to **every hub** and is written in one place:
+`AGENT_PROTOCOL.md`, at the start of the "At session opening" section. A
+Projects hub needs it most often: work runs at once from threads on this
+machine, classic sessions, other machines and the cloud.
 
 ### Tasks — they continue unchanged
 

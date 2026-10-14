@@ -991,3 +991,16 @@ işi, bitiş çizgisi değil. Bitiş çizgisi olsaydı aşama hiç kapanmazdı �
   kalınan yer özetlenir. Tek açık oturum kuralı (§2, v1.20) değişmedi.
   `acilis.sh` tek açık oturumda yaşını ölçüp hangi yolun geçerli olduğunu
   yazıyor. Uygulama sabiti 1.35 yapıldı; APK yeniden derlenmedi.
+
+- 2026-10-14: Sözleşme [1.36](SYSTEM.md): **"Önce eşitle" her hub için.**
+  1.34'te yalnız Claude Projects hub'larına (§16) yazılan kural protokolün
+  açılış bölümünün başına taşındı; §16'da yalnız işaretçi kaldı. Gerekçe:
+  ölçülen sorun (yerel kopyanın uzaktan geride kalması, 225 commit) her
+  hubda olabilir — telefon uygulaması görevleri doğrudan GitHub'a yazıyor
+  ve `acilis.sh` geride kalmayı zaten her hubda ölçüyordu; kural ölçüme
+  hizalandı. Aynı incelemede ([S-2026-10-14-apk-ve-denetim](sessions/2026-10-14-apk-ve-denetim/session.md),
+  [P-029](PLAN.md#P-029)) iki kusur da kapandı: 1.34-1.35 sabiti
+  değiştirmiş ama APK derlenmemişti (kurulu uygulama 1.33 biliyordu) ve
+  `77bc7aa` sözleşme metnini sürüm satırına dokunmadan değiştirmişti
+  (R-008). İkisi için `audit.sh`'a mekanik kontrol eklendi; dağıtılan APK
+  artık `apk/<tarih>-<sha>` etiketiyle izleniyor.

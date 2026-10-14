@@ -30,3 +30,12 @@ APK'nın sözleşme sürümü ve sürümsüz sözleşme değişikliği (R-008). 
 eşitle"yi tüm hub'lara genelleştir (1.36). Sıra önemli: sabit 1.36 olacağı
 için APK sözleşme değişikliğinden **sonra** derlenir. Plan
 [P-029](../../PLAN.md).
+
+### [10:45] Agent
+
+Sözleşme 1.36: "önce eşitle" protokolün açılış bölümünün başına genel blok
+olarak yazıldı (TR+EN); §16 alt başlığı ve Projects maddesi işaretçiye
+indi — kural tek yerde. Ek gerekçe: telefon uygulaması GitHub'a yazdığı için
+her hubın yerel kopyası geride kalabilir. Uygulama sabiti 1.36; tam süit
+630/630. EVOLUTION notu yazıldı.
+

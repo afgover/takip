@@ -5,7 +5,7 @@ ve hangi şemaya uyacağını** tanımlar. Agent ve kullanıcı uygulaması bu s
 dışına çıkmaz. Sözleşme değişiklikleri `EVOLUTION.md`'ye kaydedilir ve bu dosyanın
 başındaki sürüm numarası artırılır.
 
-**Sözleşme sürümü:** 1.35
+**Sözleşme sürümü:** 1.36
 **Ana kopya (master):** `afgover/takip` → `hub/SYSTEM.md` (tr, **kanonik**) ·
 `hub/SYSTEM.en.md` (en)
 (bkz. §10 — her hub kendi kopyasını, kendi dilindeki varyanttan günceller)
@@ -1162,13 +1162,10 @@ Projects ile çalışan hub, kökünde kısa bir `ORTAM.md` taşır:
 
 ### Açılışta önce eşitle
 
-Projects hub'ında iş birden çok yerden yürür: bu makinedeki thread'ler,
-klasik oturumlar, başka makineler ve bulut. Yerel kopya sessizce geride
-kalabilir ve geride kalan kopyadan okunan her bulgu bayattır. Açılışta,
-hiçbir kayıt okunup raporlanmadan önce `git pull --rebase` yapılır; açılış
-betiği yerel kopyanın uzaktaki son commit'i içerip içermediğini ölçer.
-Ölçülen vaka (2026-10-09): kopya 225 commit gerideydi ve thread, gerçekte
-iki günlük olan güvenlik taramasını "32 gün, bayat" diye raporladı.
+(v1.36) Bu kural artık **her hub** için geçerli ve tek yerde yazılı:
+`AGENT_PROTOCOL.md`, "Oturum açılışında" bölümünün başı. Projects hub'ında
+en sık burada gerekir: iş bu makinedeki thread'lerden, klasik oturumlardan,
+başka makinelerden ve buluttan aynı anda yürür.
 
 ### Görevler — değişmeden devam eder
 

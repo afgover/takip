@@ -21,6 +21,17 @@ what*. The procedure holds whatever the session is about.
 > up as checked (L-035). Without the script, run the items one by one; the
 > items below are the definition and the script is only their implementation.
 
+> **Sync first (v1.36).** At opening, **before** any record is read from the
+> hub and reported to the user, run `git pull --rebase`; `tool/acilis.sh`
+> measures whether the local copy contains the remote's latest commit and
+> says so if it does not. Every finding read from a stale copy is stale and
+> nothing errors — on 2026-10-09 a copy was 225 commits behind and a security
+> scan that was really two days old was reported as "32 days, stale". The
+> rule was written in 1.34 for Claude Projects hubs only (§16); but **any**
+> hub's local copy can fall behind: the phone app writes tasks straight to
+> GitHub, and work also runs from other machines or cloud sessions. The
+> script was already measuring this in every hub; the rule now matches it.
+
 0. **Read the hub's language** (`SYSTEM.md` → `**Hub language:**`, contract
    1.19) and write everything you produce in this session in that language:
    the session record, backlog entries, knowledge records, task bodies. If the
@@ -135,9 +146,9 @@ differences:
   left open" applies only to **classic** sessions and to thread sessions
   untouched for **more than 7 days**; another thread's open session is not
   touched.
-- **Sync first:** at opening, before any record is read and reported, run
-  `git pull --rebase` (the script measures whether the local copy is
-  behind).
+- **Sync first:** the general rule in the opening block (v1.36); in
+  Projects it is needed most often, because several threads share one
+  folder.
 - **Session record:** every thread opens its own `session.md`
   (`surface: projects`, `thread: <root message id>`) and keeps it at once,
   as in item 4. The inbox/waiting state is reported in the thread's first

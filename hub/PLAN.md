@@ -622,8 +622,8 @@ sırasıyla girer.
 - **Durum:** acik
 - **İlgili:** [P-028](PLAN.md#P-028), [R-008](knowledge/rules.md#R-008)
 
-- [ ] P-029.1 — Sözleşme 1.36: "önce eşitle" §16'dan genel açılışa; EN;
-      EVOLUTION; uygulama sabiti 1.36; tam süit
+- [x] P-029.1 — Sözleşme 1.36: "önce eşitle" §16'dan genel açılışa; EN;
+      EVOLUTION; uygulama sabiti 1.36; tam süit · ✅ 2026-10-14 · 630/630
 - [ ] P-029.2 — Dağıtılan APK izi: `apk/<tarih>-<sha>` etiketi; geçmiş üç
       APK için geriye dönük etiket; `install.sh` kurunca etiketler
 - [ ] P-029.3 — `audit.sh` §12: son `apk/*` etiketindeki sabit SYSTEM.md ile

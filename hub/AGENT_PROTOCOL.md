@@ -21,6 +21,17 @@ tanımlanır. Prosedür, oturumun konusu ne olursa olsun geçerlidir.
 > yazılmaz (L-035). Script yoksa maddeler tek tek elle koşulur; maddelerin
 > tanımı aşağıdadır ve script yalnız uygulamasıdır.
 
+> **Önce eşitle (v1.36).** Açılışta, hub'dan bir kayıt okunup kullanıcıya
+> raporlanmadan **önce** `git pull --rebase` yapılır; `tool/acilis.sh` yerel
+> kopyanın uzaktaki son commit'i içerip içermediğini ölçer ve içermiyorsa
+> söyler. Geride kalan kopyadan okunan her bulgu bayattır ve hiçbir yerde
+> hata vermez — 2026-10-09'da bir kopya 225 commit gerideydi ve gerçekte iki
+> günlük güvenlik taraması "32 gün, bayat" diye raporlandı. Kural 1.34'te
+> yalnız Claude Projects hub'ları için yazılmıştı (§16); oysa **her** hubın
+> yerel kopyası geride kalabilir: telefon uygulaması görevleri doğrudan
+> GitHub'a yazıyor, iş başka makineden ya da bulut oturumundan da yürüyor.
+> Betik ölçümü zaten her hubda yapıyordu; kural ona hizalandı.
+
 0. **Hub'ın dilini oku** (`SYSTEM.md` → `**Hub dili:**`, sözleşme 1.19) ve bu
    oturumda ürettiğin her şeyi o dilde yaz: oturum kaydı, backlog maddeleri,
    knowledge kayıtları, görev gövdeleri. Alan yoksa `tr`. Hub'ın dili ile
@@ -126,8 +137,8 @@ ile aşağıdaki maddeler aynen geçerlidir. `ORTAM.md` `projects` diyorsa
   `afgover/takip` klonundadır). Madde 1'deki "açık kalan oturumu kapat"
   yalnız **klasik** oturumlar ve **7 günden uzun** dokunulmamış thread
   oturumları içindir; başka bir thread'in açık oturumuna dokunulmaz.
-- **Önce eşitle:** açılışta, bir kayıt okunup raporlanmadan önce
-  `git pull --rebase` (betik yerel kopyanın geride olup olmadığını ölçer).
+- **Önce eşitle:** açılış bloğundaki genel kural (v1.36); Projects'te
+  aynı klasörü birden çok thread paylaştığı için en sık burada gerekir.
 - **Oturum kaydı:** her thread kendi `session.md`'sini açar
   (`surface: projects`, `thread: <kök mesaj kimliği>`) ve madde 4'teki
   gibi anında tutar. inbox/waiting durumu thread'in ilk cevabında söylenir.
