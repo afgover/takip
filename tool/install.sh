@@ -11,6 +11,13 @@
 # Buradaki kural: `adb install -r` ya yerinde günceller ya da sesli hata verir.
 # Kaldırma yok. Sesli hata kurtarılabilir; sessiz silme kurtarılamaz.
 #
+# Dağıtım izi (P-029): bu çağrıda derlenmiş bir release başarıyla kurulunca
+# derlendiği commit `apk/<tarih>-<sha>` diye etiketlenir ve push'lanır.
+# `audit.sh` §12 son etiketteki sözleşme sabitini SYSTEM.md ile karşılaştırır:
+# kaynak kodu güncelleyip APK'yı derlememek (1.34-1.35'te olduğu gibi) artık
+# açılışta görünür. Uygulama dosyalarında commit'lenmemiş değişiklik varsa
+# APK hiçbir commit'e karşılık gelmez; o zaman etiket konmaz.
+#
 # Kullanım:
 #   tool/install.sh                 # release derler ve kurar
 #   tool/install.sh --debug         # debug derler ve kurar
@@ -69,6 +76,18 @@ if [ "$MODE" = "release" ] && [ ! -f android/key.properties ]; then
 EOF
 fi
 
+# Etiket yalnız APK bir commit'e karşılık geliyorsa konur: bu çağrıda derlenmiş
+# ve uygulama dosyaları commit'lenmiş olmalı. Hub dosyaları APK'yı etkilemez.
+TAG_OK=0
+if [ "$MODE" = "release" ] && [ "$BUILD" -eq 1 ]; then
+  if [ -z "$(git status --porcelain -- lib android assets pubspec.yaml pubspec.lock 2>/dev/null)" ]; then
+    TAG_OK=1
+  else
+    echo "==> Not: uygulama dosyalarında commit'lenmemiş değişiklik var; APK bir commit'e"
+    echo "    karşılık gelmeyeceği için etiketlenmeyecek (audit.sh §12 onu göremez)."
+  fi
+fi
+
 if [ "$BUILD" -eq 1 ]; then
   echo "==> $MODE derleniyor"
   flutter build apk "--$MODE"
@@ -110,3 +129,17 @@ if grep -qi 'Failure' <<<"$OUT"; then
 fi
 
 echo "==> Tamam. Veri korundu; token'ı yeniden girmen gerekmiyor."
+
+if [ "$TAG_OK" -eq 1 ]; then
+  TAG="apk/$(date +%F)-$(git rev-parse --short HEAD)"
+  CV=$(grep -oE "contractVersion = '[0-9.]+'" lib/core/constants.dart | grep -oE "[0-9.]+")
+  if git tag -a "$TAG" -m "APK: $DEVICE cihazına kuruldu (tool/install.sh). Sözleşme sabiti ${CV:-?}." 2>/dev/null; then
+    if git push -q origin "$TAG" 2>/dev/null; then
+      echo "==> Dağıtım izi: $TAG (push'landı)"
+    else
+      echo "==> Dağıtım izi: $TAG (yerelde; push'lanamadı — git push origin $TAG)"
+    fi
+  else
+    echo "==> Dağıtım izi zaten var: $TAG"
+  fi
+fi

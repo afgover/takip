@@ -624,10 +624,13 @@ sırasıyla girer.
 
 - [x] P-029.1 — Sözleşme 1.36: "önce eşitle" §16'dan genel açılışa; EN;
       EVOLUTION; uygulama sabiti 1.36; tam süit · ✅ 2026-10-14 · 630/630
-- [ ] P-029.2 — Dağıtılan APK izi: `apk/<tarih>-<sha>` etiketi; geçmiş üç
-      APK için geriye dönük etiket; `install.sh` kurunca etiketler
-- [ ] P-029.3 — `audit.sh` §12: son `apk/*` etiketindeki sabit SYSTEM.md ile
-      aynı mı; §13: sürüm satırına dokunmayan sözleşme commit'i (R-008)
+- [x] P-029.2 — Dağıtılan APK izi: `apk/<tarih>-<sha>` etiketi; geçmiş üç
+      APK için geriye dönük etiket; `install.sh` kurunca etiketler ·
+      ✅ 2026-10-14 · etiket yalnız uygulama dosyaları commit'liyse
+- [x] P-029.3 — `audit.sh` §12: son `apk/*` etiketindeki sabit SYSTEM.md ile
+      aynı mı; §13: sürüm satırına dokunmayan sözleşme commit'i (R-008) ·
+      ✅ 2026-10-14 · §12 şu an bulgu veriyor (APK 1.33); §13 yürürlük
+      bugün, geçmiş ölçümü 2 ihlal (`77bc7aa`, `b3dfbb6`)
 - [ ] P-029.4 — Release derle, imzayı kurulu sürümle karşılaştır, kablosuz
       `adb install -r` (`tool/install.sh`), etiketle
 - [ ] P-029.5 — Kayıtlar ve push

@@ -501,7 +501,50 @@ else:
         warn(f"uygulama sabiti {_m.group(1)}, SYSTEM.md {_s.group(1)} — "
              "sabit güncellenip APK yeniden derlenmeli (P-028)")
     else:
-        ok(f"ikisi de {_s.group(1)}")
+        ok(f"kaynak kod sabiti de {_s.group(1)}")
+    # Kaynak kod doğru olsa da APK derlenmemiş olabilir (1.34-1.35, P-029).
+    # Dağıtılan APK'nın derlendiği commit `apk/<tarih>-<sha>` etiketinde.
+    if _s:
+        _tags = subprocess.run(["git", "-C", ROOT, "tag", "-l", "apk/*", "--sort=-refname"],
+                               capture_output=True, text=True).stdout.split()
+        if not _tags:
+            info("dağıtılan APK izi yok (apk/* etiketi) — kurulu sürüm ölçülemiyor")
+        else:
+            _src = subprocess.run(["git", "-C", ROOT, "show", f"{_tags[0]}:lib/core/constants.dart"],
+                                  capture_output=True, text=True).stdout
+            _a = re.search(r"contractVersion\s*=\s*'([0-9.]+)'", _src)
+            if not _a:
+                info(f"{_tags[0]}: sabit okunamadı — kontrol KOŞMADI")
+            elif _a.group(1) != _s.group(1):
+                warn(f"son dağıtılan APK ({_tags[0]}) sözleşme {_a.group(1)} biliyor, "
+                     f"SYSTEM.md {_s.group(1)} — APK derlenip kurulmalı (tool/install.sh)")
+            else:
+                ok(f"son dağıtılan APK ({_tags[0]}) da {_s.group(1)}")
+
+# ── 13. Sözleşme metni sürüm satırına dokunmadan değişmiş mi (R-008) ─────────
+# Uzaktaki hub'ın tek karşılaştırma ölçütü sürüm numarası; aynı numaranın iki
+# metni olursa o numarayı almış hub ayrışmış sayılır. 2026-10-09'da `77bc7aa`
+# metni 1.34'te bırakarak değiştirdi (zarar çıkmadı, ölçüldü). Sürüm satırı
+# SYSTEM.md'de; protokol dosyaları da sözleşmenin parçası. Yürürlük kontrolün
+# eklendiği gün — yeni kontrol geçmişi suçlamaz (§11 ile aynı).
+say("13. Sözleşme metni sürüm satırı değişmeden değişmiş mi (R-008)")
+_since = "2026-10-14T00:00:00"
+_rel = os.path.relpath(HUB, ROOT)
+_cfiles = [f"{_rel}/{f}" for f in ("SYSTEM.md", "SYSTEM.en.md", "AGENT_PROTOCOL.md", "AGENT_PROTOCOL.en.md")]
+_commits = subprocess.run(["git", "-C", ROOT, "log", "--no-merges", f"--since={_since}",
+                           "--format=%h", "--", *_cfiles],
+                          capture_output=True, text=True).stdout.split()
+_bad = []
+for _c in _commits:
+    _d = subprocess.run(["git", "-C", ROOT, "show", "--format=", "-U0", _c, "--",
+                         f"{_rel}/SYSTEM.md", f"{_rel}/SYSTEM.en.md"],
+                        capture_output=True, text=True).stdout
+    if not re.search(r"^\+\*\*(Sözleşme sürümü|Contract version):\*\*", _d, re.M):
+        _bad.append(_c)
+for _c in _bad:
+    warn(f"{_c}: sözleşme metnini değiştirdi ama sürüm satırına dokunmadı (R-008)")
+if not _bad:
+    ok(f"{len(_commits)} sözleşme commit'i ({_since} sonrası), hepsi sürümü artırıyor")
 
 print()
 if findings:
