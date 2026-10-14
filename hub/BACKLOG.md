@@ -923,6 +923,17 @@ başlığına ✅ ve tarih yazılır.
       çıkışı** yazılı olduğu sürece borç sessiz değildir (Aşama 5 kapanma
       koşulu 1)
 
+- [ ] B-147 · (agent+user) **Hub tarayıcısında uzun belge gezinme — sıradaki
+      iş (kullanıcı, 2026-10-14).** Bazı belgeler çok uzun (BACKLOG ~73 KB,
+      lessons ~68 KB, EVOLUTION) ve tarayıcıda belge içi arama yok.
+      Kullanıcının istediği: belge içi arama, özet/içindekiler (başlıklardan),
+      sayfa numarası ya da konum göstergesi, kaydırma çubuğu. Kullanıcı
+      "daha önce de gündeme gelmişti" dedi ama hub'da kaydı yok — konuşmada
+      kalıp iş olarak yazılmamış, kaybolmasının sebebi bu. Önce mevcut
+      görüntüleyici ölçülecek (belge tek parça mı çiziliyor, §15'teki ID
+      çapasına kaydırma nasıl çalışıyor) · kaynak:
+      [S-2026-10-14-coklu-kullanici-sync](sessions/2026-10-14-coklu-kullanici-sync/session.md)
+
 - [ ] B-146 · (agent+user) **`waiting/` kurulum tortusu.** On hub'da 64
       bekleyen görevin %45'i eşiği aşmış; 30 durgun görevin 21'i tek günden
       (2026-08-03, altı hub'ın kurulduğu gün). Kuyruğun neredeyse yarısı

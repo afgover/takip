@@ -37,3 +37,18 @@ Yeni iş: (1) senkron + mesajlaşma ihtiyacı (objektif değerlendirme),
 (3) hub tarayıcısında uzun belge gezinme — "sıradaki iş" olarak backlog'a.
 Önce mevcut durum ölçülüyor: uygulama kodu ve hub'daki önceki kararlar
 (`tool/ara.sh` ile).
+
+### [10:51] Agent
+
+Hub'daki önceki kararlar okundu: K-003 (anlık bildirim ertelendi, ETag'li
+polling), K-017 (ayrı ekip sürümü yok; yeniden açma ölçütleri: GitHub
+hesabı olmayan kullanıcı, medya eki, saniye düzeyinde bildirim, repo dışı
+entegrasyon), K-036/B-108-109 (kimlik ve çakışma görünürlüğü yapıldı),
+B-110 (atama — "ikinci kişi geldiğinde"), B-060 (webhook → relay → push
+tasarımı), B-061 (GitHub App). Ölçüm: 2026-08-15'ten beri bütün hub
+commit'leri tek GitHub hesabından (`afgover`); istisna "Fatih Gover" —
+portfoyinfo'da 12, takip'te 3 commit, GitHub hesabına bağlı değil. Hub'daki
+bütün `author`/`assignee` alanları `afgover`. Fatih Gover'ın kim olduğu
+kullanıcıya sorulacak; öneri ona bağlı. Hub tarayıcısı işi
+[B-147](../../BACKLOG.md#B-147) olarak açıldı; önceki konuşmanın kaydı
+yoktu.
