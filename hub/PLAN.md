@@ -679,7 +679,7 @@ sırasıyla girer.
 ## P-032 — Görev ekranı Aşama 2: yorum ve atama (sözleşme 1.37)
 - **Tarih:** 2026-10-15
 - **Kaynak:** [S-2026-10-14-coklu-kullanici-sync](sessions/2026-10-14-coklu-kullanici-sync/session.md)
-- **Durum:** acik
+- **Durum:** tamamlandi
 - **İlgili:** [A-2026-10-14-001](artifacts/S-2026-10-14-coklu-kullanici-sync/coklu-kullanici-ve-sync.md) §4-5,
   [R-001](knowledge/rules.md#R-001), [B-110](BACKLOG.md#B-110), [P-031](PLAN.md#P-031)
 
@@ -703,4 +703,5 @@ sırasıyla girer.
       5 widget testi; Ata penceresinde kapanış hatası testte yakalandı
 - [x] P-032.4 — `acilis.sh`: inbox'ta görev ve olay ayrı sayılır ·
       ✅ 2026-10-15 · tanıma kuralı uygulamayla aynı (hedefsiz = görev)
-- [ ] P-032.5 — Tam süit; derle, kablosuz kur, etiketle; kayıtlar
+- [x] P-032.5 — Tam süit; derle, kablosuz kur, etiketle; kayıtlar ·
+      ✅ 2026-10-15 · 668/668; `apk/2026-10-15-8b4ce5b`

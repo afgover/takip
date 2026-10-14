@@ -266,3 +266,13 @@ için "hedefe işle, tasks/events/'e taşı" diyor. Tanıma kuralı uygulamayla
 aynı (`tags` comment/assign + dolu `target`; hedefsiz olay görev sayılır).
 Geçici bir hubda görev + olay + hedefsiz olayla sınandı.
 
+### [01:12] Agent
+
+P-032.5: tam süit 668/668. İki cihaz bağlıydı (telefon + başka bir
+oturumun emülatörü `emulator-5554` — dokunulmadı); kurulum telefona açıkça
+hedeflendi (`DEVICE=`). APK `8b4ce5b` kuruldu, etiket
+`apk/2026-10-15-8b4ce5b`; `firstInstallTime` değişmedi. Denetim §12 ✓
+(1.37), §13 ✓ (bugünkü iki sözleşme commit'i de sürümü artırıyor). P-032
+tamamlandı. Kullanıcıdan bir görevde yorum ve "Üstlen" denemesi istendi;
+olay takip inbox'ına düşünce protokol gereği burada işlenebilir.
+
