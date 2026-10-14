@@ -675,3 +675,28 @@ sırasıyla girer.
       `apk/2026-10-15-ebcab36`; paket yöneticisi takip'i SEND hedefi olarak
       listeliyor; ilk kurulum tarihi değişmedi
 - [x] P-031.5 — Kayıtlar ve push · ✅ 2026-10-15
+
+## P-032 — Görev ekranı Aşama 2: yorum ve atama (sözleşme 1.37)
+- **Tarih:** 2026-10-15
+- **Kaynak:** [S-2026-10-14-coklu-kullanici-sync](sessions/2026-10-14-coklu-kullanici-sync/session.md)
+- **Durum:** acik
+- **İlgili:** [A-2026-10-14-001](artifacts/S-2026-10-14-coklu-kullanici-sync/coklu-kullanici-ve-sync.md) §4-5,
+  [R-001](knowledge/rules.md#R-001), [B-110](BACKLOG.md#B-110), [P-031](PLAN.md#P-031)
+
+> **Tasarım:** yorum ve atama inbox'a yazılan **olay dosyası** (R-001
+> korunuyor; bekleyen soruya cevabın bugünkü deseni). Tür `tags` ile
+> (`comment`, `assign`), hedef yeni `target` alanında **dosya adıyla**
+> (klasör değişince de sabit; app'in açtığı görevin henüz ID'si yok). Ajan
+> olayı hedefe işler (`## Yorumlar`, `assignee`) ve `tasks/events/`e
+> arşivler — `done/`a değil, Tamamlananlar listesi kirlenmesin. App hiçbir
+> dosyayı değiştirmez; işlenmemiş olayları hedefin üstüne bindirir, yani
+> yorum ve atama ajan çalışmasa da anında görünür.
+
+- [ ] P-032.1 — Sözleşme 1.37: §4 olay dosyaları, `target`, `## Yorumlar`,
+      `tasks/events/`; protokol madde 2; TR+EN; EVOLUTION; uygulama sabiti
+- [ ] P-032.2 — Model: olay taslakları; özette `tags`/`target`; listeden
+      olaylar çıkar, hedefe bekleyen atama ve yorum sayısı biner; test
+- [ ] P-032.3 — Detay: yorum akışı (işlenmiş + bekleyen), yorum yazma
+      (çevrimdışı kuyruk dahil), Üstlen ve Ata; test
+- [ ] P-032.4 — `acilis.sh`: inbox'ta görev ve olay ayrı sayılır
+- [ ] P-032.5 — Tam süit; derle, kablosuz kur, etiketle; kayıtlar
