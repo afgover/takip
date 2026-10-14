@@ -12,6 +12,7 @@ import 'hub_sync.dart';
 import 'hub_watcher.dart';
 import 'models/task.dart';
 import 'models/task_draft.dart';
+import 'models/task_event.dart';
 import 'offline_store.dart';
 import 'outbox.dart';
 import 'task_repo.dart';
@@ -292,7 +293,7 @@ enum TaskView {
         // Kimseyi belirtmeyen bekleme herkesi bekler (sözleşme 1.15), yani
         // beni de; kişiye atanmış aktif iş yalnız sahibinin.
         TaskView.mine => (t.status == TaskStatus.waiting && t.waitsFor(me)) ||
-            (t.status == TaskStatus.active && me != null && t.assignee == me),
+            (me != null && t.effectiveAssignee == me),
         TaskView.authored => me != null && t.author == me,
         TaskView.agents => t.createdBy == 'agent',
       };
@@ -302,8 +303,7 @@ enum TaskView {
 /// üstlendiyse. Gelen kutusu ve kişisi yazılmamış iş için null.
 String? holderOf(TaskSummary t) => switch (t.status) {
       TaskStatus.waiting => t.waitingFor,
-      TaskStatus.active => t.assignee,
-      _ => null,
+      _ => t.effectiveAssignee,
     };
 
 /// Ekip görünümünde kişiye göre bölüm. [person] null = kimseye ait değil.
@@ -409,6 +409,7 @@ Future<List<TaskSummary>> pendingFromStore(HubConfig connection) async {
   };
 
   final tasks = <TaskSummary>[];
+  final events = <TaskEvent>[];
   for (final entry in tree) {
     if (!entry.isFile) continue;
     final dir = dirs.keys.firstWhere(
@@ -434,6 +435,14 @@ Future<List<TaskSummary>> pendingFromStore(HubConfig connection) async {
       continue;
     }
 
+    // Yorum ve atama olayı görev değil (sözleşme 1.37): listeye girmez,
+    // hedefinin üstüne bindirilir.
+    final event = TaskEvent.parse(entry.path, doc.content);
+    if (event != null) {
+      events.add(event);
+      continue;
+    }
+
     final fm = Frontmatter.parse(doc.content);
     final title = fm.str('title');
     tasks.add(summary.withContext(
@@ -445,10 +454,65 @@ Future<List<TaskSummary>> pendingFromStore(HubConfig connection) async {
       author: fm.str('author'),
       assignee: fm.str('assignee'),
       createdBy: fm.str('created_by'),
+      commentCount: countComments(fm.body),
       title: (title != null && title.trim().isNotEmpty) ? title.trim() : null,
     ));
   }
-  return tasks;
+  return applyEvents(tasks, events);
+}
+
+/// İşlenmemiş olayları hedeflerinin üstüne bindirir: bekleyen yorumlar
+/// sayıya eklenir, en yeni atama sorumlu olur (sözleşme 1.37 — aynı göreve
+/// birden çok atamada `created`'ı en yeni olan geçerli).
+List<TaskSummary> applyEvents(List<TaskSummary> tasks, List<TaskEvent> events) {
+  if (events.isEmpty) return tasks;
+  final comments = <String, int>{};
+  final assigns = <String, TaskEvent>{};
+  for (final e in events) {
+    switch (e.kind) {
+      case TaskEventKind.comment:
+        comments[e.target] = (comments[e.target] ?? 0) + 1;
+      case TaskEventKind.assign:
+        final prev = assigns[e.target];
+        final who = e.assignee;
+        if (who != null && who.isNotEmpty &&
+            (prev == null || e.created.compareTo(prev.created) > 0)) {
+          assigns[e.target] = e;
+        }
+    }
+  }
+  return [
+    for (final t in tasks)
+      t.withContext(
+        commentCount: t.commentCount + (comments[t.fileName] ?? 0),
+        assignee: assigns[t.fileName]?.assignee,
+        assigneePending: assigns.containsKey(t.fileName) ? true : null,
+      ),
+  ];
+}
+
+/// Bir görevi hedefleyen işlenmemiş olaylar (detay ekranının yorum akışı ve
+/// bekleyen atama). Yerel kopyadan, ağa çıkmadan.
+Future<List<TaskEvent>> eventsFor(HubConfig connection, String fileName) async {
+  final store = OfflineStore(connection.slug);
+  final tree = await store.readTree();
+  if (tree == null) return const [];
+  final out = <TaskEvent>[];
+  for (final entry in tree) {
+    // Liste ile aynı klasörler: sözleşmeyi henüz almamış bir agent olayı
+    // görev sanıp taşımış olabilir.
+    if (!entry.isFile ||
+        !const [Hub.inboxDir, Hub.activeDir, Hub.waitingDir]
+            .any((d) => entry.path.startsWith('$d/'))) {
+      continue;
+    }
+    final doc = await store.readDoc(entry.path);
+    if (doc == null) continue;
+    final e = TaskEvent.parse(entry.path, doc.content);
+    if (e != null && e.target == fileName) out.add(e);
+  }
+  out.sort((a, b) => a.created.compareTo(b.created));
+  return out;
 }
 
 /// **Aktif repodaki** bekleyen işler.

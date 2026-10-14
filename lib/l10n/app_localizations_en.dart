@@ -1106,4 +1106,15 @@ class LEn extends L {
   @override
   String get shareAppended =>
       'The form already had text; the shared text was added to the end of the description.';
+
+  @override
+  String pendingCommentCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count comments',
+      one: '1 comment',
+    );
+    return '$_temp0';
+  }
 }

@@ -3,6 +3,7 @@ import '../../core/utils.dart';
 import '../frontmatter.dart';
 import '../hub_language.dart';
 import 'task.dart';
+import 'task_event.dart';
 
 /// Taslağın hub'da hangi klasöre gideceği.
 ///
@@ -322,6 +323,7 @@ class TaskDraft {
       status: TaskStatus.inbox,
       path: '',
       author: author,
+      target: task.path.split('/').last,
       // Kullanıcının açıklaması **`## Notlar`a** yazılıyor, isteğe değil:
       // istek "beklenen iş yapıldı" olgusu, not ise kullanıcının o iş hakkında
       // söylediği şey. İkisini birleştirmek, agent'ın makinece okuduğu cümleyi
@@ -384,6 +386,7 @@ class TaskDraft {
       status: TaskStatus.inbox,
       path: '',
       author: author,
+      target: task.path.split('/').last,
       body: '# $title\n\n'
           '## ${lang.requestHeading}\n'
           '${lang.waitingAnsweredBody(task.path)}'
@@ -399,6 +402,99 @@ class TaskDraft {
       fileName: taskFileName(at, title),
       content: draft.toFileContent(),
       commitMessage: "task(pending): inbox'a eklendi (app)",
+      title: title,
+      createdAt: at,
+      repoSlug: repoSlug,
+    );
+  }
+
+  /// Bir görev üzerine yorum (sözleşme 1.37): inbox'a **olay dosyası**.
+  /// App hedef dosyaya dokunmaz (R-001); ajan yorumu hedefin `## Yorumlar`
+  /// bölümüne işler, o zamana kadar app onu hedefin üstüne bindirir.
+  factory TaskDraft.comment(
+    HubTask task, {
+    required String text,
+    HubLanguage lang = HubLanguage.tr,
+    String? repoSlug,
+    String? author,
+    DateTime? now,
+  }) =>
+      _event(
+        task,
+        kind: TaskEventKind.comment,
+        title: lang.commentTitle(_label(task)),
+        body: '## ${lang.commentHeading}\n${text.trim()}\n',
+        commitMessage: "task(pending): yorum eklendi (app)",
+        repoSlug: repoSlug,
+        author: author,
+        now: now,
+      );
+
+  /// Bir görevi birine verme (sözleşme 1.37). [assignee] kendisi olabilir
+  /// ("üstlen"). Ajan hedefin `assignee` alanını yazar, hedef inbox'taysa
+  /// `active/`e taşır.
+  factory TaskDraft.assign(
+    HubTask task, {
+    required String assignee,
+    HubLanguage lang = HubLanguage.tr,
+    String? repoSlug,
+    String? author,
+    DateTime? now,
+  }) {
+    final file = task.path.split('/').last;
+    return _event(
+      task,
+      kind: TaskEventKind.assign,
+      title: lang.assignTitle(_label(task), assignee),
+      body: '## ${lang.assignHeading}\n${lang.assignBody(file, assignee)}\n',
+      commitMessage: "task(pending): atama eklendi (app)",
+      repoSlug: repoSlug,
+      author: author,
+      assignee: assignee,
+      now: now,
+    );
+  }
+
+  static String _label(HubTask task) =>
+      task.title.trim().isEmpty ? task.id : task.title.trim();
+
+  static TaskDraft _event(
+    HubTask task, {
+    required TaskEventKind kind,
+    required String title,
+    required String body,
+    required String commitMessage,
+    String? repoSlug,
+    String? author,
+    String? assignee,
+    DateTime? now,
+  }) {
+    final at = now ?? DateTime.parse(isoNow());
+    final created = '${at.toUtc().toIso8601String().split('.').first}Z';
+    final draft = HubTask(
+      id: 'pending',
+      title: title,
+      createdBy: 'user',
+      created: created,
+      updated: created,
+      // Hedefin etiketleri: sözleşmeyi henüz almamış bir agent olayı görev
+      // sanarsa bile doğru yerde dursun.
+      priority: task.priority,
+      category: task.category,
+      tags: [kind.tag],
+      session: 'none',
+      result: 'none',
+      status: TaskStatus.inbox,
+      path: '',
+      author: author,
+      assignee: assignee,
+      target: task.path.split('/').last,
+      body: '# $title\n\n$body',
+    );
+    return TaskDraft(
+      fileName: taskFileName(at, title),
+      content: draft.toFileContent(),
+      commitMessage: commitMessage,
       title: title,
       createdAt: at,
       repoSlug: repoSlug,

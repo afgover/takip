@@ -230,3 +230,18 @@ Protokol madde 2: olaylar görev değil, kullanıcı talimatı beklemeden
 işlenir (karar içermiyor) ama ayrı raporlanır; agent'tan bir şey isteyen
 yorum ayrıca söylenir. TR+EN, EVOLUTION, uygulama sabiti 1.37.
 
+### [01:04] Agent
+
+P-032.2: `HubTask`'e `assignee` ve `target`; yeni `TaskEvent`
+(`tags: [comment|assign]` + `target`; hedefsiz olay olay sayılmaz) ve
+işlenmiş yorum ayrıştırıcısı (`## Yorumlar`/`## Comments`, girişler
+`### [YYYY-MM-DD HH:MM] @kişi`, saat UTC — hub'ın genel zaman kuralı).
+`TaskDraft.comment` / `TaskDraft.assign` olay dosyası yazıyor; iki cevap
+taslağı da artık `target` taşıyor. Liste olayları görevlerden ayırıyor;
+`applyEvents` bekleyen yorumları sayıya ekliyor, en yeni atamayı sorumlu
+yapıyor (`assigneePending`). Bekleyen atamalı inbox görevi "iş kimde"de o
+kişiye ait sayılıyor (`effectiveAssignee`; Bana görünümü de öyle). Satırda
+"· N yorum". Commit öneki için §8'e dokunulmadı (sürümsüz metin değişikliği
+olurdu, §13): olaylar `task(pending): …` ile yazılıyor. 9 yeni test;
+663/663.
+

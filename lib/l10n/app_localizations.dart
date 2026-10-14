@@ -1986,6 +1986,12 @@ abstract class L {
   /// In tr, this message translates to:
   /// **'Formda yazılı metin vardı; paylaşılan metin açıklamanın sonuna eklendi.'**
   String get shareAppended;
+
+  /// No description provided for @pendingCommentCount.
+  ///
+  /// In tr, this message translates to:
+  /// **'{count} yorum'**
+  String pendingCommentCount(int count);
 }
 
 class _LDelegate extends LocalizationsDelegate<L> {

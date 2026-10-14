@@ -1100,4 +1100,9 @@ class LTr extends L {
   @override
   String get shareAppended =>
       'Formda yazılı metin vardı; paylaşılan metin açıklamanın sonuna eklendi.';
+
+  @override
+  String pendingCommentCount(int count) {
+    return '$count yorum';
+  }
 }

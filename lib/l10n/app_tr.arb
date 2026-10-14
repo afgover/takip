@@ -718,5 +718,13 @@
   "queuedDraftEditTitle": "Taslağı düzenle",
   "queuedTasksTapHint": "Görüntülemek, düzenlemek ya da silmek için dokun",
   "shareFilled": "Paylaşılan metin forma yerleştirildi; göndermeden önce gözden geçir.",
-  "shareAppended": "Formda yazılı metin vardı; paylaşılan metin açıklamanın sonuna eklendi."
+  "shareAppended": "Formda yazılı metin vardı; paylaşılan metin açıklamanın sonuna eklendi.",
+  "pendingCommentCount": "{count} yorum",
+  "@pendingCommentCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  }
 }

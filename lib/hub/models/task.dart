@@ -76,6 +76,8 @@ class TaskSummary {
     this.author,
     this.assignee,
     this.createdBy,
+    this.assigneePending = false,
+    this.commentCount = 0,
   });
 
   /// Klasör listesindeki kayıttan üretir; görev dosyası değilse null
@@ -140,6 +142,18 @@ class TaskSummary {
   /// Görevi açan rol: `user` ya da `agent` (`created_by`).
   final String? createdBy;
 
+  /// [assignee] dosyadan değil, henüz işlenmemiş bir atama olayından geliyor
+  /// (sözleşme 1.37). Görev inbox'ta dursa da iş artık o kişide.
+  final bool assigneePending;
+
+  /// İşlenmiş (`## Yorumlar`) ve bekleyen yorumların toplamı.
+  final int commentCount;
+
+  /// İşi şu an üstlenmiş kişi: aktif görevin `assignee`'si ya da bekleyen
+  /// atama. Gelen kutusundaki atanmamış görev için null.
+  String? get effectiveAssignee =>
+      status == TaskStatus.active || assigneePending ? assignee : null;
+
   String get repoName => repoLabel ?? repoSlug ?? '';
 
   /// Bu bekleyen iş [login] kullanıcısını mı bekliyor? `for` yazılmamışsa
@@ -157,6 +171,8 @@ class TaskSummary {
     String? author,
     String? assignee,
     String? createdBy,
+    bool? assigneePending,
+    int? commentCount,
   }) =>
       TaskSummary(
         path: path,
@@ -173,6 +189,8 @@ class TaskSummary {
         author: author ?? this.author,
         assignee: assignee ?? this.assignee,
         createdBy: createdBy ?? this.createdBy,
+        assigneePending: assigneePending ?? this.assigneePending,
+        commentCount: commentCount ?? this.commentCount,
       );
 
   // Detay provider'ı bu nesneyi anahtar olarak kullanıyor: liste her
@@ -218,6 +236,8 @@ class HubTask {
     this.multi = false,
     this.author,
     this.waitingFor,
+    this.assignee,
+    this.target,
   });
 
   /// Hub'dan gelen dosyayı sözleşme şemasına göre okur. Eksik alanlar
@@ -252,6 +272,8 @@ class HubTask {
       multi: fm.str('multi') == 'true',
       author: fm.str('author'),
       waitingFor: fm.str('for'),
+      assignee: fm.str('assignee'),
+      target: fm.str('target'),
     );
   }
 
@@ -300,6 +322,14 @@ class HubTask {
   /// olduğu için ad farklı.
   final String? waitingFor;
 
+  /// İşi üstlenen kişi (sözleşme 1.15). Atama olayında (1.37) işin verildiği
+  /// kişi.
+  final String? assignee;
+
+  /// Bağlı kaydın hedef görevi — **dosya adı**, klasörden bağımsız (sözleşme
+  /// 1.37): yorum, atama ve bekleyen soruya cevap bunu taşır.
+  final String? target;
+
   /// Agent bir soru mu sordu? Seçenekli bekleme yalnız `waiting/`te anlamlı:
   /// başka klasörde duran bir dosyada `options` bulunsa bile o iş kullanıcıyı
   /// beklemiyordur ve cevap düğmesi çıkmamalıdır.
@@ -341,6 +371,9 @@ class HubTask {
         // Sözleşme 1.15 — çoklu kullanıcı. Bilinmiyorsa alan hiç yazılmaz.
         if (author != null) 'author': author,
         if (waitingFor != null) 'for': waitingFor,
+        if (assignee != null) 'assignee': assignee,
+        // Sözleşme 1.37 — bağlı kaydın hedefi.
+        if (target != null) 'target': target,
       };
 
   /// Sözleşmeye uygun dosya içeriği (frontmatter + gövde).

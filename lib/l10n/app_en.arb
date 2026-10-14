@@ -505,5 +505,13 @@
   "queuedDraftEditTitle": "Edit draft",
   "queuedTasksTapHint": "Tap to view, edit or delete",
   "shareFilled": "The shared text was placed in the form; review it before sending.",
-  "shareAppended": "The form already had text; the shared text was added to the end of the description."
+  "shareAppended": "The form already had text; the shared text was added to the end of the description.",
+  "pendingCommentCount": "{count, plural, =1{1 comment} other{{count} comments}}",
+  "@pendingCommentCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  }
 }

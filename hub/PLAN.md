@@ -695,8 +695,9 @@ sırasıyla girer.
 - [x] P-032.1 — Sözleşme 1.37: §4 olay dosyaları, `target`, `## Yorumlar`,
       `tasks/events/`; protokol madde 2; TR+EN; EVOLUTION; uygulama sabiti ·
       ✅ 2026-10-15
-- [ ] P-032.2 — Model: olay taslakları; özette `tags`/`target`; listeden
-      olaylar çıkar, hedefe bekleyen atama ve yorum sayısı biner; test
+- [x] P-032.2 — Model: olay taslakları; özette `tags`/`target`; listeden
+      olaylar çıkar, hedefe bekleyen atama ve yorum sayısı biner; test ·
+      ✅ 2026-10-15 · 663/663
 - [ ] P-032.3 — Detay: yorum akışı (işlenmiş + bekleyen), yorum yazma
       (çevrimdışı kuyruk dahil), Üstlen ve Ata; test
 - [ ] P-032.4 — `acilis.sh`: inbox'ta görev ve olay ayrı sayılır

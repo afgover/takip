@@ -341,7 +341,12 @@ class _TaskTile extends StatelessWidget {
         children: [
           // Kendi açtığın görevde adını yazmak gürültü; başkasınınkinde
           // "kim açtı" sorusunun tek cevabı bu.
-          Text(author != null && author != me ? '$date · @$author' : date),
+          Text([
+            date,
+            if (author != null && author != me) '@$author',
+            if (task.commentCount > 0)
+              L.of(context).pendingCommentCount(task.commentCount),
+          ].join(' · ')),
           TaskTagRow(task: task),
         ],
       ),

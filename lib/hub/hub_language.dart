@@ -57,6 +57,18 @@ enum HubLanguage {
       : 'The question in `$ref` has been answered.';
   String get noChoiceMade => this == tr ? '(seçim yapılmadı)' : '(no choice)';
 
+  /// Yorum ve atama olayları (sözleşme 1.37). Başlık, olayı GitHub'da ya da
+  /// sözleşmeyi henüz almamış bir agent'ta okuyan için ne olduğunu söyler.
+  String commentTitle(String label) =>
+      this == tr ? 'Yorum: $label' : 'Comment: $label';
+  String assignTitle(String label, String who) =>
+      this == tr ? 'Atama: $label → @$who' : 'Assign: $label → @$who';
+  String get commentHeading => this == tr ? 'Yorum' : 'Comment';
+  String get assignHeading => this == tr ? 'Atama' : 'Assignment';
+  String assignBody(String file, String who) => this == tr
+      ? '`$file` görevi @$who kullanıcısına verildi.'
+      : 'The task `$file` was given to @$who.';
+
   /// İşaret/not kaydının "nerede" alanları.
   String get fileField => this == tr ? 'Dosya' : 'File';
   String get sectionField => this == tr ? 'Bölüm' : 'Section';
