@@ -796,6 +796,11 @@ class LEn extends L {
   }
 
   @override
+  String pendingWaitingForOther(String who) {
+    return 'Waiting on @$who';
+  }
+
+  @override
   String get waitingQuestion =>
       'The agent is waiting for an answer. Mark your choice; you can add a note if you like.';
 

@@ -566,6 +566,14 @@
       }
     }
   },
+  "pendingWaitingForOther": "@{who} bekliyor",
+  "@pendingWaitingForOther": {
+    "placeholders": {
+      "who": {
+        "type": "String"
+      }
+    }
+  },
   "waitingQuestion": "Agent bir cevap bekliyor. Seçimini işaretle; istersen açıklama da yazabilirsin.",
   "waitingWork": "Bu iş seni bekliyor. Ne beklendiği aşağıdaki notlarda yazılı; yaptıktan sonra agent'a haber ver.",
   "detailMultiHint": "Birden çok seçebilirsin.",

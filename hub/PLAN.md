@@ -646,8 +646,10 @@ sırasıyla girer.
 - [x] P-030.1 — Liste yenileme hatası: cevap ve çevrimdışı kuyruk sonrası
       ekranın izlediği liste yenilensin; test · ✅ 2026-10-14 · yazma sonrası
       hemen yoklama; ölü `pendingTasksProvider` silindi; 633/633
-- [ ] P-030.2 — "Seni bekliyor" yalnız `for` ben ya da boşken; başkasını
-      bekleyen görev kimi beklediğini söylesin (liste + detay); test
-- [ ] P-030.3 — Satırda yazar; test
+- [x] P-030.2 — "Seni bekliyor" yalnız `for` ben ya da boşken; başkasını
+      bekleyen görev kimi beklediğini söylesin (liste + detay); test ·
+      ✅ 2026-10-14 · detay zaten doğruydu, liste düzeltildi
+- [x] P-030.3 — Satırda yazar; test · ✅ 2026-10-14 · yalnız başkasıysa;
+      636/636
 - [ ] P-030.4 — Tam süit, analyze; release derle, kablosuz kur, etiketle
 - [ ] P-030.5 — Kayıtlar ve push

@@ -105,3 +105,15 @@ ağa çıkma riski taşıdı. Kuyruk artık yalnız gönderdiği sayıyı dönd�
 yoklamayı arayüz katmanı (yoklama kapsamı, ayarlar düğmesi) tetikliyor.
 Ölü `pendingTasksProvider` silindi. 3 yeni test; 633/633, analyze temiz.
 
+### [12:18] Agent
+
+P-030.2-3: Detay ekranındaki şerit `for` alanını zaten doğru
+kullanıyordu; sorun listedeydi — çip durumun sabit etiketini basıyordu.
+Modelin yorumu bu ayrımı tarif ediyordu ama hiç uygulanmamıştı. Şimdi:
+başkasını bekleyen görevin çipi vurgusuz "@ad bekliyor", simgesi vurgu
+almıyor; "Seni bekliyor" yalnız `for` ben ya da boşken. `TaskSummary`'ye
+`author` eklendi (yerel kopyadan); satırda yalnız başkasıysa "· @ad".
+Sıralama değişmedi (Aşama 1'in "Bana" görünümü). 3 yeni widget testi;
+636/636, analyze temiz. Kod tabanı `dart format`'a uymuyor (139 dosyanın
+74'ü değişirdi) — biçimlendirici koşulmadı, üsluba uyuldu.
+

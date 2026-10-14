@@ -73,6 +73,7 @@ class TaskSummary {
     this.priority,
     this.category,
     this.waitingFor,
+    this.author,
   });
 
   /// Klasör listesindeki kayıttan üretir; görev dosyası değilse null
@@ -127,6 +128,10 @@ class TaskSummary {
   /// bekliyor" ile "başkasını bekliyor" ayrımı buna dayanıyor.
   final String? waitingFor;
 
+  /// Görevi açan kişinin kullanıcı adı (sözleşme 1.15). Yalnız cihazdaki
+  /// kopyadan okunmuş görevlerde dolu; listede "kim açtı" sorusunun cevabı.
+  final String? author;
+
   String get repoName => repoLabel ?? repoSlug ?? '';
 
   /// Bu bekleyen iş [login] kullanıcısını mı bekliyor? `for` yazılmamışsa
@@ -141,6 +146,7 @@ class TaskSummary {
     String? category,
     String? title,
     String? waitingFor,
+    String? author,
   }) =>
       TaskSummary(
         path: path,
@@ -154,6 +160,7 @@ class TaskSummary {
         priority: priority ?? this.priority,
         category: category ?? this.category,
         waitingFor: waitingFor ?? this.waitingFor,
+        author: author ?? this.author,
       );
 
   // Detay provider'ı bu nesneyi anahtar olarak kullanıyor: liste her

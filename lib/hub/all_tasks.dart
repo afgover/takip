@@ -335,6 +335,7 @@ Future<List<TaskSummary>> pendingFromStore(HubConfig connection) async {
       priority: fm.str('priority'),
       category: fm.str('category'),
       waitingFor: fm.str('for'),
+      author: fm.str('author'),
       title: (title != null && title.trim().isNotEmpty) ? title.trim() : null,
     ));
   }

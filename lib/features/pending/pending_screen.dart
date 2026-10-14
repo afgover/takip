@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../hub/all_tasks.dart';
+import '../../hub/hub_config.dart';
 import '../../hub/hub_sync.dart';
 import '../../hub/hub_watcher.dart';
 import '../../hub/models/task.dart';
@@ -36,6 +37,8 @@ class PendingScreen extends ConsumerWidget {
     final queued = ref.watch(queuedForActiveRepoProvider);
     final filter = ref.watch(taskFilterProvider);
     final order = ref.watch(taskOrderProvider);
+    // Liste yalnız aktif hubın; null slug aktif bağlantının kimliğine düşer.
+    final me = ref.watch(loginForRepoProvider(null));
     final reported =
         ref.watch(reportedWaitingProvider).valueOrNull?.keys.toSet() ??
             const <String>{};
@@ -78,7 +81,8 @@ class PendingScreen extends ConsumerWidget {
           Expanded(
             child: RefreshIndicator(
               onRefresh: refresh,
-              child: _list(context, ref, tasks, queued, filter, order, reported),
+              child: _list(
+                  context, ref, tasks, queued, filter, order, reported, me),
             ),
           ),
         ],
@@ -94,6 +98,7 @@ class PendingScreen extends ConsumerWidget {
     TaskFilter filter,
     TaskOrder order,
     Set<String> reported,
+    String? me,
   ) {
     return switch (tasks) {
       AsyncData(:final value) when value.isEmpty && queued.isEmpty =>
@@ -125,6 +130,7 @@ class PendingScreen extends ConsumerWidget {
                   ? _QueuedTile(draft: queued[i])
                   : _TaskTile(
                       task: shown[i - queued.length],
+                      me: me,
                       // Bildirilmiş bekleme listede **kalır** (B-135): app
                       // dosyayı `waiting/`ten taşıyamıyor (R-001) ve gizlemek,
                       // agent işlemezse sessiz kayıp demek olurdu (K-022).
@@ -171,9 +177,13 @@ class _Scrollable extends StatelessWidget {
 }
 
 class _TaskTile extends StatelessWidget {
-  const _TaskTile({required this.task, this.reported = false});
+  const _TaskTile({required this.task, this.me, this.reported = false});
 
   final TaskSummary task;
+
+  /// Bu cihazdaki kullanıcının bu hubdaki adı. Bekleyen iş başkasını
+  /// bekliyorsa "Seni bekliyor" demek yanlış olur (sözleşme 1.15, `for`).
+  final String? me;
 
   /// Bildirimi gönderilmiş bekleme (B-135). Yalnız `waiting/` için anlamlı:
   /// diğer durumlarda kullanıcıdan bir şey istenmiyor, dolayısıyla
@@ -182,9 +192,16 @@ class _TaskTile extends StatelessWidget {
 
   bool get _showsReported => reported && task.status.needsUser;
 
+  /// Başkasını bekleyen iş: görünür kalır ama vurgu almaz.
+  bool get _waitsForOther => task.status.needsUser && !task.waitsFor(me);
+
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
+    final date = _showsReported
+        ? L.of(context).pendingReportedSubtitle
+        : formatTaskDate(task.date) ?? task.fileName;
+    final author = task.author;
     return ListTile(
       leading: Icon(
         switch (task.status) {
@@ -194,15 +211,17 @@ class _TaskTile extends StatelessWidget {
         },
         // Bildirilmiş bekleme dikkat çekmeyi bırakır: vurgu rengi "senden bir
         // şey isteniyor" demek ve artık istenmiyor — sıra agent'ta.
-        color: task.status.needsUser && !reported ? colors.tertiary : null,
+        color: task.status.needsUser && !reported && !_waitsForOther
+            ? colors.tertiary
+            : null,
       ),
       title: Text(task.title),
       subtitle: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(_showsReported
-              ? L.of(context).pendingReportedSubtitle
-              : formatTaskDate(task.date) ?? task.fileName),
+          // Kendi açtığın görevde adını yazmak gürültü; başkasınınkinde
+          // "kim açtı" sorusunun tek cevabı bu.
+          Text(author != null && author != me ? '$date · @$author' : date),
           TaskTagRow(task: task),
         ],
       ),
@@ -212,7 +231,10 @@ class _TaskTile extends StatelessWidget {
       // dursaydı hangisinin geçerli olduğu okunmazdı.
       trailing: _showsReported
           ? const _ReportedBadge()
-          : TaskStatusChip(status: task.status),
+          : TaskStatusChip(
+              status: task.status,
+              waitingFor: _waitsForOther ? task.waitingFor : null,
+            ),
       onTap: () => Navigator.of(context).push(
         MaterialPageRoute<void>(
           builder: (_) => TaskDetailScreen(summary: task),
@@ -291,14 +313,21 @@ String? formatTaskDate(DateTime? date) {
 }
 
 class TaskStatusChip extends StatelessWidget {
-  const TaskStatusChip({super.key, required this.status});
+  const TaskStatusChip({super.key, required this.status, this.waitingFor});
 
   final TaskStatus status;
+
+  /// Bekleyen iş **başka birini** bekliyorsa onun adı; çip vurgusuz ve
+  /// "@ad bekliyor" der.
+  final String? waitingFor;
 
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
-    final (bg, fg) = switch (status) {
+    final other = status == TaskStatus.waiting ? waitingFor : null;
+    final (bg, fg) = other != null
+        ? (colors.surfaceContainerHighest, colors.onSurfaceVariant)
+        : switch (status) {
       TaskStatus.inbox => (
           colors.secondaryContainer,
           colors.onSecondaryContainer
@@ -326,7 +355,7 @@ class TaskStatusChip extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
       ),
       child: Text(
-        status.label,
+        other != null ? L.of(context).pendingWaitingForOther(other) : status.label,
         style: Theme.of(context).textTheme.labelSmall?.copyWith(color: fg),
       ),
     );

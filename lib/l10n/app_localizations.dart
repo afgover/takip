@@ -1423,6 +1423,12 @@ abstract class L {
   /// **'Bu iş {who} kullanıcısını bekliyor.'**
   String waitingForOther(String who);
 
+  /// No description provided for @pendingWaitingForOther.
+  ///
+  /// In tr, this message translates to:
+  /// **'@{who} bekliyor'**
+  String pendingWaitingForOther(String who);
+
   /// No description provided for @waitingQuestion.
   ///
   /// In tr, this message translates to:

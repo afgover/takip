@@ -788,6 +788,11 @@ class LTr extends L {
   }
 
   @override
+  String pendingWaitingForOther(String who) {
+    return '@$who bekliyor';
+  }
+
+  @override
   String get waitingQuestion =>
       'Agent bir cevap bekliyor. Seçimini işaretle; istersen açıklama da yazabilirsin.';
 

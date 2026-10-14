@@ -276,4 +276,60 @@ void main() {
       expect(find.text('Bildirildi'), findsNothing);
     });
   });
+
+  group('çoklu kullanıcı (sözleşme 1.15: for, author)', () {
+    Widget appAs(String login, List<TaskSummary> tasks) => ProviderScope(
+          overrides: [
+            hubConfigProvider.overrideWith(() => _LoginConfig(login)),
+            activeRepoPendingTasksProvider.overrideWith((ref) async => tasks),
+          ],
+          child: testApp(PendingScreen()),
+        );
+
+    testWidgets('başkasını bekleyen görev "Seni bekliyor" demez, kimi beklediğini söyler',
+        (tester) async {
+      await tester.pumpWidget(appAs('afgover', [
+        summary('2026-10-14-soru.md', TaskStatus.waiting)
+            .withContext(waitingFor: 'fatih'),
+      ]));
+      await tester.pumpAndSettle();
+
+      expect(find.text('@fatih bekliyor'), findsOneWidget);
+      expect(find.text('Seni bekliyor'), findsNothing);
+    });
+
+    testWidgets('seni ya da kimseyi belirtmeyen bekleyen görev "Seni bekliyor" der',
+        (tester) async {
+      await tester.pumpWidget(appAs('afgover', [
+        summary('2026-10-14-bana.md', TaskStatus.waiting)
+            .withContext(waitingFor: 'afgover'),
+        summary('2026-10-14-herkese.md', TaskStatus.waiting),
+      ]));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Seni bekliyor'), findsNWidgets(2));
+    });
+
+    testWidgets('yazar yalnız başkasıysa satırda görünür', (tester) async {
+      await tester.pumpWidget(appAs('afgover', [
+        summary('2026-10-14-fatihten.md', TaskStatus.inbox)
+            .withContext(author: 'fatih'),
+        summary('2026-10-14-benden.md', TaskStatus.inbox)
+            .withContext(author: 'afgover'),
+      ]));
+      await tester.pumpAndSettle();
+
+      expect(find.textContaining('@fatih'), findsOneWidget);
+      expect(find.textContaining('@afgover'), findsNothing);
+    });
+  });
+}
+
+class _LoginConfig extends HubConfigNotifier {
+  _LoginConfig(this.login);
+  final String login;
+
+  @override
+  Future<HubConfig?> build() async =>
+      HubConfig(owner: 'afgover', repo: 'takip', token: 't', login: login);
 }
