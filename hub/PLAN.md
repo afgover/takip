@@ -615,3 +615,19 @@ sırasıyla girer.
 - [x] P-028.6 — Kurulum doğrulaması (kullanıcı): takip "Sözleşme 1.33" ✓,
       bağlantı/token yerinde · ✅ 2026-09-29 ·
       [S-2026-09-29-apk-dogrulama](sessions/2026-09-29-apk-dogrulama/session.md)
+
+## P-029 — 1.36 (önce eşitle genel), iki denetim kontrolü, kablosuz kurulum
+- **Tarih:** 2026-10-14
+- **Kaynak:** [S-2026-10-14-apk-ve-denetim](sessions/2026-10-14-apk-ve-denetim/session.md)
+- **Durum:** acik
+- **İlgili:** [P-028](PLAN.md#P-028), [R-008](knowledge/rules.md#R-008)
+
+- [ ] P-029.1 — Sözleşme 1.36: "önce eşitle" §16'dan genel açılışa; EN;
+      EVOLUTION; uygulama sabiti 1.36; tam süit
+- [ ] P-029.2 — Dağıtılan APK izi: `apk/<tarih>-<sha>` etiketi; geçmiş üç
+      APK için geriye dönük etiket; `install.sh` kurunca etiketler
+- [ ] P-029.3 — `audit.sh` §12: son `apk/*` etiketindeki sabit SYSTEM.md ile
+      aynı mı; §13: sürüm satırına dokunmayan sözleşme commit'i (R-008)
+- [ ] P-029.4 — Release derle, imzayı kurulu sürümle karşılaştır, kablosuz
+      `adb install -r` (`tool/install.sh`), etiketle
+- [ ] P-029.5 — Kayıtlar ve push
