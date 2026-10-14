@@ -574,6 +574,37 @@
       }
     }
   },
+  "pendingViewTeam": "Ekip",
+  "pendingViewMine": "Bana",
+  "pendingViewAuthored": "Açtıklarım",
+  "pendingViewAgents": "Ajanlar",
+  "pendingHeldBy": "@{who} üstlendi",
+  "@pendingHeldBy": {
+    "placeholders": {
+      "who": {
+        "type": "String"
+      }
+    }
+  },
+  "pendingSectionMe": "Sen · @{who}",
+  "@pendingSectionMe": {
+    "placeholders": {
+      "who": {
+        "type": "String"
+      }
+    }
+  },
+  "pendingSectionUnowned": "Henüz kimsede değil",
+  "pendingViewEmptyTitle": "Bu görünümde görev yok",
+  "pendingViewEmptySubtitle": "Ekip görünümünde {count} görev var.",
+  "@pendingViewEmptySubtitle": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "pendingViewNeedsLogin": "Bu görünüm için bu bağlantının kullanıcı adı gerekiyor. Ayarlar → Repolar'dan ekleyebilirsin.",
   "waitingQuestion": "Agent bir cevap bekliyor. Seçimini işaretle; istersen açıklama da yazabilirsin.",
   "waitingWork": "Bu iş seni bekliyor. Ne beklendiği aşağıdaki notlarda yazılı; yaptıktan sonra agent'a haber ver.",
   "detailMultiHint": "Birden çok seçebilirsin.",

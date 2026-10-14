@@ -158,3 +158,14 @@ ben, sonra alfabetik, en sonda sahipsiz. Listede iki kişiden az varsa tek
 bölüm — tek kullanıcıda ekran bugünküyle aynı kalsın. Seçim cihazda
 saklanıyor. 5 birim testi.
 
+### [00:38] Agent
+
+P-031.2: Bekleyenler'in üstüne yatay kayan, sayılı görünüm seçici
+(Ekip/Bana/Açtıklarım/Ajanlar). Görünüm süzgeçten önce uygulanıyor;
+kuyruktaki taslaklar yalnız Ekip ve Açtıklarım'da. Ekip'te listede iki
+kişi varsa kişi başlıkları (Sen · @ad, @diğerleri, Henüz kimsede değil).
+Kişiye bağlı görünüm kimlik bilinmeden boşsa nedeni ve Ayarlar → Repolar
+yolu yazıyor. Çip genellendi: bekleyen iş başkasını bekliyorsa "@ad
+bekliyor", aktif işi başkası üstlendiyse "@ad üstlendi"; kimlik
+bilinmiyorsa kimse "başkası" sayılmıyor. 5 yeni widget testi.
+

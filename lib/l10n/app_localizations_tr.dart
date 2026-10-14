@@ -793,6 +793,43 @@ class LTr extends L {
   }
 
   @override
+  String get pendingViewTeam => 'Ekip';
+
+  @override
+  String get pendingViewMine => 'Bana';
+
+  @override
+  String get pendingViewAuthored => 'Açtıklarım';
+
+  @override
+  String get pendingViewAgents => 'Ajanlar';
+
+  @override
+  String pendingHeldBy(String who) {
+    return '@$who üstlendi';
+  }
+
+  @override
+  String pendingSectionMe(String who) {
+    return 'Sen · @$who';
+  }
+
+  @override
+  String get pendingSectionUnowned => 'Henüz kimsede değil';
+
+  @override
+  String get pendingViewEmptyTitle => 'Bu görünümde görev yok';
+
+  @override
+  String pendingViewEmptySubtitle(int count) {
+    return 'Ekip görünümünde $count görev var.';
+  }
+
+  @override
+  String get pendingViewNeedsLogin =>
+      'Bu görünüm için bu bağlantının kullanıcı adı gerekiyor. Ayarlar → Repolar\'dan ekleyebilirsin.';
+
+  @override
   String get waitingQuestion =>
       'Agent bir cevap bekliyor. Seçimini işaretle; istersen açıklama da yazabilirsin.';
 

@@ -323,11 +323,95 @@ void main() {
       expect(find.textContaining('@afgover'), findsNothing);
     });
   });
+  group('görünümler (Aşama 1)', () {
+    Widget appAs(String? login, List<TaskSummary> tasks) => ProviderScope(
+          overrides: [
+            hubConfigProvider.overrideWith(() => _LoginConfig(login)),
+            activeRepoPendingTasksProvider.overrideWith((ref) async => tasks),
+          ],
+          child: testApp(PendingScreen()),
+        );
+
+    final mixed = [
+      summary('2026-10-15-bana-soru.md', TaskStatus.waiting)
+          .withContext(createdBy: 'agent'),
+      summary('2026-10-15-fatih-soru.md', TaskStatus.waiting)
+          .withContext(waitingFor: 'fatih', createdBy: 'agent'),
+      summary('2026-10-15-benim-isim.md', TaskStatus.active)
+          .withContext(assignee: 'afgover'),
+      summary('2026-10-15-fatihin-isi.md', TaskStatus.active)
+          .withContext(assignee: 'fatih'),
+      summary('2026-10-15-yeni-fikir.md', TaskStatus.inbox)
+          .withContext(author: 'afgover', createdBy: 'user'),
+    ];
+
+    testWidgets('seçici dört görünümü sayılarıyla gösterir, varsayılan Ekip',
+        (tester) async {
+      await tester.pumpWidget(appAs('afgover', mixed));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Ekip (5)'), findsOneWidget);
+      expect(find.text('Bana (2)'), findsOneWidget);
+      expect(find.text('Açtıklarım (1)'), findsOneWidget);
+      expect(find.text('Ajanlar (2)'), findsOneWidget);
+      expect(find.text('Bana soru'), findsOneWidget);
+      expect(find.text('Fatihin isi'), findsOneWidget);
+    });
+
+    testWidgets('Bana yalnız beni bekleyeni ve bana atananı gösterir',
+        (tester) async {
+      await tester.pumpWidget(appAs('afgover', mixed));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Bana (2)'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Bana soru'), findsOneWidget);
+      expect(find.text('Benim isim'), findsOneWidget);
+      expect(find.text('Fatih soru'), findsNothing);
+      expect(find.text('Fatihin isi'), findsNothing);
+      expect(find.text('Yeni fikir'), findsNothing);
+    });
+
+    testWidgets('kimlik bilinmiyorsa Açtıklarım nedenini söyler', (tester) async {
+      await tester.pumpWidget(appAs(null, mixed));
+      await tester.pumpAndSettle();
+      await tester.tap(find.textContaining('Açtıklarım'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Bu görünümde görev yok'), findsOneWidget);
+      expect(find.textContaining("Ayarlar → Repolar"), findsOneWidget);
+    });
+
+    testWidgets('Ekip iki kişide kişiye göre bölünür; başkasının işi "üstlendi" der',
+        (tester) async {
+      await tester.pumpWidget(appAs('afgover', mixed));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Sen · @afgover'), findsOneWidget);
+      expect(find.text('@fatih'), findsOneWidget);
+      expect(find.text('Henüz kimsede değil'), findsOneWidget);
+      expect(find.text('@fatih üstlendi'), findsOneWidget);
+      expect(find.text('@fatih bekliyor'), findsOneWidget);
+    });
+
+    testWidgets('tek kişilik listede bölüm başlığı yok', (tester) async {
+      await tester.pumpWidget(appAs('afgover', [
+        summary('2026-10-15-benim-isim.md', TaskStatus.active)
+            .withContext(assignee: 'afgover'),
+        summary('2026-10-15-yeni-fikir.md', TaskStatus.inbox)
+            .withContext(author: 'afgover'),
+      ]));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Sen · @afgover'), findsNothing);
+      expect(find.text('Henüz kimsede değil'), findsNothing);
+    });
+  });
 }
 
 class _LoginConfig extends HubConfigNotifier {
   _LoginConfig(this.login);
-  final String login;
+  final String? login;
 
   @override
   Future<HubConfig?> build() async =>

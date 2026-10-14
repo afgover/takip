@@ -665,8 +665,8 @@ sırasıyla girer.
 - [x] P-031.1 — Model: özete `assignee` ve `created_by`; görünüm tanımları
       (Bana, Açtıklarım, Ekip, Ajanlar) ve kişiye göre grup anahtarı; test ·
       ✅ 2026-10-15 · bölümleme yalnız 2+ kişide
-- [ ] P-031.2 — Bekleyenler: sayılı görünüm seçici, seçim kalıcı; Ekip'te
-      kişiye göre bölümler; test
+- [x] P-031.2 — Bekleyenler: sayılı görünüm seçici, seçim kalıcı; Ekip'te
+      kişiye göre bölümler; test · ✅ 2026-10-15 · "@ad üstlendi" de eklendi
 - [ ] P-031.3 — Android paylaş hedefi: metin paylaşılınca Ekle sekmesi dolu
       açılır, gönderim kullanıcıda; yeni bağımlılık yok; test
 - [ ] P-031.4 — Tam süit, analyze; derle, kablosuz kur, etiketle; paylaş

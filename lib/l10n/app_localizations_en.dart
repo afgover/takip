@@ -801,6 +801,43 @@ class LEn extends L {
   }
 
   @override
+  String get pendingViewTeam => 'Team';
+
+  @override
+  String get pendingViewMine => 'Mine';
+
+  @override
+  String get pendingViewAuthored => 'Opened by me';
+
+  @override
+  String get pendingViewAgents => 'Agents';
+
+  @override
+  String pendingHeldBy(String who) {
+    return '@$who has it';
+  }
+
+  @override
+  String pendingSectionMe(String who) {
+    return 'You · @$who';
+  }
+
+  @override
+  String get pendingSectionUnowned => 'Not with anyone yet';
+
+  @override
+  String get pendingViewEmptyTitle => 'No tasks in this view';
+
+  @override
+  String pendingViewEmptySubtitle(int count) {
+    return 'The Team view has $count tasks.';
+  }
+
+  @override
+  String get pendingViewNeedsLogin =>
+      'This view needs this connection\'s username. You can add it in Settings → Repositories.';
+
+  @override
   String get waitingQuestion =>
       'The agent is waiting for an answer. Mark your choice; you can add a note if you like.';
 

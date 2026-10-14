@@ -361,6 +361,37 @@
       }
     }
   },
+  "pendingViewTeam": "Team",
+  "pendingViewMine": "Mine",
+  "pendingViewAuthored": "Opened by me",
+  "pendingViewAgents": "Agents",
+  "pendingHeldBy": "@{who} has it",
+  "@pendingHeldBy": {
+    "placeholders": {
+      "who": {
+        "type": "String"
+      }
+    }
+  },
+  "pendingSectionMe": "You · @{who}",
+  "@pendingSectionMe": {
+    "placeholders": {
+      "who": {
+        "type": "String"
+      }
+    }
+  },
+  "pendingSectionUnowned": "Not with anyone yet",
+  "pendingViewEmptyTitle": "No tasks in this view",
+  "pendingViewEmptySubtitle": "The Team view has {count} tasks.",
+  "@pendingViewEmptySubtitle": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "pendingViewNeedsLogin": "This view needs this connection's username. You can add it in Settings → Repositories.",
   "waitingQuestion": "The agent is waiting for an answer. Mark your choice; you can add a note if you like.",
   "waitingWork": "This work is waiting on you. What is expected is written in the notes below; tell the agent once it is done.",
   "detailMultiHint": "You can pick more than one.",

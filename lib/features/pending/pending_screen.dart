@@ -39,6 +39,7 @@ class PendingScreen extends ConsumerWidget {
     final order = ref.watch(taskOrderProvider);
     // Liste yalnız aktif hubın; null slug aktif bağlantının kimliğine düşer.
     final me = ref.watch(loginForRepoProvider(null));
+    final view = ref.watch(taskViewProvider);
     final reported =
         ref.watch(reportedWaitingProvider).valueOrNull?.keys.toSet() ??
             const <String>{};
@@ -77,12 +78,18 @@ class PendingScreen extends ConsumerWidget {
       ),
       body: Column(
         children: [
+          _ViewBar(
+            tasks: tasks.valueOrNull ?? const [],
+            queued: queued.length,
+            me: me,
+            selected: view,
+          ),
           const TaskToolbar(),
           Expanded(
             child: RefreshIndicator(
               onRefresh: refresh,
-              child: _list(
-                  context, ref, tasks, queued, filter, order, reported, me),
+              child: _list(context, ref, tasks, queued, filter, order,
+                  reported, me, view),
             ),
           ),
         ],
@@ -99,6 +106,7 @@ class PendingScreen extends ConsumerWidget {
     TaskOrder order,
     Set<String> reported,
     String? me,
+    TaskView view,
   ) {
     return switch (tasks) {
       AsyncData(:final value) when value.isEmpty && queued.isEmpty =>
@@ -111,38 +119,66 @@ class PendingScreen extends ConsumerWidget {
         ),
       AsyncData(:final value) => Builder(
           builder: (context) {
-            final shown = order.apply(value.where(filter.allows).toList());
-            if (shown.isEmpty && queued.isEmpty) {
+            final l = L.of(context);
+            final inView = value.where((t) => view.allows(t, me)).toList();
+            // Kuyruktaki taslaklar bu cihazdan, yani benden: yalnız "hepsi"
+            // ve "açtıklarım" görünümlerinde yerleri var.
+            final drafts = view == TaskView.team || view == TaskView.authored
+                ? queued
+                : const <TaskDraft>[];
+            final shown = order.apply(inView.where(filter.allows).toList());
+            if (shown.isEmpty && drafts.isEmpty) {
+              if (inView.isEmpty && view != TaskView.team) {
+                return _Scrollable(
+                  child: HubEmptyView(
+                    icon: Icons.people_outline,
+                    title: l.pendingViewEmptyTitle,
+                    subtitle: view.needsLogin && me == null
+                        ? l.pendingViewNeedsLogin
+                        : l.pendingViewEmptySubtitle(value.length),
+                  ),
+                );
+              }
               return _Scrollable(
                 child: HubEmptyView(
                   icon: Icons.filter_alt_off_outlined,
-                  title: L.of(context).pendingFilterEmptyTitle,
-                  subtitle:
-                      L.of(context).pendingFilterEmptySubtitle(value.length),
+                  title: l.pendingFilterEmptyTitle,
+                  subtitle: l.pendingFilterEmptySubtitle(inView.length),
                 ),
               );
             }
+
+            final sections = view == TaskView.team
+                ? sectionsByHolder(shown, me)
+                : [TaskSection(null, shown)];
+            final entries = <Object>[
+              ...drafts,
+              for (final section in sections) ...[
+                if (sections.length > 1) _SectionHeader(section.person),
+                ...section.tasks,
+              ],
+            ];
             return ListView.separated(
               key: listKey,
-              itemCount: queued.length + shown.length,
+              itemCount: entries.length,
               separatorBuilder: (_, __) => const Divider(height: 1),
-              itemBuilder: (context, i) => i < queued.length
-                  ? _QueuedTile(draft: queued[i])
-                  : _TaskTile(
-                      task: shown[i - queued.length],
-                      me: me,
-                      // Bildirilmiş bekleme listede **kalır** (B-135): app
-                      // dosyayı `waiting/`ten taşıyamıyor (R-001) ve gizlemek,
-                      // agent işlemezse sessiz kayıp demek olurdu (K-022).
-                      // Görünür kalıyor ama artık "senden bir şey isteniyor"
-                      // demiyor.
-                      reported: reported.contains(
-                        ReportedWaiting.keyFor(
-                          shown[i - queued.length].repoSlug,
-                          shown[i - queued.length].path,
-                        ),
-                      ),
+              itemBuilder: (context, i) => switch (entries[i]) {
+                TaskDraft draft => _QueuedTile(draft: draft),
+                _SectionHeader header => header,
+                final TaskSummary task => _TaskTile(
+                    task: task,
+                    me: me,
+                    // Bildirilmiş bekleme listede **kalır** (B-135): app
+                    // dosyayı `waiting/`ten taşıyamıyor (R-001) ve gizlemek,
+                    // agent işlemezse sessiz kayıp demek olurdu (K-022).
+                    // Görünür kalıyor ama artık "senden bir şey isteniyor"
+                    // demiyor.
+                    reported: reported.contains(
+                      ReportedWaiting.keyFor(task.repoSlug, task.path),
                     ),
+                  ),
+                _ => const SizedBox.shrink(),
+              },
             );
           },
         ),
@@ -176,6 +212,85 @@ class _Scrollable extends StatelessWidget {
       );
 }
 
+/// Görünüm seçici: dört görünüm, her birinin yanında kaç görev tuttuğu.
+/// Yatay kayıyor; dar ekranda dört etiket tek satıra sığmayabilir.
+class _ViewBar extends ConsumerWidget {
+  const _ViewBar({
+    required this.tasks,
+    required this.queued,
+    required this.me,
+    required this.selected,
+  });
+
+  final List<TaskSummary> tasks;
+  final int queued;
+  final String? me;
+  final TaskView selected;
+
+  static Key keyFor(TaskView view) => Key('task-view-${view.name}');
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l = L.of(context);
+    String label(TaskView v) => switch (v) {
+          TaskView.team => l.pendingViewTeam,
+          TaskView.mine => l.pendingViewMine,
+          TaskView.authored => l.pendingViewAuthored,
+          TaskView.agents => l.pendingViewAgents,
+        };
+    int count(TaskView v) =>
+        tasks.where((t) => v.allows(t, me)).length +
+        (v == TaskView.team || v == TaskView.authored ? queued : 0);
+
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      padding: const EdgeInsets.fromLTRB(12, 8, 12, 0),
+      child: Row(
+        children: [
+          for (final v in TaskView.values)
+            Padding(
+              padding: const EdgeInsets.only(right: 8),
+              child: ChoiceChip(
+                key: keyFor(v),
+                label: Text('${label(v)} (${count(v)})'),
+                selected: v == selected,
+                onSelected: (_) =>
+                    ref.read(taskViewProvider.notifier).select(v),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Ekip görünümünde kişi başlığı; yalnız listede iki kişi varken çizilir.
+class _SectionHeader extends ConsumerWidget {
+  const _SectionHeader(this.person);
+
+  final String? person;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l = L.of(context);
+    final me = ref.watch(loginForRepoProvider(null));
+    final text = switch (person) {
+      null => l.pendingSectionUnowned,
+      final p when p == me => l.pendingSectionMe(p),
+      final p => '@$p',
+    };
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 14, 16, 6),
+      child: Text(
+        text,
+        style: Theme.of(context).textTheme.labelLarge?.copyWith(
+              color: Theme.of(context).colorScheme.primary,
+            ),
+      ),
+    );
+  }
+}
+
 class _TaskTile extends StatelessWidget {
   const _TaskTile({required this.task, this.me, this.reported = false});
 
@@ -192,8 +307,13 @@ class _TaskTile extends StatelessWidget {
 
   bool get _showsReported => reported && task.status.needsUser;
 
-  /// Başkasını bekleyen iş: görünür kalır ama vurgu almaz.
-  bool get _waitsForOther => task.status.needsUser && !task.waitsFor(me);
+  /// İş başka birindeyse onun adı: bekleyen iş onu bekliyor ya da aktif işi o
+  /// üstlendi. Görünür kalır ama vurgu almaz. Kim olduğum bilinmiyorsa kimse
+  /// "başkası" sayılmaz (sözleşme 1.15: `for` yoksa herkes).
+  String? get _heldByOther {
+    final holder = holderOf(task);
+    return me != null && holder != null && holder != me ? holder : null;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -211,7 +331,7 @@ class _TaskTile extends StatelessWidget {
         },
         // Bildirilmiş bekleme dikkat çekmeyi bırakır: vurgu rengi "senden bir
         // şey isteniyor" demek ve artık istenmiyor — sıra agent'ta.
-        color: task.status.needsUser && !reported && !_waitsForOther
+        color: task.status.needsUser && !reported && _heldByOther == null
             ? colors.tertiary
             : null,
       ),
@@ -233,7 +353,7 @@ class _TaskTile extends StatelessWidget {
           ? const _ReportedBadge()
           : TaskStatusChip(
               status: task.status,
-              waitingFor: _waitsForOther ? task.waitingFor : null,
+              heldBy: _heldByOther,
             ),
       onTap: () => Navigator.of(context).push(
         MaterialPageRoute<void>(
@@ -313,18 +433,20 @@ String? formatTaskDate(DateTime? date) {
 }
 
 class TaskStatusChip extends StatelessWidget {
-  const TaskStatusChip({super.key, required this.status, this.waitingFor});
+  const TaskStatusChip({super.key, required this.status, this.heldBy});
 
   final TaskStatus status;
 
-  /// Bekleyen iş **başka birini** bekliyorsa onun adı; çip vurgusuz ve
-  /// "@ad bekliyor" der.
-  final String? waitingFor;
+  /// İş **başka birindeyse** onun adı; çip vurgusuz ve bekleyen işte
+  /// "@ad bekliyor", aktif işte "@ad üstlendi" der.
+  final String? heldBy;
 
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
-    final other = status == TaskStatus.waiting ? waitingFor : null;
+    final other = status == TaskStatus.waiting || status == TaskStatus.active
+        ? heldBy
+        : null;
     final (bg, fg) = other != null
         ? (colors.surfaceContainerHighest, colors.onSurfaceVariant)
         : switch (status) {
@@ -355,7 +477,11 @@ class TaskStatusChip extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
       ),
       child: Text(
-        other != null ? L.of(context).pendingWaitingForOther(other) : status.label,
+        other == null
+            ? status.label
+            : status == TaskStatus.waiting
+                ? L.of(context).pendingWaitingForOther(other)
+                : L.of(context).pendingHeldBy(other),
         style: Theme.of(context).textTheme.labelSmall?.copyWith(color: fg),
       ),
     );

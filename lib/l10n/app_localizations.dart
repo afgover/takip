@@ -1429,6 +1429,66 @@ abstract class L {
   /// **'@{who} bekliyor'**
   String pendingWaitingForOther(String who);
 
+  /// No description provided for @pendingViewTeam.
+  ///
+  /// In tr, this message translates to:
+  /// **'Ekip'**
+  String get pendingViewTeam;
+
+  /// No description provided for @pendingViewMine.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bana'**
+  String get pendingViewMine;
+
+  /// No description provided for @pendingViewAuthored.
+  ///
+  /// In tr, this message translates to:
+  /// **'Açtıklarım'**
+  String get pendingViewAuthored;
+
+  /// No description provided for @pendingViewAgents.
+  ///
+  /// In tr, this message translates to:
+  /// **'Ajanlar'**
+  String get pendingViewAgents;
+
+  /// No description provided for @pendingHeldBy.
+  ///
+  /// In tr, this message translates to:
+  /// **'@{who} üstlendi'**
+  String pendingHeldBy(String who);
+
+  /// No description provided for @pendingSectionMe.
+  ///
+  /// In tr, this message translates to:
+  /// **'Sen · @{who}'**
+  String pendingSectionMe(String who);
+
+  /// No description provided for @pendingSectionUnowned.
+  ///
+  /// In tr, this message translates to:
+  /// **'Henüz kimsede değil'**
+  String get pendingSectionUnowned;
+
+  /// No description provided for @pendingViewEmptyTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bu görünümde görev yok'**
+  String get pendingViewEmptyTitle;
+
+  /// No description provided for @pendingViewEmptySubtitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Ekip görünümünde {count} görev var.'**
+  String pendingViewEmptySubtitle(int count);
+
+  /// No description provided for @pendingViewNeedsLogin.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bu görünüm için bu bağlantının kullanıcı adı gerekiyor. Ayarlar → Repolar\'dan ekleyebilirsin.'**
+  String get pendingViewNeedsLogin;
+
   /// No description provided for @waitingQuestion.
   ///
   /// In tr, this message translates to:
