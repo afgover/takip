@@ -635,3 +635,18 @@ sırasıyla girer.
       `adb install -r` (`tool/install.sh`), etiketle · ✅ 2026-10-14 ·
       `fc20227`, `apk/2026-10-14-fc20227`; ilk kurulum tarihi değişmedi
 - [x] P-029.5 — Kayıtlar ve push · ✅ 2026-10-14
+
+## P-030 — Görev listesi Aşama 0: yenileme hatası, "kimi bekliyor", yazar
+- **Tarih:** 2026-10-14
+- **Kaynak:** [S-2026-10-14-coklu-kullanici-sync](sessions/2026-10-14-coklu-kullanici-sync/session.md)
+- **Durum:** acik
+- **İlgili:** [A-2026-10-14-001](artifacts/S-2026-10-14-coklu-kullanici-sync/coklu-kullanici-ve-sync.md) §4-5,
+  [B-110](BACKLOG.md#B-110), [R-001](knowledge/rules.md#R-001)
+
+- [ ] P-030.1 — Liste yenileme hatası: cevap ve çevrimdışı kuyruk sonrası
+      ekranın izlediği liste yenilensin; test
+- [ ] P-030.2 — "Seni bekliyor" yalnız `for` ben ya da boşken; başkasını
+      bekleyen görev kimi beklediğini söylesin (liste + detay); test
+- [ ] P-030.3 — Satırda yazar; test
+- [ ] P-030.4 — Tam süit, analyze; release derle, kablosuz kur, etiketle
+- [ ] P-030.5 — Kayıtlar ve push

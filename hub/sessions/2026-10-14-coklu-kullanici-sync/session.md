@@ -74,3 +74,17 @@ ekranı Bana/Açtıklarım/Ekip/Ajanlar görünümleri. Beş karar soruldu.
 numaraları (`**B-n**`) arıyor; takip'in BACKLOG'unda numaralar kalın değil,
 komut burada boş dönüyor. Ayrıca düzeltilecek.
 
+
+### [12:10] Kullanıcı
+
+> 1. fatih gover benim, sarraf projesinde su an 3 kisi dahil, ve bunu daha cok ilerisi icin vede diger kullanici/kullanim seneryolari icin istedim,3sohbet uygulamasi ayrica kullaniliyor, 4. yalniz inboxa yazma ile istediklerimizi yapabiliyorsak bu kurali bozmayalim,5basla
+
+### [12:10] Agent
+
+Kararlar: (1) "Fatih Gover" kullanıcının kendisi — ikinci kişi değil, o
+ortamın git kimliği bir GitHub hesabına bağlı değil; (2) sarraf projesinde
+3 kişi var, istek ilerisi ve başka kullanım senaryoları için; (3) sohbet
+için ayrı bir uygulama kullanılıyor — paylaş menüsü anlamlı; (4) R-001
+korunur: atama ve yorum yalnız inbox'a yeni dosya yazarak tasarlanacak
+(cevapların bugünkü modeli gibi); (5) Aşama 0 başlıyor. Plan
+[P-030](../../PLAN.md).
