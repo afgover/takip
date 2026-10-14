@@ -146,3 +146,15 @@ Aşama 1 (A-2026-10-14-001 §5): Bana / Açtıklarım / Ekip / Ajanlar
 görünümleri ve Android paylaş menüsü; sözleşme değişmiyor, R-001 korunuyor.
 Sarraf hub'ının yeri sorusu cevapsız kaldı; görünümler genel tanımla
 yapılıyor. Plan [P-031](../../PLAN.md).
+
+### [00:35] Agent
+
+P-031.1: `TaskSummary`'ye `assignee` ve `created_by` (yerel kopyadan).
+`TaskView`: Ekip (varsayılan, bugünkü liste), Bana (beni ya da herkesi
+bekleyen + bana atanmış aktif), Açtıklarım (yazarı ben; yazar ya da kimlik
+bilinmiyorsa almaz), Ajanlar (`created_by: agent`). `sectionsByHolder`:
+iş kimdeyse (bekleyen → `for`, aktif → `assignee`) ona göre bölüm; önce
+ben, sonra alfabetik, en sonda sahipsiz. Listede iki kişiden az varsa tek
+bölüm — tek kullanıcıda ekran bugünküyle aynı kalsın. Seçim cihazda
+saklanıyor. 5 birim testi.
+

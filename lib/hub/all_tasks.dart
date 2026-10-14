@@ -273,6 +273,113 @@ class TaskFilterNotifier extends Notifier<TaskFilter> {
   }
 }
 
+/// Bekleyenlerin "kimin işi" boyutu (A-2026-10-14-001 §4). Süzgeçten önce
+/// uygulanır; süzgeç ve sıralama her görünümde aynen çalışır.
+///
+/// [team] varsayılan ve bugünkü listenin aynısı: görünüm eklendi diye kimse
+/// açılışta eksik bir liste görmesin.
+enum TaskView {
+  team,
+  mine,
+  authored,
+  agents;
+
+  /// Kullanıcı adı bilinmeden anlamı olmayan görünümler.
+  bool get needsLogin => this == mine || this == authored;
+
+  bool allows(TaskSummary t, String? me) => switch (this) {
+        TaskView.team => true,
+        // Kimseyi belirtmeyen bekleme herkesi bekler (sözleşme 1.15), yani
+        // beni de; kişiye atanmış aktif iş yalnız sahibinin.
+        TaskView.mine => (t.status == TaskStatus.waiting && t.waitsFor(me)) ||
+            (t.status == TaskStatus.active && me != null && t.assignee == me),
+        TaskView.authored => me != null && t.author == me,
+        TaskView.agents => t.createdBy == 'agent',
+      };
+}
+
+/// İşin şu an kimde olduğu: bekleyen iş kimi bekliyorsa, aktif iş kim
+/// üstlendiyse. Gelen kutusu ve kişisi yazılmamış iş için null.
+String? holderOf(TaskSummary t) => switch (t.status) {
+      TaskStatus.waiting => t.waitingFor,
+      TaskStatus.active => t.assignee,
+      _ => null,
+    };
+
+/// Ekip görünümünde kişiye göre bölüm. [person] null = kimseye ait değil.
+class TaskSection {
+  const TaskSection(this.person, this.tasks);
+  final String? person;
+  final List<TaskSummary> tasks;
+}
+
+/// Görevleri iş kimdeyse ona göre böler: önce ben, sonra diğerleri alfabetik,
+/// en sonda kimseye ait olmayanlar. Bölüm içi sıra verilen listenin sırası.
+///
+/// Listede en az iki kişi yoksa **tek bölüm** döner: tek kullanıcılı hubda
+/// her görevin üstünde aynı adı taşıyan bir başlık bilgi değil gürültü olur.
+List<TaskSection> sectionsByHolder(List<TaskSummary> tasks, String? me) {
+  final people = <String>{
+    for (final t in tasks) ...[
+      if (holderOf(t) != null) holderOf(t)!,
+      if (t.author != null) t.author!,
+    ],
+  };
+  if (people.length < 2) return [TaskSection(null, tasks)];
+
+  final byPerson = <String?, List<TaskSummary>>{};
+  for (final t in tasks) {
+    byPerson.putIfAbsent(holderOf(t), () => []).add(t);
+  }
+  final named = byPerson.keys.whereType<String>().toList()
+    ..sort((a, b) {
+      if (a == me) return -1;
+      if (b == me) return 1;
+      return a.compareTo(b);
+    });
+  return [
+    for (final p in named) TaskSection(p, byPerson[p]!),
+    if (byPerson.containsKey(null)) TaskSection(null, byPerson[null]!),
+  ];
+}
+
+class TaskViewNotifier extends Notifier<TaskView> {
+  static const _key = 'task_view';
+
+  @override
+  TaskView build() {
+    unawaited(_restore());
+    return TaskView.team;
+  }
+
+  Future<void> _restore() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final name = prefs.getString(_key);
+      if (name == null) return;
+      // Tanınmayan değer varsayılana düşer: görünmeyen bir görünüm listeyi
+      // sessizce daraltmasın.
+      state = TaskView.values.firstWhere(
+        (v) => v.name == name,
+        orElse: () => TaskView.team,
+      );
+    } catch (_) {}
+  }
+
+  void select(TaskView view) {
+    state = view;
+    unawaited(() async {
+      try {
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString(_key, view.name);
+      } catch (_) {}
+    }());
+  }
+}
+
+final taskViewProvider =
+    NotifierProvider<TaskViewNotifier, TaskView>(TaskViewNotifier.new);
+
 /// Yolun bir görev dosyası olup olmadığı (dört durum klasöründen biri).
 /// Kullanıcının kendi notu mu? Not **görev değildir**: bekleyen işlerde
 /// görünmez, ama belgede işaretini taşır (sözleşme 1.9 §11).
@@ -336,6 +443,8 @@ Future<List<TaskSummary>> pendingFromStore(HubConfig connection) async {
       category: fm.str('category'),
       waitingFor: fm.str('for'),
       author: fm.str('author'),
+      assignee: fm.str('assignee'),
+      createdBy: fm.str('created_by'),
       title: (title != null && title.trim().isNotEmpty) ? title.trim() : null,
     ));
   }

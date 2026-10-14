@@ -662,8 +662,9 @@ sırasıyla girer.
 - **İlgili:** [A-2026-10-14-001](artifacts/S-2026-10-14-coklu-kullanici-sync/coklu-kullanici-ve-sync.md) §4-5,
   [P-030](PLAN.md#P-030), [R-001](knowledge/rules.md#R-001)
 
-- [ ] P-031.1 — Model: özete `assignee` ve `created_by`; görünüm tanımları
-      (Bana, Açtıklarım, Ekip, Ajanlar) ve kişiye göre grup anahtarı; test
+- [x] P-031.1 — Model: özete `assignee` ve `created_by`; görünüm tanımları
+      (Bana, Açtıklarım, Ekip, Ajanlar) ve kişiye göre grup anahtarı; test ·
+      ✅ 2026-10-15 · bölümleme yalnız 2+ kişide
 - [ ] P-031.2 — Bekleyenler: sayılı görünüm seçici, seçim kalıcı; Ekip'te
       kişiye göre bölümler; test
 - [ ] P-031.3 — Android paylaş hedefi: metin paylaşılınca Ekle sekmesi dolu

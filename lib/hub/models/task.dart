@@ -74,6 +74,8 @@ class TaskSummary {
     this.category,
     this.waitingFor,
     this.author,
+    this.assignee,
+    this.createdBy,
   });
 
   /// Klasör listesindeki kayıttan üretir; görev dosyası değilse null
@@ -132,6 +134,12 @@ class TaskSummary {
   /// kopyadan okunmuş görevlerde dolu; listede "kim açtı" sorusunun cevabı.
   final String? author;
 
+  /// Aktif işi üstlenen kişi (sözleşme 1.15, `assignee`).
+  final String? assignee;
+
+  /// Görevi açan rol: `user` ya da `agent` (`created_by`).
+  final String? createdBy;
+
   String get repoName => repoLabel ?? repoSlug ?? '';
 
   /// Bu bekleyen iş [login] kullanıcısını mı bekliyor? `for` yazılmamışsa
@@ -147,6 +155,8 @@ class TaskSummary {
     String? title,
     String? waitingFor,
     String? author,
+    String? assignee,
+    String? createdBy,
   }) =>
       TaskSummary(
         path: path,
@@ -161,6 +171,8 @@ class TaskSummary {
         category: category ?? this.category,
         waitingFor: waitingFor ?? this.waitingFor,
         author: author ?? this.author,
+        assignee: assignee ?? this.assignee,
+        createdBy: createdBy ?? this.createdBy,
       );
 
   // Detay provider'ı bu nesneyi anahtar olarak kullanıyor: liste her
