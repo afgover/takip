@@ -72,6 +72,13 @@ what*. The procedure holds whatever the session is about.
    - Handle them as the user instructs; move what you pick up to `active/`.
    - If the user opened a different subject, only report the inbox — do not
      process it on your own.
+   - **Event files** (`tags: [comment]` or `[assign]`, contract §4, v1.37)
+     are not tasks: they get no ID and are not taken up as work. They are
+     applied to their target and moved to `tasks/events/`. Since they carry
+     no decision they do not wait for the user's instruction — the one
+     exception to the item above — but they are reported separately from the
+     task count ("2 comments, 1 assignment applied"). If a comment asks the
+     agent for something, applying it is not enough; tell the user as well.
 3. Look at `BACKLOG.md` **selectively** (v1.28, Ö2): extract open items with
    `grep -nE '^- \[ \] (\*\*)?B-' BACKLOG.md` (v1.34: also catches backlogs
    that write the item number in bold, `- [ ] **B-123**`) — the whole file (~17k tokens) is not

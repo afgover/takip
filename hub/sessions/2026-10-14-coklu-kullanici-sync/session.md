@@ -217,3 +217,16 @@ Aşama 2: görev atama ve yorum, yalnız inbox'a yeni dosya yazarak (R-001
 korunuyor), sözleşme 1.37. Tasarımdan önce bugünkü "bekleyen soruya cevap"
 mekanizması inceleniyor — aynı ihtiyacı (var olan bir göreve inbox'tan
 bağlı kayıt) zaten karşılıyor.
+
+### [00:58] Agent
+
+P-032.1: Sözleşme 1.37. §4'e "Yorum ve atama — olay dosyaları": inbox'a
+yazılan `tags: [comment]`/`[assign]` dosyası, hedef `target` alanında dosya
+adıyla; ajan hedefe işler (`## Yorumlar` / `## Comments`, `assignee`;
+inbox'taki hedef active'e) ve olayı `tasks/events/`e arşivler, tek commit;
+app olayı işlenmesini beklemeden hedefe bindirir; aynı göreve birden çok
+atama varsa en yeni `created` geçerli. Klasör listesine `tasks/events/`.
+Protokol madde 2: olaylar görev değil, kullanıcı talimatı beklemeden
+işlenir (karar içermiyor) ama ayrı raporlanır; agent'tan bir şey isteyen
+yorum ayrıca söylenir. TR+EN, EVOLUTION, uygulama sabiti 1.37.
+

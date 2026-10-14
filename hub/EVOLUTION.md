@@ -1004,3 +1004,17 @@ işi, bitiş çizgisi değil. Bitiş çizgisi olsaydı aşama hiç kapanmazdı �
   `77bc7aa` sözleşme metnini sürüm satırına dokunmadan değiştirmişti
   (R-008). İkisi için `audit.sh`'a mekanik kontrol eklendi; dağıtılan APK
   artık `apk/<tarih>-<sha>` etiketiyle izleniyor.
+
+- 2026-10-15: Sözleşme [1.37](SYSTEM.md): **yorum ve atama — olay dosyaları**
+  ([P-032](PLAN.md#P-032), A-2026-10-14-001 Aşama 2). Kullanıcı kararı R-001'i
+  korumaktı: "yalnız inbox'a yazmayla istediklerimizi yapabiliyorsak bu
+  kuralı bozmayalım". Yapabiliyoruz — bekleyen soruya cevap zaten aynı
+  desendi. Yorum ve atama inbox'a yazılan olay dosyaları (`tags: [comment]`,
+  `[assign]`), hedef yeni `target` alanında **dosya adıyla** (klasör
+  değişince sabit, app'in açtığı görevin ID'si henüz yok). Ajan olayı hedefe
+  işler (`## Yorumlar`, `assignee`) ve `tasks/events/`e arşivler; app hiçbir
+  dosyayı değiştirmez, işlenmemiş olayları hedefin üstüne bindirir — yani
+  yorum ve atama ajan çalışmasa da ekipte anında görünür. Reddedilen:
+  app'e var olan dosyayı düzenleme izni (R-001 ve çakışmasız yazma kaybolur),
+  dış sohbet uygulaması (karar iki yerde yaşar), işlenmiş olayın `done/`a
+  gitmesi (Tamamlananlar listesi yorumlarla dolardı).

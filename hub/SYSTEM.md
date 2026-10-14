@@ -5,7 +5,7 @@ ve hangi şemaya uyacağını** tanımlar. Agent ve kullanıcı uygulaması bu s
 dışına çıkmaz. Sözleşme değişiklikleri `EVOLUTION.md`'ye kaydedilir ve bu dosyanın
 başındaki sürüm numarası artırılır.
 
-**Sözleşme sürümü:** 1.36
+**Sözleşme sürümü:** 1.37
 **Ana kopya (master):** `afgover/takip` → `hub/SYSTEM.md` (tr, **kanonik**) ·
 `hub/SYSTEM.en.md` (en)
 (bkz. §10 — her hub kendi kopyasını, kendi dilindeki varyanttan günceller)
@@ -304,6 +304,7 @@ tasks/inbox/     # yeni: kullanıcı (app) veya agent ekledi, henüz ele alınma
 tasks/active/    # agent ele aldı, üzerinde çalışılıyor
 tasks/waiting/   # agent kullanıcıyı bekliyor — top kullanıcıda (v1.4)
 tasks/done/      # tamamlandı (arşiv — silinmez)
+tasks/events/    # (v1.37) işlenmiş yorum ve atama olayları (arşiv — görev değil)
 ```
 
 > **`waiting/` neden var (v1.4, K-022):** Sözleşme 1.3'e kadar sistem yalnız
@@ -506,6 +507,51 @@ Agent bu bildirimi gördüğünde asıl görevi `waiting/` → `done/` taşır (
 devam ediyorsa `active/`e alır) ve bildirim görevini `done/`a kapatır.
 Bildirimin ayrı bir görev olmasının nedeni R-001: app'in yazma alanı tek
 klasördür ve bu garanti derleme zamanı sabitidir.
+
+### Yorum ve atama — olay dosyaları (v1.37)
+
+Birden çok kişi aynı hubda çalışırken iki şey gerekiyor: bir görev üzerine
+konuşmak ve bir işi birine vermek. App var olan dosyayı değiştiremez (R-001);
+ikisi de bekleyen soruya cevapla aynı yoldan, `tasks/inbox/`a yazılan yeni
+bir dosyayla — **olay dosyası** — yapılır. Olay bir görev değildir: listede
+görünmez, ID almaz, hedefine işlenir.
+
+```markdown
+---
+id: pending
+title: "Yorum: <hedef görevin başlığı>"
+created_by: user
+author: fatih
+tags: [comment]                      # ya da [assign]
+target: 2026-10-15-kira-odemesi.md   # hedef görevin dosya adı
+assignee: fatih                      # yalnız [assign]: işi kime veriyor
+...
+---
+
+## Yorum
+Ev sahibi IBAN'ı değiştirdi, yenisi notlarda.
+```
+
+- **`target` dosya adıdır; yol ya da ID değil.** Görev `inbox/`dan `active/`e
+  taşınınca yolu değişir, adı değişmez; app'in açtığı görevin ise henüz ID'si
+  yoktur. Alan isteğe bağlı ve yeni (R-008); bekleyen soruya cevaplar da
+  bundan sonra `target` taşır.
+- **Agent olayı hedefe işler ve arşivler, tek commit'te:**
+  - `comment`: hedef görevin sonundaki `## Yorumlar` bölümüne (yoksa açılır)
+    `### [YYYY-MM-DD HH:MM] @author` başlığı ve yorum metni eklenir. Saat
+    olayın `created` alanından alınır.
+  - `assign`: hedefin `assignee` alanı yazılır; hedef `inbox/`daysa
+    `active/`e taşınır.
+  - Olay dosyası `tasks/events/`e taşınır — `done/`a değil: Tamamlananlar
+    görevlerin listesidir, yorumlarla dolmamalı.
+  - Hedef bulunamazsa olay yine `tasks/events/`e taşınır, `result` alanına
+    nedeni yazılır ve kullanıcıya söylenir.
+- **App olayı işlenmesini beklemeden gösterir.** İşlenmemiş olaylar hedef
+  görevin üstüne bindirilir: yorum akışta, atama sorumlu olarak "işlenmeyi
+  bekliyor" işaretiyle. Ajan hiç çalışmasa da ekipteki herkes görür; ajanın
+  işi kaydı kalıcı ve tek yerde toplamak.
+- Aynı göreve birden çok atama olayı varsa geçerli olan, `created` tarihi en
+  yeni olandır.
 
 ### Belgeden seçilerek üretilen kayıtlar (v1.5, K-023)
 

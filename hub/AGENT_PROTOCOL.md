@@ -68,6 +68,12 @@ tanımlanır. Prosedür, oturumun konusu ne olursa olsun geçerlidir.
    - Yeni görev varsa kullanıcıya bildir ("inbox'ta N yeni görev var: ...").
    - Kullanıcının talimatına göre ele al; ele aldığını `active/`e taşı.
    - Kullanıcı farklı bir konu açtıysa inbox'ı sadece raporla, kendiliğinden işleme.
+   - **Olay dosyaları** (`tags: [comment]` ya da `[assign]`, sözleşme §4,
+     v1.37) görev değildir: ID verilmez, iş olarak ele alınmaz. Hedefe işlenir
+     ve `tasks/events/`e taşınır. Karar içermediği için kullanıcının
+     talimatını beklemez — yukarıdaki maddenin tek istisnası — ama görev
+     sayısından ayrı söylenir ("2 yorum, 1 atama işlendi"). Bir yorum
+     agent'tan bir şey istiyorsa işlemek yetmez; kullanıcıya ayrıca söylenir.
 3. `BACKLOG.md`'ye **seçici** bak (v1.28, Ö2): açık maddeler
    `grep -nE '^- \[ \] (\*\*)?B-' BACKLOG.md` ile çıkarılır (v1.34: madde
    numarası kalın yazılan backlog'lar da — `- [ ] **B-123**` — yakalanır) — dosyanın tamamı

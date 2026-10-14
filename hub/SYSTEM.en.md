@@ -7,7 +7,7 @@ named, and what schema it follows**. Neither the agent nor the user application
 steps outside it. Contract changes are recorded in `EVOLUTION.md` and the
 version number at the top of this file is incremented.
 
-**Contract version:** 1.36
+**Contract version:** 1.37
 **Master copy:** `afgover/takip` → `hub/SYSTEM.md` (Turkish) ·
 `hub/SYSTEM.en.md` (English)
 (see §10 — every hub updates its own copy from there)
@@ -318,6 +318,7 @@ tasks/inbox/     # new: added by the user (app) or the agent, not yet picked up
 tasks/active/    # the agent picked it up and is working on it
 tasks/waiting/   # the agent is waiting on the user — the ball is theirs (v1.4)
 tasks/done/      # finished (archive — never deleted)
+tasks/events/    # (v1.37) applied comment and assignment events (archive — not tasks)
 ```
 
 > **Why `waiting/` exists (v1.4, K-022):** Up to contract 1.3 the system only
@@ -527,6 +528,53 @@ When the agent sees this notification it moves the original task from
 the notification task into `done/`. The reason the notification is a separate
 task is R-001: the app's write area is a single folder, and that guarantee is a
 compile-time constant.
+
+### Comments and assignment — event files (v1.37)
+
+When several people work in one hub, two things are needed: talking about a
+task and giving a piece of work to someone. The app cannot change an existing
+file (R-001); both go the same way as the answer to a waiting question, as a
+new file written to `tasks/inbox/` — an **event file**. An event is not a
+task: it does not show in the list, gets no ID, and is applied to its target.
+
+```markdown
+---
+id: pending
+title: "Comment: <title of the target task>"
+created_by: user
+author: fatih
+tags: [comment]                      # or [assign]
+target: 2026-10-15-pay-the-rent.md   # file name of the target task
+assignee: fatih                      # [assign] only: who gets the work
+...
+---
+
+## Comment
+The landlord changed the IBAN; the new one is in the notes.
+```
+
+- **`target` is a file name, not a path or an ID.** When a task moves from
+  `inbox/` to `active/` its path changes but its name does not; a task opened
+  by the app has no ID yet. The field is optional and new (R-008); answers
+  to waiting questions carry `target` from now on as well.
+- **The agent applies the event to its target and archives it, in one
+  commit:**
+  - `comment`: append a `### [YYYY-MM-DD HH:MM] @author` heading and the
+    comment text to the `## Comments` section at the end of the target task
+    (create it if missing). The time comes from the event's `created`.
+  - `assign`: write the target's `assignee`; if the target is in `inbox/`,
+    move it to `active/`.
+  - Move the event file to `tasks/events/` — not `done/`: Done is the list of
+    tasks and should not fill up with comments.
+  - If the target cannot be found, the event still moves to `tasks/events/`,
+    the reason goes into its `result`, and the user is told.
+- **The app shows an event without waiting for it to be applied.** Unapplied
+  events are overlaid on their target task: a comment in the thread, an
+  assignment as the owner marked "waiting to be applied". Everyone on the
+  team sees it even if no agent runs; the agent's job is to make the record
+  permanent and keep it in one place.
+- If one task has several assignment events, the one with the latest
+  `created` wins.
 
 ### Records produced by selecting text in a document (v1.5, K-023)
 

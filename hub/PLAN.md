@@ -692,8 +692,9 @@ sırasıyla girer.
 > dosyayı değiştirmez; işlenmemiş olayları hedefin üstüne bindirir, yani
 > yorum ve atama ajan çalışmasa da anında görünür.
 
-- [ ] P-032.1 — Sözleşme 1.37: §4 olay dosyaları, `target`, `## Yorumlar`,
-      `tasks/events/`; protokol madde 2; TR+EN; EVOLUTION; uygulama sabiti
+- [x] P-032.1 — Sözleşme 1.37: §4 olay dosyaları, `target`, `## Yorumlar`,
+      `tasks/events/`; protokol madde 2; TR+EN; EVOLUTION; uygulama sabiti ·
+      ✅ 2026-10-15
 - [ ] P-032.2 — Model: olay taslakları; özette `tags`/`target`; listeden
       olaylar çıkar, hedefe bekleyen atama ve yorum sayısı biner; test
 - [ ] P-032.3 — Detay: yorum akışı (işlenmiş + bekleyen), yorum yazma
