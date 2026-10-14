@@ -192,3 +192,17 @@ derleniyor. Kurulum yapılamadı: telefon adb'de görünmüyor, ağda kablosuz
 hata ayıklama ilanı yok (kapanmış). Kullanıcıdan telefonda kablosuz hata
 ayıklamayı açması istendi; alternatif olarak Drive yolu önerildi.
 
+### [00:48] Kullanıcı
+
+> açtım, kur
+
+### [00:48] Agent
+
+Telefon kablosuz adb'de yeniden göründü. Kurulu APK'nın imzası önceden
+ölçüldü (`f4994730…`, aynı). `tool/install.sh` derledi (`ebcab36`) ve
+yerinde kurdu ("Success"); etiket `apk/2026-10-15-ebcab36` push'landı.
+Doğrulama: paket yöneticisi takip'i `ACTION_SEND`/`text/plain` hedefi olarak
+listeliyor; `firstInstallTime` hâlâ 2026-08-01 (kaldırılmadı); denetim §12
+son dağıtımı doğru görüyor. P-031 tamamlandı. Kullanıcıdan bir sohbetten
+mesaj paylaşarak denemesi istendi.
+

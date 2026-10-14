@@ -658,7 +658,7 @@ sırasıyla girer.
 ## P-031 — Görev ekranı Aşama 1: kişiye göre görünümler, paylaş menüsü
 - **Tarih:** 2026-10-15
 - **Kaynak:** [S-2026-10-14-coklu-kullanici-sync](sessions/2026-10-14-coklu-kullanici-sync/session.md)
-- **Durum:** acik
+- **Durum:** tamamlandi
 - **İlgili:** [A-2026-10-14-001](artifacts/S-2026-10-14-coklu-kullanici-sync/coklu-kullanici-ve-sync.md) §4-5,
   [P-030](PLAN.md#P-030), [R-001](knowledge/rules.md#R-001)
 
@@ -670,8 +670,8 @@ sırasıyla girer.
 - [x] P-031.3 — Android paylaş hedefi: metin paylaşılınca Ekle sekmesi dolu
       açılır, gönderim kullanıcıda; yeni bağımlılık yok; test · ✅ 2026-10-15 ·
       singleTask; SEC-019; 654/654
-- [ ] P-031.4 — Tam süit, analyze; derle, kablosuz kur, etiketle; paylaş
-      hedefinin sistemde kayıtlı olduğunu doğrula · 2026-10-15: süit ve
-      derleme tamam (`ca17ae9`, manifest'te SEND + singleTask); kurulum
-      bekliyor — telefonda kablosuz hata ayıklama kapalı
-- [ ] P-031.5 — Kayıtlar ve push
+- [x] P-031.4 — Tam süit, analyze; derle, kablosuz kur, etiketle; paylaş
+      hedefinin sistemde kayıtlı olduğunu doğrula · ✅ 2026-10-15 ·
+      `apk/2026-10-15-ebcab36`; paket yöneticisi takip'i SEND hedefi olarak
+      listeliyor; ilk kurulum tarihi değişmedi
+- [x] P-031.5 — Kayıtlar ve push · ✅ 2026-10-15
