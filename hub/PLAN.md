@@ -619,7 +619,7 @@ sırasıyla girer.
 ## P-029 — 1.36 (önce eşitle genel), iki denetim kontrolü, kablosuz kurulum
 - **Tarih:** 2026-10-14
 - **Kaynak:** [S-2026-10-14-apk-ve-denetim](sessions/2026-10-14-apk-ve-denetim/session.md)
-- **Durum:** acik
+- **Durum:** tamamlandi
 - **İlgili:** [P-028](PLAN.md#P-028), [R-008](knowledge/rules.md#R-008)
 
 - [x] P-029.1 — Sözleşme 1.36: "önce eşitle" §16'dan genel açılışa; EN;
@@ -631,6 +631,7 @@ sırasıyla girer.
       aynı mı; §13: sürüm satırına dokunmayan sözleşme commit'i (R-008) ·
       ✅ 2026-10-14 · §12 şu an bulgu veriyor (APK 1.33); §13 yürürlük
       bugün, geçmiş ölçümü 2 ihlal (`77bc7aa`, `b3dfbb6`)
-- [ ] P-029.4 — Release derle, imzayı kurulu sürümle karşılaştır, kablosuz
-      `adb install -r` (`tool/install.sh`), etiketle
-- [ ] P-029.5 — Kayıtlar ve push
+- [x] P-029.4 — Release derle, imzayı kurulu sürümle karşılaştır, kablosuz
+      `adb install -r` (`tool/install.sh`), etiketle · ✅ 2026-10-14 ·
+      `fc20227`, `apk/2026-10-14-fc20227`; ilk kurulum tarihi değişmedi
+- [x] P-029.5 — Kayıtlar ve push · ✅ 2026-10-14

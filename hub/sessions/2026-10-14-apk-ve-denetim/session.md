@@ -1,7 +1,7 @@
 ---
 id: S-2026-10-14-apk-ve-denetim
 date: 2026-10-14
-status: open
+status: closed
 reconstructed: false
 author: afgover
 topics: [apk, denetim, sozlesme, r-008, kablosuz-kurulum]
@@ -13,15 +13,21 @@ tasks_touched: []
 
 ## Özet
 
-*(oturum açık — kapanışta yazılacak)*
+Önceki incelemenin üç önerisi uygulandı. Sözleşme 1.36: "önce eşitle" her
+hub için (protokol açılışı; §16 işaretçi). Dağıtılan APK artık
+`apk/<tarih>-<sha>` etiketiyle izleniyor (geçmiş üç APK geriye dönük;
+`install.sh` kurunca etiketliyor); `audit.sh` §12 son etiketteki sabiti
+ölçüyor, yeni §13 sürümsüz sözleşme değişikliğini (R-008) yakalıyor. APK
+`fc20227` (sözleşme 1.36) kablosuz adb ile telefona kuruldu; imza önceden
+ölçüldü, ilk kurulum tarihi (2026-08-01) değişmedi — veri yerinde.
 
 ## Kayıt
 
-### [10:30] Kullanıcı
+### [10:15] Kullanıcı
 
 > hepsini yap wifi uzerinden kur
 
-### [10:33] Agent
+### [10:19] Agent
 
 Önceki oturumdaki üç öneri onaylandı: (1) APK derle ve kur — kullanıcı
 Drive yerine **kablosuz adb** ile kurulmasını istedi; telefon (SM-F731B)
@@ -31,7 +37,7 @@ eşitle"yi tüm hub'lara genelleştir (1.36). Sıra önemli: sabit 1.36 olacağ�
 için APK sözleşme değişikliğinden **sonra** derlenir. Plan
 [P-029](../../PLAN.md).
 
-### [10:45] Agent
+### [10:21] Agent
 
 Sözleşme 1.36: "önce eşitle" protokolün açılış bölümünün başına genel blok
 olarak yazıldı (TR+EN); §16 alt başlığı ve Projects maddesi işaretçiye
@@ -39,7 +45,7 @@ indi — kural tek yerde. Ek gerekçe: telefon uygulaması GitHub'a yazdığı i
 her hubın yerel kopyası geride kalabilir. Uygulama sabiti 1.36; tam süit
 630/630. EVOLUTION notu yazıldı.
 
-### [11:15] Agent
+### [10:24] Agent
 
 Dağıtım izi: geçmiş üç APK commit'ine `apk/<tarih>-<sha>` etiketi kondu
 (sabitleri 1.26, 1.29, 1.33). `tool/install.sh` bu çağrıda derlenmiş bir
@@ -57,4 +63,19 @@ Edit aracıyla düzeltildi. Önlem: çok satırlı kod değişikliği Edit arac�
 script'li her düzenlemeden sonra diff. (2) §13'te `--since=2026-10-14`
 saatsiz tarih git'te "bugünün şimdiki saati" demek; bugünkü commit
 görünmedi, `T00:00:00` eklendi.
+
+### [10:26] Agent
+
+Kurulum: kurulu APK cihazdan çekildi, imza SHA-1'i (`f4994730…`) yerel debug
+anahtarıyla aynı ölçüldü. `tool/install.sh` derledi (`fc20227`) ve
+kablosuz adb ile yerinde kurdu ("Success"); etiket `apk/2026-10-14-fc20227`
+push'landı. Cihazda `lastUpdateTime=10:25:47`, `firstInstallTime` hâlâ
+2026-08-01 — uygulama hiç kaldırılmadı. `audit.sh` §12 ✓ (kaynak ve
+dağıtılan APK 1.36), §13 ✓. APK makineden buluta çıkmadı (yerel ağ), SEC
+kaydı gerekmedi.
+**Saat düzeltmesi:** bu oturumdaki ilk dört başlık tahminle yazılmıştı
+(10:30-11:15); commit saatlerinden düzeltildi. Kapanmış
+S-2026-10-09-son-durum'daki son başlık da (10:25) gerçekte 10:14'tü;
+kapanmış oturum değiştirilmediği için burada not edildi. Önlem: kayıt
+başlığına saat `date`'ten alınır, tahmin edilmez (L-052).
 
