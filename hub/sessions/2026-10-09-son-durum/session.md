@@ -37,3 +37,15 @@ Hub sürümleri GitHub'dan okundu (2026-09-29'daki taramaya göre):
 - Hareketsiz ve geride: vault 1.31 (son commit 09-19), din 1.29, money
   1.26, takip-demo 1.26, taskr 1.25, power 1.24.
 - fastpdfreader_takip boş repo; takip-site hub değil.
+
+### [2026-10-14 10:05] Kullanıcı
+
+> son guncellemeyi kontrol edermisin
+
+### [2026-10-14 10:08] Agent
+
+Son oturumdan sonra başka bir ortamdan dört commit gelmiş: `bfa164f`
+(1.33 → 1.34, Claude Projects §16), `a180206` (araç düzeltmeleri),
+`77bc7aa` (yine "1.34" — açılışta önce eşitle), `da7fae2` (1.35, devam
+oturumu). "Son güncelleme" bu sözleşme değişiklikleri olarak anlaşıldı;
+inceleme başladı.
