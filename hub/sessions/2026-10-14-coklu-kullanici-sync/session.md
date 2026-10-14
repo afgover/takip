@@ -206,3 +206,14 @@ listeliyor; `firstInstallTime` hâlâ 2026-08-01 (kaldırılmadı); denetim §12
 son dağıtımı doğru görüyor. P-031 tamamlandı. Kullanıcıdan bir sohbetten
 mesaj paylaşarak denemesi istendi.
 
+
+### [00:55] Kullanıcı
+
+> aşama 2'ye başla
+
+### [00:55] Agent
+
+Aşama 2: görev atama ve yorum, yalnız inbox'a yeni dosya yazarak (R-001
+korunuyor), sözleşme 1.37. Tasarımdan önce bugünkü "bekleyen soruya cevap"
+mekanizması inceleniyor — aynı ihtiyacı (var olan bir göreve inbox'tan
+bağlı kayıt) zaten karşılıyor.
