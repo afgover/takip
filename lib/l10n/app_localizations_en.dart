@@ -1117,4 +1117,58 @@ class LEn extends L {
     );
     return '$_temp0';
   }
+
+  @override
+  String detailCommentsTitle(int count) {
+    return 'Comments ($count)';
+  }
+
+  @override
+  String get detailNoComments => 'No comments yet.';
+
+  @override
+  String get detailCommentHint => 'Write a comment…';
+
+  @override
+  String get detailCommentSend => 'Send';
+
+  @override
+  String get detailCommentPending => 'not yet applied';
+
+  @override
+  String get detailCommentQueued => 'waiting to be sent';
+
+  @override
+  String get detailCommentSent => 'Comment sent.';
+
+  @override
+  String detailOwner(String who) {
+    return 'Owner: @$who';
+  }
+
+  @override
+  String get detailNoOwner => 'No owner';
+
+  @override
+  String get detailOwnerPending => 'not yet applied';
+
+  @override
+  String get detailTakeOver => 'Take it';
+
+  @override
+  String get detailAssign => 'Assign…';
+
+  @override
+  String get detailAssignTitle => 'Give it to whom?';
+
+  @override
+  String get detailAssignHint => 'GitHub username';
+
+  @override
+  String get detailAssignInvalid => 'Enter a valid GitHub username.';
+
+  @override
+  String detailAssignSent(String who) {
+    return 'Assignment to @$who sent.';
+  }
 }

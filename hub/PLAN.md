@@ -698,7 +698,8 @@ sırasıyla girer.
 - [x] P-032.2 — Model: olay taslakları; özette `tags`/`target`; listeden
       olaylar çıkar, hedefe bekleyen atama ve yorum sayısı biner; test ·
       ✅ 2026-10-15 · 663/663
-- [ ] P-032.3 — Detay: yorum akışı (işlenmiş + bekleyen), yorum yazma
-      (çevrimdışı kuyruk dahil), Üstlen ve Ata; test
+- [x] P-032.3 — Detay: yorum akışı (işlenmiş + bekleyen), yorum yazma
+      (çevrimdışı kuyruk dahil), Üstlen ve Ata; test · ✅ 2026-10-15 ·
+      5 widget testi; Ata penceresinde kapanış hatası testte yakalandı
 - [ ] P-032.4 — `acilis.sh`: inbox'ta görev ve olay ayrı sayılır
 - [ ] P-032.5 — Tam süit; derle, kablosuz kur, etiketle; kayıtlar

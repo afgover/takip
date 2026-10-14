@@ -513,5 +513,42 @@
         "type": "int"
       }
     }
+  },
+  "detailCommentsTitle": "Comments ({count})",
+  "@detailCommentsTitle": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "detailNoComments": "No comments yet.",
+  "detailCommentHint": "Write a comment…",
+  "detailCommentSend": "Send",
+  "detailCommentPending": "not yet applied",
+  "detailCommentQueued": "waiting to be sent",
+  "detailCommentSent": "Comment sent.",
+  "detailOwner": "Owner: @{who}",
+  "@detailOwner": {
+    "placeholders": {
+      "who": {
+        "type": "String"
+      }
+    }
+  },
+  "detailNoOwner": "No owner",
+  "detailOwnerPending": "not yet applied",
+  "detailTakeOver": "Take it",
+  "detailAssign": "Assign…",
+  "detailAssignTitle": "Give it to whom?",
+  "detailAssignHint": "GitHub username",
+  "detailAssignInvalid": "Enter a valid GitHub username.",
+  "detailAssignSent": "Assignment to @{who} sent.",
+  "@detailAssignSent": {
+    "placeholders": {
+      "who": {
+        "type": "String"
+      }
+    }
   }
 }

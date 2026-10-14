@@ -491,6 +491,20 @@ List<TaskSummary> applyEvents(List<TaskSummary> tasks, List<TaskEvent> events) {
   ];
 }
 
+/// Detay ekranı için: görevin bekleyen olayları. Senkron yeni dosya
+/// indirince kendiliğinden tazelenir.
+final taskEventsProvider = FutureProvider.autoDispose
+    .family<List<TaskEvent>, TaskSummary>((ref, summary) async {
+  ref.watch(hubSyncProvider.select((s) => s.version));
+  final connections = ref.watch(hubConnectionsProvider).valueOrNull;
+  final connection = (summary.repoSlug == null
+          ? null
+          : connections?.bySlug(summary.repoSlug!)) ??
+      ref.watch(hubConfigProvider).value;
+  if (connection == null) return const [];
+  return eventsFor(connection, summary.fileName);
+});
+
 /// Bir görevi hedefleyen işlenmemiş olaylar (detay ekranının yorum akışı ve
 /// bekleyen atama). Yerel kopyadan, ağa çıkmadan.
 Future<List<TaskEvent>> eventsFor(HubConfig connection, String fileName) async {

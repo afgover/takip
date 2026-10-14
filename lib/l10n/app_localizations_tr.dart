@@ -1105,4 +1105,58 @@ class LTr extends L {
   String pendingCommentCount(int count) {
     return '$count yorum';
   }
+
+  @override
+  String detailCommentsTitle(int count) {
+    return 'Yorumlar ($count)';
+  }
+
+  @override
+  String get detailNoComments => 'Henüz yorum yok.';
+
+  @override
+  String get detailCommentHint => 'Yorum yaz…';
+
+  @override
+  String get detailCommentSend => 'Gönder';
+
+  @override
+  String get detailCommentPending => 'işlenmeyi bekliyor';
+
+  @override
+  String get detailCommentQueued => 'gönderilmeyi bekliyor';
+
+  @override
+  String get detailCommentSent => 'Yorum gönderildi.';
+
+  @override
+  String detailOwner(String who) {
+    return 'Sorumlu: @$who';
+  }
+
+  @override
+  String get detailNoOwner => 'Sorumlu yok';
+
+  @override
+  String get detailOwnerPending => 'işlenmeyi bekliyor';
+
+  @override
+  String get detailTakeOver => 'Üstlen';
+
+  @override
+  String get detailAssign => 'Ata…';
+
+  @override
+  String get detailAssignTitle => 'Kime verilsin?';
+
+  @override
+  String get detailAssignHint => 'GitHub kullanıcı adı';
+
+  @override
+  String get detailAssignInvalid => 'Geçerli bir GitHub kullanıcı adı yaz.';
+
+  @override
+  String detailAssignSent(String who) {
+    return '@$who için atama gönderildi.';
+  }
 }

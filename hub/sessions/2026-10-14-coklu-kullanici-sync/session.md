@@ -245,3 +245,17 @@ kişiye ait sayılıyor (`effectiveAssignee`; Bana görünümü de öyle). Satı
 olurdu, §13): olaylar `task(pending): …` ile yazılıyor. 9 yeni test;
 663/663.
 
+### [01:09] Agent
+
+P-032.3: Detay ekranı. Rozetlerin altında "Sorumlu: @ad" (bekleyen atama
+varsa "işlenmeyi bekliyor"), "Üstlen" (sorumlu ben değilsem) ve "Ata…"
+(hubda geçen kişiler öneri, serbest yazım da var; GitHub ad kuralıyla
+doğrulanıyor). Belgenin altında yorum akışı: işlenmiş (`## Yorumlar`),
+işlenmeyi bekleyen (inbox olayı) ve gönderilmeyi bekleyen (kuyruk)
+yorumlar, saat yerel gösteriliyor; altta yazma kutusu. Belgedeki
+`## Yorumlar` bölümü gövdeden çıkarılıyor (iki kez görünmesin). Gönderim
+görevin kendi reposuna, ağ yoksa kuyruğa. Testte yakalanan hata: "Ata"
+penceresinin metin denetleyicisi pencere döner dönmez siliniyordu, kapanma
+animasyonu onu hâlâ kullanıyordu; pencere kendi ömrünü yöneten ayrı bir
+widget oldu. 5 widget testi; tam süit geçti.
+

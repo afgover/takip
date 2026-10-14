@@ -16,7 +16,9 @@ import '../../l10n/app_localizations.dart';
 import '../common/annotated_document.dart';
 import '../common/hub_error_view.dart';
 import '../common/hub_link_nav.dart';
+import '../../hub/models/task_event.dart';
 import 'pending_screen.dart' show TaskStatusChip;
+import 'task_collab.dart';
 
 /// Görev detayı — dosya ancak bu ekran açılınca indirilir (B-031).
 class TaskDetailScreen extends ConsumerWidget {
@@ -99,6 +101,9 @@ class _TaskBody extends StatelessWidget {
               _MetaChip(icon: Icons.sell_outlined, text: tag),
           ],
         ),
+        const SizedBox(height: 8),
+        // Sözleşme 1.37: kim üstlendi, kime verilsin.
+        TaskOwnerRow(task: task, summary: summary),
         if (task.hasResult) ...[
           const SizedBox(height: 16),
           Container(
@@ -128,7 +133,8 @@ class _TaskBody extends StatelessWidget {
         const SizedBox(height: 8),
         const Divider(),
         AnnotatedDocument(
-          data: task.body,
+          // Yorumlar aşağıdaki akışta; belgede ikinci kez görünmesinler.
+          data: withoutComments(task.body),
           sourcePath: task.path,
           padding: const EdgeInsets.only(top: 8),
           // Görev gövdesi plana, backlog maddesine ya da güvenlik kaydına
@@ -141,6 +147,8 @@ class _TaskBody extends StatelessWidget {
             repoSlug: summary.repoSlug,
           ),
         ),
+        const SizedBox(height: 8),
+        TaskThread(task: task, summary: summary),
       ],
     );
   }

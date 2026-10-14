@@ -151,5 +151,22 @@ List<TaskComment> parseComments(String body) {
   return comments;
 }
 
+/// Gövdeden `## Yorumlar` bölümünü çıkarır: detay ekranı yorumları kendi
+/// akışında gösteriyor, belgede ikinci kez görünmesinler.
+String withoutComments(String body) {
+  final lines = body.split('\n');
+  final start = lines.indexWhere(
+      (l) => l.startsWith('## ') && _commentsHeadings.contains(l.substring(3).trim()));
+  if (start < 0) return body;
+  var end = lines.length;
+  for (var i = start + 1; i < lines.length; i++) {
+    if (lines[i].startsWith('## ')) {
+      end = i;
+      break;
+    }
+  }
+  return [...lines.sublist(0, start), ...lines.sublist(end)].join('\n').trimRight();
+}
+
 /// Bir görev dosyasında kaç işlenmiş yorum var — liste satırı için ucuz sayım.
 int countComments(String body) => parseComments(body).length;

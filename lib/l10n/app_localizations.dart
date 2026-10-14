@@ -1992,6 +1992,102 @@ abstract class L {
   /// In tr, this message translates to:
   /// **'{count} yorum'**
   String pendingCommentCount(int count);
+
+  /// No description provided for @detailCommentsTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Yorumlar ({count})'**
+  String detailCommentsTitle(int count);
+
+  /// No description provided for @detailNoComments.
+  ///
+  /// In tr, this message translates to:
+  /// **'Henüz yorum yok.'**
+  String get detailNoComments;
+
+  /// No description provided for @detailCommentHint.
+  ///
+  /// In tr, this message translates to:
+  /// **'Yorum yaz…'**
+  String get detailCommentHint;
+
+  /// No description provided for @detailCommentSend.
+  ///
+  /// In tr, this message translates to:
+  /// **'Gönder'**
+  String get detailCommentSend;
+
+  /// No description provided for @detailCommentPending.
+  ///
+  /// In tr, this message translates to:
+  /// **'işlenmeyi bekliyor'**
+  String get detailCommentPending;
+
+  /// No description provided for @detailCommentQueued.
+  ///
+  /// In tr, this message translates to:
+  /// **'gönderilmeyi bekliyor'**
+  String get detailCommentQueued;
+
+  /// No description provided for @detailCommentSent.
+  ///
+  /// In tr, this message translates to:
+  /// **'Yorum gönderildi.'**
+  String get detailCommentSent;
+
+  /// No description provided for @detailOwner.
+  ///
+  /// In tr, this message translates to:
+  /// **'Sorumlu: @{who}'**
+  String detailOwner(String who);
+
+  /// No description provided for @detailNoOwner.
+  ///
+  /// In tr, this message translates to:
+  /// **'Sorumlu yok'**
+  String get detailNoOwner;
+
+  /// No description provided for @detailOwnerPending.
+  ///
+  /// In tr, this message translates to:
+  /// **'işlenmeyi bekliyor'**
+  String get detailOwnerPending;
+
+  /// No description provided for @detailTakeOver.
+  ///
+  /// In tr, this message translates to:
+  /// **'Üstlen'**
+  String get detailTakeOver;
+
+  /// No description provided for @detailAssign.
+  ///
+  /// In tr, this message translates to:
+  /// **'Ata…'**
+  String get detailAssign;
+
+  /// No description provided for @detailAssignTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Kime verilsin?'**
+  String get detailAssignTitle;
+
+  /// No description provided for @detailAssignHint.
+  ///
+  /// In tr, this message translates to:
+  /// **'GitHub kullanıcı adı'**
+  String get detailAssignHint;
+
+  /// No description provided for @detailAssignInvalid.
+  ///
+  /// In tr, this message translates to:
+  /// **'Geçerli bir GitHub kullanıcı adı yaz.'**
+  String get detailAssignInvalid;
+
+  /// No description provided for @detailAssignSent.
+  ///
+  /// In tr, this message translates to:
+  /// **'@{who} için atama gönderildi.'**
+  String detailAssignSent(String who);
 }
 
 class _LDelegate extends LocalizationsDelegate<L> {

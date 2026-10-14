@@ -726,5 +726,42 @@
         "type": "int"
       }
     }
+  },
+  "detailCommentsTitle": "Yorumlar ({count})",
+  "@detailCommentsTitle": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "detailNoComments": "Henüz yorum yok.",
+  "detailCommentHint": "Yorum yaz…",
+  "detailCommentSend": "Gönder",
+  "detailCommentPending": "işlenmeyi bekliyor",
+  "detailCommentQueued": "gönderilmeyi bekliyor",
+  "detailCommentSent": "Yorum gönderildi.",
+  "detailOwner": "Sorumlu: @{who}",
+  "@detailOwner": {
+    "placeholders": {
+      "who": {
+        "type": "String"
+      }
+    }
+  },
+  "detailNoOwner": "Sorumlu yok",
+  "detailOwnerPending": "işlenmeyi bekliyor",
+  "detailTakeOver": "Üstlen",
+  "detailAssign": "Ata…",
+  "detailAssignTitle": "Kime verilsin?",
+  "detailAssignHint": "GitHub kullanıcı adı",
+  "detailAssignInvalid": "Geçerli bir GitHub kullanıcı adı yaz.",
+  "detailAssignSent": "@{who} için atama gönderildi.",
+  "@detailAssignSent": {
+    "placeholders": {
+      "who": {
+        "type": "String"
+      }
+    }
   }
 }
