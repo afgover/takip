@@ -1018,3 +1018,19 @@ işi, bitiş çizgisi değil. Bitiş çizgisi olsaydı aşama hiç kapanmazdı �
   app'e var olan dosyayı düzenleme izni (R-001 ve çakışmasız yazma kaybolur),
   dış sohbet uygulaması (karar iki yerde yaşar), işlenmiş olayın `done/`a
   gitmesi (Tamamlananlar listesi yorumlarla dolardı).
+
+- 2026-10-17: Sözleşme [1.38](SYSTEM.md#16): **koordinatör ve paylaşılan kod
+  klasörü.** vault Claude Projects'e geçerken iki boşluk ölçüldü. (1) §16
+  koordinatörü hiç anmıyordu; financer'da kural yalnız koordinatörün
+  brifinginde yaşıyordu (hiçbir dosyada, talimatta ya da hafızada yazılı
+  değildi) ve vault onu bulamadı: `ORTAM.md` yoktu, hub klasik sayıldı,
+  aynı gün açılan bir thread oturum kaydı açmadı. Kural yazıldı:
+  koordinatör hub'a yazmaz ve oturum açmaz, brifing hub protokolünü
+  taşır, kuralın yeri proje talimatıdır (hafıza thread'lerden görünmez).
+  (2) §16 yalnız hub'ın paylaşılan çalışma ağacını ele alıyordu; vault'ta
+  kod klasörü başka bir thread'in dalında duruyordu. Kural: kodu
+  değiştirmeden önce dal ve `git status`, başkasının değişikliği varsa
+  dal değiştirilmez, aynı kod klasöründe aynı anda tek yazan thread.
+  Kullanıcı kararı ("Evet, 1.38 olarak"); inceleme
+  vault#S-2026-10-17-hub-projects-duzeni, karar vault#K-041. Uygulama
+  sabiti 1.38; APK yeniden derlenmedi.

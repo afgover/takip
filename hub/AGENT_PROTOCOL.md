@@ -154,6 +154,12 @@ ile aşağıdaki maddeler aynen geçerlidir. `ORTAM.md` `projects` diyorsa
 - **Paylaşılan çalışma ağacı:** düzenlemeden hemen önce dosyayı yeniden
   oku; commit'e yalnız kendi dosyalarını yolla ekle (`git add -A` yok);
   ID verince hemen commit'le; push'tan önce `git pull --rebase`.
+- **Koordinatör (v1.38, [§16](SYSTEM.md#16)):** hub'a yazmaz, oturum
+  açmaz; işi brifingle verir. Kayıt thread'indir. Kural proje
+  talimatında durur.
+- **Paylaşılan kod klasörü (v1.38):** kodu değiştirmeden önce dal ve
+  `git status`; başka thread'in değişikliği varsa ya da dal onunsa dal
+  değiştirme, söyle.
 - **Plan:** tek thread'de biten iş için thread'in durum listesi yeter;
   birden çok thread'e ya da güne yayılan plan `PLAN.md`'ye girer.
 - **Kapanış:** thread'in işi bitince (kullanıcı son adımı attı ya da

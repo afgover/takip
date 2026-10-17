@@ -166,6 +166,12 @@ differences:
 - **Shared working tree:** re-read a file right before editing it; add
   only your own files to a commit, by path (no `git add -A`); commit right
   after assigning an ID; `git pull --rebase` before pushing.
+- **Coordinator (v1.38, [§16](SYSTEM.md#16)):** does not write to the
+  hub and opens no session; it hands work over in a brief. The record
+  belongs to the thread. The rule lives in the project instructions.
+- **Shared code folder (v1.38):** before changing code, check the branch
+  and `git status`; if another thread has changes or owns the branch, do
+  not switch branches — say so.
 - **Plan:** for work that finishes in one thread the thread's status
   checklist is enough; a plan spanning several threads or days goes into
   `PLAN.md`.

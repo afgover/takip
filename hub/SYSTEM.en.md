@@ -7,7 +7,7 @@ named, and what schema it follows**. Neither the agent nor the user application
 steps outside it. Contract changes are recorded in `EVOLUTION.md` and the
 version number at the top of this file is incremented.
 
-**Contract version:** 1.37
+**Contract version:** 1.38
 **Master copy:** `afgover/takip` → `hub/SYSTEM.md` (Turkish) ·
 `hub/SYSTEM.en.md` (English)
 (see §10 — every hub updates its own copy from there)
@@ -1294,6 +1294,58 @@ not catch it. Rules:
 3. `git pull --rebase` before pushing. If there is a collision the
    renumbering rule (§4) applies; the audit's duplicate-ID check is the
    last safeguard.
+
+### The coordinator (v1.38)
+
+In Projects a **coordinator** watches the project chat: it takes the
+request, starts the thread and hands it the work in a brief. Like the
+threads it is a Claude session, but it does not own the record.
+
+- **The coordinator does not write to the hub and opens no session.**
+  The record belongs to the thread doing the work: session, backlog,
+  tasks, decisions. The coordinator is always on and touches many pieces
+  of work; a record it kept would belong to none of them and would collide
+  with the threads in shared files (`BACKLOG.md`, the counters).
+- **The brief carries the hub protocol:** where the hub is, the opening
+  command, "open a session for this topic (`surface: projects`) and close
+  it at the end", "open a `waiting/` task for every decision asked of the
+  user", "`git add <path>`, not `-A`", and the work's `B-`/`T-` numbers.
+- **The rule lives in the project instructions**, not in the
+  coordinator's memory. Memory is invisible to threads and can be lost
+  when the coordinator is replaced; the instructions enter every
+  session's context. The instructions summarise the hub and do not
+  replace it: where they conflict, the hub wins.
+- **"Where did we leave off"** is answered by the last closed session's
+  summary plus the open thread sessions.
+
+Measured case (2026-10-17): in financer the rule lived only in the
+coordinator's brief; it was written in no file, instruction or memory.
+The second project (vault) could not find it: there was no `ORTAM.md`,
+the hub counted as classic, and a thread opened that day kept no session
+record (vault#K-041). An unwritten rule does not exist for a new project.
+
+### The shared code folder (v1.38)
+
+Threads may share the **code repo** in one folder just as they share the
+hub. The risk is larger in code: the branch belongs to the whole folder.
+One thread's `git checkout` changes the other's working tree; uncommitted
+changes are carried to another branch or the operation stops on a
+conflict. Rules:
+
+1. Before changing code, look at `git branch --show-current` and
+   `git status`.
+2. If another thread has uncommitted changes, or the branch belongs to
+   another thread, **do not switch branches**; tell the user or the
+   coordinator.
+3. Only one thread writes code in a given code folder at a time. If
+   parallel writing is needed, the thread is started with its own working
+   tree (`git worktree`) or its own clone; that choice is made when the
+   session is opened.
+4. Add only your own files to a commit, by path (same as the hub rule).
+
+Measured case (2026-10-17): in vault, while one thread worked on the hub,
+the code folder sat on another thread's branch; the hub rules did not
+address this at all.
 
 ### The plan tree
 

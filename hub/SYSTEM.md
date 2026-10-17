@@ -5,7 +5,7 @@ ve hangi şemaya uyacağını** tanımlar. Agent ve kullanıcı uygulaması bu s
 dışına çıkmaz. Sözleşme değişiklikleri `EVOLUTION.md`'ye kaydedilir ve bu dosyanın
 başındaki sürüm numarası artırılır.
 
-**Sözleşme sürümü:** 1.37
+**Sözleşme sürümü:** 1.38
 **Ana kopya (master):** `afgover/takip` → `hub/SYSTEM.md` (tr, **kanonik**) ·
 `hub/SYSTEM.en.md` (en)
 (bkz. §10 — her hub kendi kopyasını, kendi dilindeki varyanttan günceller)
@@ -1247,6 +1247,55 @@ yakalamaz. Kurallar:
 3. Push'tan önce `git pull --rebase`. Çakışma olursa yeniden
    numaralandırma kuralı (§4) geçerlidir; denetimin çift ID kontrolü son
    güvencedir.
+
+### Koordinatör (v1.38)
+
+Projects'te proje sohbetini bir **koordinatör** izler: isteği alır,
+thread'i başlatır, işi ona brifingle verir. Thread'ler gibi o da bir
+Claude oturumudur, ama kaydın sahibi değildir.
+
+- **Koordinatör hub'a yazmaz ve oturum açmaz.** Kayıt, işi yapan
+  thread'indir: oturum, backlog, görev, karar. Koordinatör sürekli açık
+  ve birden çok işe dokunuyor; tutacağı kayıt hiçbir işe bağlanmaz ve
+  paylaşılan dosyalarda (`BACKLOG.md`, sayaçlar) thread'lerle çakışır.
+- **Brifing hub protokolünü taşır:** hub'ın yeri, açılış komutu, "bu konu
+  için oturum aç (`surface: projects`), sonunda kapat", "kullanıcıdan
+  istenen her karar için `waiting/` görevi aç", "`git add <yol>`, `-A`
+  değil" ve işin ilgili `B-`/`T-` numaraları.
+- **Kuralın yeri proje talimatıdır**, koordinatörün hafızası değil.
+  Hafıza thread'lerden görünmez ve yenilenen koordinatörle kaybolabilir;
+  talimat her oturumun bağlamına girer. Talimat hub'ı özetler, hub'ın
+  yerine geçmez: çeliştiklerinde hub geçerlidir.
+- **"Nerede kalmıştık"** sorusunun cevabı son kapalı oturumun özeti ile
+  açık thread oturumlarıdır.
+
+Ölçülen vaka (2026-10-17): financer'da kural yalnız koordinatörün
+brifinginde yaşıyordu; hiçbir dosyada, talimatta ya da hafızada yazılı
+değildi. İkinci proje (vault) onu bulamadı: `ORTAM.md` yoktu, hub klasik
+sayılıyordu ve aynı gün açılan bir thread oturum kaydı açmadı
+(vault#K-041). Yazılmamış kural yeni proje için yok hükmündedir.
+
+### Paylaşılan kod klasörü (v1.38)
+
+Thread'ler hub'ı olduğu gibi **kod reposunu** da tek klasörde
+paylaşabilir. Kodda risk hub'dakinden büyüktür: dal klasörün tamamına
+aittir. Bir thread'in `git checkout`'u öbürünün çalışma ağacını
+değiştirir; commit'lenmemiş değişiklik başka dala taşınır ya da işlem
+çakışmayla durur. Kurallar:
+
+1. Kodu değiştirmeden önce `git branch --show-current` ve `git status`
+   bakılır.
+2. Başka bir thread'in commit'lenmemiş değişikliği varsa ya da dal başka
+   bir thread'inse **dal değiştirilmez**; kullanıcıya ya da koordinatöre
+   söylenir.
+3. Aynı kod klasöründe aynı anda yalnız bir thread kod yazar. Paralel
+   yazma gerekiyorsa thread ayrı çalışma ağacıyla (`git worktree`) ya da
+   ayrı klonla başlatılır; bu seçim oturum açılırken yapılır.
+4. Commit'e yalnız kendi dosyaların yolla eklenir (hub kuralının aynısı).
+
+Ölçülen vaka (2026-10-17): vault'ta bir thread hub üzerinde çalışırken
+kod klasörü başka bir thread'in dalında duruyordu; hub kuralları bunu
+hiç ele almıyordu.
 
 ### Plan ağacı
 
