@@ -1034,3 +1034,12 @@ işi, bitiş çizgisi değil. Bitiş çizgisi olsaydı aşama hiç kapanmazdı �
   Kullanıcı kararı ("Evet, 1.38 olarak"); inceleme
   vault#S-2026-10-17-hub-projects-duzeni, karar vault#K-041. Uygulama
   sabiti 1.38; APK yeniden derlenmedi.
+
+- 2026-10-19: Sözleşme [1.39](AGENT_PROTOCOL.md#değişmez-kurallar): **kullanıcının e-postasından
+  gönderim yok (ana kural).** financer'da bir üyeye özür e-postası Gmail bağlayıcısıyla kullanıcının
+  kişisel adresinden gönderildi. Kullanıcı: "ana kural olarak tüm agentları kapsayacak şekilde bu
+  kuralı yaz, benim mailimden bir şey gönderme, çok lazımsa sor muhakkak". Değişmez kuralların başına
+  yazıldı: kullanıcının posta hesaplarından yeni ileti, yanıt ya da iletme yok; zorunluysa önce sorulur,
+  önceki izin sonrakini kapsamaz; üyelere e-posta projenin kendi kanalından ve yalnız kullanıcı isteyince
+  (portfoy.info: Resend, contact@portfoy.info, financer#R-013). Kaynak
+  financer#S-2026-10-19-sifre-sifirlama-ekrani. Uygulama sabiti 1.39; APK yeniden derlenmedi.

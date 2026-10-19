@@ -352,6 +352,19 @@ differences:
 
 ## Invariant rules
 
+- **No sending from the user's email (v1.39, main rule):** nothing is sent
+  from the user's email accounts (personal Gmail or any connected mailbox;
+  through a connector, SMTP or any other route): no new messages, replies or
+  forwards. If it is truly unavoidable, ask the user first and wait for an
+  explicit "yes"; an earlier permission does not cover the next one. Email to
+  members or customers goes only when the user asks, through the project's own
+  sending channel (portfoy.info: Resend as contact@portfoy.info,
+  `financer#R-013`).
+
+  *Measured case (2026-10-19):* an apology email to a member was sent from the
+  user's personal address through the Gmail connector. The user: "don't send
+  anything from my email; if it is really needed, ask without fail"
+  (`financer#S-2026-10-19-sifre-sifirlama-ekrani`).
 - **No work without a record:** no work counts as "done" unless it is reflected
   in the hub.
 - **Fidelity to the contract:** do not invent files or formats outside the

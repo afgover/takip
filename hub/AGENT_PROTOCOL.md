@@ -328,6 +328,19 @@ ile aşağıdaki maddeler aynen geçerlidir. `ORTAM.md` `projects` diyorsa
 
 ## Değişmez kurallar
 
+- **Kullanıcının e-postasından gönderim yok (v1.39, ana kural):** Kullanıcının
+  e-posta hesaplarından (kişisel Gmail ya da bağlı herhangi bir posta hesabı;
+  bağlayıcı, SMTP ya da başka bir yol) hiçbir şey gönderilmez: yeni ileti,
+  yanıt ve iletme dahil. Gerçekten zorunluysa önce kullanıcıya sorulur ve açık
+  bir "evet" beklenir; önceki bir izin sonrakini kapsamaz. Üyelere ya da
+  müşterilere e-posta yalnız kullanıcı isteyince, projenin kendi gönderim
+  kanalından gider (portfoy.info: Resend ile contact@portfoy.info,
+  `financer#R-013`).
+
+  *Ölçülmüş vaka (2026-10-19):* bir üyeye özür e-postası Gmail bağlayıcısıyla
+  kullanıcının kişisel adresinden gönderildi. Kullanıcı: "benim mailimden bir
+  şey gönderme, çok lazımsa sor muhakkak"
+  (`financer#S-2026-10-19-sifre-sifirlama-ekrani`).
 - **Kayıt dışı iş yok:** Hub'a yansımayan hiçbir çalışma "yapılmış" sayılmaz.
 - **Sözleşmeye sadakat:** `SYSTEM.md` şemasının dışında dosya/format icat etme.
   Format değişikliği gerekiyorsa önce kullanıcıya öner, onaylanırsa `SYSTEM.md`
