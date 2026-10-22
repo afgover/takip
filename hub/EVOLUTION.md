@@ -1043,3 +1043,12 @@ işi, bitiş çizgisi değil. Bitiş çizgisi olsaydı aşama hiç kapanmazdı �
   önceki izin sonrakini kapsamaz; üyelere e-posta projenin kendi kanalından ve yalnız kullanıcı isteyince
   (portfoy.info: Resend, contact@portfoy.info, financer#R-013). Kaynak
   financer#S-2026-10-19-sifre-sifirlama-ekrani. Uygulama sabiti 1.39; APK yeniden derlenmedi.
+
+- 2026-10-22: Sözleşme [1.40](AGENT_PROTOCOL.md#değişmez-kurallar): **GitHub Actions sınırı dolunca kapılar
+  yerelde (ana kural).** Copilot'ta PR #10, #11 ve `main`'in CI işleri runner almadan 2–3 sn'de, log'suz düştü.
+  Kullanıcı ücretsiz planda; dakikalar hesap genelinde paylaşılıyor ve ay başında sıfırlanıyor. Kullanıcı:
+  "CI konusunu global olarak kurallara işle … tüm projelerde işlem kesildiyse limit dolmuş demektir, self olarak
+  mümkün mertebe devam edilsin". Değişmez kuralların başına yazıldı: teşhis (runner yok + başka projeler de
+  düşüyor), CI'ın kapıları yerelde koşulur ve PR'a/kayda yazılır, "CI yeşil" denmez, sınır doluyken yeniden
+  çalıştırma yok, ay başında bir kez yeniden çalıştırma, tek projede düşüyorsa kök neden aranır. Kaynak
+  Copilot#S-2026-10-22-rota-degisikligi-navaid. Uygulama sabiti 1.40; APK yeniden derlenmedi.

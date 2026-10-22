@@ -328,6 +328,30 @@ ile aşağıdaki maddeler aynen geçerlidir. `ORTAM.md` `projects` diyorsa
 
 ## Değişmez kurallar
 
+- **GitHub Actions sınırı dolunca kapılar yerelde (v1.40, ana kural):**
+  Kullanıcı GitHub'ın ücretsiz planında. Actions dakikaları hesap genelinde
+  paylaşılır ve her ay başında sıfırlanır. Bir CI işi runner almadan saniyeler
+  içinde düşüyorsa (`runner_id: 0`, adım yok, log 404; GitHub'ın mesajı
+  "recent account payments have failed or your spending limit needs to be
+  increased") ve **başka projelerin** son koşuları ya da `main` de aynı biçimde
+  düşüyorsa sınır dolmuştur. Bu durumda hata kodda değildir:
+  1. CI'ın koştuğu kapılar **yerelde** koşulur. Bunlar projenin talimatındaki
+     tam regresyon komutu, tip kontrolü, analiz ve testlerdir; paketlemeyi
+     etkileyen işte derleme de koşulur. Yapılabilen her şey kendi makinende
+     yapılır. Sonuç PR'a bir yorumla ve oturum kaydına yazılır.
+  2. Kırmızı CI bu durumda işi bekletmez ve tek başına engel sayılmaz. Ama
+     kayıtta "CI koşmadı (Actions sınırı), kapılar yerelde geçti" yazılır;
+     "CI yeşil" yazılmaz. Yerel kapı geçmeden iş bitmiş sayılmaz.
+  3. Sınır doluyken yeniden çalıştırma, boş commit ya da PR kapat-aç
+     yapılmaz, çünkü sonuç değişmez. Ay başında sınır sıfırlanınca açık
+     PR'ların başarısız işleri bir kez yeniden çalıştırılır.
+  4. Yalnız bir projede düşüyorsa ya da iş runner alıp bir adımda düşüyorsa
+     sınır değildir; kök neden aranır.
+
+  *Ölçülmüş vaka (2026-10-22):* Copilot'ta PR #10, #11 ve `main` işleri 2–3
+  sn'de log'suz düştü. Kullanıcı: "şu anda ücretsiz sürüm kullanıyorum, tüm
+  projelerde işlem kesildiyse limit dolmuş demektir, self olarak mümkün
+  mertebe devam edilsin" (`Copilot#S-2026-10-22-rota-degisikligi-navaid`).
 - **Kullanıcının e-postasından gönderim yok (v1.39, ana kural):** Kullanıcının
   e-posta hesaplarından (kişisel Gmail ya da bağlı herhangi bir posta hesabı;
   bağlayıcı, SMTP ya da başka bir yol) hiçbir şey gönderilmez: yeni ileti,

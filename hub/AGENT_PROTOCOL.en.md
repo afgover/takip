@@ -352,6 +352,30 @@ differences:
 
 ## Invariant rules
 
+- **GitHub Actions limit reached: run the gates locally (v1.40, main
+  rule):** the user is on GitHub's free plan. Actions minutes are shared
+  across the account and reset at the start of each month. If a CI job fails
+  within seconds without getting a runner (`runner_id: 0`, no steps, log 404;
+  GitHub's message "recent account payments have failed or your spending
+  limit needs to be increased") and **other projects'** latest runs or `main`
+  fail the same way, the limit is used up. The failure is not in the code:
+  1. Run the gates CI runs **locally**: the project instructions' full
+     regression command, type check, analysis and tests, plus the build when
+     the work affects packaging. Do everything you can on your own machine.
+     Write the result in one PR comment and in the session record.
+  2. Red CI then does not hold the work and is not a blocker on its own. But
+     the record says "CI did not run (Actions limit), gates passed locally";
+     it never says "CI green". Work is not done until the local gates pass.
+  3. While the limit is reached, no re-runs, empty commits or PR close and
+     reopen: the result does not change. When the limit resets at the start
+     of the month, re-run the failed jobs of open PRs once.
+  4. If only one project fails, or a job gets a runner and fails in a step,
+     it is not the limit; find the root cause.
+
+  *Measured case (2026-10-22):* in Copilot, PR #10, #11 and `main` jobs
+  failed in 2–3 s with no logs. The user: "I'm on the free plan right now;
+  if work stopped in every project, the limit is full; carry on yourselves
+  as far as possible" (`Copilot#S-2026-10-22-rota-degisikligi-navaid`).
 - **No sending from the user's email (v1.39, main rule):** nothing is sent
   from the user's email accounts (personal Gmail or any connected mailbox;
   through a connector, SMTP or any other route): no new messages, replies or
