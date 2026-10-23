@@ -5,7 +5,7 @@ ve hangi şemaya uyacağını** tanımlar. Agent ve kullanıcı uygulaması bu s
 dışına çıkmaz. Sözleşme değişiklikleri `EVOLUTION.md`'ye kaydedilir ve bu dosyanın
 başındaki sürüm numarası artırılır.
 
-**Sözleşme sürümü:** 1.40
+**Sözleşme sürümü:** 1.41
 **Ana kopya (master):** `afgover/takip` → `hub/SYSTEM.md` (tr, **kanonik**) ·
 `hub/SYSTEM.en.md` (en)
 (bkz. §10 — her hub kendi kopyasını, kendi dilindeki varyanttan günceller)
@@ -58,10 +58,18 @@ başındaki sürüm numarası artırılır.
 > **Hub kökü (v1.3, K-020):** Bu sözleşmedeki tüm yollar hub köküne görelidir
 > ve hub kökü **her zaman** reponun içindeki **`hub/`** klasörüdür — istisnasız.
 >
-> - Her proje için ayrı bir takip reposu açılır: **`<proje>_takip`**
->   (örn. `financer_takip`), hub içeriği o reponun `hub/` klasörüne kurulur.
+> - Varsayılan olarak her proje için ayrı bir takip reposu açılır:
+>   **`<proje>_takip`** (örn. `financer_takip`), hub içeriği o reponun
+>   `hub/` klasörüne kurulur.
 > - `takip` projesi kendi hub'ını kendi reposunda barındırır (K-012); yapı
 >   aynıdır, `takip/hub/`.
+> - **(v1.41) Hub projenin kendi reposunda da durabilir** — ayrı bir takip
+>   reposu gerekmeyen kişisel ya da tek kişilik projede (asistan hub'ı böyle,
+>   §17). Kök yine `hub/`. İki sonucu kurulumda bilinir: uygulamanın token'ı
+>   kod reposunu da kapsar (yazma yine yalnız `tasks/inbox/` ve `notes/`,
+>   R-001); repoda CI varsa `hub/**` tetikleyiciden çıkarılır, yoksa her kayıt
+>   commit'i bir CI koşusu yer (Actions sınırı, `AGENT_PROTOCOL.md` v1.40).
+>   Kod commit'leri uygulamanın aktivite akışında "kod" olarak görünür (§8).
 >
 > ~~v1.2: diğer projeler için hub, `<proje>_takip` reposunun köküdür.~~
 > Geçersiz: uygulama hub kökünü `hub/` diye sabit tutuyor ve bağlantı başına
@@ -343,6 +351,10 @@ result: none                 # tamamlanınca: sonucun 1 satır özeti veya artif
 author: afgover              # (v1.15) kaydı oluşturan GitHub hesabı
 for: mehmet                  # (v1.15) yalnız waiting/: kimden bekleniyor
 assignee: afgover            # (v1.15) active/'e alan kişi
+due: 2026-11-15              # (v1.41) isteğe bağlı: dışarıdan konmuş son
+                             # tarih (YYYY-MM-DD) — bkz. "Son tarih"
+via: asistan                 # (v1.41) yalnız asistanın kullanıcı adına
+                             # yazdığı kayıtta (§17)
 
 # --- Bağlam alanları (v1.5) — yalnızca bir belgeden seçilerek üretilmiş
 # kayıtlarda bulunur; normal görevlerde hiç yazılmaz. Üçü birlikte anlamlıdır.
@@ -424,6 +436,21 @@ Bunun yerine **görünür** kılar:
   push eder (`AGENT_PROTOCOL.md`).
 - Hub'ı okuyan bir test tekrarlı ID tanımını yakalar; düzeltmesi birini yeniden
   numaralandırmaktır.
+
+### Son tarih (v1.41)
+
+`due`, işin **dışarıdan konmuş** bir son tarihi olduğunda yazılır: vergi
+beyanı, sertifika bitişi, mağaza incelemesi, ödeme günü. Düzyazıda kalan bir
+tarihi hiçbir araç göremez; alan asistanın (§17) "yaklaşanlar" listesini
+besler. Biçim gün düzeyindedir (`YYYY-MM-DD`), çünkü dış takvimler saat değil
+gün verir.
+
+- Dilek ya da tahmin tarihi yazılmaz. Her işe tarih konursa alan gürültüye
+  döner ve gerçek son tarihi gömer.
+- Alan isteğe bağlıdır; yokluğu "son tarih yok" demektir. Eski görevlere
+  geriye dönük yazılmaz.
+- Son tarih değişirse alan güncellenir, eski tarih `## Notlar`a tarihli bir
+  satırla düşülür.
 
 ### `waiting/` kullanımı
 
@@ -507,6 +534,15 @@ Agent bu bildirimi gördüğünde asıl görevi `waiting/` → `done/` taşır (
 devam ediyorsa `active/`e alır) ve bildirim görevini `done/`a kapatır.
 Bildirimin ayrı bir görev olmasının nedeni R-001: app'in yazma alanı tek
 klasördür ve bu garanti derleme zamanı sabitidir.
+
+> **Aynı soruya birden çok cevap (v1.41).** Cevap birden çok yoldan
+> gelebilir: iki cihazdaki uygulama, thread (§16), asistan (§17). Uygulama
+> tekrarı yalnız kendi cihazında engeller. Agent bir cevabı işlerken inbox'ta
+> aynı `target`'a ait başka bir cevap ya da "yapıldı" bildirimi görürse:
+> seçimler aynıysa biri işlenir, öteki aynı commit'te `done/`a kapanır
+> (`result: tekrar`); farklıysa **hiçbiri uygulanmaz** ve kullanıcıya
+> hangisinin geçerli olduğu sorulur. Sessizce birini seçmek, kullanıcının
+> vazgeçtiği bir kararı uygulamak olabilir.
 
 ### Yorum ve atama — olay dosyaları (v1.37)
 
@@ -664,6 +700,8 @@ backlog: B-014 tamamlandı
 evolution: Aşama 1 kapandı
 knowledge: L-003 eklendi
 note: eklendi / silindi (app)          # (v1.11) notes/ — kullanıcının notu
+task(pending): inbox'a eklendi (asistan)   # (v1.41) §17 — kullanıcı adına
+note: eklendi (asistan)                     # (v1.41) §17
 security: SEC-005 eklendi / SEC-002 kapatıldı   # (v1.11) SECURITY.md
 plan(P-001): plan açıldı / adım tamamlandı / plan kapandı  # (v1.25) PLAN.md
 system: sözleşme 1.1'e güncellendi
@@ -1310,3 +1348,96 @@ Projects'in paylaşılan hafızası hub'ın **yerine geçmez**: hafıza kısa
 işaretçiler taşır (hub'ın yeri, kod reposu, ID ve commit kuralları);
 kararlar, dersler ve işler hub'da kalır ve oradan aranır (`tool/ara.sh`).
 Aynı bilgiyi iki yerde tutmak ikisinin ayrışmasına davetiyedir.
+
+## 17. Asistan katmanı — birden çok hub'ı okuyan ajan (v1.41)
+
+Birden çok projeyi tek başına yürüten bir kullanıcının her hub'ı kendi
+projesini iyi tutar; ama "bugün bütün işte neye bakmalıyım" sorusunun cevabı
+hiçbir hub'da yoktur. Uygulama da bekleyenleri yalnız aktif repo için
+listeler. **Asistan** bu boşluğu dolduran ajandır: kullanıcının hub'larını
+okur, önceliklendirir, özet (brifing) üretir ve kullanıcının cevaplarını
+ilgili hub'a taşır. Hiçbir projenin sahibi değildir.
+
+Bu bölüm **yalnız asistan kullanan** kullanıcıyı ilgilendirir. Asistanı
+olmayan hub için yapılacak bir şey yoktur. Bölümün getirdiği alanlar
+(`via`, `due`) isteğe bağlıdır; onları bilmeyen okuyucu yok sayar (R-008).
+Kurulum ve örnek yapı:
+https://github.com/afgover/takip/blob/main/hub/artifacts/reference/asistan-katmani.md
+
+*Ölçülen vaka (2026-10-24):* on iki hub'da 117 bekleyen soru vardı; 62'si 30
+günden, 47'si 60 günden eskiydi ve yedi hub ana sözleşmenin gerisindeydi.
+Bunların hiçbiri tek bir hub'dan görünmüyordu (asistan#A-2026-10-24-002).
+
+### Asistanın kendi hub'ı
+
+- Asistan sıradan bir hub tutar; bu sözleşmenin tamamı ona aynen uygulanır.
+  Hub ayrı bir takip reposunda ya da asistanın kendi reposunda durabilir
+  (hub kökü notu, v1.41).
+- Hangi hub'ların okunacağı asistanın **kendi kayıt defterinde** yazar: hub
+  yolu ve proje durumu (aktif · beklemede · arşiv). Defterin biçimi bu
+  sözleşmenin konusu değildir; proje hub'larına durum alanı eklenmez.
+- Projelerin bekleyen soruları asistanın `waiting/`ine **kopyalanmaz**: aynı
+  soru iki yerde durursa iki ayrı cevap alır. Asistan onları özette gösterir,
+  cevabı kaynağına taşır.
+
+### Okuma
+
+1. **Önce eşitle** (v1.36), her hub için `git pull --ff-only`. Tazelenemeyen
+   hub atlanmaz; eski kopyadan okunur ve özette **bayat** diye işaretlenir.
+2. Değer, kaynak hub'ın şemasıyla yorumlanır. Şema dışı bir değer (ör.
+   `priority: medium`) `normal` sayılır ve özette sapma olarak anılır;
+   **düzeltilmez** — düzeltme o hub'ın ajanının işidir.
+3. Başka hub'daki kayıt önekle anılır: `proje#T-012` (protokol v1.30). Önek,
+   hub'ın `ORTAM.md`'sindeki `**Proje:**` değeridir; dosya yoksa repo adından
+   `_takip` eki atılarak türetilir.
+
+### Yazma — tek kapı
+
+Asistan başka bir hub'da **dosya taşımaz, ID vermez, backlog işaretlemez,
+oturum açmaz**: kayıt, işi yapan projenin ajanınındır (§16 koordinatör
+kuralının aynısı). Tek istisna kullanıcının **kendi sözünü** taşımaktır ve
+bu **uygulamanın kapısından** yapılır (R-001): yalnız `tasks/inbox/` ve
+`notes/`, yalnız uygulamanın yazdığı şemayla (§4, §11).
+
+- **Ne:** bekleyen soruya cevap (`waiting-answer`), yapıldı bildirimi
+  (`waiting-done`), yorum (`comment`), yeni görev, not.
+- **Ne zaman:** kullanıcı o kayıt için açıkça bir şey söylediğinde. Asistan
+  cevabı tahmin etmez; önerdiği seçeneği kullanıcı onaylamadan yazmaz.
+- **Nasıl:** `created_by: user`, `author: <kullanıcı>`, `via: asistan`;
+  `Repo:` satırı (v1.24) ve `target` (v1.37) eksiksiz. Seçenekli soruda
+  seçim listedeki metindir; listede olmayanı açıklama taşır.
+- **Önce bak:** hedef hâlâ `waiting/`te mi, inbox'ta aynı `target` için
+  cevap var mı? Biri tutmazsa yazılmaz, kullanıcıya söylenir.
+- **Commit:** `task(pending): inbox'a eklendi (asistan)`; not için
+  `note: eklendi (asistan)` (§8).
+- **İz:** asistan yazdığı her bildirimi kendi oturum kaydına `proje#T-NNN`
+  ve commit kimliğiyle not eder.
+
+Proje ajanı bu bildirimi **uygulamadan gelmiş gibi** işler; `via` yalnız
+kaynağını söyler. Kapı bilerek seçildi: uygulamanın yazma alanı zaten dar,
+çakışmasız ve her proje ajanının açılışta okuduğu yer. Asistan yeni bir
+kanal açmaz, var olanı kullanır. Aynı soruya iki kanaldan iki cevap gelirse
+§4'teki tekrar kuralı geçerlidir.
+
+### Zamanlanmış çalıştırma
+
+Asistanın rutinle çalışan, **yalnız okuyup özet üreten** koşuları (sabah
+brifingi gibi) oturum değildir: oturum kaydı açılmaz, çıktı artifact olmaz.
+Koşu bir kaydı değiştirirse ya da kullanıcı çıktıya cevap verip konuşma
+başlarsa o andan itibaren olağan oturum kuralları geçerlidir (Projects'te
+§16). Gerekçe ölçüldü: defter tutma zaten commit'lerin yarısını aşıyor
+(A-2026-09-12-001); her gün açılan boş bir oturum defteri iş üretmeden
+büyütür.
+
+### Gizlilik
+
+Asistanın çıktısı birden çok hub'ın içeriğini bir araya getirir ve içindeki
+**en kısıtlı hub kadar gizlidir**: public bir repoya ya da paylaşılan bir
+kanala yazılmaz. Asistan reposu public ise özetler commit'lenmez.
+
+### Uyum görünürlüğü
+
+Asistan okuduğu hub'larda sözleşme gecikmesini, 7 günden eski açık oturumu,
+işlenmemiş cevabı ve şema sapmasını **raporlar, düzeltmez**. Beklemedeki bir
+hub'ın sözleşmenin gerisinde kalması zararsızdır: ilk oturumunda yakalar
+(§10).

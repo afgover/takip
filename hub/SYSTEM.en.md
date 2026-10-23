@@ -7,7 +7,7 @@ named, and what schema it follows**. Neither the agent nor the user application
 steps outside it. Contract changes are recorded in `EVOLUTION.md` and the
 version number at the top of this file is incremented.
 
-**Contract version:** 1.40
+**Contract version:** 1.41
 **Master copy:** `afgover/takip` → `hub/SYSTEM.md` (Turkish) ·
 `hub/SYSTEM.en.md` (English)
 (see §10 — every hub updates its own copy from there)
@@ -63,10 +63,20 @@ else is in the **hub language**
 > hub root, and the hub root is **always** the **`hub/`** folder inside the
 > repository — no exceptions.
 >
-> - Each project gets its own tracking repository: **`<project>_takip`**
->   (e.g. `financer_takip`), with hub content installed under its `hub/` folder.
+> - By default each project gets its own tracking repository:
+>   **`<project>_takip`** (e.g. `financer_takip`), with hub content installed
+>   under its `hub/` folder.
 > - The `takip` project hosts its own hub in its own repository (K-012); the
 >   structure is the same, `takip/hub/`.
+> - **(v1.41) A hub may also live in the project's own repository** — for a
+>   personal or one-person project that needs no separate tracking
+>   repository (the assistant's hub is set up this way, §17). The root is
+>   still `hub/`. Two consequences are known at setup: the app's token then
+>   covers the code repository too (it still writes only to `tasks/inbox/`
+>   and `notes/`, R-001); if the repository has CI, exclude `hub/**` from its
+>   triggers, otherwise every record commit costs a CI run (Actions limit,
+>   `AGENT_PROTOCOL.md` v1.40). Code commits show up as "code" in the app's
+>   activity feed (§8).
 >
 > ~~v1.2: for other projects the hub is the root of the `<project>_takip`
 > repository.~~ Invalid: the app holds the hub root fixed at `hub/` and it is
@@ -358,6 +368,10 @@ result: none                 # when finished: a one-line summary or artifact lin
 author: afgover              # (v1.15) the GitHub account that created the record
 for: mehmet                  # (v1.15) waiting/ only: who it is waited on
 assignee: afgover            # (v1.15) who moved it to active/
+due: 2026-11-15              # (v1.41) optional: an externally set deadline
+                             # (YYYY-MM-DD) — see "Deadline"
+via: asistan                 # (v1.41) only on records the assistant wrote
+                             # on the user's behalf (§17)
 
 # --- Context fields (v1.5) — present only in records produced by selecting
 # text in a document; never written for ordinary tasks. The three are meaningful
@@ -444,6 +458,21 @@ Instead it makes the collision **visible**:
 - A test that reads the hub catches duplicate ID definitions; the fix is to
   renumber one of them.
 
+### Deadline (v1.41)
+
+`due` is written when the work has an **externally set** deadline: a tax
+filing, a certificate expiry, a store review, a payment date. A date left in
+prose is invisible to every tool; the field feeds the assistant's (§17)
+"coming up" list. The format is day-level (`YYYY-MM-DD`) because external
+calendars give days, not hours.
+
+- Wished-for or estimated dates are not written. If every task gets a date
+  the field turns into noise and buries the real deadlines.
+- The field is optional; its absence means "no deadline". It is not
+  back-filled on old tasks.
+- If a deadline changes, the field is updated and the old date goes into
+  `## Notes` as a dated line.
+
 ### Using `waiting/`
 
 **The agent moves a task to `waiting/` only while it awaits something concrete
@@ -528,6 +557,15 @@ When the agent sees this notification it moves the original task from
 the notification task into `done/`. The reason the notification is a separate
 task is R-001: the app's write area is a single folder, and that guarantee is a
 compile-time constant.
+
+> **Several answers to the same question (v1.41).** An answer can arrive by
+> more than one route: the app on two devices, a thread (§16), the assistant
+> (§17). The app prevents repeats only on its own device. If, while handling
+> an answer, the agent sees another answer or "done" notification for the
+> same `target` in inbox: if the choices match, one is applied and the other
+> is closed into `done/` in the same commit (`result: duplicate`); if they
+> differ, **neither is applied** and the user is asked which one stands.
+> Silently picking one could apply a decision the user has taken back.
 
 ### Comments and assignment — event files (v1.37)
 
@@ -696,6 +734,8 @@ backlog: B-014 finished
 evolution: Stage 1 closed
 knowledge: L-003 added
 note: added / deleted (app)             # (v1.11) notes/ — the user's note
+task(pending): added to inbox (asistan)  # (v1.41) §17 — on the user's behalf
+note: added (asistan)                     # (v1.41) §17
 security: SEC-005 added / SEC-002 closed  # (v1.11) SECURITY.md
 plan(P-001): plan opened / step completed / plan closed  # (v1.25) PLAN.md
 system: contract updated to 1.1
@@ -1360,3 +1400,109 @@ Projects' shared memory **does not replace** the hub: memory carries short
 pointers (where the hub is, the code repo, ID and commit rules); decisions,
 lessons and work stay in the hub and are searched there (`tool/ara.sh`).
 Keeping the same information in two places invites the two to diverge.
+
+## 17. The assistant layer — an agent that reads several hubs (v1.41)
+
+When one user runs several projects alone, each hub keeps its own project
+well, but no hub answers "what should I look at across all my work today?".
+The app, too, lists pending work only for the active repository. The
+**assistant** is the agent that fills this gap: it reads the user's hubs,
+prioritises, produces a summary (a briefing) and carries the user's answers
+back to the right hub. It owns no project.
+
+This section concerns **only users who run an assistant**. A hub without an
+assistant has nothing to do. The fields it introduces (`via`, `due`) are
+optional; a reader that does not know them ignores them (R-008). Setup and
+an example layout:
+https://github.com/afgover/takip/blob/main/hub/artifacts/reference/assistant-layer.en.md
+
+*Measured case (2026-10-24):* twelve hubs held 117 pending questions; 62
+were older than 30 days, 47 older than 60, and seven hubs were behind the
+master contract. None of this was visible from any single hub
+(asistan#A-2026-10-24-002).
+
+### The assistant's own hub
+
+- The assistant keeps an ordinary hub; this whole contract applies to it
+  unchanged. The hub may live in a separate tracking repository or in the
+  assistant's own repository (hub root note, v1.41).
+- Which hubs to read is written in the assistant's **own registry**: the
+  hub path and the project status (active · paused · archived). The
+  registry's format is not part of this contract; no status field is added
+  to project hubs.
+- Projects' pending questions are **not copied** into the assistant's
+  `waiting/`: a question held in two places gets two separate answers. The
+  assistant shows them in its summary and carries the answer to their
+  source.
+
+### Reading
+
+1. **Sync first** (v1.36), for every hub: `git pull --ff-only`. A hub that
+   cannot be refreshed is not skipped; it is read from the old copy and
+   marked **stale** in the summary.
+2. A value is interpreted with the source hub's schema. An out-of-schema
+   value (e.g. `priority: medium`) counts as `normal` and is mentioned in
+   the summary as a deviation; it is **not corrected** — that is the hub's
+   own agent's job.
+3. A record in another hub is cited with a prefix: `project#T-012`
+   (protocol v1.30). The prefix is the `**Proje:**` value in that hub's
+   `ORTAM.md`; without the file it is the repository name minus the
+   `_takip` suffix.
+
+### Writing — a single gate
+
+In another hub the assistant **moves no file, assigns no ID, ticks no
+backlog item and opens no session**: the record belongs to the project's
+agent that does the work (the same rule as the coordinator's, §16). The one
+exception is carrying the user's **own words**, and that goes **through the
+app's gate** (R-001): only `tasks/inbox/` and `notes/`, only in the schema
+the app writes (§4, §11).
+
+- **What:** an answer to a pending question (`waiting-answer`), a done
+  notification (`waiting-done`), a comment (`comment`), a new task, a note.
+- **When:** when the user has said something explicit about that record.
+  The assistant does not guess answers; it does not write an option it
+  suggested until the user confirms it.
+- **How:** `created_by: user`, `author: <user>`, `via: asistan` (the value
+  is data and stays `asistan` in every language); the `Repo:` line (v1.24)
+  and `target` (v1.37) complete. For a question with options the choice is
+  the text from the list; anything outside the list goes in the
+  explanation.
+- **Check first:** is the target still in `waiting/`, and is there already
+  an answer for the same `target` in inbox? If either fails, nothing is
+  written and the user is told.
+- **Commit:** `task(pending): added to inbox (asistan)`; for a note
+  `note: added (asistan)` (§8).
+- **Trace:** the assistant notes every notification it writes in its own
+  session record, with `project#T-NNN` and the commit id.
+
+The project's agent handles such a notification **as if it came from the
+app**; `via` only says where it came from. The gate was chosen on purpose:
+the app's write area is already narrow, conflict-free and the place every
+project agent reads at opening. The assistant opens no new channel; it uses
+the existing one. If two answers to one question arrive by two routes, the
+repeat rule in §4 applies.
+
+### Scheduled runs
+
+The assistant's scheduled runs that **only read and produce a summary**
+(such as a morning briefing) are not sessions: no session record is opened
+and the output is not an artifact. If a run changes a record, or the user
+replies to the output and a conversation starts, the usual session rules
+apply from that moment (§16 in Projects). The reason was measured:
+bookkeeping already exceeds half of all commits (A-2026-09-12-001); an
+empty session every day grows the ledger without producing work.
+
+### Privacy
+
+The assistant's output brings the contents of several hubs together and is
+**as confidential as the most restricted hub in it**: it is not written to a
+public repository or a shared channel. If the assistant's repository is
+public, summaries are not committed.
+
+### Compliance visibility
+
+In the hubs it reads, the assistant **reports, and does not fix**, contract
+lag, sessions left open for more than 7 days, unprocessed answers and schema
+deviations. A paused hub falling behind the contract is harmless: it catches
+up at its first session (§10).

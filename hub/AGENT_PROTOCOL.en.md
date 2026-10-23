@@ -79,6 +79,11 @@ what*. The procedure holds whatever the session is about.
      exception to the item above — but they are reported separately from the
      task count ("2 comments, 1 assignment applied"). If a comment asks the
      agent for something, applying it is not enough; tell the user as well.
+   - **Answer notifications (v1.41):** a notification carrying
+     `via: asistan` is handled as if it came from the app. If there are
+     several answers for the same `target`, the repeat rule in `SYSTEM.md`
+     §4 applies: matching choices, apply one; differing choices, apply
+     none — ask the user.
 3. Look at `BACKLOG.md` **selectively** (v1.28, Ö2): extract open items with
    `grep -nE '^- \[ \] (\*\*)?B-' BACKLOG.md` (v1.34: also catches backlogs
    that write the item number in bold, `- [ ] **B-123**`) — the whole file (~17k tokens) is not
@@ -178,6 +183,32 @@ differences:
 - **Closing:** when the thread's work is done (the user took the last step
   or the thread was resolved), the closing items below run for that
   thread's session.
+
+## In the assistant role (v1.41)
+
+If your hub is an **assistant** hub — an agent that reads several hubs,
+[§17](SYSTEM.md#17) — the items above and below apply unchanged to your own
+hub. For the other hubs you read, add:
+
+- **Read, do not own:** in another hub, no moving files, assigning IDs,
+  ticking backlog items or opening sessions. The record belongs to that
+  project's agent.
+- **Sync first:** `git pull --ff-only` for every hub; a hub that cannot be
+  refreshed is marked stale in the summary.
+- **Single gate:** write the user's explicit words in the app's schema to
+  `tasks/inbox/` (or `notes/` for a note): `created_by: user`,
+  `via: asistan`, `Repo:` and `target` complete. Before writing, check that
+  the target is still in `waiting/` and that no answer for the same
+  `target` exists. Do not guess answers.
+- **Trace:** note every notification you write in your own session record,
+  with `project#T-NNN` and the commit id.
+- **No copies:** do not take projects' pending questions into your own
+  `waiting/`; show them in the summary.
+- **Routine:** a scheduled run that only reads and produces a summary opens
+  no session.
+- **Privacy:** your output is as confidential as the most restricted hub
+  you read; do not write it anywhere public.
+- **Compliance:** report the deviations you see; do not fix them.
 
 ## During the session (at every exchange)
 
@@ -314,6 +345,9 @@ differences:
    expected in one actionable line under `## Notes` ("generate a fine-grained
    token on GitHub; Contents: Read and write"). Vague expectations ("maybe they
    will look at it some day") do not go into `waiting/`.
+   If the expected work has an **externally set** deadline (tax,
+   certificate, payment), write it in the `due` field (v1.41, `SYSTEM.md`
+   §4); do not write estimated dates.
    When the user taps **"Done"** in the app a notification task lands in inbox;
    on seeing it, move the original task out of `waiting/` and close the
    notification.

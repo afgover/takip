@@ -1052,3 +1052,22 @@ işi, bitiş çizgisi değil. Bitiş çizgisi olsaydı aşama hiç kapanmazdı �
   düşüyor), CI'ın kapıları yerelde koşulur ve PR'a/kayda yazılır, "CI yeşil" denmez, sınır doluyken yeniden
   çalıştırma yok, ay başında bir kez yeniden çalıştırma, tek projede düşüyorsa kök neden aranır. Kaynak
   Copilot#S-2026-10-22-rota-degisikligi-navaid. Uygulama sabiti 1.40; APK yeniden derlenmedi.
+
+- 2026-10-24: Sözleşme [1.41](SYSTEM.md#17): **asistan katmanı (isteğe bağlı §17).** Kullanıcı birden çok projeyi
+  tek başına yürütüyor ve hub'ların üstüne, hepsini okuyup günü planlayan bir asistan kurdu
+  (asistan#S-2026-10-24-asistan-kurulumu). Kullanıcı: "takip sözleşmesine asistan kullanımı ile ilgili eklemeler
+  yapmamız gerekir mi? bu genel takip işleyişini bozmamalı, bu tarz bir asistan uygulaması kullananlar için ek
+  maddeler olarak ekleyebilirsin". Analiz (asistan#A-2026-10-24-002) altı boşluk buldu: sözleşme birden çok hub'ı
+  okuyan rolü, kullanıcının cevabı için ikinci kanalı, kod reposunda duran hub'ı, rutin koşunun oturum sayılıp
+  sayılmadığını, son tarihi ve birleşik çıktının gizliliğini hiç tanımlamıyordu. Eklenenler, hepsi isteğe bağlı
+  (R-008): §17 (rol; okuma; tek yazma kapısı — kullanıcının açık sözü uygulamanın şemasıyla `tasks/inbox/`a,
+  `via: asistan`; salt-okur rutin oturum açmaz; gizlilik; uyum görünürlüğü), §4 `due` ve `via` alanları ile "aynı
+  soruya birden çok cevap" kuralı, hub kökü notu (hub kod reposunda durabilir; CI yol filtresi ve token kapsamı),
+  §8 asistan commit örnekleri, protokole "Asistan rolündeysen" bölümü. Reddedilen: proje hub'larına durum alanı
+  (her hub'a iş çıkarırdı; durum asistanın defterinde), öncelik değerlerinin yeniden tanımı (eski kayıtları ikinci
+  sınıfa düşürürdü), asistanın geride kalan hub'ların sözleşmesini güncellemesi (sahiplik; beklemedeki hub ilk
+  oturumunda yakalar), yeni bir rutin dosyası (ortak ihtiyaç henüz kanıtlanmadı). Referans:
+  [asistan-katmani.md](artifacts/reference/asistan-katmani.md), İngilizcesi assistant-layer.en.md; README'lere işaret
+  eklendi ve 1.28'de kalmış sürüm satırı sürüm tekrarlamayan bir cümleye çevrildi. Uygulama sabiti 1.41, 668 test
+  geçti; APK yeniden derlenmedi. Uygulama `due` ve `via`'yı henüz göstermiyor, bilinmeyen alanı yok sayıyor
+  ([B-148](BACKLOG.md#B-148)); denetimin şema dışı `priority`'yi görmemesi [B-149](BACKLOG.md#B-149).

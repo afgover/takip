@@ -74,6 +74,10 @@ tanımlanır. Prosedür, oturumun konusu ne olursa olsun geçerlidir.
      talimatını beklemez — yukarıdaki maddenin tek istisnası — ama görev
      sayısından ayrı söylenir ("2 yorum, 1 atama işlendi"). Bir yorum
      agent'tan bir şey istiyorsa işlemek yetmez; kullanıcıya ayrıca söylenir.
+   - **Cevap bildirimleri (v1.41):** `via: asistan` taşıyan bildirim
+     uygulamadan gelmiş gibi işlenir. Aynı `target` için birden çok cevap
+     varsa `SYSTEM.md` §4'teki tekrar kuralı uygulanır: seçimler aynıysa
+     biri işlenir, farklıysa hiçbiri — kullanıcıya sorulur.
 3. `BACKLOG.md`'ye **seçici** bak (v1.28, Ö2): açık maddeler
    `grep -nE '^- \[ \] (\*\*)?B-' BACKLOG.md` ile çıkarılır (v1.34: madde
    numarası kalın yazılan backlog'lar da — `- [ ] **B-123**` — yakalanır) — dosyanın tamamı
@@ -165,6 +169,29 @@ ile aşağıdaki maddeler aynen geçerlidir. `ORTAM.md` `projects` diyorsa
 - **Kapanış:** thread'in işi bitince (kullanıcı son adımı attı ya da
   thread çözüldü) aşağıdaki kapanış maddeleri o thread'in oturumu için
   koşulur.
+
+## Asistan rolündeysen (v1.41)
+
+Hub'ın bir **asistan** hub'ıysa — birden çok hub'ı okuyan ajan,
+[§17](SYSTEM.md#17) — yukarıdaki ve aşağıdaki maddeler kendi hub'ın için
+aynen geçerlidir. Okuduğun diğer hub'lar için şunlar eklenir:
+
+- **Oku, sahiplenme:** başka hub'da dosya taşıma, ID verme, backlog
+  işaretleme, oturum açma yok. Kayıt o projenin ajanınındır.
+- **Önce eşitle:** her hub için `git pull --ff-only`; tazelenemeyen hub
+  özette bayat diye işaretlenir.
+- **Tek kapı:** kullanıcının açık sözünü uygulamanın şemasıyla
+  `tasks/inbox/`a (not ise `notes/`a) yaz: `created_by: user`,
+  `via: asistan`, `Repo:` ve `target` eksiksiz. Yazmadan önce hedef hâlâ
+  `waiting/`te mi, aynı `target` için cevap var mı bak. Cevap tahmin etme.
+- **İz:** yazdığın her bildirimi kendi oturum kaydına `proje#T-NNN` ve
+  commit kimliğiyle not et.
+- **Kopyalama yok:** projelerin bekleyen sorularını kendi `waiting/`ine
+  alma; özette göster.
+- **Rutin:** yalnız okuyup özet üreten zamanlanmış koşu oturum açmaz.
+- **Gizlilik:** çıktın okuduğun en kısıtlı hub kadar gizlidir; public bir
+  yere yazma.
+- **Uyum:** gördüğün sapmayı raporla, düzeltme.
 
 ## Oturum boyunca (her mesaj alışverişinde)
 
@@ -293,6 +320,9 @@ ile aşağıdaki maddeler aynen geçerlidir. `ORTAM.md` `projects` diyorsa
    `waiting/` görevidir."* Beklenen şeyi `## Notlar`a tek satırda, yapılabilir
    biçimde yaz ("GitHub'da fine-grained token üret; Contents: Read and write").
    Belirsiz beklentiler (`belki bir gün bakar`) `waiting/`e konmaz.
+   Beklenen işin **dışarıdan konmuş** bir son tarihi varsa (vergi,
+   sertifika, ödeme) `due` alanına yaz (v1.41, `SYSTEM.md` §4); tahmin
+   tarihi yazma.
    Kullanıcı uygulamadan **"Yaptım"** dediğinde inbox'a bildirim görevi düşer;
    onu görünce asıl görevi `waiting/`ten çıkar ve bildirimi kapat.
 10. **`notes/` senin işin değil (sözleşme 1.9 §11).** Oradaki dosyalar
