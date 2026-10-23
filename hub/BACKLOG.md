@@ -999,3 +999,20 @@ başlığına ✅ ve tarih yazılır.
       ile ölçülüyor (curl+diff, yalnız karşılaştırır — SYSTEM.md kalıbı).
       Pilot `datasources_takip` — ritim ihlali en yüksek hub (%74). Ölçüt
       [P-017.7](PLAN.md#P-017)'de; kalan sekiz repo pilot sayıyı düşürürse
+
+- [ ] B-148 · (agent) **`due` ve `via` uygulamada görünmüyor (sözleşme 1.41).**
+      Uygulama bilinmeyen alanı yok sayıyor, yani bir şey bozulmuyor; ama son
+      tarihi olan görev listede ayırt edilmiyor ve asistanın yazdığı cevap
+      uygulamanınkinden farksız görünüyor. Öneri: görev detayında ve
+      bekleyenler listesinde `due` (yaklaşanlar önce), bildirimde `via`
+      rozeti. Tetikleyici: hub'larda `due` kullanılmaya başlanması · kaynak:
+      asistan#S-2026-10-24-asistan-kurulumu
+
+- [ ] B-149 · (agent) **Denetim şema dışı `priority` ve saatsiz `created`
+      değerini görmüyor.** Asistanın 2026-10-24 ölçümü: on iki hub'daki 122
+      bekleyen sorunun 19'u `priority: medium` (şemada yok), 2'si alansız;
+      9'unun `created` değeri saatsiz ya da boş. `audit.sh` bunları bulgu
+      saymıyor; hub'lar arası sıralama (§17) bunlara takılıyor. Öneri: enum
+      dışı `priority` ve ISO UTC olmayan `created` için bulgu · kaynak:
+      asistan#A-2026-10-24-002
+
