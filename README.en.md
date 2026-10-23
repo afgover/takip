@@ -108,6 +108,15 @@ hub content under that repository's `hub/` folder.
    `reconstructed: true`).
 4. Add the repository in the app.
 
+### If you run several projects
+
+Each project keeps its own hub; an **assistant** that reads them all and
+plans your day can sit on top. The assistant never touches a project's
+record; it carries your answers through the app's gate (`tasks/inbox/`).
+Example layout and setup:
+[`assistant-layer.en.md`](hub/artifacts/reference/assistant-layer.en.md);
+rules in `SYSTEM.md` §17.
+
 ## Running it
 
 ```bash
@@ -147,9 +156,10 @@ taken, known holes and outstanding work, all in one place.
 
 ## Contract version
 
-Currently **1.28**. Every hub carries its own copy, and at each session opening
-the agent compares it with the master and updates if it is behind
-(`SYSTEM.md` §10). If the versions match but the content differs — divergence —
+The current version is written in the first lines of
+[`hub/SYSTEM.md`](hub/SYSTEM.md) (it is not repeated here; when it was, it fell
+behind). Every hub carries its own copy, and at each session opening the agent
+compares it with the master and updates if it is behind (`SYSTEM.md` §10). If the versions match but the content differs — divergence —
 nothing is overwritten: that is a case a version-number-only check cannot see,
 and it has actually happened.
 

@@ -78,6 +78,14 @@ reponun `hub/` klasöründe.
 
 Ayrıntı: [`proje-ekleme.md`](hub/artifacts/reference/proje-ekleme.md).
 
+### Birden çok projen varsa
+
+Her proje kendi hub'ını tutar; hepsini okuyup günü planlayan bir **asistan**
+eklenebilir. Asistan hiçbir projenin kaydına dokunmaz, kullanıcının cevabını
+uygulamanın kapısından (`tasks/inbox/`) taşır. Örnek yapı ve kurulum:
+[`asistan-katmani.md`](hub/artifacts/reference/asistan-katmani.md); kurallar
+`SYSTEM.md` §17.
+
 ## Çalıştırma
 
 ```bash
@@ -119,8 +127,10 @@ Güvenlik geçmişinin tamamı: [`hub/SECURITY.md`](hub/SECURITY.md) — alınan
 
 ## Sözleşme sürümü
 
-Şu an **1.28**. Her hub kendi kopyasını taşır ve agent her oturum açılışında ana
-kopyayla karşılaştırıp geriden geliyorsa günceller (`SYSTEM.md` §10). Sürüm eşit
+Güncel sürüm [`hub/SYSTEM.md`](hub/SYSTEM.md)'nin ilk satırlarında yazar (bu
+dosyada tekrarlanmaz; tekrarlanınca geride kalıyordu). Her hub kendi kopyasını
+taşır ve agent her oturum açılışında ana kopyayla karşılaştırıp geriden
+geliyorsa günceller (`SYSTEM.md` §10). Sürüm eşit
 ama içerik farklıysa (ayrışma) üzerine yazılmaz — bu, yalnız numaraya bakan bir
 kontrolün göremediği ve gerçekten yaşanmış bir durumdur.
 
