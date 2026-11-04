@@ -140,6 +140,7 @@ the token stored on the device.
 Version 0.1.0. In daily use, but written with **single-user assumptions**:
 
 - **Android** only; iOS has never been tried.
+- **The Today tab is optional:** pending decisions from all hubs come from the Merkez server, and answers are written to `tasks/inbox` through Merkez. Without a connection the other tabs work as before. Change the address at build time with `--dart-define=MERKEZ_URL=...`.
 - Authentication is a **personal access token**. It is kept only in the device's
   secure storage and never written to a file, a commit or a log. The app warns
   when given a classic (`ghp_`) token but **cannot tell whether a fine-grained

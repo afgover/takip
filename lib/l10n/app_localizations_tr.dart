@@ -1159,4 +1159,99 @@ class LTr extends L {
   String detailAssignSent(String who) {
     return '@$who için atama gönderildi.';
   }
+
+  @override
+  String get navToday => 'Bugün';
+
+  @override
+  String get todayLoginTitle => 'Merkez\'e bağlan';
+
+  @override
+  String get todayLoginHint =>
+      'Tüm hub\'ların bekleyen kararları burada toplanır. Diğer sekmeler Merkez olmadan da çalışır.';
+
+  @override
+  String get todayPassword => 'Parola';
+
+  @override
+  String get todayLoginButton => 'Bağlan';
+
+  @override
+  String get todayLogout => 'Merkez bağlantısını kapat';
+
+  @override
+  String get todayRetry => 'Yeniden dene';
+
+  @override
+  String get todayEmpty => 'Bekleyen karar yok.';
+
+  @override
+  String get todayWriteAnswer => 'Cevap yaz';
+
+  @override
+  String get todayAwaitingAgent => 'Cevaplandı, ajan bekleniyor';
+
+  @override
+  String get todayAnswerSent => 'Cevap hub\'a yazıldı.';
+
+  @override
+  String get todayAnswerText => 'Cevabın';
+
+  @override
+  String get todayAnswerNote => 'Açıklama (isteğe bağlı)';
+
+  @override
+  String get todayAnswerEmpty => 'Bir cevap yaz.';
+
+  @override
+  String get todaySend => 'Gönder';
+
+  @override
+  String get todayErrorPassword => 'Parola kabul edilmedi.';
+
+  @override
+  String get todayErrorRateLimit =>
+      'Çok fazla deneme. Bir dakika sonra yeniden dene.';
+
+  @override
+  String get todayErrorNetwork =>
+      'Merkez\'e ulaşılamadı. Bağlantını kontrol et.';
+
+  @override
+  String get todayErrorServer => 'Merkez bir hata döndürdü. Yeniden dene.';
+
+  @override
+  String todaySummary(int pending, int options) {
+    return '$pending bekleyen karar, $options seçenekli';
+  }
+
+  @override
+  String todayAwaitingCount(int count) {
+    return '$count cevap ajan bekliyor';
+  }
+
+  @override
+  String todayParked(int count) {
+    return 'Beklemedeki projeler ($count)';
+  }
+
+  @override
+  String todayStaleHubs(String hubs) {
+    return 'Güncellenemeyen hub: $hubs';
+  }
+
+  @override
+  String todayDue(String date) {
+    return 'Son tarih: $date';
+  }
+
+  @override
+  String todayOverdue(String date) {
+    return 'Son tarih geçti: $date';
+  }
+
+  @override
+  String todayChoice(String option) {
+    return 'Seçim: $option';
+  }
 }

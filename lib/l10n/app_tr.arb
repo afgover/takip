@@ -763,5 +763,83 @@
         "type": "String"
       }
     }
+  },
+  "navToday": "Bugün",
+  "todayLoginTitle": "Merkez'e bağlan",
+  "todayLoginHint": "Tüm hub'ların bekleyen kararları burada toplanır. Diğer sekmeler Merkez olmadan da çalışır.",
+  "todayPassword": "Parola",
+  "todayLoginButton": "Bağlan",
+  "todayLogout": "Merkez bağlantısını kapat",
+  "todayRetry": "Yeniden dene",
+  "todayEmpty": "Bekleyen karar yok.",
+  "todayWriteAnswer": "Cevap yaz",
+  "todayAwaitingAgent": "Cevaplandı, ajan bekleniyor",
+  "todayAnswerSent": "Cevap hub'a yazıldı.",
+  "todayAnswerText": "Cevabın",
+  "todayAnswerNote": "Açıklama (isteğe bağlı)",
+  "todayAnswerEmpty": "Bir cevap yaz.",
+  "todaySend": "Gönder",
+  "todayErrorPassword": "Parola kabul edilmedi.",
+  "todayErrorRateLimit": "Çok fazla deneme. Bir dakika sonra yeniden dene.",
+  "todayErrorNetwork": "Merkez'e ulaşılamadı. Bağlantını kontrol et.",
+  "todayErrorServer": "Merkez bir hata döndürdü. Yeniden dene.",
+  "todaySummary": "{pending} bekleyen karar, {options} seçenekli",
+  "@todaySummary": {
+    "placeholders": {
+      "pending": {
+        "type": "int"
+      },
+      "options": {
+        "type": "int"
+      }
+    }
+  },
+  "todayAwaitingCount": "{count} cevap ajan bekliyor",
+  "@todayAwaitingCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "todayParked": "Beklemedeki projeler ({count})",
+  "@todayParked": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "todayStaleHubs": "Güncellenemeyen hub: {hubs}",
+  "@todayStaleHubs": {
+    "placeholders": {
+      "hubs": {
+        "type": "String"
+      }
+    }
+  },
+  "todayDue": "Son tarih: {date}",
+  "@todayDue": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "todayOverdue": "Son tarih geçti: {date}",
+  "@todayOverdue": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "todayChoice": "Seçim: {option}",
+  "@todayChoice": {
+    "placeholders": {
+      "option": {
+        "type": "String"
+      }
+    }
   }
 }

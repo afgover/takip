@@ -10,6 +10,8 @@ import 'package:takip/features/shell.dart';
 import 'package:takip/hub/hub_connections.dart';
 import 'package:takip/hub/models/task.dart';
 import 'package:takip/hub/all_tasks.dart';
+import 'package:takip/merkez/merkez_api.dart';
+import 'package:takip/merkez/merkez_providers.dart';
 
 import '../helpers/test_app.dart';
 
@@ -96,5 +98,50 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Sekme geçişinde yaşayacak yazı'), findsOneWidget);
+  });
+
+  group('Bugün sekmesi', () {
+    Future<void> pumpShell(WidgetTester tester) async {
+      final container = ProviderContainer(
+        overrides: [
+          activeRepoPendingTasksProvider
+              .overrideWith((ref) async => const <TaskSummary>[]),
+          // Oturum varken gerçek ağ isteği açılmasın.
+          merkezTodayProvider.overrideWith(
+            (ref) async => TodayData.fromJson(const {}),
+          ),
+        ],
+      );
+      addTearDown(container.dispose);
+      await container.read(hubConnectionsProvider.future);
+      await tester.pumpWidget(UncontrolledProviderScope(
+        container: container,
+        child: testApp(const AppShell()),
+      ));
+      await tester.pumpAndSettle();
+    }
+
+    int selected(WidgetTester tester) =>
+        tester.widget<NavigationBar>(find.byType(NavigationBar)).selectedIndex;
+
+    testWidgets('Merkez oturumu yoksa ana ekran Bekleyenler kalır', (tester) async {
+      await pumpShell(tester);
+      expect(selected(tester), AppShell.pendingTabIndex);
+    });
+
+    testWidgets('Merkez oturumu varsa açılışta Bugün, sonra seçim korunur', (tester) async {
+      FlutterSecureStorage.setMockInitialValues({
+        HubConnectionsStore.listKey: jsonEncode([
+          {'owner': 'afgover', 'repo': 'takip', 'token': 't'},
+        ]),
+        merkezTokenKey: 'jwt',
+      });
+      await pumpShell(tester);
+      expect(selected(tester), AppShell.todayTabIndex);
+
+      await tester.tap(find.text('Ayarlar'));
+      await tester.pumpAndSettle();
+      expect(selected(tester), AppShell.settingsTabIndex);
+    });
   });
 }
