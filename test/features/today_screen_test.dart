@@ -18,6 +18,8 @@ class _Server implements HttpClientAdapter {
   (int, Object?) answerResponse = (201, {'path': 'p'});
   (int, Object?) loginResponse = (200, {'accessToken': 'jwt'});
   int todayStatus = 200;
+  (int, Object?) commandsResponse = (200, {'catalog': [], 'recent': []});
+  (int, Object?) runResponse = (201, {'id': 'c1'});
   final answers = <Map<String, dynamic>>[];
   final paths = <String>[];
 
@@ -34,6 +36,10 @@ class _Server implements HttpClientAdapter {
       out = loginResponse;
     } else if (options.path == '/today') {
       out = (todayStatus, today);
+    } else if (options.path == '/commands') {
+      out = commandsResponse;
+    } else if (options.path.startsWith('/commands/')) {
+      out = runResponse;
     } else {
       answers.add(jsonDecode(body!) as Map<String, dynamic>);
       out = answerResponse;
@@ -214,5 +220,99 @@ void main() {
     ));
     await tester.pumpAndSettle();
     expect(find.text('1 pending decisions, 1 with options'), findsOneWidget);
+  });
+
+  group('Çalıştır', () {
+    const name = 'goverco.harcamalari-cikar';
+    Map<String, dynamic> list(List<Map<String, dynamic>> recent) => {
+          'catalog': [
+            {
+              'name': name,
+              'title': {'tr': 'Harcamaları çıkar', 'en': 'Extract expenses'},
+              'hub': 'goverco_takip',
+            },
+          ],
+          'recent': recent,
+        };
+
+    testWidgets('katalog boşsa bölüm görünmez', (tester) async {
+      signedIn();
+      await _pump(tester, _Server(_sample()));
+      expect(find.text('Çalıştır'), findsNothing);
+    });
+
+    testWidgets('dokunmak işi başlatmaz; vazgeçince istek gitmez', (tester) async {
+      signedIn();
+      final server = _Server(_sample())..commandsResponse = (200, list(const []));
+      await _pump(tester, server);
+      await tester.tap(find.text('Çalıştır'));
+      await tester.pumpAndSettle();
+      expect(server.paths, isNot(contains('/commands/$name/run')));
+      await tester.tap(find.text('Vazgeç'));
+      await tester.pumpAndSettle();
+      expect(server.paths, isNot(contains('/commands/$name/run')));
+    });
+
+    testWidgets('onayla kuyruğa alınır, durum yenilenir', (tester) async {
+      signedIn();
+      final server = _Server(_sample())..commandsResponse = (200, list(const []));
+      await _pump(tester, server);
+      await tester.tap(find.text('Çalıştır'));
+      await tester.pumpAndSettle();
+      server.commandsResponse = (200, list([{'type': name, 'status': 'queued'}]));
+      await tester.tap(find.widgetWithText(FilledButton, 'Çalıştır').last);
+      await tester.pumpAndSettle();
+      expect(server.paths, contains('/commands/$name/run'));
+      expect(find.text('İş kuyruğa alındı. Mac mini alınca başlar.'), findsOneWidget);
+      expect(find.text('Kuyrukta, Mac mini bekleniyor'), findsOneWidget);
+      final button = tester.widget<FilledButton>(find.ancestor(
+          of: find.text('Çalıştır'), matching: find.byWidgetPredicate((w) => w is FilledButton)));
+      expect(button.onPressed, isNull);
+    });
+
+    testWidgets('son çalışma durumu gösterilir, en yeni kazanır', (tester) async {
+      signedIn();
+      final server = _Server(_sample())
+        ..commandsResponse = (200, list([
+          {'type': name, 'status': 'failed'},
+          {'type': name, 'status': 'done'},
+          {'type': 'wake-agent', 'status': 'queued'},
+        ]));
+      await _pump(tester, server);
+      expect(find.text('Son çalışma başarısız'), findsOneWidget);
+    });
+
+    testWidgets('komut listesi hatası bekleyen kararları düşürmez', (tester) async {
+      signedIn();
+      final server = _Server(_sample())..commandsResponse = (500, {});
+      await _pump(tester, server);
+      expect(find.textContaining('Hangisi?'), findsOneWidget);
+    });
+
+    testWidgets('kuyruktaki iş için 409 mesajı gösterilir', (tester) async {
+      signedIn();
+      final server = _Server(_sample())
+        ..commandsResponse = (200, list(const []))
+        ..runResponse = (409, {'message': 'Bu komut zaten kuyrukta'});
+      await _pump(tester, server);
+      await tester.tap(find.text('Çalıştır'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.widgetWithText(FilledButton, 'Çalıştır').last);
+      await tester.pumpAndSettle();
+      expect(find.text('Bu komut zaten kuyrukta'), findsOneWidget);
+    });
+
+    testWidgets('İngilizce başlık', (tester) async {
+      signedIn();
+      final server = _Server(_sample())..commandsResponse = (200, list(const []));
+      final dio = Dio(BaseOptions(baseUrl: 'https://m.test'))..httpClientAdapter = server;
+      await tester.pumpWidget(ProviderScope(
+        overrides: [merkezDioProvider.overrideWithValue(dio)],
+        child: testApp(const Scaffold(body: TodayScreen()), locale: const Locale('en')),
+      ));
+      await tester.pumpAndSettle();
+      expect(find.text('Extract expenses'), findsOneWidget);
+      expect(find.text('Run'), findsOneWidget);
+    });
   });
 }

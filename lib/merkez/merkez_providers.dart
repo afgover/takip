@@ -34,6 +34,13 @@ class MerkezTokenNotifier extends AsyncNotifier<String?> {
   }
 }
 
+/// Komut listesi Bugün ekranının yan bilgisi: hatası listeyi düşürmez.
+final merkezCommandsProvider = FutureProvider<List<MerkezCommand>>((ref) async {
+  final token = await ref.watch(merkezTokenProvider.future);
+  if (token == null) return const [];
+  return ref.read(merkezApiProvider).commands(token);
+});
+
 /// `/today`. Belirteç reddedilirse oturum kapanır, ekran giriş formuna döner.
 final merkezTodayProvider = FutureProvider<TodayData?>((ref) async {
   final token = await ref.watch(merkezTokenProvider.future);

@@ -2244,6 +2244,54 @@ abstract class L {
   /// In tr, this message translates to:
   /// **'Seçim: {option}'**
   String todayChoice(String option);
+
+  /// No description provided for @todayCommandRun.
+  ///
+  /// In tr, this message translates to:
+  /// **'Çalıştır'**
+  String get todayCommandRun;
+
+  /// No description provided for @todayCommandCancel.
+  ///
+  /// In tr, this message translates to:
+  /// **'Vazgeç'**
+  String get todayCommandCancel;
+
+  /// No description provided for @todayCommandConfirm.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bu iş Mac mini\'de bir Claude ajanı başlatır. Devam edilsin mi?'**
+  String get todayCommandConfirm;
+
+  /// No description provided for @todayCommandQueuedNote.
+  ///
+  /// In tr, this message translates to:
+  /// **'İş kuyruğa alındı. Mac mini alınca başlar.'**
+  String get todayCommandQueuedNote;
+
+  /// No description provided for @todayCommandQueued.
+  ///
+  /// In tr, this message translates to:
+  /// **'Kuyrukta, Mac mini bekleniyor'**
+  String get todayCommandQueued;
+
+  /// No description provided for @todayCommandRunning.
+  ///
+  /// In tr, this message translates to:
+  /// **'Çalışıyor'**
+  String get todayCommandRunning;
+
+  /// No description provided for @todayCommandDone.
+  ///
+  /// In tr, this message translates to:
+  /// **'Son çalışma tamamlandı'**
+  String get todayCommandDone;
+
+  /// No description provided for @todayCommandFailed.
+  ///
+  /// In tr, this message translates to:
+  /// **'Son çalışma başarısız'**
+  String get todayCommandFailed;
 }
 
 class _LDelegate extends LocalizationsDelegate<L> {

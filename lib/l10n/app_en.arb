@@ -576,5 +576,13 @@
   "todayStaleHubs": "Could not refresh: {hubs}",
   "todayDue": "Due: {date}",
   "todayOverdue": "Overdue: {date}",
-  "todayChoice": "Choice: {option}"
+  "todayChoice": "Choice: {option}",
+  "todayCommandRun": "Run",
+  "todayCommandCancel": "Cancel",
+  "todayCommandConfirm": "This starts a Claude agent on the Mac mini. Continue?",
+  "todayCommandQueuedNote": "The job was queued. It starts when the Mac mini picks it up.",
+  "todayCommandQueued": "Queued, waiting for the Mac mini",
+  "todayCommandRunning": "Running",
+  "todayCommandDone": "Last run finished",
+  "todayCommandFailed": "Last run failed"
 }

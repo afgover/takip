@@ -147,6 +147,45 @@ class TodayData {
   final DateTime? lastIndexedAt;
 }
 
+/// Kapalı katalogdaki bir komut ve son çalışması (Merkez `/commands`).
+class MerkezCommand {
+  const MerkezCommand({
+    required this.name,
+    required this.titleTr,
+    required this.titleEn,
+    this.lastStatus,
+  });
+
+  final String name;
+  final String titleTr;
+  final String titleEn;
+
+  /// queued | running | done | failed; hiç çalışmadıysa null.
+  final String? lastStatus;
+
+  bool get isActive => lastStatus == 'queued' || lastStatus == 'running';
+
+  /// Yanıtın `recent` listesi en yeni önce gelir.
+  static List<MerkezCommand> listFromJson(Map<String, dynamic> json) {
+    final recent = (json['recent'] as List? ?? const [])
+        .whereType<Map<String, dynamic>>()
+        .toList();
+    return (json['catalog'] as List? ?? const [])
+        .whereType<Map<String, dynamic>>()
+        .map((c) {
+      final name = c['name'] as String;
+      final title = c['title'] as Map<String, dynamic>? ?? const {};
+      final last = recent.where((r) => r['type'] == name).firstOrNull;
+      return MerkezCommand(
+        name: name,
+        titleTr: title['tr'] as String? ?? name,
+        titleEn: title['en'] as String? ?? name,
+        lastStatus: last?['status'] as String?,
+      );
+    }).toList();
+  }
+}
+
 int _int(Object? value) => value is num ? value.toInt() : 0;
 
 /// Merkez'in uygulamanın kullandığı üç ucu. Bilinmeyen alan yok sayılır:
@@ -199,6 +238,21 @@ class MerkezApi {
             if (option != null) 'option': option,
             if (text != null && text.trim().isNotEmpty) 'text': text.trim(),
           },
+          options: _auth(token),
+        );
+      });
+
+  Future<List<MerkezCommand>> commands(String token) => _guard(() async {
+        final res = await _dio.get<Map<String, dynamic>>(
+          '/commands',
+          options: _auth(token),
+        );
+        return MerkezCommand.listFromJson(res.data ?? const {});
+      });
+
+  Future<void> runCommand(String token, String name) => _guard(() async {
+        await _dio.post<dynamic>(
+          '/commands/${Uri.encodeComponent(name)}/run',
           options: _auth(token),
         );
       });
