@@ -144,7 +144,10 @@ class _TodayList extends ConsumerWidget {
         data.hubs.where((h) => h.status == 'beklemede' && h.waiting.isNotEmpty);
 
     return RefreshIndicator(
-      onRefresh: () => ref.refresh(merkezTodayProvider.future),
+      onRefresh: () {
+        ref.invalidate(merkezCommandsProvider);
+        return ref.refresh(merkezTodayProvider.future);
+      },
       child: ListView(
         padding: const EdgeInsets.fromLTRB(12, 12, 12, 24),
         children: [
@@ -159,6 +162,7 @@ class _TodayList extends ConsumerWidget {
               l.todayStaleHubs(data.failedHubs.join(', ')),
               style: TextStyle(color: Theme.of(context).colorScheme.error),
             ),
+          const _CommandsSection(),
           if (active.isEmpty && parked.isEmpty)
             Padding(
               padding: const EdgeInsets.only(top: 32),
@@ -176,6 +180,87 @@ class _TodayList extends ConsumerWidget {
             onPressed: () => ref.read(merkezTokenProvider.notifier).logout(),
             child: Text(l.todayLogout),
           ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Mac mini'de iş başlatan kapalı katalog (ör. harcamaları çıkar).
+///
+/// Sonuç anlık gelmez: iş kuyruğa düşer, çalıştırıcı alınca başlar. Bu yüzden
+/// başarı mesajı "başladı" değil "kuyruğa alındı" der.
+class _CommandsSection extends ConsumerWidget {
+  const _CommandsSection();
+
+  String? _statusText(L l, String? status) => switch (status) {
+        'queued' => l.todayCommandQueued,
+        'running' => l.todayCommandRunning,
+        'done' => l.todayCommandDone,
+        'failed' => l.todayCommandFailed,
+        _ => null,
+      };
+
+  Future<void> _run(BuildContext context, WidgetRef ref, MerkezCommand command,
+      String title) async {
+    final l = L.of(context);
+    final messenger = ScaffoldMessenger.of(context);
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: Text(title),
+        content: Text(l.todayCommandConfirm),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(false),
+            child: Text(l.todayCommandCancel),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.of(dialogContext).pop(true),
+            child: Text(l.todayCommandRun),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true) return;
+    final token = ref.read(merkezTokenProvider).valueOrNull;
+    if (token == null) return;
+    try {
+      await ref.read(merkezApiProvider).runCommand(token, command.name);
+      messenger.showSnackBar(SnackBar(content: Text(l.todayCommandQueuedNote)));
+    } catch (e) {
+      messenger.showSnackBar(SnackBar(content: Text(_errorText(l, e))));
+    }
+    ref.invalidate(merkezCommandsProvider);
+  }
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l = L.of(context);
+    final english = Localizations.localeOf(context).languageCode == 'en';
+    final commands = ref.watch(merkezCommandsProvider).valueOrNull ?? const [];
+    if (commands.isEmpty) return const SizedBox.shrink();
+    return Padding(
+      padding: const EdgeInsets.only(top: 12),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          for (final command in commands)
+            Builder(builder: (context) {
+              final title = english ? command.titleEn : command.titleTr;
+              final status = _statusText(l, command.lastStatus);
+              return ListTile(
+                contentPadding: EdgeInsets.zero,
+                title: Text(title),
+                subtitle: status == null ? null : Text(status),
+                trailing: FilledButton.tonal(
+                  onPressed: command.isActive
+                      ? null
+                      : () => _run(context, ref, command, title),
+                  child: Text(l.todayCommandRun),
+                ),
+              );
+            }),
         ],
       ),
     );

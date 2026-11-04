@@ -85,6 +85,35 @@ void main() {
     expect(data.hubs.single.isActive, isTrue);
   });
 
+  test('commands: yalnız katalog, durum recent listesinden', () async {
+    final (api, fake) = _api(200, {
+      'catalog': [
+        {'name': 'a.b', 'title': {'tr': 'Tr', 'en': 'En'}},
+        {'name': 'c.d', 'title': {}},
+      ],
+      'recent': [
+        {'type': 'a.b', 'status': 'running'},
+        {'type': 'a.b', 'status': 'done'},
+        {'type': 'wake-agent', 'status': 'queued'},
+      ],
+    });
+    final list = await api.commands('jwt');
+    expect(fake.last!.headers['Authorization'], 'Bearer jwt');
+    expect(list.map((c) => c.name), ['a.b', 'c.d']);
+    expect(list.first.lastStatus, 'running');
+    expect(list.first.isActive, isTrue);
+    expect(list.last.lastStatus, isNull);
+    expect(list.last.titleTr, 'c.d');
+  });
+
+  test('runCommand adı kodlar, gövde göndermez', () async {
+    final (api, fake) = _api(201, {'id': 'c'});
+    await api.runCommand('jwt', 'goverco.harcamalari-cikar');
+    expect(fake.last!.path, '/commands/goverco.harcamalari-cikar/run');
+    expect(fake.last!.method, 'POST');
+    expect(fake.lastBody, isNull);
+  });
+
   test('answer yolu kodlar, boş açıklamayı göndermez', () async {
     final (api, fake) = _api(201, {'path': 'p'});
     await api.answer('jwt', hub: 'Copilot_takip', taskId: 'T-1', option: 'Evet', text: '  ');

@@ -841,5 +841,13 @@
         "type": "String"
       }
     }
-  }
+  },
+  "todayCommandRun": "Çalıştır",
+  "todayCommandCancel": "Vazgeç",
+  "todayCommandConfirm": "Bu iş Mac mini'de bir Claude ajanı başlatır. Devam edilsin mi?",
+  "todayCommandQueuedNote": "İş kuyruğa alındı. Mac mini alınca başlar.",
+  "todayCommandQueued": "Kuyrukta, Mac mini bekleniyor",
+  "todayCommandRunning": "Çalışıyor",
+  "todayCommandDone": "Son çalışma tamamlandı",
+  "todayCommandFailed": "Son çalışma başarısız"
 }

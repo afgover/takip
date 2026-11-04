@@ -1254,4 +1254,30 @@ class LTr extends L {
   String todayChoice(String option) {
     return 'Seçim: $option';
   }
+
+  @override
+  String get todayCommandRun => 'Çalıştır';
+
+  @override
+  String get todayCommandCancel => 'Vazgeç';
+
+  @override
+  String get todayCommandConfirm =>
+      'Bu iş Mac mini\'de bir Claude ajanı başlatır. Devam edilsin mi?';
+
+  @override
+  String get todayCommandQueuedNote =>
+      'İş kuyruğa alındı. Mac mini alınca başlar.';
+
+  @override
+  String get todayCommandQueued => 'Kuyrukta, Mac mini bekleniyor';
+
+  @override
+  String get todayCommandRunning => 'Çalışıyor';
+
+  @override
+  String get todayCommandDone => 'Son çalışma tamamlandı';
+
+  @override
+  String get todayCommandFailed => 'Son çalışma başarısız';
 }

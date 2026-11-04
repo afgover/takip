@@ -1265,4 +1265,30 @@ class LEn extends L {
   String todayChoice(String option) {
     return 'Choice: $option';
   }
+
+  @override
+  String get todayCommandRun => 'Run';
+
+  @override
+  String get todayCommandCancel => 'Cancel';
+
+  @override
+  String get todayCommandConfirm =>
+      'This starts a Claude agent on the Mac mini. Continue?';
+
+  @override
+  String get todayCommandQueuedNote =>
+      'The job was queued. It starts when the Mac mini picks it up.';
+
+  @override
+  String get todayCommandQueued => 'Queued, waiting for the Mac mini';
+
+  @override
+  String get todayCommandRunning => 'Running';
+
+  @override
+  String get todayCommandDone => 'Last run finished';
+
+  @override
+  String get todayCommandFailed => 'Last run failed';
 }
