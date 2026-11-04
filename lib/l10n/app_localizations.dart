@@ -2088,6 +2088,162 @@ abstract class L {
   /// In tr, this message translates to:
   /// **'@{who} için atama gönderildi.'**
   String detailAssignSent(String who);
+
+  /// No description provided for @navToday.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bugün'**
+  String get navToday;
+
+  /// No description provided for @todayLoginTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Merkez\'e bağlan'**
+  String get todayLoginTitle;
+
+  /// No description provided for @todayLoginHint.
+  ///
+  /// In tr, this message translates to:
+  /// **'Tüm hub\'ların bekleyen kararları burada toplanır. Diğer sekmeler Merkez olmadan da çalışır.'**
+  String get todayLoginHint;
+
+  /// No description provided for @todayPassword.
+  ///
+  /// In tr, this message translates to:
+  /// **'Parola'**
+  String get todayPassword;
+
+  /// No description provided for @todayLoginButton.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bağlan'**
+  String get todayLoginButton;
+
+  /// No description provided for @todayLogout.
+  ///
+  /// In tr, this message translates to:
+  /// **'Merkez bağlantısını kapat'**
+  String get todayLogout;
+
+  /// No description provided for @todayRetry.
+  ///
+  /// In tr, this message translates to:
+  /// **'Yeniden dene'**
+  String get todayRetry;
+
+  /// No description provided for @todayEmpty.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bekleyen karar yok.'**
+  String get todayEmpty;
+
+  /// No description provided for @todayWriteAnswer.
+  ///
+  /// In tr, this message translates to:
+  /// **'Cevap yaz'**
+  String get todayWriteAnswer;
+
+  /// No description provided for @todayAwaitingAgent.
+  ///
+  /// In tr, this message translates to:
+  /// **'Cevaplandı, ajan bekleniyor'**
+  String get todayAwaitingAgent;
+
+  /// No description provided for @todayAnswerSent.
+  ///
+  /// In tr, this message translates to:
+  /// **'Cevap hub\'a yazıldı.'**
+  String get todayAnswerSent;
+
+  /// No description provided for @todayAnswerText.
+  ///
+  /// In tr, this message translates to:
+  /// **'Cevabın'**
+  String get todayAnswerText;
+
+  /// No description provided for @todayAnswerNote.
+  ///
+  /// In tr, this message translates to:
+  /// **'Açıklama (isteğe bağlı)'**
+  String get todayAnswerNote;
+
+  /// No description provided for @todayAnswerEmpty.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bir cevap yaz.'**
+  String get todayAnswerEmpty;
+
+  /// No description provided for @todaySend.
+  ///
+  /// In tr, this message translates to:
+  /// **'Gönder'**
+  String get todaySend;
+
+  /// No description provided for @todayErrorPassword.
+  ///
+  /// In tr, this message translates to:
+  /// **'Parola kabul edilmedi.'**
+  String get todayErrorPassword;
+
+  /// No description provided for @todayErrorRateLimit.
+  ///
+  /// In tr, this message translates to:
+  /// **'Çok fazla deneme. Bir dakika sonra yeniden dene.'**
+  String get todayErrorRateLimit;
+
+  /// No description provided for @todayErrorNetwork.
+  ///
+  /// In tr, this message translates to:
+  /// **'Merkez\'e ulaşılamadı. Bağlantını kontrol et.'**
+  String get todayErrorNetwork;
+
+  /// No description provided for @todayErrorServer.
+  ///
+  /// In tr, this message translates to:
+  /// **'Merkez bir hata döndürdü. Yeniden dene.'**
+  String get todayErrorServer;
+
+  /// No description provided for @todaySummary.
+  ///
+  /// In tr, this message translates to:
+  /// **'{pending} bekleyen karar, {options} seçenekli'**
+  String todaySummary(int pending, int options);
+
+  /// No description provided for @todayAwaitingCount.
+  ///
+  /// In tr, this message translates to:
+  /// **'{count} cevap ajan bekliyor'**
+  String todayAwaitingCount(int count);
+
+  /// No description provided for @todayParked.
+  ///
+  /// In tr, this message translates to:
+  /// **'Beklemedeki projeler ({count})'**
+  String todayParked(int count);
+
+  /// No description provided for @todayStaleHubs.
+  ///
+  /// In tr, this message translates to:
+  /// **'Güncellenemeyen hub: {hubs}'**
+  String todayStaleHubs(String hubs);
+
+  /// No description provided for @todayDue.
+  ///
+  /// In tr, this message translates to:
+  /// **'Son tarih: {date}'**
+  String todayDue(String date);
+
+  /// No description provided for @todayOverdue.
+  ///
+  /// In tr, this message translates to:
+  /// **'Son tarih geçti: {date}'**
+  String todayOverdue(String date);
+
+  /// No description provided for @todayChoice.
+  ///
+  /// In tr, this message translates to:
+  /// **'Seçim: {option}'**
+  String todayChoice(String option);
 }
 
 class _LDelegate extends LocalizationsDelegate<L> {

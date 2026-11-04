@@ -550,5 +550,31 @@
         "type": "String"
       }
     }
-  }
+  },
+  "navToday": "Today",
+  "todayLoginTitle": "Connect to Merkez",
+  "todayLoginHint": "Pending decisions from all hubs are collected here. The other tabs work without Merkez.",
+  "todayPassword": "Password",
+  "todayLoginButton": "Connect",
+  "todayLogout": "Disconnect from Merkez",
+  "todayRetry": "Retry",
+  "todayEmpty": "No pending decisions.",
+  "todayWriteAnswer": "Write an answer",
+  "todayAwaitingAgent": "Answered, waiting for the agent",
+  "todayAnswerSent": "The answer was written to the hub.",
+  "todayAnswerText": "Your answer",
+  "todayAnswerNote": "Explanation (optional)",
+  "todayAnswerEmpty": "Write an answer.",
+  "todaySend": "Send",
+  "todayErrorPassword": "The password was not accepted.",
+  "todayErrorRateLimit": "Too many attempts. Try again in a minute.",
+  "todayErrorNetwork": "Could not reach Merkez. Check your connection.",
+  "todayErrorServer": "Merkez returned an error. Try again.",
+  "todaySummary": "{pending} pending decisions, {options} with options",
+  "todayAwaitingCount": "{count} answers waiting for the agent",
+  "todayParked": "Parked projects ({count})",
+  "todayStaleHubs": "Could not refresh: {hubs}",
+  "todayDue": "Due: {date}",
+  "todayOverdue": "Overdue: {date}",
+  "todayChoice": "Choice: {option}"
 }

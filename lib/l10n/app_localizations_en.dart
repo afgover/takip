@@ -1171,4 +1171,98 @@ class LEn extends L {
   String detailAssignSent(String who) {
     return 'Assignment to @$who sent.';
   }
+
+  @override
+  String get navToday => 'Today';
+
+  @override
+  String get todayLoginTitle => 'Connect to Merkez';
+
+  @override
+  String get todayLoginHint =>
+      'Pending decisions from all hubs are collected here. The other tabs work without Merkez.';
+
+  @override
+  String get todayPassword => 'Password';
+
+  @override
+  String get todayLoginButton => 'Connect';
+
+  @override
+  String get todayLogout => 'Disconnect from Merkez';
+
+  @override
+  String get todayRetry => 'Retry';
+
+  @override
+  String get todayEmpty => 'No pending decisions.';
+
+  @override
+  String get todayWriteAnswer => 'Write an answer';
+
+  @override
+  String get todayAwaitingAgent => 'Answered, waiting for the agent';
+
+  @override
+  String get todayAnswerSent => 'The answer was written to the hub.';
+
+  @override
+  String get todayAnswerText => 'Your answer';
+
+  @override
+  String get todayAnswerNote => 'Explanation (optional)';
+
+  @override
+  String get todayAnswerEmpty => 'Write an answer.';
+
+  @override
+  String get todaySend => 'Send';
+
+  @override
+  String get todayErrorPassword => 'The password was not accepted.';
+
+  @override
+  String get todayErrorRateLimit => 'Too many attempts. Try again in a minute.';
+
+  @override
+  String get todayErrorNetwork =>
+      'Could not reach Merkez. Check your connection.';
+
+  @override
+  String get todayErrorServer => 'Merkez returned an error. Try again.';
+
+  @override
+  String todaySummary(int pending, int options) {
+    return '$pending pending decisions, $options with options';
+  }
+
+  @override
+  String todayAwaitingCount(int count) {
+    return '$count answers waiting for the agent';
+  }
+
+  @override
+  String todayParked(int count) {
+    return 'Parked projects ($count)';
+  }
+
+  @override
+  String todayStaleHubs(String hubs) {
+    return 'Could not refresh: $hubs';
+  }
+
+  @override
+  String todayDue(String date) {
+    return 'Due: $date';
+  }
+
+  @override
+  String todayOverdue(String date) {
+    return 'Overdue: $date';
+  }
+
+  @override
+  String todayChoice(String option) {
+    return 'Choice: $option';
+  }
 }

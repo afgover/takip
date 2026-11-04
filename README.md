@@ -109,6 +109,7 @@ token'ı siliyordu.
 Sürüm 0.1.0. Günlük kullanımda ama **tek kullanıcılık varsayımlarla** yazıldı:
 
 - **Android**; iOS hiç denenmedi.
+- **Bugün sekmesi isteğe bağlıdır:** tüm hub'ların bekleyen kararları Merkez sunucusundan gelir, cevap Merkez üzerinden `tasks/inbox`'a yazılır. Bağlı değilken diğer sekmeler eskisi gibi çalışır. Adres derlemede `--dart-define=MERKEZ_URL=...` ile değişir.
 - Arayüz, sözleşme ve protokol Türkçe ve İngilizce. Dil **hub'ın
   özelliğidir**, kurulumda seçilir (`SYSTEM.md` → `Hub dili`); sözleşme,
   arayüz ve yeni kayıtlar onu izler. Türkçe kopya **kanoniktir**: iki varyant
