@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:clock/clock.dart';
@@ -193,7 +194,7 @@ void main() {
     await outbox.add(market);
     await outbox.add(draft('Fatura'));
 
-    await outbox.remove(market.fileName);
+    await outbox.remove(market);
 
     final left = t.container.read(outboxProvider).valueOrNull!;
     expect(left.map((d) => d.title), ['Fatura']);
@@ -321,6 +322,63 @@ void main() {
       expect(t.adapter.requests, hasLength(1));
       expect(t.sent, isEmpty);
       expect(t.container.read(outboxProvider).valueOrNull, isEmpty);
+    });
+
+    test('aynı gün aynı başlıklı iki repo taslağından yalnız seçilen silinir', () async {
+      final t = await bootWithRepos(['a/bir', 'b/iki']); // aktif: b/iki
+      final outbox = t.container.read(outboxProvider.notifier);
+      final inB = draft('Market');
+      await outbox.add(inB);
+      await outbox.add(draft('Market').forRepo('a/bir'));
+      final queued = t.container.read(outboxProvider).valueOrNull!;
+      expect(queued.map((d) => d.fileName).toSet(), hasLength(1),
+          reason: 'senaryonun koşulu: iki taslak aynı dosya adını taşıyor');
+
+      await outbox.remove(queued.firstWhere((d) => d.repoSlug == 'b/iki'));
+
+      final left = t.container.read(outboxProvider).valueOrNull!;
+      expect(left.map((d) => d.repoSlug), ['a/bir']);
+    });
+
+    test('aynı adlı iki repo taslağından yalnız düzenlenen değişir', () async {
+      final t = await bootWithRepos(['a/bir', 'b/iki']);
+      final outbox = t.container.read(outboxProvider.notifier);
+      await outbox.add(draft('Market'));
+      await outbox.add(draft('Market').forRepo('a/bir'));
+      final queued = t.container.read(outboxProvider).valueOrNull!;
+      final a = queued.firstWhere((d) => d.repoSlug == 'a/bir');
+
+      await outbox.replace(a, draft('Market düzeltildi').forRepo('a/bir'));
+
+      final left = t.container.read(outboxProvider).valueOrNull!;
+      expect(left.map((d) => '${d.repoSlug} ${d.title}'),
+          ['b/iki Market', 'a/bir Market düzeltildi']);
+    });
+
+    test('gönderim sürerken eklenen taslak kaybolmaz', () async {
+      final t = await bootWithRepos(['a/bir', 'b/iki']);
+      final gate = Completer<void>();
+      final outbox = t.container.read(outboxProvider.notifier);
+      t.container.updateOverrides([
+        taskRepoProvider.overrideWithValue(
+          TaskRepo(ContentsApi(Dio(), owner: 'a', repo: 'bir')),
+        ),
+        draftSenderProvider.overrideWithValue((target, d) async {
+          t.sent.add((slug: target.slug, title: d.title));
+          await gate.future;
+        }),
+      ]);
+      await outbox.add(draft('İlk'));
+
+      final flushing = outbox.flush();
+      await Future<void>.delayed(Duration.zero);
+      await outbox.add(draft('Sırada eklenen'));
+      gate.complete();
+      expect(await flushing, 1);
+
+      final left = t.container.read(outboxProvider).valueOrNull!;
+      expect(left.map((d) => d.title), ['Sırada eklenen']);
+      expect(t.sent.map((e) => e.title), ['İlk']);
     });
 
     test('reposu kaldırılan taslak kuyrukta kalır, atılmaz', () async {
