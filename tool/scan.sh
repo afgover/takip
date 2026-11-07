@@ -167,10 +167,20 @@ fi
 
 # Geçmiş ayrı taranıyor: silinmiş bir sır çalışma ağacında görünmez ama
 # repoda durmaya devam eder.
-if git log --all -p --no-color 2>/dev/null | grep -qE "$SECRET_RE"; then
-  warn "git GEÇMİŞİNDE sır deseni eşleşti — token'ı iptal et, sonra temizliği planla"
+#
+# `grep -q` ilk eşleşmede çıkınca `git log` SIGPIPE ile ölüyor; `pipefail`
+# altında boru hattı başarısız sayılıp eşleşme "temiz" raporlanıyordu
+# (2026-11-07, yol haritası incelemesi). Sayım bütün çıktıyı okur. Tarayıcının
+# kendisi koşamazsa bu "temiz" değil, ayrı bir sonuçtur.
+if ! git rev-parse --git-dir >/dev/null 2>&1; then
+  warn "git geçmişi taranamadı (git deposu değil) — sonuç bilinmiyor"
 else
-  ok "git geçmişi temiz"
+  GECMIS=$(git log --all -p --no-color 2>/dev/null | grep -cE "$SECRET_RE")
+  if [ "${GECMIS:-0}" -gt 0 ]; then
+    warn "git GEÇMİŞİNDE sır deseni eşleşti ($GECMIS satır) — token'ı iptal et, sonra temizliği planla"
+  else
+    ok "git geçmişi temiz"
+  fi
 fi
 
 # ---------------------------------------------------------------------------
