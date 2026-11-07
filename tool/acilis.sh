@@ -101,10 +101,17 @@ fi
 SON=$(awk '/\*\*Tarih:\*\*/{d=$3} /\*\*Tür:\*\* tarama/{print d}' "$HUB/SECURITY.md" 2>/dev/null | sort | tail -1)
 if [ -z "$SON" ]; then warn "hiç tarama kaydı yok — madde 4 taramayı ister"
 else
-  YAS=$(python3 -c "from datetime import date; print((date.today()-date.fromisoformat('$SON')).days)" 2>/dev/null)
-  [ -z "$YAS" ] && YAS=999
-  if [ "$YAS" -le 30 ]; then ok "son tarama $SON ($YAS gün)"
-  else warn "son tarama $SON ($YAS gün) — 30 günü aştı, yenile (madde 4)"; fi
+  # Tarih hub dosyasından gelir: VERİ olarak argv ile geçer, koda gömülmez
+  # (2026-11-07, yol haritası incelemesi: tırnak içeren bir "tarih" Python kodu
+  # olarak çalışıyordu). Biçim önce doğrulanır.
+  if ! printf '%s' "$SON" | grep -qE '^[0-9]{4}-[0-9]{2}-[0-9]{2}$'; then
+    warn "son tarama tarihi okunamadı (YYYY-AA-GG değil) — SECURITY.md'yi düzelt (madde 4)"
+  else
+    YAS=$(python3 -c 'import sys; from datetime import date; print((date.today()-date.fromisoformat(sys.argv[1])).days)' "$SON" 2>/dev/null)
+    [ -z "$YAS" ] && YAS=999
+    if [ "$YAS" -le 30 ]; then ok "son tarama $SON ($YAS gün)"
+    else warn "son tarama $SON ($YAS gün) — 30 günü aştı, yenile (madde 4)"; fi
+  fi
 fi
 
 # 4) Açık oturum (madde 1)
