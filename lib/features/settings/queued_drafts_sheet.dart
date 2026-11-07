@@ -96,7 +96,7 @@ class QueuedDraftsSheet extends ConsumerWidget {
       ),
     );
     if (ok != true) return;
-    await ref.read(outboxProvider.notifier).remove(d.fileName);
+    await ref.read(outboxProvider.notifier).remove(d);
     messenger.showSnackBar(SnackBar(content: Text(l.queuedDraftDeleted)));
   }
 
@@ -110,7 +110,7 @@ class QueuedDraftsSheet extends ConsumerWidget {
     if (result == null) return;
     await ref
         .read(outboxProvider.notifier)
-        .replace(d.fileName,
+        .replace(d,
             d.edited(title: result.title, description: result.description));
     messenger.showSnackBar(SnackBar(content: Text(l.queuedDraftSaved)));
   }

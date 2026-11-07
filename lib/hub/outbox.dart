@@ -84,21 +84,27 @@ class Outbox extends AsyncNotifier<List<TaskDraft>> {
     await _persist(current);
   }
 
-  /// Kuyruktaki bir taslağı yerinde değiştirir (T-021).
+  /// Kuyruğun tekil anahtarı: hedef repo + dosya adı.
   ///
-  /// Eşleşme `fileName` ile: kuyruğun tekil anahtarı o. Yeni taslak eskisinin
+  /// Yalnız dosya adı yetmiyordu: ad tarih ve başlıktan türüyor, aynı gün aynı
+  /// başlıkla iki repoya yazılan iki taslak aynı adı taşıyor ve birini silmek
+  /// ikisini de siliyordu (2026-11-07, yol haritası incelemesi).
+  static bool _same(TaskDraft a, TaskDraft b) =>
+      a.fileName == b.fileName && a.repoSlug == b.repoSlug;
+
+  /// Kuyruktaki bir taslağı yerinde değiştirir (T-021). Yeni taslak eskisinin
   /// **sırasını korur** — düzenlenen taslağın kuyruğun sonuna düşmesi,
   /// gönderim sırasını sessizce değiştirirdi.
-  Future<void> replace(String fileName, TaskDraft updated) async {
+  Future<void> replace(TaskDraft original, TaskDraft updated) async {
     final current = (state.valueOrNull ?? const <TaskDraft>[])
-        .map((d) => d.fileName == fileName ? updated : d)
+        .map((d) => _same(d, original) ? updated : d)
         .toList();
     await _persist(current);
   }
 
-  Future<void> remove(String fileName) async {
+  Future<void> remove(TaskDraft draft) async {
     final current = (state.valueOrNull ?? const <TaskDraft>[])
-        .where((d) => d.fileName != fileName)
+        .where((d) => !_same(d, draft))
         .toList();
     await _persist(current);
   }
@@ -119,6 +125,7 @@ class Outbox extends AsyncNotifier<List<TaskDraft>> {
 
     _flushing = true;
     final remaining = <TaskDraft>[];
+    final sent = <TaskDraft>[];
     try {
       // Tek doğru kaynak bağlantı listesi. `hubConfigProvider` buradan
       // **asenkron** türediği için repo değiştikten hemen sonra bayat kalır;
@@ -159,6 +166,7 @@ class Outbox extends AsyncNotifier<List<TaskDraft>> {
           } else {
             await ref.read(draftSenderProvider)(target, draft);
           }
+          sent.add(draft);
         } on HubNetworkError {
           offline = true; // hâlâ ağ yok; kalanları deneme
           remaining.add(draft);
@@ -169,8 +177,15 @@ class Outbox extends AsyncNotifier<List<TaskDraft>> {
         }
       }
 
-      await _persist(remaining);
-      return queued.length - remaining.length;
+      // Gönderim sürerken kuyruk değişmiş olabilir (yeni taslak eklendi,
+      // biri düzenlendi). Başlangıçtaki kopyayı yazmak o değişiklikleri
+      // siliyordu; yalnız gönderilen nesneler çıkarılır. Gönderim sırasında
+      // düzenlenen taslak yeni bir nesnedir, kuyrukta kalır.
+      final now = state.valueOrNull ?? const <TaskDraft>[];
+      await _persist(
+        now.where((d) => !sent.any((s) => identical(s, d))).toList(),
+      );
+      return sent.length;
     } finally {
       _flushing = false;
     }
