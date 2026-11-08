@@ -107,6 +107,14 @@ class HubSync extends Notifier<SyncStatus> {
   ///
   /// Kod dosyaları dışarıda — uygulama onları göstermiyor, indirmek boşuna
   /// yer ve istek olurdu.
+  /// Bu boyuttan büyük dosya Contents API'den değil, blob olarak iner.
+  ///
+  /// GitHub Contents API 1 MB üstünde içerik göndermiyor; eskiden bu,
+  /// dosyanın ait olduğu reponun senkronunu tümden durduruyordu (hata
+  /// yukarı çıkıyor, ağaç yazılmıyordu). Sınır biraz aşağıda tutuldu:
+  /// "1 MB"ın 10^6 mı 2^20 mi olduğu belgede net değil.
+  static const largeFileBytes = 1000 * 1000;
+
   static bool isSyncable(TreeEntry entry) =>
       entry.isFile &&
       entry.path.startsWith('${Hub.basePath}/') &&
@@ -195,10 +203,13 @@ class HubSync extends Notifier<SyncStatus> {
 
       var done = 0;
       for (final entry in stale) {
-        final file = await contents.getFile(entry.path);
+        final size = entry.size;
+        final content = size != null && size >= largeFileBytes
+            ? await trees.blobText(entry.sha)
+            : (await contents.getFile(entry.path)).content;
         await store.writeDoc(
           entry.path,
-          StoredDoc(sha: entry.sha, content: file.content),
+          StoredDoc(sha: entry.sha, content: content),
         );
         done++;
         if (isActive) state = state.copyWith(done: done);
