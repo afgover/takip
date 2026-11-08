@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -67,6 +69,29 @@ class TreesApi {
               size: e['size'] as int?,
             ))
         .toList();
+  }
+
+  /// Blob'un metin içeriği, ağaçtaki SHA'sıyla.
+  ///
+  /// Contents API 1 MB'ı aşan dosyada içerik göndermez (`encoding: none`);
+  /// Blobs API 100 MB'a kadar base64 verir. Hub'da bu boyutu geçen dosya
+  /// olabiliyor (uzun BACKLOG), onu okumanın yolu bu.
+  Future<String> blobText(String sha) async {
+    final res = await sendGithub(
+      () => _dio.get<dynamic>(
+        '/repos/${Uri.encodeComponent(owner)}/${Uri.encodeComponent(repo)}'
+        '/git/blobs/${Uri.encodeComponent(sha)}',
+      ),
+    );
+
+    final data = res.data;
+    if (data is! Map ||
+        data['encoding'] != 'base64' ||
+        data['content'] is! String) {
+      throw HubUnexpectedError('Blob okunamadı: $sha');
+    }
+    final raw = (data['content'] as String).replaceAll(RegExp(r'\s'), '');
+    return utf8.decode(base64.decode(raw));
   }
 }
 

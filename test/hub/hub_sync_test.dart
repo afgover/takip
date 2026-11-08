@@ -23,6 +23,10 @@ class FakeRemote {
   Map<String, String> files;
   int treeRequests = 0;
   final downloaded = <String>[];
+  final blobDownloads = <String>[];
+
+  /// GitHub Contents API bu boyutun üstünde içerik göndermez.
+  static const contentsLimit = 1024 * 1024;
   bool offline = false;
 
   static String shaOf(String content) =>
@@ -47,9 +51,23 @@ class FakeRemote {
               'path': entry.key,
               'sha': shaOf(entry.value),
               'type': 'blob',
-              'size': entry.value.length,
+              'size': utf8.encode(entry.value).length,
             },
         ],
+      });
+    }
+
+    final blobMarker = '/git/blobs/';
+    final blobIndex = path.indexOf(blobMarker);
+    if (blobIndex >= 0) {
+      final sha = path.substring(blobIndex + blobMarker.length);
+      final match = files.entries.where((e) => shaOf(e.value) == sha);
+      if (match.isEmpty) return jsonResponse({'message': 'Not Found'}, status: 404);
+      blobDownloads.add(match.first.key);
+      return jsonResponse({
+        'sha': sha,
+        'content': base64.encode(utf8.encode(match.first.value)),
+        'encoding': 'base64',
       });
     }
 
@@ -60,6 +78,15 @@ class FakeRemote {
       final content = files[filePath];
       if (content == null) return jsonResponse({'message': 'Not Found'}, status: 404);
       downloaded.add(filePath);
+      if (utf8.encode(content).length > contentsLimit) {
+        // Gerçek GitHub: büyük dosyada içerik boş, encoding "none".
+        return jsonResponse({
+          'path': filePath,
+          'sha': shaOf(content),
+          'content': '',
+          'encoding': 'none',
+        });
+      }
       return jsonResponse({
         'path': filePath,
         'sha': shaOf(content),
@@ -263,6 +290,33 @@ void main() {
     await t.container.read(hubSyncProvider.notifier).clearOfflineCopy();
 
     expect((await other.readDoc('hub/BACKLOG.md'))?.content, 'öteki repo');
+  });
+
+  test('1 MB\'ı aşan dosya blob olarak iner, senkron durmaz', () async {
+    final big = '# Backlog\n${'- [ ] B-001 uzun madde satırı\n' * 50000}';
+    expect(utf8.encode(big).length, greaterThan(FakeRemote.contentsLimit));
+    final t = await boot({...hub, 'hub/BACKLOG.md': big});
+    await t.container.read(hubSyncProvider.notifier).syncNow();
+
+    final status = t.container.read(hubSyncProvider);
+    expect(status.error, isNull,
+        reason: 'büyük dosya reponun senkronunu durdurmamalı');
+    expect(status.docCount, 3);
+    expect(t.remote.blobDownloads, ['hub/BACKLOG.md']);
+
+    final store = t.container.read(offlineStoreProvider)!;
+    expect((await store.readDoc('hub/BACKLOG.md'))?.content, big);
+    expect((await store.readDoc('hub/SYSTEM.md'))?.content, '# Sözleşme');
+    expect(await store.readTree(), isNotNull,
+        reason: 'ağaç yazılmazsa her senkron aynı yerde takılır');
+  });
+
+  test('küçük dosyalar yine Contents API ile iner', () async {
+    final t = await boot(hub);
+    await t.container.read(hubSyncProvider.notifier).syncNow();
+
+    expect(t.remote.blobDownloads, isEmpty);
+    expect(t.remote.downloaded, hasLength(3));
   });
 
   test('üst üste çağrılan senkron tek kez koşar', () async {
