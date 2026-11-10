@@ -516,3 +516,23 @@ değil. Token, parola veya anahtar bu dosyada hiçbir koşulda yer almaz.
   - Yeni bağımlılık yok; kanal `MainActivity.kt` içinde, ~40 satır.
   Kalan risk: kötü niyetli bir uygulama formu yanıltıcı metinle
   doldurabilir; kullanıcı göndermeden önce metni görür. Kabul edildi.
+
+## SEC-020 — Tarama: periyodik (5. koşum)
+- **Tarih:** 2026-11-10
+- **Tür:** tarama
+- **Durum:** kapali
+- **Kaynak:** [S-2026-11-10-sozlesme-1-42](sessions/2026-11-10-sozlesme-1-42/session.md),
+  madde 4 (son tarama [SEC-018](#SEC-018), 43 gün)
+- **Açıklama:** `tool/scan.sh` tam koşum (OSV dahil).
+  **(1) Bilinen zafiyet:** 70 pakette yok; kontrol grubu 3/3 doğrulandı.
+  **(2) Sürüm güncelliği (bilgi):** yama düzeyinde `dio` 5.11.0 → 5.11.1
+  ve `yaml` 3.1.3 → 3.1.4 hâlâ kısıt içinde; major farklar
+  (`flutter_riverpod` 2.6.1 / 3.5.0, `flutter_secure_storage` 9.2.4 /
+  11.2.0) [B-138](BACKLOG.md#B-138)'in konusu, mevcut sürümlerde
+  danışmanlık yok — erteleme geçerli.
+  **(3) Sır taraması:** çalışma ağacı ve git geçmişinin tamamı temiz.
+  **(4) Android:** yedekleme kuralları bağlı (SEC-009), izin listesi tek
+  (`INTERNET`). Bilinen iki bulgu sürüyor: release debug anahtarıyla
+  imzalanıyor ve elde duran release APK debug imzalı
+  ([SEC-010](#SEC-010), [B-101](BACKLOG.md#B-101); tetikleyici store
+  yüklemesi, T-010). Yeni bulgu yok.
