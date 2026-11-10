@@ -1,16 +1,17 @@
 ---
-id: pending
+id: T-026
 title: "Sözleşme 1.42: karar kaydı biçimi ve öncelik puanı"
 created_by: user
 created: "2026-11-08T22:14:38Z"
-updated: "2026-11-08T22:14:38Z"
+updated: "2026-11-10T12:07:00Z"
 priority: high
 category: gelistirme
 tags: [sozlesme, karar]
-session: none
-result: none
+session: S-2026-11-10-sozlesme-1-42
+result: "sözleşme 1.42'de çıktı (§4 Karar kaydı, §13 G-002); eski karar priority'den türer"
 author: afgover
 via: asistan
+assignee: afgover
 ---
 
 # Sözleşme 1.42: karar kaydı biçimi ve öncelik puanı
@@ -150,3 +151,6 @@ Proje ajanı, sözleşmeyi 1.42'ye yükselttiği ilk oturumda `tasks/waiting/`
 içindeki kararları gözden geçirir: geçerliliğini yitirenleri kapatır,
 aynı konuyu soranları birleştirir, kalanları yeni biçime çevirir. Asistan
 katmanı bu işi başka hub'larda yapmaz (§17).
+
+## Notlar
+- 2026-11-10 12:07 — sözleşme 1.42'de çıktı (§4 Karar kaydı, §13 G-002); eski karar priority'den türer. Kayıt: [S-2026-11-10-sozlesme-1-42](../../sessions/2026-11-10-sozlesme-1-42/session.md).
