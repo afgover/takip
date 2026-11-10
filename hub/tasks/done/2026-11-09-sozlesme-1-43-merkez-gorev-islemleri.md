@@ -1,16 +1,17 @@
 ---
-id: pending
+id: T-027
 title: "Sözleşme 1.43: Merkez görev işlemleri (aktör, istek kimliği, görev geçişi olayları)"
 created_by: user
 created: "2026-11-09T18:30:00Z"
-updated: "2026-11-09T18:30:00Z"
+updated: "2026-11-10T12:07:00Z"
 priority: high
 category: gelistirme
 tags: [sozlesme, merkez]
-session: none
-result: none
+session: S-2026-11-10-sozlesme-1-42
+result: "1.43 yerine 1.42'de çıktı (§4 Görev işlemleri, §16 işleyici satırı); çakışma alan karşılaştırmasıyla"
 author: afgover
 via: asistan
+assignee: afgover
 ---
 
 # Sözleşme 1.43: Merkez görev işlemleri (aktör, istek kimliği, görev geçişi olayları)
@@ -65,3 +66,5 @@ denetimi ve görünüm ayrı iş (sonraki sürüm).
 ## Notlar
 Merkez tarafındaki F2.1 (merkez#23) bugünkü 1.41 biçimiyle çalışır; bu
 öneri onaylanmadan hiçbir hub'da işleyici açılmaz.
+
+- 2026-11-10 12:07 — 1.43 yerine 1.42'de çıktı (§4 Görev işlemleri, §16 işleyici satırı); çakışma alan karşılaştırmasıyla. Kayıt: [S-2026-11-10-sozlesme-1-42](../../sessions/2026-11-10-sozlesme-1-42/session.md).
