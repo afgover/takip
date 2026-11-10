@@ -1,21 +1,28 @@
 ---
 id: S-2026-11-10-sozlesme-1-42
 date: 2026-11-10
-status: open
+status: closed
 reconstructed: false
 author: afgover
 surface: projects
 thread: cmsg_015UWMzEHfYaAw8ghcFB1SaBCsGbZGh5xyT3pf2jgJQNAq
 topics: [sozlesme, karar, merkez, supersedes]
 artifacts: []
-tasks_touched: []
+tasks_touched: [T-010, T-026, T-027]
 ---
 
 # Oturum: sözleşme 1.42 — karar kaydı, Merkez görev işlemleri, karar serisi
 
 ## Özet
 
-*(oturum açık — kapanışta yazılacak)*
+Sözleşme 1.41 → 1.42: üç öneri (karar kaydı + öncelik puanı, Merkez görev
+işlemleri, karar serisi / `supersedes`) tek sürümde, tr + en, Merkez'in
+`main` koduna hizalı (`2c72957`). Biçim denetimi `tool/audit.sh --karar`
+ve hub denetiminde karar kontrolü, dört testle. Uygulama sabiti 1.42,
+uygulama tarafı B-150. G-002 eski kararların göçü için eklendi (takip'in
+kendi `waiting/`inde karar yok, uygulanacak bir şey çıkmadı). Yan işler:
+2026-10-14 oturumu kapatıldı, iki eski olay işlendi, SEC-020 taraması
+(yeni bulgu yok). Merkez thread'ine koordinatör üzerinden haber verildi.
 
 ## Kayıt
 
@@ -84,3 +91,9 @@ Inbox: iki öneri T-026 ve T-027 olarak `done/`a (sonuç: 1.42'de çıktı).
 taşındı. "Hub kayıtlarını özel depoya taşı" görevi inbox'ta, bu oturumun
 konusu değil. Güvenlik taraması 43 gündür koşmamıştı: `tool/scan.sh`
 koştu, yeni bulgu yok ([SEC-020](../../SECURITY.md#SEC-020)).
+
+### [12:16] Agent
+
+Push: `78cf83a..d3aebb8` (takip main). Koordinatöre Merkez ve ayıklama
+thread'leri için not gönderildi: sürüm 1.42 (1.43 yok), ORTAM satırı,
+koda hizalanan iki ayrılık, `uid`'in isteğe bağlı olduğu. Oturum kapandı.
