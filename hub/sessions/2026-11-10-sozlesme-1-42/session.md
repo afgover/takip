@@ -92,7 +92,7 @@ taşındı. "Hub kayıtlarını özel depoya taşı" görevi inbox'ta, bu oturum
 konusu değil. Güvenlik taraması 43 gündür koşmamıştı: `tool/scan.sh`
 koştu, yeni bulgu yok ([SEC-020](../../SECURITY.md#SEC-020)).
 
-### [12:16] Agent
+### [12:11] Agent
 
 Push: `78cf83a..d3aebb8` (takip main). Koordinatöre Merkez ve ayıklama
 thread'leri için not gönderildi: sürüm 1.42 (1.43 yok), ORTAM satırı,
