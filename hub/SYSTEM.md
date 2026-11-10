@@ -5,7 +5,7 @@ ve hangi şemaya uyacağını** tanımlar. Agent ve kullanıcı uygulaması bu s
 dışına çıkmaz. Sözleşme değişiklikleri `EVOLUTION.md`'ye kaydedilir ve bu dosyanın
 başındaki sürüm numarası artırılır.
 
-**Sözleşme sürümü:** 1.41
+**Sözleşme sürümü:** 1.42
 **Ana kopya (master):** `afgover/takip` → `hub/SYSTEM.md` (tr, **kanonik**) ·
 `hub/SYSTEM.en.md` (en)
 (bkz. §10 — her hub kendi kopyasını, kendi dilindeki varyanttan günceller)
@@ -41,6 +41,7 @@ başındaki sürüm numarası artırılır.
 > | Notlar | `## Notlar` | `## Notes` |
 > | Nerede | `## Nerede` | `## Where` |
 > | Alıntı | `## Alıntı` | `## Quote` |
+> | Karar (v1.42) | `## Soru`, `## Bağlam`, `## Seçenekler`, `## Öneri`, `## Kaynaklar`, `## Ek bilgi` | `## Question`, `## Context`, `## Options`, `## Recommendation`, `## Sources`, `## More information` |
 >
 > **Ayrıştırıcı hepsini tanır.** Hub'ın ilan ettiği dille sınırlanmaz: dil
 > alanı eklenmeden önce yazılmış kayıtlar, elle düzenlenmiş dosyalar ve dil
@@ -52,7 +53,9 @@ başındaki sürüm numarası artırılır.
 >
 > **Gövde içi alan adları da aynı kurala tabi:** `Seçim`/`Choice`,
 > `Açıklama`/`Explanation`, `Dosya`/`File`, `Bölüm`/`Section`,
-> `Tür`/`Type`, `Durum`/`Status`.
+> `Tür`/`Type`, `Durum`/`Status`; (v1.42) karar kartında `Ne olur`/`What
+> happens`, `Maliyet`/`Cost`, `Risk`/`Risk`, `Geri alınır mı`/`Reversible`,
+> `Kimi etkiler`/`Who is affected`, işlem olayında `Gerekçe`/`Reason`.
 
 
 > **Hub kökü (v1.3, K-020):** Bu sözleşmedeki tüm yollar hub köküne görelidir
@@ -312,7 +315,7 @@ tasks/inbox/     # yeni: kullanıcı (app) veya agent ekledi, henüz ele alınma
 tasks/active/    # agent ele aldı, üzerinde çalışılıyor
 tasks/waiting/   # agent kullanıcıyı bekliyor — top kullanıcıda (v1.4)
 tasks/done/      # tamamlandı (arşiv — silinmez)
-tasks/events/    # (v1.37) işlenmiş yorum ve atama olayları (arşiv — görev değil)
+tasks/events/    # (v1.37) işlenmiş yorum, atama ve (v1.42) işlem olayları (arşiv)
 ```
 
 > **`waiting/` neden var (v1.4, K-022):** Sözleşme 1.3'e kadar sistem yalnız
@@ -354,7 +357,15 @@ assignee: afgover            # (v1.15) active/'e alan kişi
 due: 2026-11-15              # (v1.41) isteğe bağlı: dışarıdan konmuş son
                              # tarih (YYYY-MM-DD) — bkz. "Son tarih"
 via: asistan                 # (v1.41) yalnız asistanın kullanıcı adına
-                             # yazdığı kayıtta (§17)
+                             # yazdığı kayıtta (§17); (v1.42) `merkez`:
+                             # Merkez'in yazdığı kayıtta
+uid: 01JCXK3M9V6R2T8Y4QW7N5B0FH   # (v1.42) isteğe bağlı kalıcı kimlik (ULID)
+actor: "ayse"                # (v1.42) Merkez kaydında işlemi yapan
+closed_as: done              # (v1.42) yalnız done/: done | cancelled
+defer_until: 2026-12-01      # (v1.42) isteğe bağlı: o güne kadar gündemden
+                             # düşer — bkz. "Görev işlemleri"
+# Karar alanları (v1.42: recommended, importance, blocks, reversible,
+# involves, asked_by, effort, supersedes) — bkz. "Karar kaydı"
 
 # --- Bağlam alanları (v1.5) — yalnızca bir belgeden seçilerek üretilmiş
 # kayıtlarda bulunur; normal görevlerde hiç yazılmaz. Üçü birlikte anlamlıdır.
@@ -387,7 +398,9 @@ Kurallar:
   bir hatayı iki tarafın işine çevirirdi (K-026).
 - Klasörler arası taşımayı yalnızca agent yapar
   (`inbox → active → waiting → active → done`; sıra bunlarla sınırlı değil,
-  ama her geçişi agent yapar).
+  ama her geçişi agent yapar). **Tek istisna (v1.42):** hub'ın `ORTAM.md`'de
+  beyan ettiği görev işleyici, yalnız "Görev işlemleri"nde tanımlı geçişleri
+  yapar.
 - Taşıma = eski yolu silme + yeni yola yazma (Contents API'de iki çağrı);
   commit mesajı: `task(T-001): active → done`.
 - `done/` içindeki dosyalar silinmez; yılda bir `done/arsiv-<yil>/` altına
@@ -544,6 +557,187 @@ klasördür ve bu garanti derleme zamanı sabitidir.
 > hangisinin geçerli olduğu sorulur. Sessizce birini seçmek, kullanıcının
 > vazgeçtiği bir kararı uygulamak olabilir.
 
+### Karar kaydı (v1.42)
+
+1.41'e kadar bekleyen kararlar serbest biçimde yazılıyordu: önemi, son
+tarihi, neyi durdurduğu ve geri alınıp alınamayacağı kayıtta yoktu. Birden
+çok hub'ı okuyan bir okuyucu (asistan §17, Merkez) kararları bu yüzden tek
+bir sıraya dizemiyordu. *Ölçülen vaka:* on iki hub'da 117 bekleyen soru,
+62'si 30 günden eski (§17). Bu bölüm bir karar biçimi, ondan türeyen öncelik
+puanı, ek bilgi isteme ve aynı sorunun yinelenmesi kurallarını getirir.
+Hepsi geriye uyumludur: `options` düz liste kalır, yeni alanları bilmeyen
+okuyucu onları yok sayar (R-008).
+
+**Karar**, `tasks/waiting/` altında `category: karar` taşıyan görevdir.
+
+| Alan | Zorunlu | Anlamı |
+|---|---|---|
+| `category: karar` | evet | Dosyayı karar destesine sokar |
+| `options` | evet | Seçenek adları, en çok 4 (v1.12) |
+| `recommended` | evet | Ajanın önerdiği seçenek, `options`'taki metnin aynısı |
+| `importance` | evet | `kritik` \| `yuksek` \| `orta` \| `dusuk` |
+| `due` | hayır | Dışarıdan konmuş kesin tarih (v1.41) |
+| `blocks` | evet | Karar gelmeden duran işler: görev kimlikleri (`[T-12, B-40]`), `proje` ya da `yok` |
+| `reversible` | evet | `evet` \| `zor` \| `hayir` |
+| `for` | evet | Kararı verecek kişi (v1.15) |
+| `involves` | hayır | Etkilenen ya da görüşü alınacak kişiler ve ajanlar |
+| `asked_by` | evet | Soruyu açan: `ajan:<ad>` ya da kişi |
+| `effort` | hayır | Cevap için tahmini süre: `30sn` \| `5dk` \| `masa` |
+| `supersedes` | hayır | Bu kararın yerine geçtiği eski kararlar: `[T-5]` ya da `[T-3, T-5]` (aşağıda "Seri") |
+
+- Değerler **sabit belirteçtir**, hub diline çevrilmez (`priority` gibi):
+  hub'lar arası aynı puan ancak aynı belirteçle hesaplanır.
+- `priority` karar kaydında `importance`'tan türetilir ve eski okuyucular
+  için yazılmaya devam eder: kritik→`urgent`, yuksek→`high`,
+  orta→`normal`, dusuk→`low`.
+
+#### Gövde
+
+```markdown
+# <başlık>
+
+## Soru
+<tek cümle, soru işaretiyle>
+
+## Bağlam
+<ne oldu, neden şimdi soruluyor; en çok beş satır>
+
+## Seçenekler
+
+### <options'taki ad, birebir>
+- **Ne olur:** ...
+- **Maliyet:** ... (emek, para, süre)
+- **Risk:** ...
+- **Geri alınır mı:** ...
+- **Kimi etkiler:** ...
+
+(her seçenek için bir kart)
+
+## Öneri
+<recommended>: <tek paragraf gerekçe>
+
+## Kaynaklar
+- <belge, PR, log bağlantıları> (isteğe bağlı)
+
+## Ek bilgi
+### <YYYY-MM-DD HH:MM> — <istenen>
+<ajanın cevabı> (yalnız ek bilgi istendiğinde eklenir)
+```
+
+#### Önem
+
+- **kritik:** güvenlik, para kaybı, canlı sistem ya da yasal süre.
+- **yuksek:** bir projenin ana yolu ya da dış taraf (mağaza, müşteri)
+  bekliyor.
+- **orta:** bir iş duruyor ama proje yürüyor.
+- **dusuk:** tercih, iyileştirme; beklese de olur.
+
+#### Biçim denetimi
+
+Zorunlu alanı eksik, `recommended`'ı `options`'ta olmayan, `## Soru`,
+`## Bağlam` ya da `## Öneri` bölümü ya da bir seçeneğinin kartı eksik olan
+karar **commit'lenmez**. Ajan commit'ten önce
+`tool/audit.sh --karar <dosya>` koşar (betik `afgover/takip`
+klonundadır; yoksa bu liste elle geçilir ve koşulamadığı kayda yazılır).
+Hub denetimi (`tool/audit.sh`) aynı kuralı 1.42'den sonra açılmış her
+karara uygular; daha eskiler G-002 kapsamıdır (§13).
+
+#### Ajan kendisi karar verir
+
+`reversible: evet` ve `importance: dusuk` olacak bir konuda ajan soru
+açmaz: kendisi karar verir ve kararı `notes/`a `tags: [ajan-karari]` ile
+yazar. Brifing bunları "verdiğim kararlar" diye gösterir; kullanıcı itiraz
+ederse ajan geri alır.
+
+#### Öncelik puanı ve etkin son tarih
+
+Puan kayda yazılmaz; her okuyucu kayıttan hesaplar.
+
+| Önem | Süre | W |
+|---|---|---|
+| kritik | 2 gün | 8 |
+| yuksek | 7 gün | 4 |
+| orta | 14 gün | 2 |
+| dusuk | 30 gün | 1 |
+
+```
+etkin son tarih = min(due, başlangıç + süre(importance))
+P = W × U × B × Y
+U = 1 + 3 × clamp(1 − kalan_gün / süre, 0, 1.5)
+B = 1 (blocks: yok ya da yazılmamış) | 1.5 (görev kimlikleri) | 2 (proje)
+Y = 1 + min(yaş_gün / 60, 0.5)
+```
+
+- Günler UTC takvim günüdür. **Başlangıç** kararın `created` günüdür;
+  karar bir serinin lideriyse serinin ilk üyesinin `created` günü.
+  `yaş_gün` başlangıçtan bugüne, `kalan_gün` bugünden etkin son tarihe.
+- `importance` taşımayan (1.42 öncesi) karar `priority`'den sayılır
+  (`urgent`→kritik, `high`→yuksek, `normal` ya da yok→orta,
+  `low`→dusuk); başlangıcı **2026-11-08**'dir — her hub ve her okuyucu
+  için aynı gün, yoksa iki okuyucu aynı karara farklı puan verir.
+- **Günlük deste:** puana göre ilk 5 karar; `kritik` olanlar sınırdan
+  bağımsız destededir.
+- İki okuyucu farklı "ilk 5" gösterirse deste güvenini kaybeder. Ortak
+  test vektörleri: `afgover/merkez`
+  `src/hubs/__fixtures__/decision-score-vectors.json`.
+
+#### Ek bilgi isteme
+
+Kullanıcı karar vermeden önce bir şey sorabilir. Uygulama, asistan ya da
+Merkez inbox'a `tags: [waiting-info]` ile yazar (§4 bildirim şeması,
+`target` dolu):
+
+```markdown
+## İstek
+`tasks/waiting/<dosya>.md` (T-00X) kararı için ek bilgi istendi.
+
+- **Repo:** `afgover/<proje>_takip`
+- **İstenen:** <kullanıcının sorusu>
+```
+
+Ajan karar dosyasına tarihli bir `## Ek bilgi` girdisi ekler, gerekirse
+seçenek kartlarını günceller ve `updated`'ı yazar; karar `waiting/`te
+kalır. Bildirim `done/`a kapanır.
+
+#### Seri ve `supersedes`
+
+Cevap gelmeden aynı soru yeniden sorulduğunda (soru değişmiş olsa da) ajan
+yeni karara `supersedes:` yazar. Eski kararı kendisi kapatmaz; seri cevapla
+kapanır (aşağıda).
+
+Aynı hub'da şu kararlar bir **seri**dir:
+
+- `supersedes` ile bağlananlar;
+- `supersedes` olmasa da seçenekli olup başlığının sıra numarası atılmış
+  hâli (`Bildirim denemesi 6: …` → `bildirim denemesi: …`; `B-298` gibi
+  kimlikler ve yıllar atılmaz), seçenek kümesi ve `## Soru` metni aynı
+  olanlar.
+
+Serinin en yenisi (`created`, eşitse görev numarası) **lider**dir: destede
+yalnız o durur, "N. kez soruldu" diye anılır, yaşı ve süresi serinin ilk
+üyesinden sayılır. Ortak test vektörleri: `afgover/merkez`
+`src/hubs/__fixtures__/decision-series-vectors.json`.
+
+#### Kapanış: yinelenen ve geçersiz
+
+- Lider cevaplanınca cevabı yazan araç (uygulama, asistan, Merkez),
+  liderden **eski** bekleyen her üye için aynı seçimle ayrı bir
+  `waiting-answer` yazar; açıklama satırı: `Yinelenen soru: T-6 ile aynı;
+  T-6'ya verilen cevap uygulanır, bu kayıt kapatılabilir.` Ajan bunları
+  olağan cevap gibi işler ve eski kaydı `done/`a taşır. Liderden **sonra**
+  sorulan üye kapatılmaz: cevaptan sonra yeniden sormak yeni cevap
+  istemektir.
+- Kullanıcı bir kararı "geçersiz say"arsa seçimsiz bir `waiting-answer`
+  gelir: `Geçersiz: bu karar artık gerekmiyor, kapatılabilir.` Ajan kaydı
+  `result: gecersiz` ile `done/`a taşır.
+
+#### Bayatlık — yalnız okuyucuda
+
+Okuyucu şu kararı "hâlâ geçerli mi?" diye işaretler; işaret kayda
+yazılmaz: yerine yenisi geçmiş (seride lider değil); etkin son tarihi
+kendi süresi kadar geçmiş; `blocks` ile beklettiği görevlerin hepsi
+`done/`da.
+
 ### Yorum ve atama — olay dosyaları (v1.37)
 
 Birden çok kişi aynı hubda çalışırken iki şey gerekiyor: bir görev üzerine
@@ -588,6 +782,114 @@ Ev sahibi IBAN'ı değiştirdi, yenisi notlarda.
   işi kaydı kalıcı ve tek yerde toplamak.
 - Aynı göreve birden çok atama olayı varsa geçerli olan, `created` tarihi en
   yeni olandır.
+
+### Görev işlemleri — `op` olayları ve görev işleyici (v1.42)
+
+Merkez (çok kullanıcılı arka uç, uygulamanın sunucu karşılığı) uygulamadan
+gelen görev düzenleme, kapatma, iptal, yeniden açma ve ertelemeyi hub'a
+yazar. 1.37'nin olay yolu yalnız yorum ve atamayı taşıyordu ve klasörler
+arası taşımayı yalnız ajan yapıyordu. Bu bölüm işlemleri **olay** olarak
+tanımlar ve hub isterse onları ajanın yerine uygulayacak bir **görev
+işleyici** beyan etmesine izin verir. Hepsi isteğe bağlıdır: bilmeyen
+okuyucu yok sayar, işleyici beyan etmeyen hub'a yalnız yeni bir olay türü
+gelir (R-008).
+
+| Alan | Nerede | Anlamı |
+|---|---|---|
+| `via: merkez` | Merkez'in yazdığı her kayıt | Kaynağı uygulamadan ve asistandan ayırır (§17) |
+| `actor` | olay; işlenen görevin notu | İşlemi yapanın tanıtıcısı. `author` GitHub hesabıdır; Merkez üyesinin GitHub hesabı olmayabilir (sahipte ikisi aynı) |
+| `request_id` | olay | İstemcinin ürettiği istek kimliği (`[A-Za-z0-9_-]`, 16–64). Aynı kimlikle gelen ikinci istek yeni dosya üretmez, yeniden uygulanmaz |
+| `uid` | görev | Kalıcı kimlik (ULID); görevi açan yazar, değişmez. Numara verilmeden önce de görevi tek anlamlı gösterir. `target` yine dosya adıdır (v1.37) |
+| `op` | olay, `tags: [op]` ile | `edit` \| `close` \| `cancel` \| `reopen` \| `defer` |
+| `base` | olay | İsteğe bağlı: hedefin istemcinin bildiği blob SHA'sı |
+| `closed_as` | `done/`daki görev | `done` \| `cancelled`; yokluğu `done` demektir. İptal için klasör açılmaz, "durum = klasör" korunur |
+| `defer_until` | görev | `YYYY-MM-DD`. `due`'dan ayrıdır: dış son tarih değil, "o güne kadar bakma". Görev klasör değiştirmez; okuyucular o güne kadar onu gündem listelerinden (Bugün, brifing) düşürür, gün gelince geri döner |
+
+Olay dosyası (`tasks/inbox/`a ya da işleyici varsa doğrudan
+`tasks/events/`e yazılır; 1.37 olayları gibi görev değildir, ID almaz):
+
+```markdown
+---
+id: pending
+title: "İşlem (close): 2026-11-01-yedek-bolgesi.md"
+created_by: user
+created: "2026-11-09T18:40:00Z"
+updated: "2026-11-09T18:40:00Z"
+tags: [op]
+op: close
+target: 2026-11-01-yedek-bolgesi.md
+request_id: req_0123456789abcdef
+actor: "afgover"
+via: merkez
+result: "uygulandi T-12 active → done"   # işlendikten sonra
+---
+
+# İşlem: close
+
+- **Gerekçe:** Avrupa seçildi
+```
+
+`edit` gövdesi değişen her alan için bilinen ve istenen değeri taşır
+(`- **priority:** "high" → "low"`); `defer` ise
+`- **defer_until:** 2026-12-01`.
+
+**Geçişler** — işleyici de ajan da aynı kuralla uygular:
+
+| İşlem | Ne yapar |
+|---|---|
+| `edit` | Yalnız `title`, `priority`, `category`, `due`, `defer_until`, `assignee` |
+| `close` | → `done/`, `closed_as: done`, gerekçe varsa `result` |
+| `cancel` | → `done/`, `closed_as: cancelled`, `result` gerekçe ya da `iptal` |
+| `reopen` | `done/` → `active/`, `closed_as` kaldırılır |
+| `defer` | `defer_until` yazılır, klasör değişmez |
+
+- **Karşılaştır-ve-yaz (`edit`):** her alanın güncel değeri olaydaki
+  bilinen değerle aynıysa yazılır; zaten istenen değerdeyse dokunulmaz;
+  ikisinden de farklıysa **çakışma** — olay uygulanmaz. Çakışmanın ölçüsü
+  alan karşılaştırmasıdır, `base` değil: blob SHA dosyanın tamamına
+  bağlıdır ve ajanın ilgisiz bir not satırı da onu bozar.
+- **Tekrar zararsızdır:** kapalı göreve aynı `close`, açık göreve
+  `reopen`, aynı tarihe `defer` hiçbir şey yazmaz. Kapalı bir görevi farklı
+  biçimde kapatmak (`done` ↔ `cancelled`) çakışmadır.
+- Uygulanan her işlem görevin `updated`'ını yazar ve `## Notlar`a tarihli
+  satır ekler: `- [YYYY-MM-DD HH:MM] @<actor>: kapattı — <gerekçe>`.
+- Alt görev ve bağımlılık (`parent`, `depends_on`) bu sürümde yoktur.
+
+**Kim uygular:**
+
+- **Beyan yoksa** (varsayılan) `op` olayını ajan işler: hedefe uygular,
+  `result` yazar ve olayı `tasks/events/`e taşır — yorum ve atama gibi,
+  kullanıcının talimatını beklemeden. Emin olamazsa kullanıcıya sorar.
+  Çakışmada olay `result: cakisma` ile `tasks/events/`e alınır ve iki değer
+  kullanıcıya söylenir. 1.42'yi bilmeyen bir uygulama inbox'taki olayı
+  görev gibi gösterebilir; ajan işleyince kaybolur.
+- **Beyan varsa:** hub `ORTAM.md`'de `**Görev işleyici:** merkez` satırını
+  taşır (İngilizce hub'da `**Task processor:** merkez`, §16). Beyan işleyicinin o hub'da çalışmasının **hub tarafındaki**
+  ön koşuludur; işleyici kendi tarafında da açılmadıkça çalışmaz (Merkez'de
+  proje başına, varsayılan kapalı). Beyan her işlemde yeniden okunur;
+  satır kaldırılınca işleyici durur. İşleyici:
+  - yalnız yukarıdaki geçişleri yapar; yalnız `tasks/` altındaki durum
+    klasörlerine ve `tasks/events/`e yazar;
+  - görev değişikliğini (gerekiyorsa taşımayı) ve olay kaydını **tek
+    commit**'te yazar; olay inbox'tan geçmez, doğrudan `tasks/events/`e
+    `result: uygulandi <T-n> <eski> → <yeni>` ile girer;
+  - commit'i okuduğu uca bağlar (dal zorla güncellenmez); arada push olduysa
+    yeniden okur ve dener;
+  - `id: pending` göreve numarayı kendisi verir (hub'daki en büyük `T-` +
+    1). Ajanla aynı numarayı seçme yarışı böylece git'te reddedilen bir
+    commit olarak görünür, sessiz çakışma olmaz;
+  - çakışmada yazmaz; Merkez kullanıcıya iki değeri gösterir;
+  - commit mesajı: `task(T-12): active → done (merkez)`; klasör değişmezse
+    `task(T-12): düzenlendi (merkez)` ya da `task(T-12): defer (merkez)`
+    (§8).
+
+  Ajan `tasks/events/`teki `via: merkez` kayıtlarını işlenmiş sayar ve
+  onlara dokunmaz. Beyanlı hub'da inbox'a yine de bir `op` olayı düşerse
+  (işleyici o an kapalıydı) ajan onu beyansız hub'daki gibi işler.
+
+R-001 değişmez: uygulama yine yalnız `tasks/inbox/`a (ve `notes/`a) yazar.
+İşleyici uygulama değildir; hub'ın kendi beyanıyla yetkilendirdiği ve
+yalnız tanımlı geçişlerde ajanın yerine geçen bir yazardır.
 
 ### Belgeden seçilerek üretilen kayıtlar (v1.5, K-023)
 
@@ -702,6 +1004,8 @@ knowledge: L-003 eklendi
 note: eklendi / silindi (app)          # (v1.11) notes/ — kullanıcının notu
 task(pending): inbox'a eklendi (asistan)   # (v1.41) §17 — kullanıcı adına
 note: eklendi (asistan)                     # (v1.41) §17
+task(T-012): active → done (merkez)         # (v1.42) §4 görev işleyici
+task(T-012): düzenlendi (merkez)            # (v1.42) klasör değişmeyen işlem
 security: SEC-005 eklendi / SEC-002 kapatıldı   # (v1.11) SECURITY.md
 plan(P-001): plan açıldı / adım tamamlandı / plan kapandı  # (v1.25) PLAN.md
 system: sözleşme 1.1'e güncellendi
@@ -1006,6 +1310,36 @@ tutulan bir bayrak dosyayla ayrışabilirdi.
 > listesi, kullanıcıyı agent'ın hiç düşünmediği bir çerçeveye sıkıştırır ve
 > yanlış cevabı doğru görünen bir biçimde kaydeder.
 
+### G-002 — Bekleyen kararları 1.42 karar biçimine geçir
+
+- **Kimi ilgilendiriyor:** sözleşme **1.42'den önce** açılmış karar
+  bekleyen `waiting/` görevleri bulunan hub'lar. Yeni kurulan bir hub'da
+  yapacak bir şey yok.
+- **Ne zaman kalkar:** ilgilendiği hub'larda uygulandıktan sonra; ana kopya
+  maddeyi sildiğinde herkes için biter.
+- **Neden geçici:** 1.42 karar kaydını (§4) geriye dönük getirmedi. Eski
+  kararlar puanda `importance` yerine `priority`'den ve 2026-11-08'den
+  başlayarak sayılıyor; aynı soruyu birkaç kez soran kayıtlar destede yer
+  kaplıyor.
+
+Proje ajanı sözleşmeyi 1.42'ye yükselttiği ilk oturumda `tasks/waiting/`
+içindeki kararları (beklenen şey bir **seçim** olanlar; `options` taşıyıp
+taşımadığına bakılmaz) gözden geçirir:
+
+1. **Geçerliliğini yitirenleri kapatır:** iş başka yoldan çözülmüş ya da
+   konu kalkmışsa `result: gecersiz` ile `done/`a taşır, nedeni
+   `## Notlar`a yazar.
+2. **Aynı konuyu soranları birleştirir:** en yenisini bırakır ve ona
+   `supersedes:` yazar; eskiler §4'teki kapanış kuralıyla, cevapla kapanır.
+3. **Kalanları yeni biçime çevirir:** `category: karar`, zorunlu alanlar
+   ve gövde (Soru, Bağlam, seçenek kartları, Öneri).
+
+Kural **idempotent**: `importance` taşıyan karar atlanır. Kayıtlardan
+türetilemeyen bir değer uydurulmaz — o karar olduğu gibi bırakılır ve
+kullanıcıya listelenir (G-001'deki gerekçe: yanlış alan, doğru görünen
+yanlış bir puan üretir). Kapatılan ve birleştirilenler kullanıcıya tek
+satırda söylenir. Asistan bu işi başka hub'larda yapmaz (§17).
+
 ## 14. `PLAN.md` — görev ağacı (v1.25, geriye dönük plan v1.26)
 
 Oturum kaydı **ne konuşulduğunu** tutar, `BACKLOG.md` **ne yapılacağını**,
@@ -1212,6 +1546,12 @@ Projects ile çalışan hub, kökünde kısa bir `ORTAM.md` taşır:
   sürekli "ayrışmış" görünürdü. Hub dili gibi kurulum anında seçilir.
 - Projects hub'ında klasik oturum açmak da serbesttir; ikisi aynı hub'da
   birlikte yaşar.
+- **(v1.42) `**Görev işleyici:** merkez`** (İngilizce hub'da
+  `**Task processor:** merkez`) — isteğe bağlı satır: hub'ın
+  görev işlemlerini (§4, "Görev işlemleri") Merkez'in işleyicisine
+  bıraktığını beyan eder. Satır yoksa işlemleri ajan uygular. Bu satır
+  `projects` dışındaki hub'da da yazılabilir: `**Çalışma ortamı:**`
+  yazılmamış bir `ORTAM.md` hub'ı klasik bırakır.
 
 ### Oturum = thread
 
@@ -1414,7 +1754,8 @@ bu **uygulamanın kapısından** yapılır (R-001): yalnız `tasks/inbox/` ve
   ve commit kimliğiyle not eder.
 
 Proje ajanı bu bildirimi **uygulamadan gelmiş gibi** işler; `via` yalnız
-kaynağını söyler. Kapı bilerek seçildi: uygulamanın yazma alanı zaten dar,
+kaynağını söyler. (v1.42) Merkez de aynı kapıyı aynı kurallarla, `via:
+merkez` ile kullanır; görev işlemleri ve işleyici için §4. Kapı bilerek seçildi: uygulamanın yazma alanı zaten dar,
 çakışmasız ve her proje ajanının açılışta okuduğu yer. Asistan yeni bir
 kanal açmaz, var olanı kullanır. Aynı soruya iki kanaldan iki cevap gelirse
 §4'teki tekrar kuralı geçerlidir.

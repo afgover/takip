@@ -7,7 +7,7 @@ named, and what schema it follows**. Neither the agent nor the user application
 steps outside it. Contract changes are recorded in `EVOLUTION.md` and the
 version number at the top of this file is incremented.
 
-**Contract version:** 1.41
+**Contract version:** 1.42
 **Master copy:** `afgover/takip` → `hub/SYSTEM.md` (Turkish) ·
 `hub/SYSTEM.en.md` (English)
 (see §10 — every hub updates its own copy from there)
@@ -46,10 +46,13 @@ else is in the **hub language**
 > | Notes | `## Notlar` | `## Notes` |
 > | Where | `## Nerede` | `## Where` |
 > | Quote | `## Alıntı` | `## Quote` |
+> | Decision (v1.42) | `## Soru`, `## Bağlam`, `## Seçenekler`, `## Öneri`, `## Kaynaklar`, `## Ek bilgi` | `## Question`, `## Context`, `## Options`, `## Recommendation`, `## Sources`, `## More information` |
 >
 > In-body field names follow the same rule: `Seçim`/`Choice`,
 > `Açıklama`/`Explanation`, `Dosya`/`File`, `Bölüm`/`Section`,
-> `Tür`/`Type`, `Durum`/`Status`.
+> `Tür`/`Type`, `Durum`/`Status`; (v1.42) on a decision card `Ne olur`/`What
+> happens`, `Maliyet`/`Cost`, `Risk`/`Risk`, `Geri alınır mı`/`Reversible`,
+> `Kimi etkiler`/`Who is affected`, in an operation event `Gerekçe`/`Reason`.
 >
 > **The parser accepts all of them.** It is not restricted to the language the
 > hub declares: there are records written before the language field existed,
@@ -328,7 +331,7 @@ tasks/inbox/     # new: added by the user (app) or the agent, not yet picked up
 tasks/active/    # the agent picked it up and is working on it
 tasks/waiting/   # the agent is waiting on the user — the ball is theirs (v1.4)
 tasks/done/      # finished (archive — never deleted)
-tasks/events/    # (v1.37) applied comment and assignment events (archive — not tasks)
+tasks/events/    # (v1.37) applied comment, assignment and (v1.42) operation events (archive)
 ```
 
 > **Why `waiting/` exists (v1.4, K-022):** Up to contract 1.3 the system only
@@ -371,7 +374,15 @@ assignee: afgover            # (v1.15) who moved it to active/
 due: 2026-11-15              # (v1.41) optional: an externally set deadline
                              # (YYYY-MM-DD) — see "Deadline"
 via: asistan                 # (v1.41) only on records the assistant wrote
-                             # on the user's behalf (§17)
+                             # on the user's behalf (§17); (v1.42) `merkez`:
+                             # on records Merkez wrote
+uid: 01JCXK3M9V6R2T8Y4QW7N5B0FH   # (v1.42) optional permanent identifier (ULID)
+actor: "ayse"                # (v1.42) on Merkez records: who performed it
+closed_as: done              # (v1.42) done/ only: done | cancelled
+defer_until: 2026-12-01      # (v1.42) optional: off the agenda until that
+                             # day — see "Task operations"
+# Decision fields (v1.42: recommended, importance, blocks, reversible,
+# involves, asked_by, effort, supersedes) — see "Decision record"
 
 # --- Context fields (v1.5) — present only in records produced by selecting
 # text in a document; never written for ordinary tasks. The three are meaningful
@@ -407,7 +418,9 @@ Rules:
   (K-026).
 - Only the agent moves files between folders
   (`inbox → active → waiting → active → done`; the order is not limited to
-  these, but every transition is the agent's).
+  these, but every transition is the agent's). **The one exception (v1.42):**
+  a task processor the hub declares in `ORTAM.md` makes only the transitions
+  defined in "Task operations".
 - A move is delete-old-path plus write-new-path (two Contents API calls); commit
   message: `task(T-001): active → done`.
 - Files in `done/` are never deleted; once a year they may be gathered under
@@ -567,6 +580,191 @@ compile-time constant.
 > differ, **neither is applied** and the user is asked which one stands.
 > Silently picking one could apply a decision the user has taken back.
 
+### Decision record (v1.42)
+
+Up to 1.41 waiting decisions were written free-form: their importance,
+deadline, what they block and whether they can be undone were not in the
+record. A reader of several hubs (the assistant, §17; Merkez) therefore could
+not put them into one order. *Measured case:* 117 waiting questions across
+twelve hubs, 62 of them older than 30 days (§17). This section adds a decision
+format, a priority score derived from it, a way to ask for more information,
+and rules for a question asked again. All of it is backward compatible:
+`options` stays a flat list, and a reader that does not know the new fields
+ignores them (R-008).
+
+A **decision** is a task under `tasks/waiting/` with `category: karar`.
+
+| Field | Required | Meaning |
+|---|---|---|
+| `category: karar` | yes | Puts the file into the decision deck |
+| `options` | yes | Option names, at most 4 (v1.12) |
+| `recommended` | yes | The option the agent recommends, the exact text from `options` |
+| `importance` | yes | `kritik` \| `yuksek` \| `orta` \| `dusuk` |
+| `due` | no | An externally set hard date (v1.41) |
+| `blocks` | yes | Work stalled until the decision comes: task IDs (`[T-12, B-40]`), `proje` or `yok` |
+| `reversible` | yes | `evet` \| `zor` \| `hayir` |
+| `for` | yes | Who makes the decision (v1.15) |
+| `involves` | no | People and agents affected or to be consulted |
+| `asked_by` | yes | Who opened the question: `ajan:<name>` or a person |
+| `effort` | no | Estimated time to answer: `30sn` \| `5dk` \| `masa` |
+| `supersedes` | no | Older decisions this one replaces: `[T-5]` or `[T-3, T-5]` (see "Series" below) |
+
+- Values are **fixed tokens** and are not translated into the hub language
+  (like `priority`): the same score across hubs needs the same tokens.
+  (kritik = critical, yuksek = high, orta = medium, dusuk = low; evet = yes,
+  zor = hard, hayir = no; proje = project, yok = none; masa = needs a desk.)
+- On a decision `priority` is derived from `importance` and is still written
+  for older readers: kritik→`urgent`, yuksek→`high`, orta→`normal`,
+  dusuk→`low`.
+
+#### Body
+
+```markdown
+# <title>
+
+## Question
+<one sentence, ending with a question mark>
+
+## Context
+<what happened, why it is asked now; at most five lines>
+
+## Options
+
+### <the name from options, verbatim>
+- **What happens:** ...
+- **Cost:** ... (effort, money, time)
+- **Risk:** ...
+- **Reversible:** ...
+- **Who is affected:** ...
+
+(one card per option)
+
+## Recommendation
+<recommended>: <one paragraph of reasoning>
+
+## Sources
+- <links to documents, PRs, logs> (optional)
+
+## More information
+### <YYYY-MM-DD HH:MM> — <what was asked>
+<the agent's answer> (added only when more information is requested)
+```
+
+#### Importance
+
+- **kritik:** security, money loss, a live system or a legal deadline.
+- **yuksek:** a project's main path or an outside party (store, customer)
+  is waiting.
+- **orta:** one piece of work is stalled but the project moves.
+- **dusuk:** a preference or improvement; waiting is fine.
+
+#### Format check
+
+A decision with a missing required field, a `recommended` not in `options`,
+a missing `## Question`, `## Context` or `## Recommendation` section, or a
+missing card for any option is **not committed**. The agent runs
+`tool/audit.sh --karar <file>` before committing (the script is in the
+`afgover/takip` clone; without it the list is checked by hand and the record
+says it could not run). The hub audit (`tool/audit.sh`) applies the same rule
+to every decision opened after 1.42; older ones fall under G-002 (§13).
+
+#### The agent decides for itself
+
+On a matter that would be `reversible: evet` and `importance: dusuk` the
+agent does not open a question: it decides and writes the decision to
+`notes/` with `tags: [ajan-karari]`. The briefing shows these as "decisions I
+made"; if the user objects, the agent undoes it.
+
+#### Priority score and effective deadline
+
+The score is not written to the record; every reader computes it.
+
+| Importance | Duration | W |
+|---|---|---|
+| kritik | 2 days | 8 |
+| yuksek | 7 days | 4 |
+| orta | 14 days | 2 |
+| dusuk | 30 days | 1 |
+
+```
+effective deadline = min(due, start + duration(importance))
+P = W × U × B × Y
+U = 1 + 3 × clamp(1 − days_left / duration, 0, 1.5)
+B = 1 (blocks: yok or absent) | 1.5 (task IDs) | 2 (proje)
+Y = 1 + min(age_days / 60, 0.5)
+```
+
+- Days are UTC calendar days. **Start** is the decision's `created` day; if
+  the decision leads a series, the `created` day of the series' first member.
+  `age_days` runs from start to today, `days_left` from today to the effective
+  deadline.
+- A decision without `importance` (pre-1.42) is scored from `priority`
+  (`urgent`→kritik, `high`→yuksek, `normal` or absent→orta, `low`→dusuk);
+  its start is **2026-11-08** — the same day for every hub and every reader,
+  otherwise two readers score the same decision differently.
+- **Daily deck:** the top 5 decisions by score; `kritik` ones are in the deck
+  regardless of the limit.
+- If two readers show a different "top 5" the deck loses trust. Shared test
+  vectors: `afgover/merkez`
+  `src/hubs/__fixtures__/decision-score-vectors.json`.
+
+#### Asking for more information
+
+The user may ask something before deciding. The app, the assistant or Merkez
+writes to inbox with `tags: [waiting-info]` (the §4 notification schema, with
+`target` filled):
+
+```markdown
+## Request
+More information requested for the decision `tasks/waiting/<file>.md` (T-00X).
+
+- **Repo:** `afgover/<project>_takip`
+- **Requested:** <the user's question>
+```
+
+The agent adds a dated `## More information` entry to the decision file,
+updates the option cards if needed and writes `updated`; the decision stays in
+`waiting/`. The notification is closed into `done/`.
+
+#### Series and `supersedes`
+
+When a question is asked again before it is answered (even if reworded), the
+agent writes `supersedes:` on the new decision. It does not close the old one
+itself; the series closes with the answer (below).
+
+In one hub these decisions form a **series**:
+
+- those linked by `supersedes`;
+- without `supersedes`, decisions with options whose title with the sequence
+  number dropped (`Notification test 6: …` → `notification test: …`; IDs such
+  as `B-298` and years are kept), option set and `## Question` text are the
+  same.
+
+The newest in a series (`created`, then task number) is the **leader**: only
+it stays in the deck, it is shown as "asked N times", and its age and
+duration count from the series' first member. Shared test vectors:
+`afgover/merkez` `src/hubs/__fixtures__/decision-series-vectors.json`.
+
+#### Closing: repeated and void
+
+- When the leader is answered, the tool writing the answer (app, assistant,
+  Merkez) writes a separate `waiting-answer` with the same choice for each
+  waiting member **older** than the leader; explanation line (Merkez writes
+  it in Turkish, as is): `Yinelenen soru: T-6 ile aynı; T-6'ya verilen cevap
+  uygulanır, bu kayıt kapatılabilir.` The agent handles these like any answer
+  and moves the old record to `done/`. A member asked **after** the leader is
+  not closed: asking again after an answer asks for a new answer.
+- If the user marks a decision void, a `waiting-answer` without a choice
+  arrives: `Geçersiz: bu karar artık gerekmiyor, kapatılabilir.` The agent
+  moves the record to `done/` with `result: gecersiz`.
+
+#### Staleness — reader only
+
+A reader flags a decision "still valid?" without writing anything to the
+record when: a newer one replaced it (it is not the series leader); its
+effective deadline has passed by its own duration; or every task it `blocks`
+is in `done/`.
+
 ### Comments and assignment — event files (v1.37)
 
 When several people work in one hub, two things are needed: talking about a
@@ -613,6 +811,122 @@ The landlord changed the IBAN; the new one is in the notes.
   permanent and keep it in one place.
 - If one task has several assignment events, the one with the latest
   `created` wins.
+
+### Task operations — `op` events and the task processor (v1.42)
+
+Merkez (the multi-user backend, the server-side counterpart of the app)
+writes task edits, closing, cancelling, reopening and deferring coming from
+the app into the hub. The 1.37 event path carried only comments and
+assignments, and only the agent moved files between folders. This section
+defines operations as **events** and lets a hub declare a **task processor**
+that applies them in the agent's place. All of it is optional: a reader that
+does not know it ignores it, and a hub without a declared processor only
+gains a new event type (R-008).
+
+| Field | Where | Meaning |
+|---|---|---|
+| `via: merkez` | every record Merkez writes | Tells it apart from the app and the assistant (§17) |
+| `actor` | event; note on the processed task | Handle of who performed it. `author` is a GitHub account; a Merkez member may not have one (for the owner they are the same) |
+| `request_id` | event | Request ID generated by the client (`[A-Za-z0-9_-]`, 16–64). A second request with the same ID creates no new file and is not applied again |
+| `uid` | task | Permanent ID (ULID), written by whoever opens the task, never changed. Identifies the task before it has a number. `target` is still the file name (v1.37) |
+| `op` | event, with `tags: [op]` | `edit` \| `close` \| `cancel` \| `reopen` \| `defer` |
+| `base` | event | Optional: the target's blob SHA as the client knew it |
+| `closed_as` | task in `done/` | `done` \| `cancelled`; absent means `done`. No folder for cancellation — "state = folder" holds |
+| `defer_until` | task | `YYYY-MM-DD`. Separate from `due`: not an external deadline but "don't look until then". The task does not change folder; readers drop it from agenda lists (Today, briefing) until that day, then it returns |
+
+Event file (written to `tasks/inbox/`, or directly to `tasks/events/` when a
+processor is declared; like 1.37 events it is not a task and gets no ID):
+
+```markdown
+---
+id: pending
+title: "İşlem (close): 2026-11-01-backup-region.md"
+created_by: user
+created: "2026-11-09T18:40:00Z"
+updated: "2026-11-09T18:40:00Z"
+tags: [op]
+op: close
+target: 2026-11-01-backup-region.md
+request_id: req_0123456789abcdef
+actor: "afgover"
+via: merkez
+result: "uygulandi T-12 active → done"   # after processing
+---
+
+# İşlem: close
+
+- **Gerekçe:** Europe chosen
+```
+
+An `edit` body carries the known and requested value of each changed field
+(`- **priority:** "high" → "low"`); a `defer` carries
+`- **defer_until:** 2026-12-01`. Merkez writes the title, heading, labels and
+`result` tokens (`uygulandi`, `cakisma`) in Turkish regardless of hub
+language; parsers accept them as such.
+
+**Transitions** — the processor and the agent apply the same rules:
+
+| Operation | What it does |
+|---|---|
+| `edit` | Only `title`, `priority`, `category`, `due`, `defer_until`, `assignee` |
+| `close` | → `done/`, `closed_as: done`, `result` if a reason is given |
+| `cancel` | → `done/`, `closed_as: cancelled`, `result` the reason or `iptal` |
+| `reopen` | `done/` → `active/`, `closed_as` removed |
+| `defer` | `defer_until` written, folder unchanged |
+
+- **Compare-and-write (`edit`):** a field is written if its current value
+  equals the known value in the event; left alone if it already has the
+  requested value; if it differs from both it is a **conflict** — the event is
+  not applied. The measure of a conflict is the field comparison, not `base`:
+  a blob SHA covers the whole file, and an unrelated note line from the agent
+  also breaks it.
+- **Repeats are harmless:** the same `close` on a closed task, `reopen` on an
+  open one, `defer` to the same date write nothing. Closing a closed task the
+  other way (`done` ↔ `cancelled`) is a conflict.
+- Every applied operation writes the task's `updated` and appends a dated
+  line under `## Notes`: `- [YYYY-MM-DD HH:MM] @<actor>: kapattı — <reason>`.
+- Subtasks and dependencies (`parent`, `depends_on`) are not in this version.
+
+**Who applies them:**
+
+- **Without a declaration** (the default) the agent handles `op` events:
+  applies them to the target, writes `result` and moves the event to
+  `tasks/events/` — like comments and assignments, without waiting for the
+  user's instruction. If unsure, it asks the user. On a conflict the event goes
+  to `tasks/events/` with `result: cakisma` and the user is told both values.
+  An app that does not know 1.42 may show the inbox event as a task; it
+  disappears once the agent processes it.
+- **With a declaration:** the hub carries the line
+  `**Görev işleyici:** merkez` (or `**Task processor:** merkez`) in
+  `ORTAM.md` (§16). The declaration is the **hub-side** precondition for the
+  processor to run in that hub; the processor runs only if it is also enabled
+  on its own side (in Merkez per project, off by default). The declaration is
+  re-read on every operation; removing the line stops the processor. The
+  processor:
+  - makes only the transitions above; writes only to the state folders under
+    `tasks/` and to `tasks/events/`;
+  - writes the task change (and move, if any) and the event record in **one
+    commit**; the event does not pass through inbox, it goes directly to
+    `tasks/events/` with `result: uygulandi <T-n> <old> → <new>`;
+  - bases the commit on the head it read (the branch is never force-updated);
+    if a push happened in between, it re-reads and retries;
+  - numbers an `id: pending` task itself (highest `T-` in the hub + 1). A race
+    with an agent for the same number shows up as a rejected commit in git,
+    not as a silent collision;
+  - writes nothing on a conflict; Merkez shows the user both values;
+  - commit message: `task(T-12): active → done (merkez)`; without a folder
+    change `task(T-12): düzenlendi (merkez)` or `task(T-12): defer (merkez)`
+    (§8).
+
+  The agent treats `via: merkez` records in `tasks/events/` as processed and
+  does not touch them. If an `op` event still lands in inbox in a declared hub
+  (the processor was off at the time), the agent handles it as in an
+  undeclared hub.
+
+R-001 does not change: the app still writes only to `tasks/inbox/` (and
+`notes/`). The processor is not the app; it is a writer authorised by the
+hub's own declaration, standing in for the agent only for the defined
+transitions.
 
 ### Records produced by selecting text in a document (v1.5, K-023)
 
@@ -736,6 +1050,8 @@ knowledge: L-003 added
 note: added / deleted (app)             # (v1.11) notes/ — the user's note
 task(pending): added to inbox (asistan)  # (v1.41) §17 — on the user's behalf
 note: added (asistan)                     # (v1.41) §17
+task(T-012): active → done (merkez)       # (v1.42) §4 task processor
+task(T-012): düzenlendi (merkez)          # (v1.42) no folder change; Merkez writes it as is
 security: SEC-005 added / SEC-002 closed  # (v1.11) SECURITY.md
 plan(P-001): plan opened / step completed / plan closed  # (v1.25) PLAN.md
 system: contract updated to 1.1
@@ -1043,6 +1359,37 @@ by the task itself, and a separate flag could drift from the files.
 > it is: an invented option list forces the user into a frame the agent never
 > thought through, and records a wrong answer in a form that looks right.
 
+### G-002 — Move waiting decisions to the 1.42 decision format
+
+- **Who it concerns:** hubs with `waiting/` tasks awaiting a decision that
+  were opened **before contract 1.42**. Nothing to do in a newly set-up hub.
+- **When it is removed:** once applied in the hubs it concerns; it ends for
+  everyone when the master deletes the entry.
+- **Why it is temporary:** 1.42 did not introduce the decision record (§4)
+  retroactively. Old decisions are scored from `priority` instead of
+  `importance` and from 2026-11-08; records asking the same question several
+  times take up room in the deck.
+
+In the first session that upgrades the contract to 1.42, the project agent
+reviews the decisions in `tasks/waiting/` (those where the awaited thing is a
+**choice**, whether or not they carry `options`):
+
+1. **Closes those no longer valid:** if the matter was solved another way or
+   dropped, moves it to `done/` with `result: gecersiz` and writes the reason
+   under `## Notes`.
+2. **Merges those asking the same thing:** keeps the newest and writes
+   `supersedes:` on it; the older ones close with the answer under the §4
+   closing rule.
+3. **Converts the rest to the new format:** `category: karar`, the required
+   fields and the body (Question, Context, option cards, Recommendation).
+
+The entry is **idempotent**: a decision carrying `importance` is skipped. A
+value that cannot be derived from the records is not invented — that
+decision is left as it is and listed for the user (the G-001 reasoning: a
+wrong field produces a wrong score that looks right). What was closed or
+merged is told to the user in one line. The assistant does not do this in
+other hubs (§17).
+
 ## 14. `PLAN.md` — the task tree (v1.25, retroactive plans v1.26)
 
 A session record holds **what was discussed**, `BACKLOG.md` **what is to be
@@ -1261,6 +1608,11 @@ contract):
   permanently "diverged". Like the hub language, it is chosen at setup.
 - Opening a classic session in a Projects hub is also allowed; both live
   in the same hub.
+- **(v1.42) `**Görev işleyici:** merkez`** (or `**Task processor:**
+  merkez`) — an optional line declaring that the hub leaves task operations
+  (§4, "Task operations") to Merkez's processor. Without it the agent applies
+  them. The line may also appear in a hub that is not `projects`: an
+  `ORTAM.md` without `**Çalışma ortamı:**` leaves the hub classic.
 
 ### Session = thread
 
@@ -1477,7 +1829,9 @@ the app writes (§4, §11).
   session record, with `project#T-NNN` and the commit id.
 
 The project's agent handles such a notification **as if it came from the
-app**; `via` only says where it came from. The gate was chosen on purpose:
+app**; `via` only says where it came from. (v1.42) Merkez uses the same
+gate under the same rules, with `via: merkez`; for task operations and the
+processor see §4. The gate was chosen on purpose:
 the app's write area is already narrow, conflict-free and the place every
 project agent reads at opening. The assistant opens no new channel; it uses
 the existing one. If two answers to one question arrive by two routes, the

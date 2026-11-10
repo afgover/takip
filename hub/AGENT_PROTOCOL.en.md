@@ -84,6 +84,21 @@ what*. The procedure holds whatever the session is about.
      several answers for the same `target`, the repeat rule in `SYSTEM.md`
      §4 applies: matching choices, apply one; differing choices, apply
      none — ask the user.
+   - **Operation events (v1.42, `tags: [op]`, contract §4 "Task
+     operations"):** handled without waiting for instructions, like comments
+     and assignments: apply the defined transition to the target, write
+     `result`, move the event to `tasks/events/`. On `edit`, if the current
+     value is neither the known nor the requested value, do not apply it
+     (`result: cakisma`) and tell the user both values. If `ORTAM.md`
+     declares a task processor, `via: merkez` records in `tasks/events/` are
+     already processed; leave them alone.
+   - **Requests for more information (v1.42, `tags: [waiting-info]`):** add
+     a dated `## More information` entry to the decision file, update option
+     cards if needed; the decision stays in `waiting/`, the notification goes
+     to `done/`.
+   - **Repeated / void answers (v1.42):** a `waiting-answer` explained as
+     `Yinelenen soru: …` or `Geçersiz: …` is handled like any answer; for
+     void use `result: gecersiz`.
 3. Look at `BACKLOG.md` **selectively** (v1.28, Ö2): extract open items with
    `grep -nE '^- \[ \] (\*\*)?B-' BACKLOG.md` (v1.34: also catches backlogs
    that write the item number in bold, `- [ ] **B-123**`) — the whole file (~17k tokens) is not
@@ -351,6 +366,16 @@ hub. For the other hubs you read, add:
    When the user taps **"Done"** in the app a notification task lands in inbox;
    on seeing it, move the original task out of `waiting/` and close the
    notification.
+   **If what you await is a choice, write a decision record (v1.42,
+   `SYSTEM.md` §4 "Decision record"):** `category: karar`, `recommended`,
+   `importance`, `blocks`, `reversible`, `for`, `asked_by` and a body of
+   Question / Context / option cards / Recommendation. Run
+   `tool/audit.sh --karar <file>` before committing; if it fails, do not
+   commit. On a matter that would be `reversible: evet` and
+   `importance: dusuk` do not open a question: decide yourself and write it
+   to `notes/` with `tags: [ajan-karari]`. If you ask an unanswered question
+   again, write `supersedes: [T-n]` on the new decision and do not close the
+   old one.
 10. **`notes/` is not your business (contract 1.9 §11).** The files there are
    notes the user took for themselves: no ID, no moving, no `result`, no
    "done", no deleting, no editing. You **may read** them as context ("the user

@@ -17,6 +17,8 @@
 #   tool/audit.sh                    # bu reponun hub'ı
 #   tool/audit.sh --hub /yol/hub     # başka bir hub (klon)
 #   tool/audit.sh --quiet            # yalnız bulgular
+#   tool/audit.sh --karar <dosya>... # yalnız karar biçimi (sözleşme 1.42 §4);
+#                                    # commit'ten önce — düşerse commit'leme
 #
 # Çıkış kodu:
 #   0  bulgu yok
@@ -26,10 +28,18 @@ set -uo pipefail
 
 HUB=""
 QUIET=0
+KARAR=""
 while [ $# -gt 0 ]; do
   case "$1" in
     --hub)   HUB="${2:-}"; shift 2 ;;
     --quiet) QUIET=1; shift ;;
+    --karar) shift
+             [ $# -gt 0 ] || { echo "--karar en az bir dosya ister" >&2; exit 2; }
+             while [ $# -gt 0 ] && [ "${1#--}" = "$1" ]; do
+               [ -f "$1" ] || { echo "Dosya yok: $1" >&2; exit 2; }
+               KARAR="$KARAR$(cd "$(dirname "$1")" && pwd)/$(basename "$1")
+"; shift
+             done ;;
     *) echo "Bilinmeyen seçenek: $1" >&2; exit 2 ;;
   esac
 done
@@ -44,7 +54,7 @@ command -v python3 >/dev/null || { echo "python3 yok — denetim koşmadı" >&2;
 git -C "$HUB" rev-parse --git-dir >/dev/null 2>&1 || {
   echo "Hub bir git deposunda değil — mekanik kontrollerin çoğu koşamaz" >&2; exit 2; }
 
-python3 - "$HUB" "$QUIET" <<'PY'
+KARAR="$KARAR" python3 - "$HUB" "$QUIET" <<'PY'
 import os, re, subprocess, sys, datetime, collections, difflib
 
 HUB, QUIET = sys.argv[1], sys.argv[2] == "1"
@@ -90,6 +100,93 @@ def frontmatter(p):
 # Eşik hafızadan değil, alanı ekleyen commit'ten türetilir.
 _a = git("log","--diff-filter=M","--format=%cs","-S","author:","--",f"{REL}/SYSTEM.md")
 AUTHOR_SINCE = _a.strip().split("\n")[-1] if _a.strip() else None
+
+# ── Karar kaydı biçimi (sözleşme 1.42 §4 "Karar kaydı") ──────────────────────
+# Mekanik: alanlar, değer kümeleri ve gövde başlıkları. Gerekçenin iyi olup
+# olmadığına bakmaz — o okuyanın işi.
+IMPORTANCE = {"kritik": "urgent", "yuksek": "high", "orta": "normal", "dusuk": "low"}
+REVERSIBLE = {"evet", "zor", "hayir"}
+EFFORT     = {"30sn", "5dk", "masa"}
+KARAR_REQ  = ("options", "recommended", "importance", "blocks", "reversible",
+              "for", "asked_by")
+_ID = r"(?:[\w.-]+#)?[A-Z]+-\d+"
+
+def fm_list(v):
+    """`["a", "b"]`, `[a, b]` ya da tek değer → liste."""
+    v = (v or "").split(" #")[0].strip()
+    if v.startswith("[") and v.endswith("]"): v = v[1:-1]
+    out, cur, q = [], "", None
+    for ch in v:
+        if q:
+            if ch == q: q = None
+            else: cur += ch
+        elif ch in "\"'": q = ch
+        elif ch == ",": out.append(cur.strip()); cur = ""
+        else: cur += ch
+    if cur.strip(): out.append(cur.strip())
+    return [x for x in out if x]
+
+def karar_problems(path):
+    fm, body = frontmatter(path)
+    if not fm: return ["frontmatter yok"]
+    val = lambda k: (fm.get(k) or "").split(" #")[0].strip().strip('"')
+    p = []
+    if val("category") != "karar": p.append("`category: karar` değil")
+    for k in KARAR_REQ:
+        if not val(k): p.append(f"`{k}` yok")
+    opts = fm_list(fm.get("options"))
+    if fm.get("options") and not opts: p.append("`options` okunamadı")
+    if len(opts) > 4: p.append(f"`options` {len(opts)} seçenek (en çok 4)")
+    if val("recommended") and opts and val("recommended") not in opts:
+        p.append("`recommended` `options`'ta yok (metin birebir olmalı)")
+    imp = val("importance")
+    if imp and imp not in IMPORTANCE: p.append(f"`importance: {imp}` tanımsız")
+    if imp in IMPORTANCE and val("priority") and val("priority") != IMPORTANCE[imp]:
+        p.append(f"`priority: {val('priority')}` `importance: {imp}` ile uyuşmuyor "
+                 f"({IMPORTANCE[imp]} olmalı)")
+    if val("reversible") and val("reversible") not in REVERSIBLE:
+        p.append(f"`reversible: {val('reversible')}` tanımsız")
+    b = val("blocks")
+    if b and b not in ("yok", "proje"):
+        ids = fm_list(b)
+        if not ids or not all(re.fullmatch(_ID, x) for x in ids):
+            p.append(f"`blocks: {b}` ne `yok`/`proje` ne kimlik listesi")
+    if val("effort") and val("effort") not in EFFORT:
+        p.append(f"`effort: {val('effort')}` tanımsız")
+    if fm.get("supersedes"):
+        sup = fm_list(fm.get("supersedes"))
+        if not sup or not all(re.fullmatch(r"T-\d+", x) for x in sup):
+            p.append("`supersedes` T- kimlikleri listesi değil")
+    if val("due") and not re.fullmatch(r"\d{4}-\d{2}-\d{2}", val("due")):
+        p.append("`due` YYYY-MM-DD değil")
+    heads = {h.strip() for h in re.findall(r"^##\s+(.+?)\s*$", body, re.M)}
+    for tr_, en_ in (("Soru","Question"), ("Bağlam","Context"), ("Öneri","Recommendation")):
+        if tr_ not in heads and en_ not in heads: p.append(f"`## {tr_}` bölümü yok")
+    cards = {h.strip() for h in re.findall(r"^###\s+(.+?)\s*$", body, re.M)}
+    for o in opts:
+        if o not in cards: p.append(f"seçenek kartı yok: `### {o}`")
+    return p
+
+_KARAR = [x for x in os.environ.get("KARAR", "").split("\n") if x]
+if _KARAR:
+    bad = 0
+    for f in _KARAR:
+        prob = karar_problems(f)
+        if prob:
+            bad += 1
+            print(f"  ! {f}")
+            for x in prob: print(f"      - {x}")
+        else:
+            print(f"  ✓ {f}")
+    print(f"\n{BOLD}{bad} karar biçim dışı.{OFF} Düzeltmeden commit'leme (sözleşme 1.42 §4)."
+          if bad else f"\n{BOLD}Karar biçimi tamam.{OFF}")
+    sys.exit(1 if bad else 0)
+
+# Karar biçiminin geldiği gün: sözleşmeye bölümü ekleyen commit (AUTHOR_SINCE
+# ile aynı yol — eşik hafızadan değil git'ten). Hub kopyası 1.42'yi henüz
+# almadıysa boş kalır ve hiçbir karar suçlanmaz.
+_k = git("log","--format=%cs","-S","Karar kaydı (v1.42)","--",f"{REL}/SYSTEM.md")
+KARAR_SINCE = _k.strip().split("\n")[-1] if _k.strip() else None
 
 # Görevin yol zinciri. Taşımalar dosya **adı değişerek** yapılabiliyor
 # (2026-08-01'de inbox'taki uzun ad done'da kısaldı), bu yüzden ne `--follow`
@@ -317,6 +414,23 @@ for f in skipped: warn(f"done/{f}: inbox/ ya da active/ üzerinden geçmemiş")
 if not skipped: ok("kullanıcı görevleri klasör zincirini izlemiş")
 for f in migrated: info(f"done/{f} — zincirin öncesi başka repoda")
 for f in no_opt: info(f"waiting/{f}: `options` yok (G-001 kapsamı olabilir)")
+# Karar kaydı (1.42): biçimden sonra açılan karar biçim dışıysa bulgu; öncesi
+# G-002'nin işi, yalnız bilgi.
+_wd, _kn, _kold = os.path.join(tasks, "waiting"), 0, []
+for fn in sorted(os.listdir(_wd)) if os.path.isdir(_wd) else []:
+    if not fn.endswith(".md") or fn == "README.md": continue
+    fm, _ = frontmatter(os.path.join(_wd, fn))
+    if (fm.get("category") or "").split(" #")[0].strip() != "karar": continue
+    _kn += 1
+    prob = karar_problems(os.path.join(_wd, fn))
+    if not prob: continue
+    if KARAR_SINCE and (fm.get("created") or "")[:10] >= KARAR_SINCE:
+        warn(f"waiting/{fn}: karar biçim dışı — " + "; ".join(prob))
+    else:
+        _kold.append(fn)
+for f in _kold: info(f"waiting/{f}: 1.42 öncesi karar, biçim dışı (G-002 kapsamı)")
+if _kn and not any(f.startswith("waiting/") and "karar biçim" in f for f in findings):
+    ok(f"{_kn} karar kaydı; 1.42 sonrası açılanlar biçime uyuyor")
 
 # ── 6. Bekleyenlerin yaşı ────────────────────────────────────────────────────
 say("6. Bekleyen ve duran işler")

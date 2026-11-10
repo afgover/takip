@@ -1071,3 +1071,23 @@ işi, bitiş çizgisi değil. Bitiş çizgisi olsaydı aşama hiç kapanmazdı �
   eklendi ve 1.28'de kalmış sürüm satırı sürüm tekrarlamayan bir cümleye çevrildi. Uygulama sabiti 1.41, 668 test
   geçti; APK yeniden derlenmedi. Uygulama `due` ve `via`'yı henüz göstermiyor, bilinmeyen alanı yok sayıyor
   ([B-148](BACKLOG.md#B-148)); denetimin şema dışı `priority`'yi görmemesi [B-149](BACKLOG.md#B-149).
+
+- 2026-11-10: Sözleşme [1.42](SYSTEM.md#4): **karar kaydı, öncelik puanı, karar serisi ve Merkez görev
+  işlemleri (hepsi isteğe bağlı).** Üç öneri tek sürümde çıktı: inbox'taki "1.42 karar kaydı biçimi ve öncelik
+  puanı" (2026-11-08, asistan), "1.43 Merkez görev işlemleri" (2026-11-09; kullanıcı kararı 2026-11-09T18:19Z
+  "önerildiği gibi yapabilirsin", asistan#T-018) ve karar serisi / `supersedes` eki
+  (asistan#S-2026-11-10-karar-eskime). 1.43 numarası kullanılmadı. Eklenenler: §4 "Karar kaydı" (zorunlu
+  `recommended`, `importance`, `blocks`, `reversible`, `for`, `asked_by`; seçenek kartlı gövde; ajanın kendi
+  kararı; P = W×U×B×Y puanı ve günlük deste; `waiting-info` ek bilgi isteme; seri, lider, "yinelenen soru" ve
+  "geçersiz" kapanışı; okuyucuda bayatlık), §4 "Görev işlemleri" (`op` olayları `edit|close|cancel|reopen|defer`,
+  `actor`, `request_id`, `uid`, `base`, `closed_as`, `defer_until`, `via: merkez`; hub'ın `ORTAM.md`'de beyan
+  ettiği görev işleyici — §4 "taşımayı yalnız ajan yapar" kuralının tek istisnası; tek commit, uca bağlı
+  commit, numara verme, çakışma), §8 Merkez commit örnekleri, §13 G-002 (eski kararların göçü), §16 ORTAM
+  satırı, §17 `via: merkez`; protokolde inbox ve waiting maddeleri. Biçim denetimi: `tool/audit.sh --karar`
+  (commit öncesi kapı) ve hub denetiminde 1.42 sonrası kararlar. Merkez'in `main`'deki koduna (#32'ye kadar)
+  karşı yazıldı; öneriden iki ayrılık kodun davranışına hizalandı: çakışmanın ölçüsü `base` blob SHA'sı değil
+  alan karşılaştırması (SHA dosyanın tamamına bağlı, ilgisiz bir not satırı da bozar; `base` isteğe bağlı
+  kaldı), `importance` taşımayan eski karar hep `orta` değil `priority`'den türer ve başlangıcı sabit
+  2026-11-08 (iki okuyucu aynı puanı versin). Değerler sabit belirteç, hub diline çevrilmez. Reddedilen: alt
+  görev ve bağımlılık (döngü denetimi ayrı iş, sonraki sürüm). Uygulama sabiti 1.42; uygulama yeni alanları
+  henüz göstermiyor ([B-150](BACKLOG.md#B-150)); APK yeniden derlenmedi.

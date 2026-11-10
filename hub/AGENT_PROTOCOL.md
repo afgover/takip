@@ -78,6 +78,19 @@ tanımlanır. Prosedür, oturumun konusu ne olursa olsun geçerlidir.
      uygulamadan gelmiş gibi işlenir. Aynı `target` için birden çok cevap
      varsa `SYSTEM.md` §4'teki tekrar kuralı uygulanır: seçimler aynıysa
      biri işlenir, farklıysa hiçbiri — kullanıcıya sorulur.
+   - **İşlem olayları (v1.42, `tags: [op]`, sözleşme §4 "Görev
+     işlemleri"):** yorum ve atama gibi talimat beklemeden işlenir: tanımlı
+     geçiş hedefe uygulanır, `result` yazılır, olay `tasks/events/`e taşınır.
+     `edit`'te güncel değer ne bilinen ne istenen değerse uygulanmaz
+     (`result: cakisma`) ve kullanıcıya iki değer söylenir. `ORTAM.md`
+     görev işleyici beyan ediyorsa `tasks/events/`teki `via: merkez`
+     kayıtları işlenmiştir, dokunulmaz.
+   - **Ek bilgi istekleri (v1.42, `tags: [waiting-info]`):** karar
+     dosyasına tarihli `## Ek bilgi` girdisi eklenir, gerekiyorsa seçenek
+     kartları güncellenir; karar `waiting/`te kalır, bildirim `done/`a.
+   - **Yinelenen / geçersiz cevaplar (v1.42):** `Yinelenen soru: …` ya da
+     `Geçersiz: …` açıklamalı `waiting-answer` olağan cevap gibi işlenir;
+     geçersizde `result: gecersiz`.
 3. `BACKLOG.md`'ye **seçici** bak (v1.28, Ö2): açık maddeler
    `grep -nE '^- \[ \] (\*\*)?B-' BACKLOG.md` ile çıkarılır (v1.34: madde
    numarası kalın yazılan backlog'lar da — `- [ ] **B-123**` — yakalanır) — dosyanın tamamı
@@ -325,6 +338,15 @@ aynen geçerlidir. Okuduğun diğer hub'lar için şunlar eklenir:
    tarihi yazma.
    Kullanıcı uygulamadan **"Yaptım"** dediğinde inbox'a bildirim görevi düşer;
    onu görünce asıl görevi `waiting/`ten çıkar ve bildirimi kapat.
+   **Beklenen şey bir seçimse karar kaydı yaz (v1.42, `SYSTEM.md` §4
+   "Karar kaydı"):** `category: karar`, `recommended`, `importance`,
+   `blocks`, `reversible`, `for`, `asked_by` ve Soru / Bağlam / seçenek
+   kartları / Öneri gövdesi. Commit'ten önce
+   `tool/audit.sh --karar <dosya>` koş; düşerse commit'leme.
+   `reversible: evet` ve `importance: dusuk` olacak konuda soru açma:
+   kendin karar ver, `notes/`a `tags: [ajan-karari]` ile yaz. Cevapsız bir
+   soruyu yeniden soruyorsan yeni karara `supersedes: [T-n]` yaz, eskisini
+   kapatma.
 10. **`notes/` senin işin değil (sözleşme 1.9 §11).** Oradaki dosyalar
    kullanıcının kendine aldığı notlardır: ID atama, taşıma, `result` yazma,
    "yapıldı" deme, silme, düzenleme. Bağlam olarak **okuyabilirsin** ("kullanıcı

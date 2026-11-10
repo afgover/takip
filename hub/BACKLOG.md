@@ -1016,3 +1016,15 @@ başlığına ✅ ve tarih yazılır.
       dışı `priority` ve ISO UTC olmayan `created` için bulgu · kaynak:
       asistan#A-2026-10-24-002
 
+
+- [ ] B-150 · (agent) **Uygulama sözleşme 1.42'nin alanlarını bilmiyor.**
+      Sabit 1.42'ye çıktı ama uygulama yeni kayıtları ayırt etmiyor: (a)
+      `tags: [op]` olayı `TaskEventKind`'da yok, inbox'a düşerse görev gibi
+      listelenir (ajan işleyince kaybolur); (b) `waiting-info` için "ek bilgi
+      iste" düğmesi yok; (c) karar kaydının seçenek kartları, `recommended`,
+      `importance` ve puan görünmüyor; (d) `closed_as: cancelled` "Tamamlandı"
+      ile karışıyor, `defer_until` gündemden düşürmüyor; (e) seriyi cevaplarken
+      eski üyelere "yinelenen soru" cevabı yazılmıyor. Merkez bunları kendi
+      ekranında yapıyor; uygulama tarafı ayrı iş. Tetikleyici: hub'larda karar
+      kaydı ya da Merkez işleyicisi kullanılmaya başlanması · kaynak:
+      [S-2026-11-10-sozlesme-1-42](sessions/2026-11-10-sozlesme-1-42/session.md)
