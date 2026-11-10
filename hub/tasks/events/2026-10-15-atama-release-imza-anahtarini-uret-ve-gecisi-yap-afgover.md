@@ -8,7 +8,7 @@ priority: normal
 category: gorev
 tags: [assign]
 session: none
-result: none
+result: "işlendi: hedefin assignee alanı afgover (hedef waiting/'te, taşınmadı; S-2026-11-10-sozlesme-1-42)"
 author: afgover
 assignee: afgover
 target: 2026-08-06-release-imza-anahtari.md

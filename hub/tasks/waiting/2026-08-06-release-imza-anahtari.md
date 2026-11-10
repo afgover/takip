@@ -3,7 +3,7 @@ id: T-010
 title: "Release imza anahtarını üret ve geçişi yap"
 created_by: agent
 created: "2026-08-06T00:10:00Z"
-updated: "2026-08-30T14:10:00Z"
+updated: "2026-11-10T12:07:00Z"
 priority: normal
 category: gorev
 tags: [guvenlik, imza]
@@ -11,6 +11,7 @@ session: S-2026-08-06-release-imzasi
 result: none
 options: ["Keystore hazır, key.properties yazıldı", "Yedeği aldım ama keystore'da takıldım", "Şimdilik vazgeçtim"]
 multi: false
+assignee: afgover
 ---
 
 # Release imza anahtarını üret ve geçişi yap
@@ -98,3 +99,7 @@ Google yönetir, upload anahtarı kurtarılabilir. Karar T-020 ile birlikte.
 Tetikleyici netleşti: **store yüklemesinden hemen önce** üretilecek
 (kullanıcı kararı, P-021). O güne kadar telefondaki kurulum ve veri bozulmaz.
 
+## Yorumlar
+
+### [2026-10-15 00:32] @afgover
+deneme yorum

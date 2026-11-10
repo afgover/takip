@@ -8,7 +8,7 @@ priority: normal
 category: gorev
 tags: [comment]
 session: none
-result: none
+result: "işlendi: yorum hedefin ## Yorumlar bölümüne eklendi (S-2026-11-10-sozlesme-1-42)"
 author: afgover
 target: 2026-08-06-release-imza-anahtari.md
 ---
