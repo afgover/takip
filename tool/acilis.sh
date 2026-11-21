@@ -14,7 +14,8 @@
 #     dosyanın kendisine iner.
 #
 # Güvenlik sözleşmesi: git durumunu ve hub dosyalarını OKUR; hiçbir şey
-# YAZMAZ; ağa yalnız iki GET atar (github.com Date başlığı, ana kopya diff'i).
+# YAZMAZ; ağa yalnız iki GET atar (github.com Date başlığı, ana kopya diff'i)
+# ve `gh` kuruluysa hub deposunun açık PR listesini okur (salt okuma).
 #
 # Kullanım:
 #   tool/acilis.sh                   # bu reponun hub'ı
@@ -178,6 +179,28 @@ else
 fi
 WT=$(ls "$HUB/tasks/waiting" 2>/dev/null | grep -v '^README' || true)
 [ -n "$WT" ] && printf '  · waiting (%s): %s\n' "$(echo "$WT" | wc -l | tr -d ' ')" "$(echo "$WT" | tr '\n' ' ')"
+
+# 5b) Hub deposunda bekleyen PR'lar (financer T-166, 2026-11-22). Nöbetçinin
+# bulut ajanı gibi otomatik yazıcılar raporu hub'a taslak PR olarak açıyor;
+# kapatan adım tanımlı değildi ve üç rapor PR'ı 5-13 gün birikti. 2 günden
+# eski açık PR dikkat maddesidir: oturumu açan ajan okur, konusu çözülmüşse
+# birleştirir ya da kapatır, değilse görev açar. `gh` yoksa ya da depo
+# okunamazsa bu satır "koşmadı" der ama açılışı düşürmez (her ortamda gh yok).
+if command -v gh >/dev/null 2>&1; then
+  PRS=$( (cd "$HUB" && gh pr list --state open --limit 30 --json number,title,createdAt \
+          --jq '.[] | "\(((now - (.createdAt | fromdateiso8601)) / 86400) | floor)\t#\(.number) \(.title)"') 2>/dev/null); prc=$?
+  if [ $prc -ne 0 ]; then printf '  · hub PR listesi okunamadı (gh) — açık PR varsa elle bak\n'
+  elif [ -z "$PRS" ]; then ok "hub deposunda açık PR yok"
+  else
+    ESKI=$(printf '%s\n' "$PRS" | awk -F'\t' '$1 >= 2')
+    YENI=$(printf '%s\n' "$PRS" | awk -F'\t' '$1 < 2')
+    [ -n "$ESKI" ] && { warn "hub deposunda 2 günden eski $(printf '%s\n' "$ESKI" | grep -c .) açık PR — oku; çözüldüyse birleştir/kapat, değilse görev aç:"
+                        printf '%s\n' "$ESKI" | awk -F'\t' '{printf "      · %s (%s gün)\n", substr($2,1,100), $1}'; }
+    [ -n "$YENI" ] && printf '  · hub deposunda yeni açık PR: %s\n' "$(printf '%s\n' "$YENI" | cut -f2 | cut -c1-60 | tr '\n' ' ')"
+  fi
+else
+  printf '  · hub PR kontrolü koşmadı (gh yok)\n'
+fi
 
 # 6) BACKLOG açık maddeleri — seçici bakış (Ö2, sayım denetimli)
 say "BACKLOG — açık maddeler (satırlar özettir: bir maddeye dayanıp İŞ YAPMADAN önce gövdesi okunur)"
