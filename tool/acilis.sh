@@ -157,6 +157,27 @@ elif [ "$NACIK" -eq 1 ]; then
   else printf '    ilk mesaj proje adıysa: bu oturuma [devam] başlığıyla devam et (v1.35)\n'; fi
 else for f in $ACIK; do warn "AÇIK OTURUM: ${f#"$HUB"/sessions/} — birden çok açık olamaz (madde 1)"; done; fi
 
+# 4c) Oturum kaydı BACKLOG'un gerisinde mi (madde 4; datasources 2026-11-24)
+# Ölçülen vaka: açık oturumun kaydı 21 Kasım'da durdu, üç günlük iş yalnız
+# BACKLOG'a yazıldı. Kural vardı (madde 4) ama bekçi kancası (hub-guard --stop)
+# yalnız hub klasöründe açılan oturumda koşuyor; iş deposunda açılan oturumda
+# bunu gören yoktu. Bir günden büyük fark dikkat maddesidir. Kapalı kayıtlar da
+# sayılır: en yeni session.md commit'i esastır. Sığ klonda tarih güvenilmez.
+if [ "$(git -C "$HUB" rev-parse --is-shallow-repository 2>/dev/null)" != "false" ]; then
+  printf '  · oturum kaydı/BACKLOG farkı ölçülmedi (sığ klon ya da git yok)\n'
+else
+  BT=$(git -C "$HUB" log -1 --format=%ct -- BACKLOG.md 2>/dev/null)
+  OT=$(git -C "$HUB" log -1 --format=%ct -- 'sessions/*/session.md' 2>/dev/null)
+  if [ -z "$BT" ] || [ -z "$OT" ]; then
+    printf '  · oturum kaydı/BACKLOG farkı ölçülmedi (birinin commit geçmişi yok)\n'
+  else
+    FARK=$(( BT - OT ))
+    if [ "$FARK" -gt 86400 ]; then
+      warn "OTURUM KAYDI GERİDE: BACKLOG son oturum kaydından $(( FARK / 3600 )) saat yeni — eksik alışverişleri session.md'ye yaz (madde 4)"
+    else ok "oturum kaydı BACKLOG'un gerisinde değil (en fazla 1 gün)"; fi
+  fi
+fi
+
 # 5) inbox / waiting (madde 2, 9)
 # Olay dosyaları (sözleşme 1.37 §4: tags [comment|assign] + target) görev
 # değil: ayrı sayılır; agent onları talimat beklemeden hedefe işler. Tanıma
